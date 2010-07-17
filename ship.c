@@ -61,6 +61,12 @@ static int api_position(lua_State *L)
 	return 2;
 }
 
+static int api_fire(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	return 0;
+}
+
 static lua_State *ai_create(char *filename)
 {
 	lua_State *G, *L;
@@ -70,6 +76,7 @@ static lua_State *ai_create(char *filename)
 	lua_register(G, "thrust", api_thrust);
 	lua_register(G, "yield", api_yield);
 	lua_register(G, "position", api_position);
+	lua_register(G, "fire", api_fire);
 
 	L = lua_newthread(G);
 

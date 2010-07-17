@@ -39,5 +39,6 @@ while true do
 	a = angle_between(x, y, 0, 0)
 	--io.write(string.format("x=%g y=%g a=%g\n", x, y, a))
 	thrust(a, 20.0/(distance(x, y, 0, 0)^2))
+	fire(a)
 	yield()
 end
