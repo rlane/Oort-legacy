@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <complex.h>
-#include <sys/time.h>
 #include <glib.h>
 
 #include "physics.h"

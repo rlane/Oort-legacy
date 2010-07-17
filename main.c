@@ -15,6 +15,7 @@
 #include <SDL_gfxPrimitives.h>
 #include <SDL_framerate.h>
 
+#include "risc.h"
 #include "ship.h"
 #include "physics.h"
 

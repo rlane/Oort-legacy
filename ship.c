@@ -5,8 +5,9 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-#include "ship.h"
+#include "risc.h"
 #include "physics.h"
+#include "ship.h"
 
 #define LW_VERBOSE 0
 
@@ -122,8 +123,6 @@ int ship_ai_run(struct ship *s, int len)
 		return 0;
 	}
 }
-
-extern int ticks; // XXX
 
 void ship_tick_one(struct ship *s, void *unused)
 {
