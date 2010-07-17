@@ -1,5 +1,11 @@
 pi = 3.1415927
 
+function printf(...)
+   local function wrapper(...) io.write(string.format(...)) end
+   local status, result = pcall(wrapper, ...)
+   if not status then error(result, 2) end
+end
+
 function sleep(ticks)
 	local i
 	for i = 1,ticks do
@@ -35,7 +41,7 @@ function lead(x1, y1, x2, y2, vx1, vy1, vx2, vy2, w, t_max)
 	b = 2 * (dx*dvx + dy*dvy)
 	c = dx^2 + dy^2
 	t = largest_root_of_quadratic_equation(a, b, c)
-	io.write(string.format("t=%.03g\n", t))
+	--printf("t=%.03g\n", t)
 	if t >= 0 and t <= t_max then
 		x3 = x2 + dvx*t
 		y3 = y2 + dvy*t
@@ -65,7 +71,7 @@ while true do
 	x, y = position()
 	vx, vy = velocity()
 	a = angle_between(x, y, 0, 0)
-	--io.write(string.format("x=%g y=%g a=%g\n", x, y, a))
+	--printf("x=%g y=%g a=%g\n", x, y, a)
 	thrust(a, 20.0/(distance(x, y, 0, 0)^2))
 	a2 = lead(x, y, 0, 0, vx, vy, 0, 0, 10, 1)
 	if a2 then
