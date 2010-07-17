@@ -1,0 +1,31 @@
+#include <complex.h>
+#include <lua.h>
+#include <lauxlib.h>
+
+#ifndef SHIP_H
+#define SHIP_H
+
+struct ship_class {
+	double energy_max, energy_rate;
+	double r;
+};
+
+#define TAIL_SEGMENTS 4
+
+struct ship {
+	const struct ship_class *class;
+	complex double p, v, thrust;
+	double a, av;
+	double energy;
+	lua_State *lua;
+	int ai_dead;
+	complex double tail[TAIL_SEGMENTS];
+	int tail_head;
+};
+
+extern const struct ship_class fighter;
+
+struct ship *ship_create(char *filename);
+int ship_run(struct ship *s, int len);
+
+#endif
