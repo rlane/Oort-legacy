@@ -18,6 +18,8 @@ const struct ship_class fighter = {
 
 char RKEY_SHIP[1];
 
+GList *all_ships = NULL;
+
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
 	lua_pushlightuserdata(L, key);
@@ -97,7 +99,7 @@ static void count_hook(lua_State *L, lua_Debug *ar)
 	lua_yield(L, 0);
 }
 
-int ship_run(struct ship *s, int len)
+int ship_ai_run(struct ship *s, int len)
 {
 	int result;
 	double returned;
@@ -121,10 +123,29 @@ int ship_run(struct ship *s, int len)
 	}
 }
 
+extern int ticks; // XXX
+
+void ship_tick_one(struct ship *s, void *unused)
+{
+	if (ticks % 16 == 0) {
+		s->tail[s->tail_head++] = s->physics->p;
+		if (s->tail_head == TAIL_SEGMENTS) s->tail_head = 0;
+	}
+
+	if (!s->ai_dead) {
+		int ret = ship_ai_run(s, 100);
+		if (!ret) s->ai_dead = 1;
+	}
+}
+
+void ship_tick(double t)
+{
+	g_list_foreach(all_ships, (GFunc)ship_tick_one, NULL);
+}
+
 struct ship *ship_create(char *filename)
 {
-	struct ship *s = calloc(1, sizeof(*s));
-	if (!s) return NULL;
+	struct ship *s = g_slice_new0(struct ship);
 
 	s->lua = ai_create(filename);
 	if (!s->lua) {
@@ -146,5 +167,13 @@ struct ship *ship_create(char *filename)
 
 	s->tail_head = 0;
 
+	all_ships = g_list_append(all_ships, s);
+
 	return s;
+}
+
+void ship_destroy(struct ship *s)
+{
+	all_ships = g_list_remove(all_ships, s);
+	g_slice_free(struct ship, s);
 }

@@ -40,13 +40,8 @@ complex double S(complex double p)
 				 (I * screen_height/2);
 }
 
-static void ship_tick(struct ship *s, void *unused)
+static void render_ship(struct ship *s, void *unused)
 {
-	if (ticks % 16 == 0) {
-		s->tail[s->tail_head++] = s->physics->p;
-		if (s->tail_head == TAIL_SEGMENTS) s->tail_head = 0;
-	}
-
 	complex double sp = S(s->physics->p);
 	aacircleRGBA(screen, creal(sp), cimag(sp), 4, 0, 255, 0, 150);
 
@@ -70,11 +65,6 @@ static void ship_tick(struct ship *s, void *unused)
 			pixelColor(screen, creal(sp2), cimag(sp2), old_color | 0xFF);
 		}
 		sp = sp2;
-	}
-
-	if (!s->ai_dead) {
-		int ret = ship_run(s, 100);
-		if (!ret) s->ai_dead = 1;
 	}
 }
 
@@ -134,6 +124,9 @@ int main(int argc, char **argv)
 			}
 		}
 
+		physics_tick(tick_length);
+		ship_tick(tick_length);
+
 		SDL_FillRect(screen, NULL, background_color);
 
 		SDL_LockSurface(screen);
@@ -144,8 +137,7 @@ int main(int argc, char **argv)
 				          creal(v1), cimag(v1), creal(v2), cimag(v2),
 				          255, 0, 0, 255);
 
-		g_list_foreach(ships, (GFunc)ship_tick, NULL);
-		physics_tick(tick_length);
+		g_list_foreach(ships, (GFunc)render_ship, NULL);
 
 		SDL_UnlockSurface(screen);
 

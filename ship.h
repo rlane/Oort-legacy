@@ -1,6 +1,7 @@
 #include <complex.h>
 #include <lua.h>
 #include <lauxlib.h>
+#include <glib.h>
 
 #ifndef SHIP_H
 #define SHIP_H
@@ -23,8 +24,10 @@ struct ship {
 };
 
 extern const struct ship_class fighter;
+extern GList *all_ships;
 
 struct ship *ship_create(char *filename);
-int ship_run(struct ship *s, int len);
+void ship_destroy(struct ship *s);
+void ship_tick(double t);
 
 #endif
