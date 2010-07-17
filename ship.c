@@ -7,6 +7,7 @@
 
 #include "risc.h"
 #include "physics.h"
+#include "bullet.h"
 #include "ship.h"
 
 #define LW_VERBOSE 0
@@ -69,6 +70,12 @@ static int api_position(lua_State *L)
 static int api_fire(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
+	double a = luaL_optnumber(L, 1, 0);
+	double v = 10.0;
+	struct bullet *b = bullet_create();
+	b->physics->p = s->physics->p;
+	b->physics->v = s->physics->v + v * (cos(a) + sin(a)*I);
+	//printf("bullet v=(%0.2g, %0.2g)\n", creal(b->physics->v), cimag(b->physics->v));
 	return 0;
 }
 
@@ -174,5 +181,6 @@ struct ship *ship_create(char *filename)
 void ship_destroy(struct ship *s)
 {
 	all_ships = g_list_remove(all_ships, s);
+	physics_destroy(s->physics);
 	g_slice_free(struct ship, s);
 }

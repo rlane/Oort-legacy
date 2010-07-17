@@ -16,8 +16,9 @@
 #include <SDL_framerate.h>
 
 #include "risc.h"
-#include "ship.h"
 #include "physics.h"
+#include "ship.h"
+#include "bullet.h"
 
 SDL_Surface *screen;
 FPSmanager fps_manager;
@@ -30,9 +31,6 @@ double view_scale = 32.0;
 const complex double border_v1 = -16.0 + -12.0*I;
 const complex double border_v2 = 15.95 + 11.95*I;
 int ticks = 0;
-
-GList *ships = NULL;
-
 
 complex double S(complex double p)
 {
@@ -69,6 +67,12 @@ static void render_ship(struct ship *s, void *unused)
 	}
 }
 
+static void render_bullet(struct bullet *b, void *unused)
+{
+	complex double sp = S(b->physics->p);
+	pixelColor(screen, creal(sp), cimag(sp), 0xFF0000AA);
+}
+
 int main(int argc, char **argv)
 {
 	SDL_Event event;
@@ -97,8 +101,7 @@ int main(int argc, char **argv)
 	for (i = 0; i < 16; i++) {
 		s = ship_create("orbit.lua");
 		s->physics->p = g_random_double_range(-1.0,1.0) +
-			             g_random_double_range(-1.0,1.0)*I;
-		ships = g_list_append(ships, s);
+			              g_random_double_range(-1.0,1.0)*I;
 	}
 
 	struct timeval last_sample_time;
@@ -127,10 +130,14 @@ int main(int argc, char **argv)
 
 		physics_tick(tick_length);
 		ship_tick(tick_length);
+		bullet_tick(tick_length);
 
 		SDL_FillRect(screen, NULL, background_color);
 
 		SDL_LockSurface(screen);
+
+		complex double sun_p = S(0);
+		aacircleColor(screen, creal(sun_p), cimag(sun_p), 20, 0xAAAA22FF);
 
 		complex double v1 = S(border_v1);
 		complex double v2 = S(border_v2);
@@ -138,7 +145,8 @@ int main(int argc, char **argv)
 				          creal(v1), cimag(v1), creal(v2), cimag(v2),
 				          255, 0, 0, 255);
 
-		g_list_foreach(ships, (GFunc)render_ship, NULL);
+		g_list_foreach(all_ships, (GFunc)render_ship, NULL);
+		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
 
 		SDL_UnlockSurface(screen);
 
