@@ -6,6 +6,7 @@
 #include <lauxlib.h>
 
 #include "ship.h"
+#include "physics.h"
 
 #define LW_VERBOSE 0
 
@@ -43,7 +44,8 @@ static int api_thrust(lua_State *L)
 	struct ship *s = lua_ship(L);
 	double a = luaL_optnumber(L, 1, 0);
 	double f = luaL_optnumber(L, 2, 0);
-	s->thrust = f * (cos(a) + sin(a)*I);
+	s->physics->thrust = f * (cos(a) + sin(a)*I);
+	//printf("thrust x=%g y=%g\n", creal(s->physics->thrust), cimag(s->physics->thrust));
 	return 0;
 }
 
@@ -56,8 +58,8 @@ static int api_yield(lua_State *L)
 static int api_position(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
-	lua_pushnumber(L, creal(s->p));
-	lua_pushnumber(L, cimag(s->p));
+	lua_pushnumber(L, creal(s->physics->p));
+	lua_pushnumber(L, cimag(s->physics->p));
 	return 2;
 }
 
@@ -132,8 +134,8 @@ struct ship *ship_create(char *filename)
 
 	lua_registry_set(s->lua, RKEY_SHIP, s);
 
-	s->p = s->v = s->thrust = 0.0 + 0.0*I;
-	s->a = s->av = 0.0;
+	s->physics = physics_create();
+
 	s->ai_dead = 0;
 	s->class = &fighter;
 

@@ -14,8 +14,7 @@ struct ship_class {
 
 struct ship {
 	const struct ship_class *class;
-	complex double p, v, thrust;
-	double a, av;
+	struct physics *physics;
 	double energy;
 	lua_State *lua;
 	int ai_dead;

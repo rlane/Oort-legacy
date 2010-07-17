@@ -16,6 +16,7 @@
 #include <SDL_framerate.h>
 
 #include "ship.h"
+#include "physics.h"
 
 SDL_Surface *screen;
 FPSmanager fps_manager;
@@ -39,22 +40,14 @@ complex double S(complex double p)
 				 (I * screen_height/2);
 }
 
-void physics_tick(struct ship *s)
-{
-	s->p += (s->v + s->thrust*tick_length/2)*tick_length;
-	s->v += s->thrust*tick_length;
-}
-
 static void ship_tick(struct ship *s, void *unused)
 {
 	if (ticks % 16 == 0) {
-		s->tail[s->tail_head++] = s->p;
+		s->tail[s->tail_head++] = s->physics->p;
 		if (s->tail_head == TAIL_SEGMENTS) s->tail_head = 0;
 	}
 
-	physics_tick(s);
-
-	complex double sp = S(s->p);
+	complex double sp = S(s->physics->p);
 	aacircleRGBA(screen, creal(sp), cimag(sp), 4, 0, 255, 0, 150);
 
 	int i;
@@ -112,8 +105,8 @@ int main(int argc, char **argv)
 	int i;
 	for (i = 0; i < 16; i++) {
 		s = ship_create("orbit.lua");
-		s->p = g_random_double_range(-1.0,1.0) +
-			     g_random_double_range(-1.0,1.0)*I;
+		s->physics->p = g_random_double_range(-1.0,1.0) +
+			             g_random_double_range(-1.0,1.0)*I;
 		ships = g_list_append(ships, s);
 	}
 
@@ -152,7 +145,7 @@ int main(int argc, char **argv)
 				          255, 0, 0, 255);
 
 		g_list_foreach(ships, (GFunc)ship_tick, NULL);
-
+		physics_tick(tick_length);
 
 		SDL_UnlockSurface(screen);
 
