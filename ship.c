@@ -15,13 +15,13 @@
 const struct ship_class fighter = {
 	.energy_max = 1.0,
 	.energy_rate = 0.1,
-	.r = 64.0,
+	.r = 4.0/32.0,
 };
 
 const struct ship_class mothership = {
 	.energy_max = 20.0,
 	.energy_rate = 1.0,
-	.r = 32.0*10,
+	.r = 10.0/32.0,
 };
 
 char RKEY_SHIP[1];

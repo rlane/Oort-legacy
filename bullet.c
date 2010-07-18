@@ -12,6 +12,7 @@ struct bullet *bullet_create(void)
 {
 	struct bullet *b = g_slice_new(struct bullet);
 	b->physics = physics_create();
+	b->physics->r = 1.0/32;
 	b->ttl = 1;
 	all_bullets = g_list_append(all_bullets, b);
 	return b;
