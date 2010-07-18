@@ -15,7 +15,7 @@
 const struct ship_class fighter = {
 	.energy_max = 1.0,
 	.energy_rate = 0.1,
-	.r = 1.0,
+	.r = 64.0,
 };
 
 char RKEY_SHIP[1];
@@ -170,10 +170,12 @@ struct ship *ship_create(char *filename)
 
 	lua_registry_set(s->lua, RKEY_SHIP, s);
 
+	s->class = &fighter;
+
 	s->physics = physics_create();
+	s->physics->r = s->class->r;
 
 	s->ai_dead = 0;
-	s->class = &fighter;
 
 	int i;
 	for (i = 0; i < TAIL_SEGMENTS; i++) {

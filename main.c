@@ -42,7 +42,8 @@ complex double S(complex double p)
 static void render_ship(struct ship *s, void *unused)
 {
 	complex double sp = S(s->physics->p);
-	aacircleRGBA(screen, creal(sp), cimag(sp), 4, 0, 255, 0, 150);
+	double sr = s->class->r / view_scale;
+	aacircleRGBA(screen, creal(sp), cimag(sp), sr, 0, 255, 0, 150);
 
 	int i;
 	for (i = 0; i < TAIL_SEGMENTS-1; i++) {
