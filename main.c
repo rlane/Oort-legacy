@@ -154,6 +154,20 @@ int main(int argc, char **argv)
 		g_list_foreach(all_ships, (GFunc)render_ship, NULL);
 		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
 
+		GList *es, *eb;
+		for (es = g_list_first(all_ships); es; es = g_list_next(es)) {
+			struct ship *s = es->data;
+			for (eb = g_list_first(all_bullets); eb; eb = g_list_next(eb)) {
+				struct bullet *b = eb->data;
+				complex double cp;
+				if (physics_check_collision(s->physics, b->physics, &cp)) {
+					complex double exp_p = S(cp);
+					aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
+					//bullet_destroy(b);
+				}
+			}
+		}
+
 		SDL_UnlockSurface(screen);
 
 		SDL_Flip(screen);
