@@ -70,8 +70,11 @@ static void render_ship(struct ship *s, void *unused)
 
 static void render_bullet(struct bullet *b, void *unused)
 {
-	complex double sp = S(b->physics->p);
-	pixelColor(screen, creal(sp), cimag(sp), 0xFF0000AA);
+	complex double p2, sp1, sp2;
+	p2 = b->physics->p + b->physics->v/32;
+	sp1 = S(b->physics->p);
+	sp2 = S(p2);
+	aalineColor(screen, creal(sp1), cimag(sp1), creal(sp2), cimag(sp2), 0xFF0000AA);
 }
 
 int main(int argc, char **argv)
