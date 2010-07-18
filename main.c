@@ -86,11 +86,20 @@ static void render_bullet(struct bullet *b, void *unused)
 	aalineColor(screen, creal(sp1), cimag(sp1), creal(sp2), cimag(sp2), 0xFF0000AA);
 }
 
-struct bullet_hit {
-	struct ship *s;
-	struct bullet *b;
-	vec2 cp;
-};
+static void handle_bullet_hit(struct ship *s, struct bullet *b, vec2 cp)
+{
+	b->dead = 1;
+	if (b->team != s->team) {
+		complex double dv = s->physics->v - b->physics->v;
+		double hit_energy = 0.5 * b->physics->m * distance(dv, 0);
+		complex double exp_p = S(cp);
+		aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
+		s->hull -= hit_energy;
+		if (s->hull <= 0) {
+			s->dead = 1;
+		}
+	}
+}
 
 int main(int argc, char **argv)
 {
@@ -172,39 +181,17 @@ int main(int argc, char **argv)
 		g_list_foreach(all_ships, (GFunc)render_ship, NULL);
 		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
 
-		GList *es, *eb, *bullet_hits = NULL;
+		GList *es, *eb;
 		for (es = g_list_first(all_ships); es; es = g_list_next(es)) {
 			struct ship *s = es->data;
 			for (eb = g_list_first(all_bullets); eb; eb = g_list_next(eb)) {
 				struct bullet *b = eb->data;
 				complex double cp;
 				if (physics_check_collision(s->physics, b->physics, tick_length, &cp)) {
-					struct bullet_hit *hit = g_slice_new(struct bullet_hit);
-					hit->s = s;
-					hit->b = b;
-					hit->cp = cp;
-					bullet_hits = g_list_prepend(bullet_hits, hit);
+					handle_bullet_hit(s, b, cp);
 				}
 			}
 		}
-
-		GList *eh;
-		for (eh = g_list_first(bullet_hits); eh; eh = g_list_next(eh)) {
-			struct bullet_hit *hit = eh->data;
-			if (hit->b->team != hit->s->team) {
-				complex double dv = hit->s->physics->v - hit->b->physics->v;
-				double hit_energy = 0.5 * hit->b->physics->m * distance(dv, 0);
-				complex double exp_p = S(hit->cp);
-				aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
-				hit->s->hull -= hit_energy;
-				if (hit->s->hull <= 0) {
-					hit->s->dead = 1;
-				}
-			}
-			hit->b->dead = 1;
-			g_slice_free(struct bullet_hit, hit);
-		}
-		g_list_free(bullet_hits);
 
 		SDL_UnlockSurface(screen);
 
