@@ -16,12 +16,14 @@ const struct ship_class fighter = {
 	.energy_max = 1.0,
 	.energy_rate = 0.1,
 	.r = 4.0/32.0,
+	.hull_max = 1.0,
 };
 
 const struct ship_class mothership = {
 	.energy_max = 20.0,
 	.energy_rate = 1.0,
 	.r = 10.0/32.0,
+	.hull_max = 30.0,
 };
 
 char RKEY_SHIP[1];
@@ -188,7 +190,9 @@ struct ship *ship_create(char *filename, const struct ship_class *class)
 	s->physics = physics_create();
 	s->physics->r = s->class->r;
 
+	s->dead = 0;
 	s->ai_dead = 0;
+	s->hull = s->class->hull_max;
 
 	int i;
 	for (i = 0; i < TAIL_SEGMENTS; i++) {
@@ -207,4 +211,16 @@ void ship_destroy(struct ship *s)
 	all_ships = g_list_remove(all_ships, s);
 	physics_destroy(s->physics);
 	g_slice_free(struct ship, s);
+}
+
+void ship_purge(void)
+{
+	GList *e, *e2;
+	for (e = g_list_first(all_ships); e; e = e2) {
+		struct ship *s = e->data;
+		e2 = g_list_next(e);
+		if (s->dead) {
+			ship_destroy(s);
+		}
+	}
 }

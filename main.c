@@ -192,10 +192,16 @@ int main(int argc, char **argv)
 		for (eh = g_list_first(bullet_hits); eh; eh = g_list_next(eh)) {
 			struct bullet_hit *hit = eh->data;
 			if (hit->b->team != hit->s->team) {
+				complex double dv = hit->s->physics->v - hit->b->physics->v;
+				double hit_energy = 0.5 * hit->b->physics->m * distance(dv, 0);
 				complex double exp_p = S(hit->cp);
 				aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
+				hit->s->hull -= hit_energy;
+				if (hit->s->hull <= 0) {
+					hit->s->dead = 1;
+				}
 			}
-			bullet_destroy(hit->b);
+			hit->b->dead = 1;
 			g_slice_free(struct bullet_hit, hit);
 		}
 		g_list_free(bullet_hits);
@@ -203,6 +209,9 @@ int main(int argc, char **argv)
 		SDL_UnlockSurface(screen);
 
 		SDL_Flip(screen);
+
+		bullet_purge();
+		ship_purge();
 
 		SDL_framerateDelay(&fps_manager);
 		ticks += 1;

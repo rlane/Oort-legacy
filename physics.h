@@ -21,4 +21,6 @@ void physics_destroy(struct physics *);
 void physics_tick(double t);
 int physics_check_collision(struct physics *q1, struct physics *q2, double interval, complex double *cp);
 
+double distance(vec2 a, vec2 b);
+
 #endif
