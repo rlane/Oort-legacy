@@ -12,5 +12,7 @@ all: main
 
 main: main.o ship.o physics.o bullet.o
 
+test_check_collision: test_check_collision.o physics.o
+
 clean:
-	rm -f *.o main
+	rm -f *.o main test_check_collision

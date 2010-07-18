@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 			for (eb = g_list_first(all_bullets); eb; eb = g_list_next(eb)) {
 				struct bullet *b = eb->data;
 				complex double cp;
-				if (physics_check_collision(s->physics, b->physics, &cp)) {
+				if (physics_check_collision(s->physics, b->physics, tick_length, &cp)) {
 					complex double exp_p = S(cp);
 					aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
 					//bullet_destroy(b);

@@ -40,35 +40,52 @@ double distance(complex double a, complex double b)
 	return sqrt(dx*dx + dy*dy);
 }
 
-int physics_check_collision(struct physics *q1, struct physics *q2, complex double *rcp)
+double dot(complex double a, complex double b)
 {
-	double r = q1->r + q2->r;
-	if (distance(q1->p0, q2->p0) <= r) {
-		*rcp = q2->p0;
+	return creal(a)*creal(b) + cimag(a)*cimag(b);
+}
+
+double min(double a, double b)
+{
+	return a < b ? a : b;
+}
+
+double collision_time(struct physics *q1, struct physics *q2)
+{
+	vec2 dv = q1->v - q2->v;
+	vec2 dp = q1->p - q2->p;
+	double a = dot(dv, dv);
+	double b = 2*dot(dp, dv);
+	double r_sum = q1->r + q2->r;
+	double c = dot(dp, dp) - r_sum*r_sum;
+	double disc = b*b - 4*a*c;
+	if (disc < 0) {
+		return NAN;
+	} else if (disc == 0) {
+		return -b/(2*a);
+	} else {
+		double t0 = (-b - sqrt(disc))/(2*a);
+		double t1 = (-b + sqrt(disc))/(2*a);
+		return min(t0, t1);
+	}
+}
+
+int physics_check_collision(struct physics *q1, struct physics *q2, double interval, complex double *rcp)
+{
+	double t = collision_time(q1, q2);
+	if (isnan(t)) {
+		return 0;
+	} if (t < 0) {
+		// past collision
+		return 0;
+	} if (t > interval) {
+		// future collision
+		return 0;
+	} else {
+		vec2 cp = q2->p + t*q2->v;
+		if (rcp) *rcp = cp;
 		return 1;
 	}
-
-	if (distance(q1->p, q2->p) <= r) {
-		*rcp = q2->p;
-		return 1;
-	}
-
-	complex double dp0 = q2->p0 - q1->p0;
-	complex double dp = q2->p - q1->p;
-	complex double l = dp - dp0;
-	double lx = creal(l);
-	double ly = cimag(l);
-	double dx = creal(dp0);
-	double dy = cimag(dp0);
-	double u = -(dx*lx + dy*ly)/(dx*dx + dy*dy);
-	complex double cp = dp0 + u*l;
-
-#if 0
-	printf("cp.x=%0.2g cp.y=%0.2g dist=%0.3g\n", creal(cp), cimag(cp), distance(cp, 0));
-#endif
-
-	*rcp = q2->p0 + u*l;
-	return u >= 0 && u <= 1 && distance(cp, 0) <= r;
 }
 
 void physics_tick(double t)
