@@ -102,12 +102,13 @@ int main(int argc, char **argv)
 	struct ship *s;
 
 	s = ship_create("rock.lua", &mothership);
+	s->physics->p = 2.0 + 2.0*I;
 
 	int i;
 	for (i = 0; i < 16; i++) {
 		s = ship_create("orbit.lua", &fighter);
-		s->physics->p = g_random_double_range(-1.0,1.0) +
-			              g_random_double_range(-1.0,1.0)*I;
+		s->physics->p = g_random_double_range(-2.0,6.0) +
+			              g_random_double_range(-2.0,6.0)*I;
 	}
 
 	struct timeval last_sample_time;

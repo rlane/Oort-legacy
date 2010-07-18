@@ -35,6 +35,7 @@ function lead(x1, y1, x2, y2, vx1, vy1, vx2, vy2, w, t_max)
 	dy = y2 - y1
 	dvx = vx2 - vx1
 	dvy = vy2 - vy1
+	--printf("dvx=%0.2g dvy=%0.2g\n", dvx, dvy)
 	a = (dvx^2 + dvy^2) - w^2
 	b = 2 * (dx*dvx + dy*dvy)
 	c = dx^2 + dy^2
@@ -43,6 +44,7 @@ function lead(x1, y1, x2, y2, vx1, vy1, vx2, vy2, w, t_max)
 	if t >= 0 and t <= t_max then
 		x3 = x2 + dvx*t
 		y3 = y2 + dvy*t
+		--printf("x3=%0.2g y3=%0.2g\n", x3, y3)
 		return angle_between(x1, y1, x3, y3)
 	else
 		return nil
@@ -66,12 +68,14 @@ thrust(math.pi/2, 1)
 sleep(32)
 
 while true do
+	tx = 2.0
+	ty = 2.0
 	x, y = position()
 	vx, vy = velocity()
-	a = angle_between(x, y, 0, 0)
+	a = angle_between(x, y, tx, ty)
 	--printf("x=%g y=%g a=%g\n", x, y, a)
-	thrust(a, 20.0/(distance(x, y, 0, 0)^2))
-	a2 = lead(x, y, 0, 0, vx, vy, 0, 0, 10, 1)
+	thrust(a, 20.0/(distance(x, y, tx, ty)^2))
+	a2 = lead(x, y, tx, ty, vx, vy, 0, 0, 10, 1)
 	if a2 then
 		fire(a2)
 	end
