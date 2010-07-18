@@ -77,6 +77,12 @@ static void render_bullet(struct bullet *b, void *unused)
 	aalineColor(screen, creal(sp1), cimag(sp1), creal(sp2), cimag(sp2), 0xFF0000AA);
 }
 
+struct bullet_hit {
+	struct ship *s;
+	struct bullet *b;
+	vec2 cp;
+};
+
 int main(int argc, char **argv)
 {
 	SDL_Event event;
@@ -155,19 +161,31 @@ int main(int argc, char **argv)
 		g_list_foreach(all_ships, (GFunc)render_ship, NULL);
 		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
 
-		GList *es, *eb;
+		GList *es, *eb, *bullet_hits = NULL;
 		for (es = g_list_first(all_ships); es; es = g_list_next(es)) {
 			struct ship *s = es->data;
 			for (eb = g_list_first(all_bullets); eb; eb = g_list_next(eb)) {
 				struct bullet *b = eb->data;
 				complex double cp;
 				if (physics_check_collision(s->physics, b->physics, tick_length, &cp)) {
-					complex double exp_p = S(cp);
-					aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
-					//bullet_destroy(b);
+					struct bullet_hit *hit = g_slice_new(struct bullet_hit);
+					hit->s = s;
+					hit->b = b;
+					hit->cp = cp;
+					bullet_hits = g_list_prepend(bullet_hits, hit);
 				}
 			}
 		}
+
+		GList *eh;
+		for (eh = g_list_first(bullet_hits); eh; eh = g_list_next(eh)) {
+			struct bullet_hit *hit = eh->data;
+			complex double exp_p = S(hit->cp);
+			aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
+			bullet_destroy(hit->b);
+			g_slice_free(struct bullet_hit, hit);
+		}
+		g_list_free(bullet_hits);
 
 		SDL_UnlockSurface(screen);
 
