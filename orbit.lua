@@ -1,5 +1,3 @@
-pi = 3.1415927
-
 function printf(...)
    local function wrapper(...) io.write(string.format(...)) end
    local status, result = pcall(wrapper, ...)
@@ -19,7 +17,7 @@ function angle_between(x1, y1, x2, y2)
 	dy = y2 - y1
 	a = math.atan2(dy, dx)
 	if (a < 0) then
-		a = 2*pi + a
+		a = 2*math.pi + a
 	end
 	return a
 end
@@ -64,7 +62,7 @@ thrust(0, 0)
 
 sleep(32)
 
-thrust(pi/2, 1)
+thrust(math.pi/2, 1)
 sleep(32)
 
 while true do
