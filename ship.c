@@ -18,6 +18,12 @@ const struct ship_class fighter = {
 	.r = 64.0,
 };
 
+const struct ship_class mothership = {
+	.energy_max = 20.0,
+	.energy_rate = 1.0,
+	.r = 32.0*10,
+};
+
 char RKEY_SHIP[1];
 
 GList *all_ships = NULL;
@@ -158,7 +164,7 @@ void ship_tick(double t)
 	g_list_foreach(all_ships, (GFunc)ship_tick_one, NULL);
 }
 
-struct ship *ship_create(char *filename)
+struct ship *ship_create(char *filename, const struct ship_class *class)
 {
 	struct ship *s = g_slice_new0(struct ship);
 
@@ -170,7 +176,7 @@ struct ship *ship_create(char *filename)
 
 	lua_registry_set(s->lua, RKEY_SHIP, s);
 
-	s->class = &fighter;
+	s->class = class;
 
 	s->physics = physics_create();
 	s->physics->r = s->class->r;

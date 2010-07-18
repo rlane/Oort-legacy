@@ -23,10 +23,10 @@ struct ship {
 	int tail_head;
 };
 
-extern const struct ship_class fighter;
+extern const struct ship_class fighter, mothership;
 extern GList *all_ships;
 
-struct ship *ship_create(char *filename);
+struct ship *ship_create(char *filename, const struct ship_class *class);
 void ship_destroy(struct ship *s);
 void ship_tick(double t);
 
