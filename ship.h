@@ -21,6 +21,7 @@ struct ship {
 	int ai_dead;
 	complex double tail[TAIL_SEGMENTS];
 	int tail_head;
+	int last_shot_tick;
 };
 
 extern const struct ship_class fighter, mothership;

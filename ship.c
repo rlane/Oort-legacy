@@ -84,12 +84,18 @@ static int api_velocity(lua_State *L)
 static int api_fire(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
+
+	if (s->last_shot_tick > ticks - 8) {
+		return 0;
+	}
+
 	double a = luaL_optnumber(L, 1, 0);
 	double v = 10.0;
 	struct bullet *b = bullet_create();
 	b->physics->p = s->physics->p;
 	b->physics->v = s->physics->v + v * (cos(a) + sin(a)*I);
-	//printf("bullet v=(%0.2g, %0.2g)\n", creal(b->physics->v), cimag(b->physics->v));
+
+	s->last_shot_tick = ticks;
 	return 0;
 }
 
