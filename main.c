@@ -32,6 +32,14 @@ const complex double border_v1 = -16.0 + -12.0*I;
 const complex double border_v2 = 15.95 + 11.95*I;
 int ticks = 0;
 
+struct team green_team = {
+	.color = 0x00FF0000,
+};
+
+struct team blue_team = {
+	.color = 0x0000FF00,
+};
+
 complex double S(complex double p)
 {
 	return (p - view_pos) * view_scale +
@@ -43,7 +51,8 @@ static void render_ship(struct ship *s, void *unused)
 {
 	complex double sp = S(s->physics->p);
 	double sr = s->class->r * view_scale;
-	aacircleRGBA(screen, creal(sp), cimag(sp), sr, 0, 255, 0, 150);
+	Uint32 team_color = s->team->color;
+	aacircleColor(screen, creal(sp), cimag(sp), sr, team_color | 150);
 
 	int i;
 	for (i = 0; i < TAIL_SEGMENTS-1; i++) {
@@ -54,7 +63,7 @@ static void render_ship(struct ship *s, void *unused)
 			break;
 		int sp2_clipped = creal(sp2) < 0 || creal(sp2) > screen_width ||
 			                cimag(sp2) < 0 || cimag(sp2) > screen_height;
-		Uint32 color = 0x00FF0000 + 64-(64/TAIL_SEGMENTS)*i;
+		Uint32 color = team_color | (64-(64/TAIL_SEGMENTS)*i);
 
 		Uint32 old_color;
 		if (!sp2_clipped) {
@@ -109,12 +118,14 @@ int main(int argc, char **argv)
 
 	s = ship_create("rock.lua", &mothership);
 	s->physics->p = 2.0 + 2.0*I;
+	s->team = &blue_team;
 
 	int i;
 	for (i = 0; i < 16; i++) {
 		s = ship_create("orbit.lua", &fighter);
 		s->physics->p = g_random_double_range(-2.0,6.0) +
 			              g_random_double_range(-2.0,6.0)*I;
+		s->team = &green_team;
 	}
 
 	struct timeval last_sample_time;
@@ -180,8 +191,10 @@ int main(int argc, char **argv)
 		GList *eh;
 		for (eh = g_list_first(bullet_hits); eh; eh = g_list_next(eh)) {
 			struct bullet_hit *hit = eh->data;
-			complex double exp_p = S(hit->cp);
-			aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
+			if (hit->b->team != hit->s->team) {
+				complex double exp_p = S(hit->cp);
+				aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
+			}
 			bullet_destroy(hit->b);
 			g_slice_free(struct bullet_hit, hit);
 		}

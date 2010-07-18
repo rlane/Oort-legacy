@@ -5,6 +5,7 @@
 
 struct bullet {
 	struct physics *physics;
+	struct team *team;
 	double ttl;
 };
 

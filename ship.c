@@ -92,6 +92,7 @@ static int api_fire(lua_State *L)
 	double a = luaL_optnumber(L, 1, 0);
 	double v = 10.0;
 	struct bullet *b = bullet_create();
+	b->team = s->team;
 	b->physics->p = s->physics->p;
 	b->physics->v = s->physics->v + v * (cos(a) + sin(a)*I);
 

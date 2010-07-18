@@ -15,6 +15,7 @@ struct ship_class {
 
 struct ship {
 	const struct ship_class *class;
+	struct team *team;
 	struct physics *physics;
 	double energy;
 	lua_State *lua;
