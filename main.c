@@ -172,6 +172,31 @@ int main(int argc, char **argv)
 				SDL_Quit();
 				return 0;
 			}
+
+			if (event.type == SDL_KEYDOWN) {
+				switch (event.key.keysym.sym) {
+				case SDLK_UP:
+					view_pos -= C(0,1);
+					break;
+				case SDLK_DOWN:
+					view_pos += C(0,1);
+					break;
+				case SDLK_LEFT:
+					view_pos -= C(1,0);
+					break;
+				case SDLK_RIGHT:
+					view_pos -= C(-1,0);
+					break;
+				case SDLK_z:
+					view_scale *= 1.1;
+					break;
+				case SDLK_x:
+					view_scale /= 1.1;
+					break;
+				default:
+					break;
+				}
+			}
 		}
 
 		physics_tick(tick_length);
