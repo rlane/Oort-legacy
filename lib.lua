@@ -70,3 +70,12 @@ function pick_closest_enemy(x, y, enemy_team, max_dist)
 
 	return t
 end
+
+function enemy_team()
+	local my_team = team()
+	if my_team == "green" then
+		return "blue"
+	else
+		return "green"
+	end
+end

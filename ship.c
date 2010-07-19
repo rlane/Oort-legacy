@@ -137,6 +137,13 @@ static int api_sensor_contacts(lua_State *L)
 	return 1;
 }
 
+static int api_team(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	lua_pushstring(L, s->team->name);
+	return 1;
+}
+
 static lua_State *ai_create(char *filename)
 {
 	lua_State *G, *L;
@@ -149,6 +156,7 @@ static lua_State *ai_create(char *filename)
 	lua_register(G, "velocity", api_velocity);
 	lua_register(G, "fire", api_fire);
 	lua_register(G, "sensor_contacts", api_sensor_contacts);
+	lua_register(G, "team", api_team);
 
 	L = lua_newthread(G);
 

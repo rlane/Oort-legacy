@@ -22,7 +22,7 @@ local max_target_distance = bullet_speed*bullet_lifetime
 while true do
 	if i == 0 then
 		local x, y = position()
-		t = pick_closest_enemy(x, y, "blue", max_target_distance)
+		t = pick_closest_enemy(x, y, enemy_team(), max_target_distance)
 	end
 
 	i = i + 1
