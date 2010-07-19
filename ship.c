@@ -102,6 +102,33 @@ static int api_fire(lua_State *L)
 	return 0;
 }
 
+static int api_sensor_contacts(lua_State *L)
+{
+	int i = 1;
+	lua_newtable(L);
+	GList *e;
+	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
+		struct ship *s = e->data;
+		lua_pushnumber(L, i++);
+		lua_newtable(L);
+
+		lua_pushstring(L, "team");
+		lua_pushstring(L, s->team->name);
+		lua_settable(L, -3);
+
+		lua_pushstring(L, "x"); // index 3
+		lua_pushnumber(L, creal(s->physics->p)); // index 4
+		lua_settable(L, -3);
+
+		lua_pushstring(L, "y"); // index 3
+		lua_pushnumber(L, creal(s->physics->p)); // index 4
+		lua_settable(L, -3);
+
+		lua_settable(L, -3);
+	}
+	return 1;
+}
+
 static lua_State *ai_create(char *filename)
 {
 	lua_State *G, *L;
@@ -113,6 +140,7 @@ static lua_State *ai_create(char *filename)
 	lua_register(G, "position", api_position);
 	lua_register(G, "velocity", api_velocity);
 	lua_register(G, "fire", api_fire);
+	lua_register(G, "sensor_contacts", api_sensor_contacts);
 
 	L = lua_newthread(G);
 

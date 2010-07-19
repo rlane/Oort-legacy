@@ -66,17 +66,44 @@ thrust(math.pi/2, 1)
 sleep(32)
 end
 
+local i = 0
+local target_acquired = false
+local tx, ty
+
 while true do
-	tx = 2.0
-	ty = 2.0
+	if i == 0 then
+		contacts = sensor_contacts()
+
+		target_acquired = false
+		for k, t in pairs(contacts) do
+			--printf("contact team=%s x=%0.2g y=%0.2g\n", t.team, t.x, t.y)
+			if t.team == 'blue' then
+				target_acquired = true
+				tx = t.x
+				ty = t.y
+			end
+		end
+	end
+
+	i = i + 1
+	if i == 32 then
+		i = 0
+	end
+
 	x, y = position()
 	vx, vy = velocity()
-	a = angle_between(x, y, tx, ty)
-	--printf("x=%g y=%g a=%g\n", x, y, a)
-	thrust(a, 20.0/(distance(x, y, tx, ty)^2))
-	a2 = lead(x, y, tx, ty, vx, vy, 0, 0, 10, 1)
-	if a2 then
-		fire(a2)
+
+	if target_acquired then
+		a = angle_between(x, y, tx, ty)
+		thrust(a, 20.0/(distance(x, y, tx, ty)^2))
+		a2 = lead(x, y, tx, ty, vx, vy, 0, 0, 10, 1)
+		if a2 then
+			fire(a2)
+		end
+	else
+		a = angle_between(x, y, 0, 0)
+		thrust(a, 20.0/(distance(x, y, 0, 0)^2))
 	end
+
 	yield()
 end
