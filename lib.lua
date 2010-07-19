@@ -1,3 +1,5 @@
+target_debug = false
+
 function printf(...)
 	io.write(string.format(...))
 end
@@ -62,10 +64,12 @@ function pick_closest_enemy(x, y, enemy_team, max_dist)
 		end
 	end
 
-	if t then
-		printf("target p=(%0.2g, %0.2g) v=(%0.2g, %0.2g)\n", t.x, t.y, t.vx, t.vy);
-	else
-		printf("no target\n")
+	if target_debug then
+		if t then
+			printf("target p=(%0.2g, %0.2g) v=(%0.2g, %0.2g)\n", t.x, t.y, t.vx, t.vy);
+		else
+			printf("no target\n")
+		end
 	end
 
 	return t
