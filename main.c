@@ -33,10 +33,12 @@ const complex double border_v2 = 15.95 + 11.95*I;
 int ticks = 0;
 
 struct team green_team = {
+	.name = "green",
 	.color = 0x00FF0000,
 };
 
 struct team blue_team = {
+	.name = "blue",
 	.color = 0x0000FF00,
 };
 
