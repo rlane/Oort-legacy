@@ -5,7 +5,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-#include "risc.h"
+#include "game.h"
 #include "physics.h"
 #include "bullet.h"
 #include "ship.h"

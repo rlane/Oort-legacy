@@ -8,14 +8,13 @@
 #include <stdio.h>
 #include <complex.h>
 #include <sys/time.h>
-
 #include <glib.h>
 
 #include <SDL.h>
 #include <SDL_gfxPrimitives.h>
 #include <SDL_framerate.h>
 
-#include "risc.h"
+#include "game.h"
 #include "physics.h"
 #include "ship.h"
 #include "bullet.h"
@@ -30,7 +29,6 @@ complex double view_pos = 0.0;
 double view_scale = 32.0;
 const complex double border_v1 = -16.0 + -12.0*I;
 const complex double border_v2 = 15.95 + 11.95*I;
-int ticks = 0;
 
 struct team green_team = {
 	.name = "green",
@@ -42,7 +40,7 @@ struct team blue_team = {
 	.color = 0x0000FF00,
 };
 
-complex double S(complex double p)
+static complex double S(complex double p)
 {
 	return (p - view_pos) * view_scale +
 		     (screen_width/2) +
@@ -88,19 +86,10 @@ static void render_bullet(struct bullet *b, void *unused)
 	aalineColor(screen, creal(sp1), cimag(sp1), creal(sp2), cimag(sp2), 0xFF0000AA);
 }
 
-static void handle_bullet_hit(struct ship *s, struct bullet *b, vec2 cp)
+static void render_bullet_hit(struct bullet_hit *hit, void *unused)
 {
-	b->dead = 1;
-	if (b->team != s->team) {
-		complex double dv = s->physics->v - b->physics->v;
-		double hit_energy = 0.5 * b->physics->m * distance(dv, 0);
-		complex double exp_p = S(cp);
-		aacircleColor(screen, creal(exp_p), cimag(exp_p), 5, 0xAAAA22FF);
-		s->hull -= hit_energy;
-		if (s->hull <= 0) {
-			s->dead = 1;
-		}
-	}
+	complex double sp = S(hit->cp);
+	aacircleColor(screen, creal(sp), cimag(sp), 5, 0xAAAA22FF);
 }
 
 int main(int argc, char **argv)
@@ -199,9 +188,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		physics_tick(tick_length);
-		ship_tick(tick_length);
-		bullet_tick(tick_length);
+		game_tick(tick_length);
 
 		SDL_FillRect(screen, NULL, background_color);
 
@@ -218,25 +205,13 @@ int main(int argc, char **argv)
 
 		g_list_foreach(all_ships, (GFunc)render_ship, NULL);
 		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
-
-		GList *es, *eb;
-		for (es = g_list_first(all_ships); es; es = g_list_next(es)) {
-			struct ship *s = es->data;
-			for (eb = g_list_first(all_bullets); eb; eb = g_list_next(eb)) {
-				struct bullet *b = eb->data;
-				complex double cp;
-				if (physics_check_collision(s->physics, b->physics, tick_length, &cp)) {
-					handle_bullet_hit(s, b, cp);
-				}
-			}
-		}
+		g_list_foreach(bullet_hits, (GFunc)render_bullet_hit, NULL);
 
 		SDL_UnlockSurface(screen);
 
 		SDL_Flip(screen);
 
-		bullet_purge();
-		ship_purge();
+		game_purge();
 
 		SDL_framerateDelay(&fps_manager);
 		ticks += 1;

@@ -10,7 +10,7 @@ LDFLAGS=-llua5.1 \
 
 all: main
 
-main: main.o ship.o physics.o bullet.o
+main: main.o ship.o physics.o bullet.o game.o
 
 test_check_collision: test_check_collision.o physics.o
 
