@@ -1,4 +1,4 @@
 *.swp
 *.o
-main
+sdl-viewer
 test_check_collision
