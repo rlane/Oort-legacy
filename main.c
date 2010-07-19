@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 	s->team = &blue_team;
 
 	int i;
-	for (i = 0; i < 16; i++) {
+	for (i = 0; i < 8; i++) {
 		s = ship_create("orbit.lua", &fighter);
 		s->physics->p = g_random_double_range(-2.0,6.0) +
 			              g_random_double_range(-2.0,6.0)*I;

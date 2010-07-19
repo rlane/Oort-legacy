@@ -121,7 +121,15 @@ static int api_sensor_contacts(lua_State *L)
 		lua_settable(L, -3);
 
 		lua_pushstring(L, "y"); // index 3
-		lua_pushnumber(L, creal(s->physics->p)); // index 4
+		lua_pushnumber(L, cimag(s->physics->p)); // index 4
+		lua_settable(L, -3);
+
+		lua_pushstring(L, "vx");
+		lua_pushnumber(L, creal(s->physics->v));
+		lua_settable(L, -3);
+
+		lua_pushstring(L, "vy");
+		lua_pushnumber(L, cimag(s->physics->v));
 		lua_settable(L, -3);
 
 		lua_settable(L, -3);

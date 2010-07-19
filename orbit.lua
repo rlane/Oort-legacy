@@ -67,21 +67,25 @@ sleep(32)
 end
 
 local i = 0
-local target_acquired = false
-local tx, ty
+local t = nil
+local max_target_distance = 10
 
 while true do
+	local x, y = position()
 	if i == 0 then
-		contacts = sensor_contacts()
+		local contacts = sensor_contacts()
 
-		target_acquired = false
-		for k, t in pairs(contacts) do
-			--printf("contact team=%s x=%0.2g y=%0.2g\n", t.team, t.x, t.y)
-			if t.team == 'blue' then
-				target_acquired = true
-				tx = t.x
-				ty = t.y
+		t = nil
+		for k, c in pairs(contacts) do
+			if c.team == 'blue' and distance(c.x, c.y, x, y) < max_target_distance then
+				t = c
 			end
+		end
+
+		if t then
+			printf("target p=(%0.2g, %0.2g) v=(%0.2g, %0.2g)\n", t.x, t.y, t.vx, t.vy);
+		else
+			printf("no target\n")
 		end
 	end
 
@@ -90,18 +94,18 @@ while true do
 		i = 0
 	end
 
-	x, y = position()
-	vx, vy = velocity()
+	local x, y = position()
+	local vx, vy = velocity()
 
-	if target_acquired then
-		a = angle_between(x, y, tx, ty)
-		thrust(a, 20.0/(distance(x, y, tx, ty)^2))
-		a2 = lead(x, y, tx, ty, vx, vy, 0, 0, 10, 1)
+	if t then
+		local a = angle_between(x, y, t.x, t.y)
+		thrust(a, 20.0/(distance(x, y, t.x, t.y)^2))
+		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, 10, 1)
 		if a2 then
 			fire(a2)
 		end
 	else
-		a = angle_between(x, y, 0, 0)
+		local a = angle_between(x, y, 0, 0)
 		thrust(a, 20.0/(distance(x, y, 0, 0)^2))
 	end
 
