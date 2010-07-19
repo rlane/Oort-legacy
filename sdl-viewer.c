@@ -1,9 +1,3 @@
-/*
- * Reactor/Batteries per ship.
- * Basic ships can thrust/fire in any direction.
- * Thrust/fire/spawn/shield consume energy.
- */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <complex.h>
