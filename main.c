@@ -132,11 +132,22 @@ int main(int argc, char **argv)
 	s->team = &blue_team;
 
 	int i;
-	for (i = 0; i < 8; i++) {
+	for (i = 0; i < 16; i++) {
 		s = ship_create("orbit.lua", &fighter);
-		s->physics->p = g_random_double_range(-2.0,6.0) +
-			              g_random_double_range(-2.0,6.0)*I;
+		s->physics->p = g_random_double_range(-9.0,-9.0) +
+			              g_random_double_range(-2.0,2.0)*I;
+		s->physics->v = g_random_double_range(0.0,0.1) +
+			              g_random_double_range(1.0,1.3)*I;
 		s->team = &green_team;
+	}
+
+	for (i = 0; i < 16; i++) {
+		s = ship_create("orbit.lua", &fighter);
+		s->physics->p = g_random_double_range(8.0,9.0) +
+			              g_random_double_range(-2.0,2.0)*I;
+		s->physics->v = g_random_double_range(0.0,0.1) +
+			              g_random_double_range(-1.3,-1.0)*I;
+		s->team = &blue_team;
 	}
 
 	struct timeval last_sample_time;
