@@ -55,11 +55,11 @@ function distance(x1, y1, x2, y2)
 	return math.sqrt((x2 - x1)^2 + (y2-y1)^2)
 end
 
-function pick_closest_enemy(x, y, enemy_team, max_dist)
+function pick_close_enemy(x, y, enemy_team, max_dist, prob)
 	local contacts = sensor_contacts()
 	local t = nil
 	for k, c in pairs(contacts) do
-		if c.team == enemy_team and distance(c.x, c.y, x, y) < max_dist then
+		if c.team == enemy_team and distance(c.x, c.y, x, y) < max_dist and (not t or (math.random() < prob)) then
 			t = c
 		end
 	end

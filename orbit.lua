@@ -24,7 +24,7 @@ local orbit_y = 0
 while true do
 	if i == 0 then
 		local x, y = position()
-		t = pick_closest_enemy(x, y, enemy_team(), max_target_distance)
+		t = pick_close_enemy(x, y, enemy_team(), max_target_distance, 0.8)
 	end
 
 	i = i + 1
