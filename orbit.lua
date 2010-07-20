@@ -1,17 +1,7 @@
 dofile("lib.lua")
 
-if false then
-thrust(0, 10)
-sleep(32)
-thrust(0, -10)
-sleep(32)
-thrust(0, 0)
-
-sleep(32)
-
 thrust(math.pi/2, 1)
 sleep(32)
-end
 
 local i = 0
 local t = nil
