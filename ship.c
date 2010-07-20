@@ -217,7 +217,7 @@ void ship_tick(double t)
 	g_list_foreach(all_ships, (GFunc)ship_tick_one, NULL);
 }
 
-struct ship *ship_create(char *filename, const struct ship_class *class)
+struct ship *ship_create(const char *filename, const struct ship_class *class)
 {
 	struct ship *s = g_slice_new0(struct ship);
 

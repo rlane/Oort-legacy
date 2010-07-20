@@ -21,6 +21,7 @@
 #include "physics.h"
 #include "ship.h"
 #include "bullet.h"
+#include "scenario.h"
 
 SDL_Surface *screen;
 FPSmanager fps_manager;
@@ -30,16 +31,6 @@ const int screen_height = 768;
 const double tick_length = 1.0/32.0;
 complex double view_pos = 0.0;
 double view_scale = 32.0;
-
-struct team green_team = {
-	.name = "green",
-	.color = 0x00FF0000,
-};
-
-struct team blue_team = {
-	.name = "blue",
-	.color = 0x0000FF00,
-};
 
 static complex double S(complex double p)
 {
@@ -184,12 +175,9 @@ int main(int argc, char **argv)
 
 	Uint32 background_color = SDL_MapRGB(screen->format, 0, 0, 0);
 
-	struct ship *s;
+	load_scenario("scenarios/basic.lua");
 
-	s = ship_create("rock.lua", &mothership);
-	s->physics->p = 2.0 + 2.0*I;
-	s->team = &blue_team;
-
+	/*
 	const int n = 128;
 
 	int i;
@@ -210,6 +198,7 @@ int main(int argc, char **argv)
 			              g_random_double_range(-1.3,-1.0)*I;
 		s->team = &blue_team;
 	}
+	*/
 
 	struct timeval last_sample_time;
 	int sample_ticks = 0;
