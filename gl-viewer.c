@@ -175,7 +175,9 @@ int main(int argc, char **argv)
 
 	Uint32 background_color = SDL_MapRGB(screen->format, 0, 0, 0);
 
-	load_scenario("scenarios/basic.lua");
+	if (load_scenario("scenarios/basic.lua")) {
+		return 1;
+	}
 
 	/*
 	const int n = 128;
