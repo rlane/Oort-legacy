@@ -201,7 +201,7 @@ int ship_ai_run(struct ship *s, int len)
 
 void ship_tick_one(struct ship *s, void *unused)
 {
-	if (ticks % 16 == 0) {
+	if (ticks % TAIL_TICKS == 0) {
 		s->tail[s->tail_head++] = s->physics->p;
 		if (s->tail_head == TAIL_SEGMENTS) s->tail_head = 0;
 	}
