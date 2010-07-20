@@ -30,7 +30,7 @@ struct ship {
 extern const struct ship_class fighter, mothership;
 extern GList *all_ships;
 
-struct ship *ship_create(char *filename, const struct ship_class *class);
+struct ship *ship_create(const char *filename, const struct ship_class *class);
 void ship_purge();
 void ship_tick(double t);
 
