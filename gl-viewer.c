@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <complex.h>
 #include <sys/time.h>
+#include <math.h>
 #include <glib.h>
 
 #if 0
@@ -52,6 +53,19 @@ static void glColor32(Uint32 c)
 	glColor4ub((c >> 24) & 0xFF, (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF);
 }
 
+static void render_octagon(double x, double y, double r)
+{
+	double da = 2*M_PI/8, a = 0;
+	int i;
+
+	glBegin(GL_LINE_STRIP);
+	for (i = 0; i < 9; i++) {
+		a += da;
+		glVertex3f(x + cos(a)*r, y + sin(a)*r, 0);
+	}
+	glEnd();
+}
+
 static void render_ship(struct ship *s, void *unused)
 {
 	complex double sp = S(s->physics->p);
@@ -60,12 +74,7 @@ static void render_ship(struct ship *s, void *unused)
 	double x = creal(sp), y = cimag(sp);
 
 	glColor32(team_color | 0xAA);
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(x, y, 0);
-	glVertex3f(x+sr, y, 0);
-	glVertex3f(x, y+sr, 0);
-	glVertex3f(x, y, 0);
-	glEnd();
+	render_octagon(x, y, sr);
 
 	glBegin(GL_LINE_STRIP);
 	glVertex3f(x, y, 0);
