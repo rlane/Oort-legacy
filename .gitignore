@@ -1,5 +1,5 @@
 *.swp
 *.o
-sdl-viewer
 gl-viewer
 test_check_collision
+recorder

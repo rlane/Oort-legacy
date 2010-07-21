@@ -10,9 +10,11 @@ LDFLAGS=-l$(LUA) \
         `pkg-config glib-2.0 --libs` \
         -lSDL_gfx -lGL -lGLU
 
-all: gl-viewer
+all: gl-viewer recorder
 
 gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o team.o
+
+recorder: recorder.o ship.o physics.o bullet.o game.o scenario.o team.o
 
 test_check_collision: test_check_collision.o physics.o
 
