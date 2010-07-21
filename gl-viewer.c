@@ -26,8 +26,8 @@
 SDL_Surface *screen;
 FPSmanager fps_manager;
 
-const int screen_width = 1024;
-const int screen_height = 768;
+int screen_width = 1024;
+int screen_height = 768;
 const double tick_length = 1.0/32.0;
 complex double view_pos = 0.0;
 double view_scale = 32.0;
@@ -118,9 +118,24 @@ static void render_bullet_hit(struct bullet_hit *hit, void *unused)
 	glEnd();
 }
 
+static void get_resolution(void)
+{
+	char *s;
+
+	if ((s = getenv("RISC_W"))) {
+		screen_width = atoi(s);
+	}
+
+	if ((s = getenv("RISC_H"))) {
+		screen_height = atoi(s);
+	}
+}
+
 int main(int argc, char **argv)
 {
 	SDL_Event event;
+
+	get_resolution();
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
