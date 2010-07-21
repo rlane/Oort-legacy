@@ -1,4 +1,5 @@
 dofile("examples/lib.lua")
+math.randomseed(4567)
 
 thrust(math.pi/2, 1)
 sleep(32)
