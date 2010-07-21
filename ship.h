@@ -12,8 +12,8 @@ struct ship_class {
 	double hull_max;
 };
 
-#define TAIL_SEGMENTS 8
-#define TAIL_TICKS 8
+#define TAIL_SEGMENTS 16
+#define TAIL_TICKS 4
 
 struct ship {
 	const struct ship_class *class;
