@@ -45,13 +45,14 @@ static void glColor32(Uint32 c)
 	glColor4ub((c >> 24) & 0xFF, (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF);
 }
 
-static void render_octagon(double x, double y, double r)
+static void render_circle(double x, double y, double r)
 {
-	double da = 2*M_PI/8, a = 0;
+	int n = r < 8 ? 8 : r+1;
+	double da = 2*M_PI/n, a = 0;
 	int i;
 
 	glBegin(GL_LINE_STRIP);
-	for (i = 0; i < 9; i++) {
+	for (i = 0; i < (n+1); i++) {
 		a += da;
 		glVertex3f(x + cos(a)*r, y + sin(a)*r, 0);
 	}
@@ -66,7 +67,7 @@ static void render_ship(struct ship *s, void *unused)
 	double x = creal(sp), y = cimag(sp);
 
 	glColor32(team_color | 0xAA);
-	render_octagon(x, y, sr);
+	render_circle(x, y, sr);
 
 	glBegin(GL_LINE_STRIP);
 	glVertex3f(x, y, 0);
