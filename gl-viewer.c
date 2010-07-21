@@ -276,6 +276,12 @@ int main(int argc, char **argv)
 
 		game_purge();
 
+		struct team *winner;
+		if ((winner = game_check_victory())) {
+			printf("Team '%s' is victorious\n", winner->name);
+			return 0;
+		}
+
 		SDL_framerateDelay(&fps_manager);
 		ticks += 1;
 		sample_ticks++;

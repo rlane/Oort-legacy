@@ -61,3 +61,19 @@ void game_purge()
 	bullet_purge();
 	ship_purge();
 }
+
+struct team *game_check_victory(void)
+{
+	struct team *winner = NULL;
+	GList *e;
+
+	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
+		struct ship *s = e->data;
+		if (winner && s->team != winner) {
+			return NULL;
+		}
+		winner = s->team;
+	}
+
+	return winner;
+}
