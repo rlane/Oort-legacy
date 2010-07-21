@@ -181,10 +181,10 @@ int main(int argc, char **argv)
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
-	//glEnable(GL_LINE_SMOOTH);
-	//glEnable(GL_POINT_SMOOTH);
-	//glLineWidth(1.2);
-	//glPointSize(1.0);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POINT_SMOOTH);
+	glLineWidth(1.2);
+	glPointSize(1.0);
 
 	printf("initialized opengl\n");
 
