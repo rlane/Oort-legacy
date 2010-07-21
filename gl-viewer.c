@@ -102,9 +102,10 @@ static void render_bullet(struct bullet *b, void *unused)
 	sp1 = S(b->physics->p);
 	sp2 = S(p2);
 
-	glColor32(0xFF0000AA);
 	glBegin(GL_LINE_STRIP);
+	glColor32(0xFF000000);
 	glVertex3f(creal(sp1), cimag(sp1), 0);
+	glColor32(0xFF0000FF);
 	glVertex3f(creal(sp2), cimag(sp2), 0);
 	glEnd();
 }
