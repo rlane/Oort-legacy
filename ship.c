@@ -3,6 +3,7 @@
 #include <math.h>
 #include <complex.h>
 #include <lua.h>
+#include <lualib.h>
 #include <lauxlib.h>
 
 #include "game.h"
@@ -147,7 +148,7 @@ static int api_team(lua_State *L)
 	return 1;
 }
 
-static lua_State *ai_create(char *filename)
+static lua_State *ai_create(const char *filename)
 {
 	lua_State *G, *L;
 

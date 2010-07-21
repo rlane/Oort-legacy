@@ -5,15 +5,7 @@
 #include <math.h>
 #include <glib.h>
 
-#if 0
-#include <GL/glu.h>
-#include <GL/glext.h>
-#include <GL/glx.h>
-#include <GL/glxext.h>
-#endif
-
 #include <SDL.h>
-#include <SDL_gfxPrimitives.h>
 #include <SDL_framerate.h>
 #include <SDL_opengl.h>
 
@@ -24,14 +16,16 @@
 #include "scenario.h"
 #include "team.h"
 
-SDL_Surface *screen;
-FPSmanager fps_manager;
+static SDL_Surface *screen;
+static FPSmanager fps_manager;
 
-int screen_width = 1024;
-int screen_height = 768;
-const double tick_length = 1.0/32.0;
-complex double view_pos = 0.0;
-double view_scale = 32.0;
+static const int FPS = 32;
+static const double tick_length = 1.0/32.0;
+
+static int screen_width = 1024;
+static int screen_height = 768;
+static complex double view_pos = 0.0;
+static double view_scale = 32.0;
 
 static complex double S(complex double p)
 {
@@ -81,7 +75,6 @@ static void render_ship(struct ship *s, void *unused)
 
 		glColor32(color);
 		glVertex3f(creal(sp2), cimag(sp2), 0);
-		aalineColor(screen, creal(sp), cimag(sp), creal(sp2), cimag(sp2), color);
 		sp = sp2;
 	}
 	glEnd();
@@ -138,29 +131,31 @@ int main(int argc, char **argv)
 
 	get_resolution();
 
+	printf("initializing SDL..\n");
+
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		fprintf(stderr,"Failed to initialize SDL Video!\n");
 		exit(1);
 	}
 
-	atexit(SDL_Quit);
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	screen = SDL_SetVideoMode(screen_width, screen_height, 32, SDL_OPENGL | SDL_FULLSCREEN);
-
-	if (!screen)
-	{
-		fprintf(stderr,"Couldn't set video mode!\n%s\n", SDL_GetError());
-		exit(1);
-	}
-
 	SDL_initFramerate(&fps_manager);
-	SDL_setFramerate(&fps_manager, 32);
+	SDL_setFramerate(&fps_manager, FPS);
 
 	SDL_WM_SetCaption("RISC", "RISC");
   SDL_ShowCursor(SDL_DISABLE);
 
+	atexit(SDL_Quit);
+
+	printf("initializing OpenGL..\n");
+
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	screen = SDL_SetVideoMode(screen_width, screen_height, 32, SDL_OPENGL | SDL_FULLSCREEN);
+
+	if (!screen) {
+		fprintf(stderr, "Failed to set video mode: %s\n", SDL_GetError());
+		exit(1);
+	}
 
 	glEnable( GL_TEXTURE_2D );
 
@@ -187,36 +182,11 @@ int main(int argc, char **argv)
 	glLineWidth(1.2);
 	glPointSize(1.0);
 
-	printf("initialized opengl\n");
-
-	Uint32 background_color = SDL_MapRGB(screen->format, 0, 0, 0);
+	printf("loading scenario...\n");
 
 	if (load_scenario("scenarios/basic.lua")) {
 		return 1;
 	}
-
-	/*
-	const int n = 128;
-
-	int i;
-	for (i = 0; i < n; i++) {
-		s = ship_create("orbit.lua", &fighter);
-		s->physics->p = g_random_double_range(-9.0,-9.0) +
-			              g_random_double_range(-2.0,2.0)*I;
-		s->physics->v = g_random_double_range(0.0,0.1) +
-			              g_random_double_range(1.0,1.3)*I;
-		s->team = &green_team;
-	}
-
-	for (i = 0; i < n; i++) {
-		s = ship_create("orbit.lua", &fighter);
-		s->physics->p = g_random_double_range(8.0,9.0) +
-			              g_random_double_range(-2.0,2.0)*I;
-		s->physics->v = g_random_double_range(0.0,0.1) +
-			              g_random_double_range(-1.3,-1.0)*I;
-		s->team = &blue_team;
-	}
-	*/
 
 	struct timeval last_sample_time;
 	int sample_ticks = 0;
@@ -268,17 +238,6 @@ int main(int argc, char **argv)
 		}
 
 		game_tick(tick_length);
-
-#if 0
-		complex double sun_p = S(0);
-		aacircleColor(screen, creal(sun_p), cimag(sun_p), 20, 0xAAAA22FF);
-
-		complex double v1 = S(border_v1);
-		complex double v2 = S(border_v2);
-		rectangleRGBA(screen,
-				          creal(v1), cimag(v1), creal(v2), cimag(v2),
-				          255, 0, 0, 255);
-#endif
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
