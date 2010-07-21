@@ -21,6 +21,7 @@ static FPSmanager fps_manager;
 
 static const int FPS = 32;
 static const double tick_length = 1.0/32.0;
+const double zoom_force = 0.1;
 
 static int screen_width = 1024;
 static int screen_height = 768;
@@ -32,6 +33,11 @@ static complex double S(complex double p)
 	return (p - view_pos) * view_scale +
 		     (screen_width/2) +
 				 (I * screen_height/2);
+}
+
+static complex double W(complex double o)
+{
+	return view_pos + (o - (screen_width/2) - (I * screen_height/2))/view_scale;
 }
 
 static void glColor32(Uint32 c)
@@ -143,7 +149,7 @@ int main(int argc, char **argv)
 	SDL_setFramerate(&fps_manager, FPS);
 
 	SDL_WM_SetCaption("RISC", "RISC");
-  SDL_ShowCursor(SDL_DISABLE);
+	SDL_ShowCursor(SDL_ENABLE);
 
 	atexit(SDL_Quit);
 
@@ -229,6 +235,26 @@ int main(int argc, char **argv)
 					view_scale *= 1.1;
 					break;
 				case SDLK_x:
+					view_scale /= 1.1;
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (event.type == SDL_MOUSEBUTTONDOWN) {
+				if (event.button.button == SDL_BUTTON_WHEELUP ||
+				    event.button.button == SDL_BUTTON_WHEELDOWN) {
+					int x, y;
+					SDL_GetMouseState(&x, &y);
+					view_pos = (1-zoom_force)*view_pos + zoom_force * W(C(x,y));
+				}
+
+				switch (event.button.button) {
+				case SDL_BUTTON_WHEELUP:
+					view_scale *= 1.1;
+					break;
+				case SDL_BUTTON_WHEELDOWN:
 					view_scale /= 1.1;
 					break;
 				default:
