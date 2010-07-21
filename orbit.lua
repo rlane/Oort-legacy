@@ -3,10 +3,10 @@ dofile("lib.lua")
 thrust(math.pi/2, 1)
 sleep(32)
 
-local i = 0
+local i = math.random(1,16)
 local t = nil
 local bullet_lifetime = 1
-local bullet_speed = 10
+local bullet_speed = 20
 local max_target_distance = bullet_speed*bullet_lifetime
 local orbit_x = 0
 local orbit_y = 0
@@ -18,7 +18,7 @@ while true do
 	end
 
 	i = i + 1
-	if i == 32 then
+	if i >= 16 then
 		i = 0
 	end
 
@@ -27,14 +27,30 @@ while true do
 
 	if t then
 		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, bullet_speed, bullet_lifetime)
+		local d = distance(x, y, t.x, t.y)
 		if a2 then
 			fire(a2)
 		end
+
+		orbit_x = t.x
+		orbit_y = t.y
+	else
+		orbit_x = 0
+		orbit_y = 0
 	end
 
 	local a = angle_between(x, y, orbit_x, orbit_y)
-	local f = math.min(10, 20.0/(distance(x, y, orbit_x, orbit_y)^2))
-	thrust(a, f)
+	local k = math.random(10)
+	if k < 7 then
+		local f = math.min(10, 10.0/math.sqrt(distance(x, y, orbit_x, orbit_y)))
+		thrust(a, f)
+	elseif k < 8 then
+		a = normalize_angle(a + R(0.5,1) * sign(R(-1,1)))
+		thrust(a, 5)
+	else
+		a = normalize_angle(a + (math.pi/2) * sign(R(-1,1)))
+		thrust(a, 5)
+	end
 
 	yield()
 end

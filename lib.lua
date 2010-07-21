@@ -83,3 +83,29 @@ function enemy_team()
 		return "green"
 	end
 end
+
+function R(a,b)
+	d = b - a
+	return a + math.random()*d
+end
+
+function normalize_angle(a)
+	two_pi = math.pi * 2
+	if a > two_pi then
+		return a - two_pi
+	elseif a < 0 then
+		return a + two_pi
+	else
+		return a
+	end
+end
+
+function sign(x)
+	if x < 0 then
+		return -1
+	elseif x == 0 then
+		return 0
+	else
+		return 1
+	end
+end

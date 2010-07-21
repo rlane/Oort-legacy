@@ -23,7 +23,7 @@ const struct ship_class mothership = {
 	.energy_max = 20.0,
 	.energy_rate = 1.0,
 	.r = 10.0/32.0,
-	.hull_max = 30.0,
+	.hull_max = 100.0,
 };
 
 char RKEY_SHIP[1];
@@ -92,9 +92,11 @@ static int api_fire(lua_State *L)
 	}
 
 	double a = luaL_optnumber(L, 1, 0);
-	double v = 10.0;
+	double v = s->class == &fighter ? 20.0 : 10;
 	struct bullet *b = bullet_create();
 	b->team = s->team;
+	b->ttl = s->class == &mothership ? 5 : 1;
+	b->physics->m = s->class == &mothership ? 1 : 0.1;
 	b->physics->p = s->physics->p;
 	b->physics->v = s->physics->v + v * (cos(a) + sin(a)*I);
 
@@ -207,7 +209,7 @@ void ship_tick_one(struct ship *s, void *unused)
 	}
 
 	if (!s->ai_dead) {
-		int ret = ship_ai_run(s, 100);
+		int ret = ship_ai_run(s, 1000);
 		if (!ret) s->ai_dead = 1;
 	}
 }
