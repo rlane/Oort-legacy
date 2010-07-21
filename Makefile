@@ -1,9 +1,11 @@
+LUA=lua5.1
+
 CFLAGS=-I/usr/include/lua5.1 \
        `sdl-config --cflags` \
        `pkg-config glib-2.0 --cflags` \
        -g -O2 -march=native -Wall
 
-LDFLAGS=-llua5.1 \
+LDFLAGS=-l$(LUA) \
         `sdl-config --libs` \
         `pkg-config glib-2.0 --libs` \
         -lSDL_gfx -lGL -lGLU
