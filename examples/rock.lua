@@ -1,4 +1,4 @@
-dofile("lib.lua")
+dofile("examples/lib.lua")
 
 local i = 0
 local t = nil

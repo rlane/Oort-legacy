@@ -1,4 +1,4 @@
-dofile("lib.lua")
+dofile("examples/lib.lua")
 
 thrust(math.pi/2, 1)
 sleep(32)
