@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
 		struct team *winner;
 		if ((winner = game_check_victory())) {
-			printf("Team '%s' is victorious\n", winner->name);
+			printf("Team '%s' is victorious in %0.2g seconds\n", winner->name, ticks*tick_length);
 			return 0;
 		}
 
