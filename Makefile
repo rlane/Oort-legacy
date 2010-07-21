@@ -8,13 +8,11 @@ LDFLAGS=-llua5.1 \
         `pkg-config glib-2.0 --libs` \
         -lSDL_gfx -lGL -lGLU
 
-all: sdl-viewer gl-viewer
-
-sdl-viewer: sdl-viewer.o ship.o physics.o bullet.o game.o team.c
+all: gl-viewer
 
 gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o team.o
 
 test_check_collision: test_check_collision.o physics.o
 
 clean:
-	rm -f *.o sdl-viewer test_check_collision
+	rm -f *.o gl-viewer test_check_collision
