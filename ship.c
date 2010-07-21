@@ -9,6 +9,7 @@
 #include "physics.h"
 #include "bullet.h"
 #include "ship.h"
+#include "team.h"
 
 #define LW_VERBOSE 0
 

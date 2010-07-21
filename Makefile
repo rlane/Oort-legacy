@@ -10,9 +10,9 @@ LDFLAGS=-llua5.1 \
 
 all: sdl-viewer gl-viewer
 
-sdl-viewer: sdl-viewer.o ship.o physics.o bullet.o game.o
+sdl-viewer: sdl-viewer.o ship.o physics.o bullet.o game.o team.c
 
-gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o
+gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o team.o
 
 test_check_collision: test_check_collision.o physics.o
 

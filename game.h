@@ -4,11 +4,6 @@
 #ifndef RISC_H
 #define RISC_H
 
-struct team {
-	int color;
-	char *name;
-};
-
 struct bullet_hit {
 	struct ship *s;
 	struct bullet *b;

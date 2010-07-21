@@ -3,6 +3,9 @@ function R(a,b)
 	return a + math.random()*d
 end
 
+team("blue",  0x0000FF00)
+team("green", 0x00FF0000)
+
 for i = 1,32 do
 	ship("fighter", "orbit.lua", "blue", R(15,20), R(10,20))
 	ship("fighter", "orbit.lua", "green", R(-15,-20), R(-20,-10))

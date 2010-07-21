@@ -22,6 +22,7 @@
 #include "ship.h"
 #include "bullet.h"
 #include "scenario.h"
+#include "team.h"
 
 SDL_Surface *screen;
 FPSmanager fps_manager;
