@@ -154,21 +154,30 @@ static lua_State *ai_create(const char *filename)
 
 	G = luaL_newstate();
 	luaL_openlibs(G);
-	lua_register(G, "thrust", api_thrust);
-	lua_register(G, "yield", api_yield);
-	lua_register(G, "position", api_position);
-	lua_register(G, "velocity", api_velocity);
-	lua_register(G, "fire", api_fire);
-	lua_register(G, "sensor_contacts", api_sensor_contacts);
-	lua_register(G, "team", api_team);
+	lua_register(G, "sys_thrust", api_thrust);
+	lua_register(G, "sys_yield", api_yield);
+	lua_register(G, "sys_position", api_position);
+	lua_register(G, "sys_velocity", api_velocity);
+	lua_register(G, "sys_fire", api_fire);
+	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
+	lua_register(G, "sys_team", api_team);
+
+	if (luaL_dofile(G, "runtime.lua")) {
+		fprintf(stderr, "Failed to load runtime: %s\n", lua_tostring(G, -1));
+		return NULL;
+	}
 
 	L = lua_newthread(G);
+
+	lua_getglobal(L, "sandbox");
 
 	if (luaL_loadfile(L, filename)) {
 		fprintf(stderr, "Couldn't load file %s: %s\n", filename, lua_tostring(L, -1));
 		// XXX free
 		return NULL;
 	}
+
+	lua_call(L, 1, 1);
 
 	return L;
 }
