@@ -18,25 +18,25 @@ ships.mothership = {
 	hull = 100,
 	guns = {
 		turret1 = {
-			bullet_mass = 1.0,
+			bullet_mass = 0.5,
 			bullet_velocity = 10,
 			bullet_ttl = 5,
 			reload_time = 0.35,
 		},
 		turret2 = {
-			bullet_mass = 1.0,
+			bullet_mass = 0.5,
 			bullet_velocity = 10,
 			bullet_ttl = 5,
 			reload_time = 0.35,
 		},
 		turret3 = {
-			bullet_mass = 1.0,
+			bullet_mass = 0.5,
 			bullet_velocity = 10,
 			bullet_ttl = 5,
 			reload_time = 0.35,
 		},
 		turret4 = {
-			bullet_mass = 1.0,
+			bullet_mass = 0.5,
 			bullet_velocity = 10,
 			bullet_ttl = 5,
 			reload_time = 0.35,
