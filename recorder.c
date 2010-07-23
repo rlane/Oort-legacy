@@ -16,6 +16,12 @@ static const double tick_length = 1.0/32.0;
 
 int main(int argc, char **argv)
 {
+	printf("loading ships...\n");
+
+	if (load_ship_classes("ships.lua")) {
+		return 1;
+	}
+
 	printf("loading scenario...\n");
 
 	if (load_scenario("scenarios/basic.lua")) {

@@ -15,6 +15,7 @@ void game_purge();
 struct team *game_check_victory(void);
 
 extern int ticks;
+extern double current_time;
 extern GList *bullet_hits;
 
 #endif

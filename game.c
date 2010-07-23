@@ -11,6 +11,7 @@
 
 int ticks = 0;
 GList *bullet_hits = NULL;
+double current_time = 0.0;
 
 static void handle_bullet_hit(struct ship *s, struct bullet *b, vec2 cp)
 {
@@ -52,6 +53,7 @@ void game_tick(double tick_length)
 	physics_tick(tick_length);
 	ship_tick(tick_length);
 	bullet_tick(tick_length);
+	current_time += tick_length;
 }
 
 void game_purge()

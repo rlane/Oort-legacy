@@ -7,9 +7,9 @@
 #define SHIP_H
 
 struct ship_class {
-	double energy_max, energy_rate;
-	double r;
-	double hull_max;
+	const char *name;
+	double radius;
+	double hull;
 };
 
 #define TAIL_SEGMENTS 16
@@ -30,8 +30,9 @@ struct ship {
 extern const struct ship_class fighter, mothership;
 extern GList *all_ships;
 
-struct ship *ship_create(const char *filename, const struct ship_class *class);
+struct ship *ship_create(const char *filename, const char *class_name);
 void ship_purge();
 void ship_tick(double t);
+int load_ship_classes(const char *filename);
 
 #endif

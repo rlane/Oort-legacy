@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <complex.h>
+#include <string.h>
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
@@ -14,23 +15,10 @@
 
 #define LW_VERBOSE 0
 
-const struct ship_class fighter = {
-	.energy_max = 1.0,
-	.energy_rate = 0.1,
-	.r = 4.0/32.0,
-	.hull_max = 1.0,
-};
-
-const struct ship_class mothership = {
-	.energy_max = 20.0,
-	.energy_rate = 1.0,
-	.r = 10.0/32.0,
-	.hull_max = 100.0,
-};
-
 char RKEY_SHIP[1];
 
 GList *all_ships = NULL;
+static GHashTable *ship_classes = NULL;
 
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
@@ -85,24 +73,24 @@ static int api_velocity(lua_State *L)
 	return 2;
 }
 
-static int api_fire(lua_State *L)
+static int api_create_bullet(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
 
-	if (s->last_shot_tick > ticks - 8) {
-		return 0;
-	}
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
+	double vx = lua_tonumber(L, 3);
+	double vy = lua_tonumber(L, 4);
+	double m = lua_tonumber(L, 5);
+	double ttl = lua_tonumber(L, 6);
 
-	double a = luaL_optnumber(L, 1, 0);
-	double v = s->class == &fighter ? 20.0 : 10;
 	struct bullet *b = bullet_create();
 	b->team = s->team;
-	b->ttl = s->class == &mothership ? 5 : 1;
-	b->physics->m = s->class == &mothership ? 1 : 0.1;
-	b->physics->p = s->physics->p;
-	b->physics->v = s->physics->v + v * (cos(a) + sin(a)*I);
+	b->physics->p = C(x,y);
+	b->physics->v = C(vx,vy);
+	b->physics->m = m;
+	b->ttl = ttl;
 
-	s->last_shot_tick = ticks;
 	return 0;
 }
 
@@ -148,7 +136,20 @@ static int api_team(lua_State *L)
 	return 1;
 }
 
-static lua_State *ai_create(const char *filename)
+static int api_class(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	lua_pushstring(L, s->class->name);
+	return 1;
+}
+
+static int api_time(lua_State *L)
+{
+	lua_pushnumber(L, current_time);
+	return 1;
+}
+
+static lua_State *ai_create(const char *filename, struct ship *s)
 {
 	lua_State *G, *L;
 
@@ -158,9 +159,13 @@ static lua_State *ai_create(const char *filename)
 	lua_register(G, "sys_yield", api_yield);
 	lua_register(G, "sys_position", api_position);
 	lua_register(G, "sys_velocity", api_velocity);
-	lua_register(G, "sys_fire", api_fire);
+	lua_register(G, "sys_create_bullet", api_create_bullet);
 	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
 	lua_register(G, "sys_team", api_team);
+	lua_register(G, "sys_class", api_class);
+	lua_register(G, "sys_time", api_time);
+
+	lua_registry_set(G, RKEY_SHIP, s);
 
 	if (luaL_dofile(G, "runtime.lua")) {
 		fprintf(stderr, "Failed to load runtime: %s\n", lua_tostring(G, -1));
@@ -230,26 +235,30 @@ void ship_tick(double t)
 	g_list_foreach(all_ships, (GFunc)ship_tick_one, NULL);
 }
 
-struct ship *ship_create(const char *filename, const struct ship_class *class)
+struct ship *ship_create(const char *filename, const char *class_name)
 {
 	struct ship *s = g_slice_new0(struct ship);
 
-	s->lua = ai_create(filename);
+	s->class = g_hash_table_lookup(ship_classes, class_name);
+	if (!s->class) {
+		fprintf(stderr, "class '%s' not found\n", class_name);
+		// XXX free
+		return NULL;
+	}
+
+	s->lua = ai_create(filename, s);
 	if (!s->lua) {
 		fprintf(stderr, "failed to create AI\n");
 		return NULL;
 	}
 
-	lua_registry_set(s->lua, RKEY_SHIP, s);
-
-	s->class = class;
-
 	s->physics = physics_create();
-	s->physics->r = s->class->r;
+	s->physics->r = s->class->radius;
 
 	s->dead = 0;
 	s->ai_dead = 0;
-	s->hull = s->class->hull_max;
+
+	s->hull = s->class->hull;
 
 	int i;
 	for (i = 0; i < TAIL_SEGMENTS; i++) {
@@ -280,4 +289,52 @@ void ship_purge(void)
 			ship_destroy(s);
 		}
 	}
+}
+
+static double lua_getfield_double(lua_State *L, int index, const char *key)
+{
+	lua_getfield(L, -1, key);
+	double v = lua_tonumber(L, -1);
+	printf(" %s = %g\n", key, v);
+	lua_pop(L, 1);
+	return v;
+}
+
+int load_ship_classes(const char *filename)
+{
+	lua_State *L;
+
+	L = luaL_newstate();
+	//luaL_openlibs(L);
+
+	if (luaL_dofile(L, filename)) {
+		fprintf(stderr, "Failed to load ships from %s: %s\n", filename, lua_tostring(L, -1));
+		lua_close(L);
+		return -1;
+	}
+
+	lua_getglobal(L, "ships");
+
+	if (lua_isnil(L, 1)) {
+		fprintf(stderr, "Fail to load ships from %s: 'ships' table not defined\n", filename);
+		lua_close(L);
+		return -1;
+	}
+
+	ship_classes = g_hash_table_new(g_str_hash, g_str_equal);
+
+	lua_pushnil(L);
+	while (lua_next(L, 1) != 0) {
+		char *name = g_strdup(lua_tolstring(L, -2, NULL));
+		printf("loading ship %s\n", name);
+		struct ship_class *c = g_slice_new(struct ship_class);
+		c->name = name;
+		c->radius = lua_getfield_double(L, -1, "radius");
+		c->hull = lua_getfield_double(L, -1, "hull");
+		g_hash_table_insert(ship_classes, name, c);
+		lua_pop(L, 1);
+	}
+
+	lua_close(L);
+	return 0;
 }

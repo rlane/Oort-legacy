@@ -1,3 +1,8 @@
+dofile("ships.lua")
+
+local my_class = ships[sys_class()]
+local last_fire_time = 0
+
 function thrust(a,f)
 	sys_thrust(a,f)
 end
@@ -11,7 +16,22 @@ function velocity()
 end
 
 function fire(a)
-	sys_fire(a)
+	local x,y,v,vx,vy,m,ttl
+
+	if last_fire_time + 0.25 > sys_time() then
+		return
+	else
+		last_fire_time = sys_time()
+	end
+
+	x, y = position()
+	v = my_class.bullet_velocity
+	vx, vy = velocity()
+	vx = vx + math.cos(a)*v
+	vy = vy + math.sin(a)*v
+	m = my_class.bullet_mass
+	ttl = my_class.bullet_ttl
+	sys_create_bullet(x,y,vx,vy,m,ttl)
 end
 
 function yield()
@@ -24,6 +44,10 @@ end
 
 function sensor_contacts()
 	return sys_sensor_contacts()
+end
+
+function class()
+	return sys_class();
 end
 
 sandbox_api = {

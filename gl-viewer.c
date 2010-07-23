@@ -62,7 +62,7 @@ static void render_circle(double x, double y, double r)
 static void render_ship(struct ship *s, void *unused)
 {
 	complex double sp = S(s->physics->p);
-	double sr = s->class->r * view_scale;
+	double sr = s->class->radius * view_scale;
 	Uint32 team_color = s->team->color;
 	double x = creal(sp), y = cimag(sp);
 
@@ -188,6 +188,12 @@ int main(int argc, char **argv)
 	glEnable(GL_POINT_SMOOTH);
 	glLineWidth(1.2);
 	glPointSize(1.0);
+
+	printf("loading ships...\n");
+
+	if (load_ship_classes("ships.lua")) {
+		return 1;
+	}
 
 	printf("loading scenario...\n");
 

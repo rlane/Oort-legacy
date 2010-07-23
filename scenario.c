@@ -13,18 +13,6 @@
 #include "physics.h"
 #include "team.h"
 
-static const struct ship_class *lookup_ship_class(const char *name)
-{
-	if (strcmp(name, "fighter") == 0) {
-		return &fighter;
-	} else if (strcmp(name, "mothership") == 0) {
-		return &mothership;
-	} else {
-		abort();
-		return NULL;
-	}
-}
-
 static int scn_team(lua_State *L)
 {
 	const char *name = lua_tolstring(L, 1, NULL);
@@ -41,8 +29,7 @@ static int scn_ship(lua_State *L)
 	double x = lua_tonumber(L, 4);
 	double y = lua_tonumber(L, 5);
 	struct team *team = team_lookup(team_name);
-	const struct ship_class *ship_class = lookup_ship_class(ship_class_name);
-	struct ship *s = ship_create(filename, ship_class);
+	struct ship *s = ship_create(filename, ship_class_name);
 	s->physics->p = C(x,y);
 	s->physics->v = 0;
 	s->team = team;
