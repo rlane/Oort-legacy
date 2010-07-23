@@ -20,5 +20,5 @@ function mothership_circle(X, Y, n, r, filename, team)
 	end
 end
 
-mothership_circle(0, -10, 3, 5, "examples/rock.lua", "green")
-mothership_circle(0, 10, 3, 5, "examples/rock.lua", "blue")
+mothership_circle(0, -20, 3, 5, "examples/rock.lua", "green")
+mothership_circle(0, 20, 3, 5, "examples/rock.lua", "blue")
