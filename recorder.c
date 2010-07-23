@@ -34,10 +34,10 @@ int main(int argc, char **argv)
 	gettimeofday(&last_sample_time, NULL);
 
 	while (1) {
-		if (sample_ticks == 32*1) {
-			struct timeval now;
-			gettimeofday(&now, NULL);
-			long usecs = (now.tv_sec-last_sample_time.tv_sec)*(1000*1000) + (now.tv_usec - last_sample_time.tv_usec);
+		struct timeval now;
+		gettimeofday(&now, NULL);
+		long usecs = (now.tv_sec-last_sample_time.tv_sec)*(1000*1000) + (now.tv_usec - last_sample_time.tv_usec);
+		if (usecs > 1000*1000) {
 			printf("%g FPS\n", (1000.0*1000*sample_ticks/usecs));
 			sample_ticks = 0;
 			last_sample_time = now;

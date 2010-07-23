@@ -1,7 +1,7 @@
 dofile("ships.lua")
 
 local my_class = ships[sys_class()]
-local last_fire_time = 0
+local last_fire_times = {}
 
 function thrust(a,f)
 	sys_thrust(a,f)
@@ -15,22 +15,29 @@ function velocity()
 	return sys_velocity()
 end
 
-function fire(a)
+function fire(name, a)
 	local x,y,v,vx,vy,m,ttl
+	local gun = my_class.guns[name]
+	
+	if not gun then
+		error(string.format("gun %s does not exist", name))
+	end
 
-	if last_fire_time + 0.25 > sys_time() then
+	local last_fire_time = last_fire_times[name]
+
+	if last_fire_time and last_fire_time + gun.reload_time > sys_time() then
 		return
 	else
-		last_fire_time = sys_time()
+		last_fire_times[name] = sys_time()
 	end
 
 	x, y = position()
-	v = my_class.bullet_velocity
+	v = gun.bullet_velocity
 	vx, vy = velocity()
 	vx = vx + math.cos(a)*v
 	vy = vy + math.sin(a)*v
-	m = my_class.bullet_mass
-	ttl = my_class.bullet_ttl
+	m = gun.bullet_mass
+	ttl = gun.bullet_ttl
 	sys_create_bullet(x,y,vx,vy,m,ttl)
 end
 

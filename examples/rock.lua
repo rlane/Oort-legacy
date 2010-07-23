@@ -11,14 +11,16 @@ while true do
 	local x, y = position()
 	local vx, vy = velocity()
 
-	t = pick_close_enemy(x, y, enemy_team(), max_target_distance, 0.5)
+	for i = 1,4 do
+		t = pick_close_enemy(x, y, enemy_team(), max_target_distance, 0.5)
 
-	if t then
-		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, bullet_speed, bullet_lifetime)
-		if a2 then
-			fire(a2+R(-0.1,0.1))
+		if t then
+			local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, bullet_speed, bullet_lifetime)
+			if a2 then
+				fire("turret" .. i, a2+R(-0.1,0.1))
+			end
 		end
-	end
 
-	yield()
+		yield()
+	end
 end

@@ -30,7 +30,7 @@ while true do
 		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, bullet_speed, bullet_lifetime)
 		local d = distance(x, y, t.x, t.y)
 		if a2 then
-			fire(a2)
+			fire("main", a2)
 		end
 
 		orbit_x = t.x
