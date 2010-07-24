@@ -149,6 +149,33 @@ static int api_time(lua_State *L)
 	return 1;
 }
 
+static int api_random(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	int n = lua_gettop(L);
+
+	if (n == 0) {
+		lua_settop(L, 0);
+		lua_pushnumber(L, g_rand_double(s->prng));
+	} else if (n == 1 || n == 2) {
+		guint32 begin, end;
+		if (n == 1) {
+			begin = 1;
+			end = lua_tointeger(L, -1);
+		} else {
+			begin = lua_tointeger(L, -2);
+			end = lua_tointeger(L, -1);
+		}
+		lua_settop(L, 0);
+		lua_pushnumber(L, g_rand_int_range(s->prng, begin, end));
+	} else {
+	//	lua_pushstring(L, "too many arguments");
+		//lua_error(L);
+	}
+	
+	return 1;
+}
+
 static lua_State *ai_create(const char *filename, struct ship *s)
 {
 	lua_State *G, *L;
@@ -164,6 +191,7 @@ static lua_State *ai_create(const char *filename, struct ship *s)
 	lua_register(G, "sys_team", api_team);
 	lua_register(G, "sys_class", api_class);
 	lua_register(G, "sys_time", api_time);
+	lua_register(G, "sys_random", api_random);
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
@@ -266,6 +294,8 @@ struct ship *ship_create(const char *filename, const char *class_name)
 	}
 
 	s->tail_head = 0;
+
+	s->prng = g_rand_new_with_seed(g_random_int());
 
 	all_ships = g_list_append(all_ships, s);
 

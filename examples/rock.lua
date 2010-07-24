@@ -1,5 +1,4 @@
 dofile("examples/lib.lua")
-math.randomseed(1234)
 
 local i = 0
 local t = nil

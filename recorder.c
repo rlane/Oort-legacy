@@ -16,6 +16,8 @@ static const double tick_length = 1.0/32.0;
 
 int main(int argc, char **argv)
 {
+	g_random_set_seed(1234);
+
 	printf("loading ships...\n");
 
 	if (load_ship_classes("ships.lua")) {

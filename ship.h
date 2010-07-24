@@ -21,6 +21,7 @@ struct ship {
 	struct physics *physics;
 	double energy, hull;
 	lua_State *lua;
+	GRand *prng;
 	int dead, ai_dead;
 	complex double tail[TAIL_SEGMENTS];
 	int tail_head;

@@ -101,6 +101,9 @@ function sandbox(f)
 	}
 
 	env.math = copy_table(math, {})
+	env.math.random = sys_random
+	env.math.randomseed = nil
+
 	copy_table(sandbox_api, env)
 
 	setfenv(f, env)

@@ -136,6 +136,7 @@ int main(int argc, char **argv)
 {
 	SDL_Event event;
 
+	g_random_set_seed(1234);
 	get_resolution();
 
 	printf("initializing SDL..\n");
