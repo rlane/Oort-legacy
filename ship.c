@@ -19,6 +19,7 @@ char RKEY_SHIP[1];
 
 GList *all_ships = NULL;
 static GHashTable *ship_classes = NULL;
+static int next_ship_id = 1;
 
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
@@ -195,6 +196,9 @@ static lua_State *ai_create(const char *filename, struct ship *s)
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
+	lua_pushnumber(G, s->id);
+	lua_setglobal(G, "ship_id");
+
 	if (luaL_dofile(G, "runtime.lua")) {
 		fprintf(stderr, "Failed to load runtime: %s\n", lua_tostring(G, -1));
 		return NULL;
@@ -215,9 +219,10 @@ static lua_State *ai_create(const char *filename, struct ship *s)
 	return L;
 }
 
-static void count_hook(lua_State *L, lua_Debug *ar)
+static void count_hook(lua_State *L, lua_Debug *a)
 {
-	if (LW_VERBOSE) fprintf(stderr, "count hook fired\n");
+	lua_getglobal(L, "debug_count_hook");
+	lua_call(L, 0, 0);
 	lua_yield(L, 0);
 }
 
@@ -253,7 +258,7 @@ void ship_tick_one(struct ship *s, void *unused)
 	}
 
 	if (!s->ai_dead) {
-		int ret = ship_ai_run(s, 1000);
+		int ret = ship_ai_run(s, 5000);
 		if (!ret) s->ai_dead = 1;
 	}
 }
@@ -266,6 +271,8 @@ void ship_tick(double t)
 struct ship *ship_create(const char *filename, const char *class_name)
 {
 	struct ship *s = g_slice_new0(struct ship);
+
+	s->id = next_ship_id++;
 
 	s->class = g_hash_table_lookup(ship_classes, class_name);
 	if (!s->class) {

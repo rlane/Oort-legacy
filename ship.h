@@ -16,6 +16,7 @@ struct ship_class {
 #define TAIL_TICKS 4
 
 struct ship {
+	int id;
 	const struct ship_class *class;
 	struct team *team;
 	struct physics *physics;

@@ -82,6 +82,11 @@ function safe_dofile(name)
 	return f()
 end
 
+function debug_count_hook()
+	print("preempted", sys_class(), ship_id)
+	print(debug.traceback())
+end
+
 function sandbox(f)
 	local env = {
 		_G = {},
