@@ -14,6 +14,7 @@ extern GList *all_bullets;
 
 struct bullet *bullet_create();
 void bullet_purge(void);
+void bullet_shutdown(void);
 void bullet_tick(double t);
 
 #endif

@@ -136,7 +136,6 @@ int main(int argc, char **argv)
 {
 	SDL_Event event;
 
-	g_random_set_seed(1234);
 	get_resolution();
 
 	printf("initializing SDL..\n");
@@ -190,15 +189,8 @@ int main(int argc, char **argv)
 	glLineWidth(1.2);
 	glPointSize(1.0);
 
-	printf("loading ships...\n");
-
-	if (load_ship_classes("ships.lua")) {
-		return 1;
-	}
-
-	printf("loading scenario...\n");
-
-	if (load_scenario("scenarios/basic.lua")) {
+	if (game_init()) {
+		fprintf(stderr, "initialization failed\n");
 		return 1;
 	}
 

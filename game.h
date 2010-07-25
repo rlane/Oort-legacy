@@ -10,12 +10,15 @@ struct bullet_hit {
 	vec2 cp;
 };
 
+int game_init();
 void game_tick(double tick_length);
 void game_purge();
+void game_shutdown();
 struct team *game_check_victory(void);
 
 extern int ticks;
 extern double current_time;
 extern GList *bullet_hits;
+extern GRand *prng;
 
 #endif

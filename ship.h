@@ -21,7 +21,7 @@ struct ship {
 	struct team *team;
 	struct physics *physics;
 	double energy, hull;
-	lua_State *lua;
+	lua_State *lua, *global_lua;
 	GRand *prng;
 	int dead, ai_dead;
 	complex double tail[TAIL_SEGMENTS];
@@ -35,6 +35,7 @@ extern GList *all_ships;
 
 struct ship *ship_create(const char *filename, const char *class_name);
 void ship_purge();
+void ship_shutdown();
 void ship_tick(double t);
 int load_ship_classes(const char *filename);
 

@@ -26,6 +26,11 @@ void team_destroy(struct team *t)
 	g_slice_free(struct team, t);
 }
 
+void team_shutdown(void)
+{
+	g_list_foreach(all_teams, (GFunc)team_destroy, NULL);
+}
+
 static int name_predicate(struct team *t, const char *name)
 {
 	return strcmp(name, t->name);

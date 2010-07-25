@@ -39,6 +39,11 @@ void bullet_purge(void)
 	}
 }
 
+void bullet_shutdown(void)
+{
+	g_list_foreach(all_bullets, (GFunc)bullet_destroy, NULL);
+}
+
 void bullet_tick_one(struct bullet *b, double *ta)
 {
 	double t = *ta;

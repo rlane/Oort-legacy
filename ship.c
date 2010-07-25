@@ -230,7 +230,7 @@ static int api_recv(lua_State *L)
 	return 1;
 }
 
-static lua_State *ai_create(const char *filename, struct ship *s)
+static int ai_create(const char *filename, struct ship *s)
 {
 	lua_State *G, *L;
 
@@ -256,7 +256,8 @@ static lua_State *ai_create(const char *filename, struct ship *s)
 
 	if (luaL_dofile(G, "runtime.lua")) {
 		fprintf(stderr, "Failed to load runtime: %s\n", lua_tostring(G, -1));
-		return NULL;
+		lua_close(G);
+		return 1;
 	}
 
 	L = lua_newthread(G);
@@ -265,13 +266,17 @@ static lua_State *ai_create(const char *filename, struct ship *s)
 
 	if (luaL_loadfile(L, filename)) {
 		fprintf(stderr, "Couldn't load file %s: %s\n", filename, lua_tostring(L, -1));
-		// XXX free
-		return NULL;
+		lua_close(L);
+		lua_close(G);
+		return 1;
 	}
 
 	lua_call(L, 1, 1);
 
-	return L;
+	s->lua = L;
+	s->global_lua = G;
+
+	return 0;
 }
 
 static void count_hook(lua_State *L, lua_Debug *a)
@@ -336,8 +341,7 @@ struct ship *ship_create(const char *filename, const char *class_name)
 		return NULL;
 	}
 
-	s->lua = ai_create(filename, s);
-	if (!s->lua) {
+	if (ai_create(filename, s)) {
 		fprintf(stderr, "failed to create AI\n");
 		return NULL;
 	}
@@ -357,7 +361,7 @@ struct ship *ship_create(const char *filename, const char *class_name)
 
 	s->tail_head = 0;
 
-	s->prng = g_rand_new_with_seed(g_random_int());
+	s->prng = g_rand_new_with_seed(g_rand_int(prng));
 	s->mq = g_queue_new();
 
 	all_ships = g_list_append(all_ships, s);
@@ -379,6 +383,8 @@ void ship_destroy(struct ship *s)
 	g_queue_free(s->mq);
 
 	physics_destroy(s->physics);
+	lua_close(s->lua);
+	g_rand_free(s->prng);
 	g_slice_free(struct ship, s);
 }
 
@@ -392,6 +398,20 @@ void ship_purge(void)
 			ship_destroy(s);
 		}
 	}
+}
+
+static int free_ship_class(char *name, struct ship_class *class)
+{
+	free(name);
+	g_slice_free(struct ship_class, class);
+	return TRUE;
+}
+
+void ship_shutdown(void)
+{
+	g_list_foreach(all_ships, (GFunc)ship_destroy, NULL);
+	g_hash_table_foreach_remove(ship_classes, (GHRFunc)free_ship_class, NULL);
+	g_hash_table_destroy(ship_classes);
 }
 
 static double lua_getfield_double(lua_State *L, int index, const char *key)

@@ -8,10 +8,13 @@
 #include "physics.h"
 #include "ship.h"
 #include "bullet.h"
+#include "team.h"
+#include "scenario.h"
 
 int ticks = 0;
 GList *bullet_hits = NULL;
 double current_time = 0.0;
+GRand *prng = NULL;
 
 static void handle_bullet_hit(struct ship *s, struct bullet *b, vec2 cp)
 {
@@ -47,6 +50,25 @@ static void check_bullet_hits(double tick_length)
 	}
 }
 
+int game_init(void)
+{
+	prng = g_rand_new_with_seed(1234);
+
+	printf("loading ships...\n");
+
+	if (load_ship_classes("ships.lua")) {
+		return 1;
+	}
+
+	printf("loading scenario...\n");
+
+	if (load_scenario("scenarios/basic.lua")) {
+		return 1;
+	}
+
+	return 0;
+}
+
 void game_tick(double tick_length)
 {
 	check_bullet_hits(tick_length);
@@ -56,12 +78,26 @@ void game_tick(double tick_length)
 	current_time += tick_length;
 }
 
-void game_purge()
+static void free_bullet_hit(struct bullet_hit *h)
 {
+	g_slice_free(struct bullet_hit, h);
+}
+
+void game_purge(void)
+{
+	g_list_foreach(bullet_hits, (GFunc)free_bullet_hit, NULL);
 	g_list_free(bullet_hits);
 	bullet_hits = NULL;
 	bullet_purge();
 	ship_purge();
+}
+
+void game_shutdown(void)
+{
+	ship_shutdown();
+	bullet_shutdown();
+	team_shutdown();
+	g_rand_free(prng);
 }
 
 struct team *game_check_victory(void)
