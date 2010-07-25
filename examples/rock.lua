@@ -10,6 +10,11 @@ local flak_bullet_lifetime = 0.5
 local flak_bullet_speed = 25
 
 while true do
+	local msg = recv()
+	if msg then
+		print("msg: " .. msg)
+	end
+
 	local x, y = position()
 	local vx, vy = velocity()
 	t = pick_close_enemy(x, y, enemy_team(), main_bullet_speed*main_bullet_lifetime, 0.5)
@@ -31,6 +36,10 @@ while true do
 				fire("flak" .. i, a2+R(-spread,spread))
 			end
 		end
+	end
+
+	if math.random(1,1000) == 5 then
+		send("hello")
 	end
 
 	yield()

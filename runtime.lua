@@ -57,6 +57,14 @@ function class()
 	return sys_class();
 end
 
+function send(msg)
+	sys_send(msg)
+end
+
+function recv()
+	return sys_recv()
+end
+
 sandbox_api = {
 	thrust = thrust,
 	position = position,
@@ -65,6 +73,8 @@ sandbox_api = {
 	yield = yield,
 	team = team,
 	sensor_contacts = sensor_contacts,
+	send = send,
+	recv = recv,
 }
 
 function copy_table(t, t2)

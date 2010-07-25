@@ -27,6 +27,7 @@ struct ship {
 	complex double tail[TAIL_SEGMENTS];
 	int tail_head;
 	int last_shot_tick;
+	GQueue *mq;
 };
 
 extern const struct ship_class fighter, mothership;

@@ -177,6 +177,59 @@ static int api_random(lua_State *L)
 	return 1;
 }
 
+struct msg {
+	int refcount;
+	int len;
+	char *data;
+};
+
+static int api_send(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	size_t len;
+	const char *ldata = lua_tolstring(L, -1, &len);
+
+	char *data = malloc(len);
+	if (!data) abort();
+	memcpy(data, ldata, len);
+
+	struct msg *msg = g_slice_new(struct msg);
+	msg->refcount = 1;
+	msg->len = len;
+	msg->data = data;
+
+	GList *e;
+	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
+		struct ship *s2 = e->data;
+		if (s == s2 || s->team != s2->team) continue;
+		msg->refcount++;
+		g_queue_push_tail(s2->mq, msg);
+	}
+	
+	if (--msg->refcount == 0) {
+		free(msg->data);
+		g_slice_free(struct msg, msg);
+	}
+		
+	return 0;	
+}
+
+static int api_recv(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+
+	struct msg *msg = g_queue_pop_head(s->mq);
+	if (!msg) return 0;
+	lua_pushlstring(L, msg->data, msg->len);
+
+	if (--msg->refcount == 0) {
+		free(msg->data);
+		g_slice_free(struct msg, msg);
+	}
+
+	return 1;
+}
+
 static lua_State *ai_create(const char *filename, struct ship *s)
 {
 	lua_State *G, *L;
@@ -193,6 +246,8 @@ static lua_State *ai_create(const char *filename, struct ship *s)
 	lua_register(G, "sys_class", api_class);
 	lua_register(G, "sys_time", api_time);
 	lua_register(G, "sys_random", api_random);
+	lua_register(G, "sys_send", api_send);
+	lua_register(G, "sys_recv", api_recv);
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
@@ -303,6 +358,7 @@ struct ship *ship_create(const char *filename, const char *class_name)
 	s->tail_head = 0;
 
 	s->prng = g_rand_new_with_seed(g_random_int());
+	s->mq = g_queue_new();
 
 	all_ships = g_list_append(all_ships, s);
 
@@ -312,6 +368,16 @@ struct ship *ship_create(const char *filename, const char *class_name)
 void ship_destroy(struct ship *s)
 {
 	all_ships = g_list_remove(all_ships, s);
+
+	struct msg *msg;
+	while ((msg = g_queue_pop_head(s->mq))) {
+		if (--msg->refcount == 0) {
+			free(msg->data);
+			g_slice_free(struct msg, msg);
+		}
+	}
+	g_queue_free(s->mq);
+
 	physics_destroy(s->physics);
 	g_slice_free(struct ship, s);
 }

@@ -12,6 +12,11 @@ local orbit_x = 0
 local orbit_y = 0
 
 while true do
+	local msg = recv()
+	if msg then
+		print("msg: " .. msg)
+	end
+
 	if i == 0 then
 		local x, y = position()
 		t = pick_close_enemy(x, y, enemy_team(), max_target_distance*1.5, 0.8)
