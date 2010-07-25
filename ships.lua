@@ -2,13 +2,13 @@ ships = {}
 
 ships.fighter = {
 	radius = 4/32,
-	hull = 10,
+	hull = 1,
 	guns = {
 		main = {
-			bullet_mass = 0.1,
-			bullet_velocity = 20,
-			bullet_ttl = 1,
-			reload_time = 0.25,
+			bullet_mass = 0.010,
+			bullet_velocity = 40,
+			bullet_ttl = 0.5,
+			reload_time = 0.10,
 		}
 	}
 }

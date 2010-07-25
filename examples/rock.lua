@@ -19,8 +19,6 @@ while true do
 		if a2 then fire("main", a2) end
 	end
 
-	yield()
-
 	for i = 1,3 do
 		local x, y = position()
 		local vx, vy = velocity()
@@ -33,7 +31,7 @@ while true do
 				fire("flak" .. i, a2+R(-spread,spread))
 			end
 		end
-
-		yield()
 	end
+
+	yield()
 end
