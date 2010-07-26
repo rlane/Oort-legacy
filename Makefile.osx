@@ -1,0 +1,24 @@
+LUA=lua
+
+CFLAGS=-I/usr/include/lua5.1 \
+       `sdl-config --cflags` \
+       `pkg-config glib-2.0 --cflags` \
+       -g -O2 -Wall
+
+LDFLAGS=-l$(LUA) \
+        `sdl-config --libs` \
+        `pkg-config glib-2.0 --libs` \
+        -lSDL_gfx -lGL -lGLU \
+        -L/System/Library/Frameworks/OpenGL.framework/Libraries \
+        -framework OpenGL -framework GLUT
+
+all: gl-viewer recorder
+
+gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o team.o
+
+recorder: recorder.o ship.o physics.o bullet.o game.o scenario.o team.o
+
+test_check_collision: test_check_collision.o physics.o
+
+clean:
+	rm -f *.o gl-viewer test_check_collision
