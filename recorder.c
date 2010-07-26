@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <complex.h>
 #include <sys/time.h>
@@ -18,8 +19,10 @@ int main(int argc, char **argv)
 {
 	struct timeval last_sample_time;
 	int sample_ticks = 0;
+	int seed = getpid() ^ time(NULL);
+	const char *scenario = argc > 1 ? argv[1] : "scenarios/basic.lua";
 
-	if (game_init()) {
+	if (game_init(seed, scenario)) {
 		fprintf(stderr, "initialization failed\n");
 		return 1;
 	}

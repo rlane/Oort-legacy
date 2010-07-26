@@ -50,9 +50,9 @@ static void check_bullet_hits(double tick_length)
 	}
 }
 
-int game_init(void)
+int game_init(int seed, const char *scenario)
 {
-	prng = g_rand_new_with_seed(1234);
+	prng = g_rand_new_with_seed(seed);
 
 	printf("loading ships...\n");
 
@@ -62,7 +62,7 @@ int game_init(void)
 
 	printf("loading scenario...\n");
 
-	if (load_scenario("scenarios/basic.lua")) {
+	if (load_scenario(scenario)) {
 		return 1;
 	}
 

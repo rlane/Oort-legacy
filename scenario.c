@@ -36,7 +36,7 @@ static int scn_ship(lua_State *L)
 	return 0;
 }
 
-int load_scenario(char *filename)
+int load_scenario(const char *filename)
 {
 	lua_State *L;
 
