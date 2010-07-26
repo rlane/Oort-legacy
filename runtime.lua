@@ -65,6 +65,31 @@ function recv()
 	return sys_recv()
 end
 
+function spawn(class, filename)
+	sys_spawn(class, filename)
+end
+
+function explode()
+	local x, y = position()
+	local vx, vy = velocity()
+	local i
+	local n = 128
+	local exp = my_class.explosion
+
+	for i = 1,exp.count do
+		local a, v, m, ttl, vx2, vy2
+		a = math.random()*math.pi*2
+		v = math.random()*exp.velocity
+		vx2 = vx + math.cos(a)*v
+		vy2 = vy + math.sin(a)*v
+		m = exp.mass
+		ttl = exp.ttl
+		sys_create_bullet(x,y,vx2,vy2,m,ttl)
+	end
+
+	sys_die()
+end
+
 sandbox_api = {
 	thrust = thrust,
 	position = position,
@@ -75,6 +100,8 @@ sandbox_api = {
 	sensor_contacts = sensor_contacts,
 	send = send,
 	recv = recv,
+	spawn = spawn,
+	explode = explode,
 }
 
 function copy_table(t, t2)

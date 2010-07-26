@@ -10,7 +10,13 @@ ships.fighter = {
 			bullet_ttl = 0.5,
 			reload_time = 0.10,
 		}
-	}
+	},
+	explosion = {
+		count = 16,
+		velocity = 2,
+		ttl = 1,
+	},
+	count_for_victory = true
 }
 
 local flak = {
@@ -33,5 +39,24 @@ ships.mothership = {
 		flak1 = flak,
 		flak2 = flak,
 		flak3 = flak,
-	}
+	},
+	explosion = {
+		count = 256,
+		velocity = 2,
+		ttl = 2,
+	},
+	count_for_victory = true
+}
+
+ships.missile = {
+	radius = 1/32,
+	hull = 0.1,
+	guns = {},
+	explosion = {
+		count = 128,
+		mass = 0.1,
+		velocity = 4,
+		ttl = 0.5,
+	},
+	count_for_victory = false
 }

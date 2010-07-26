@@ -42,5 +42,9 @@ while true do
 		send("hello")
 	end
 
+	if math.random(1,100) == 7 then
+		spawn("missile", "examples/missile.lua")
+	end
+
 	yield()
 end

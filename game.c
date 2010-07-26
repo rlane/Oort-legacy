@@ -107,6 +107,7 @@ struct team *game_check_victory(void)
 
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s = e->data;
+		if (!s->class->count_for_victory) continue;
 		if (winner && s->team != winner) {
 			return NULL;
 		}

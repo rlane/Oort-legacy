@@ -230,6 +230,29 @@ static int api_recv(lua_State *L)
 	return 1;
 }
 
+static int api_spawn(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	const char *class_name = lua_tolstring(L, 1, NULL);
+	const char *filename = lua_tolstring(L, 2, NULL);
+	struct ship *child = ship_create(filename, class_name);
+	if (!child) {
+		fprintf(stderr, "failed to create ship %s:%s\n", class_name, filename);
+		return 0;
+	}
+	child->physics->p = s->physics->p;
+	child->physics->v = s->physics->v;
+	child->team = s->team;
+	return 0;
+}
+
+static int api_die(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	s->dead = 1;
+	return lua_yield(L, 0);
+}	
+
 static int ai_create(const char *filename, struct ship *s)
 {
 	lua_State *G, *L;
@@ -248,6 +271,8 @@ static int ai_create(const char *filename, struct ship *s)
 	lua_register(G, "sys_random", api_random);
 	lua_register(G, "sys_send", api_send);
 	lua_register(G, "sys_recv", api_recv);
+	lua_register(G, "sys_spawn", api_spawn);
+	lua_register(G, "sys_die", api_die);
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
@@ -454,6 +479,9 @@ int load_ship_classes(const char *filename)
 		c->name = name;
 		c->radius = lua_getfield_double(L, -1, "radius");
 		c->hull = lua_getfield_double(L, -1, "hull");
+		lua_getfield(L, -1, "count_for_victory");
+		c->count_for_victory = lua_toboolean(L, -1);
+		lua_pop(L, 1);
 		g_hash_table_insert(ship_classes, name, c);
 		lua_pop(L, 1);
 	}

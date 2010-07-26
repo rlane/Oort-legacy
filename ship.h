@@ -10,6 +10,7 @@ struct ship_class {
 	const char *name;
 	double radius;
 	double hull;
+	int count_for_victory;
 };
 
 #define TAIL_SEGMENTS 16
