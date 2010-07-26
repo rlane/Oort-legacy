@@ -109,6 +109,10 @@ static int api_sensor_contacts(lua_State *L)
 		lua_pushstring(L, s->team->name);
 		lua_settable(L, -3);
 
+		lua_pushstring(L, "class");
+		lua_pushstring(L, s->class->name);
+		lua_settable(L, -3);
+
 		lua_pushstring(L, "x"); // index 3
 		lua_pushnumber(L, creal(s->physics->p)); // index 4
 		lua_settable(L, -3);
