@@ -84,6 +84,19 @@ function pick(t,fn)
 	return k, t[k]
 end
 
+function min_by(t,fn)
+	local best_value = nil
+	local best_score = math.huge
+	for k,v in pairs(t) do
+		local score = fn(v)
+		if fn(v) < best_score then
+			best_value = v
+			best_score = score
+		end
+	end
+	return best_value
+end
+
 function enemy_team()
 	local my_team = team()
 	if my_team == "green" then
