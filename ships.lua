@@ -60,3 +60,16 @@ ships.missile = {
 	},
 	count_for_victory = false
 }
+
+ships.little_missile = {
+	radius = 0.5/32,
+	hull = 0.1,
+	guns = {},
+	explosion = {
+		count = 16,
+		mass = 0.1,
+		velocity = 2,
+		ttl = 1,
+	},
+	count_for_victory = false
+}
