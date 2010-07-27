@@ -39,7 +39,7 @@ while true do
 	end
 
 	if math.random(1,1000) == 5 then
-		send("hello")
+		--send("hello")
 	end
 
 	if math.random(1,100) == 7 then
