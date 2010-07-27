@@ -79,7 +79,7 @@ function pick(t,fn)
 	local t2 = select(t, fn)
 	local ids = keys(t2)
 	local n = table.maxn(ids)
-	if not n then return end
+	if not n or n == 0 then return end
 	local k = ids[math.random(n)]
 	return k, t[k]
 end
