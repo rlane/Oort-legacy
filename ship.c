@@ -172,10 +172,17 @@ static int api_random(lua_State *L)
 			end = lua_tointeger(L, -1);
 		}
 		lua_settop(L, 0);
-		lua_pushnumber(L, g_rand_int_range(s->prng, begin, end));
+		if (begin < end) {
+			lua_pushnumber(L, g_rand_int_range(s->prng, begin, end));
+		} else if (begin == end) {
+			lua_pushnumber(L, begin);
+		} else {
+			lua_pushstring(L, "end must be >= begin");
+			lua_error(L);
+		}
 	} else {
-	//	lua_pushstring(L, "too many arguments");
-		//lua_error(L);
+		lua_pushstring(L, "too many arguments");
+		lua_error(L);
 	}
 	
 	return 1;
