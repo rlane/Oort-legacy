@@ -357,7 +357,7 @@ void ship_tick_one(struct ship *s, void *unused)
 	}
 
 	if (!s->ai_dead) {
-		int ret = ship_ai_run(s, 5000);
+		int ret = ship_ai_run(s, 10000);
 		if (!ret) s->ai_dead = 1;
 	}
 }
