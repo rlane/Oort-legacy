@@ -125,3 +125,19 @@ function selecti(t, fn)
 	end
 	return r
 end
+
+function keys_iter(t)
+	local function itr(t,k)
+		local k,v = next(t,k)
+		return k
+	end
+	return itr, t, nil		
+end
+
+function keys(t)
+	local r = {}
+	for k in keys_iter(t) do
+		table.insert(r, k)
+	end
+	return r
+end

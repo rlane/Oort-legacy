@@ -15,9 +15,11 @@ struct ship_class {
 
 #define TAIL_SEGMENTS 16
 #define TAIL_TICKS 4
+#define API_ID_SIZE 8
 
 struct ship {
 	int id;
+	const char api_id[API_ID_SIZE];
 	const struct ship_class *class;
 	struct team *team;
 	struct physics *physics;

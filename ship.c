@@ -102,8 +102,12 @@ static int api_sensor_contacts(lua_State *L)
 	GList *e;
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s = e->data;
-		lua_pushnumber(L, i++);
+		lua_pushstring(L, s->id);
 		lua_newtable(L);
+
+		lua_pushstring(L, "id");
+		lua_pushlstring(L, s->api_id, API_ID_SIZE);
+		lua_settable(L, -3);
 
 		lua_pushstring(L, "team");
 		lua_pushstring(L, s->team->name);
@@ -399,6 +403,8 @@ struct ship *ship_create(const char *filename, const char *class_name)
 
 	s->prng = g_rand_new_with_seed(g_rand_int(prng));
 	s->mq = g_queue_new();
+
+	snprintf((char*)s->api_id, sizeof(s->api_id), "%08x", g_rand_int(prng));
 
 	all_ships = g_list_append(all_ships, s);
 
