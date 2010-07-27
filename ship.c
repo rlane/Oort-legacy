@@ -97,12 +97,11 @@ static int api_create_bullet(lua_State *L)
 
 static int api_sensor_contacts(lua_State *L)
 {
-	int i = 1;
 	lua_newtable(L);
 	GList *e;
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s = e->data;
-		lua_pushstring(L, s->id);
+		lua_pushstring(L, s->api_id);
 		lua_newtable(L);
 
 		lua_pushstring(L, "id");
