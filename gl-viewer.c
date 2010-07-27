@@ -28,6 +28,7 @@ static int screen_width = 1024;
 static int screen_height = 768;
 static complex double view_pos = 0.0;
 static double view_scale = 8.0;
+static int paused = 0;
 
 static complex double S(complex double p)
 {
@@ -248,6 +249,9 @@ int main(int argc, char **argv)
 				case SDLK_x:
 					view_scale /= 1.1;
 					break;
+				case SDLK_SPACE:
+					paused = !paused;
+					break;
 				default:
 					break;
 				}
@@ -274,7 +278,9 @@ int main(int argc, char **argv)
 			}
 		}
 
-		game_tick(tick_length);
+		if (!paused) {
+			game_tick(tick_length);
+		}
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
@@ -285,16 +291,19 @@ int main(int argc, char **argv)
 
 		SDL_GL_SwapBuffers();
 
-		game_purge();
+		if (!paused) {
+			game_purge();
 
-		struct team *winner;
-		if ((winner = game_check_victory())) {
-			printf("Team '%s' is victorious in %0.2g seconds\n", winner->name, ticks*tick_length);
-			return 0;
+			struct team *winner;
+			if ((winner = game_check_victory())) {
+				printf("Team '%s' is victorious in %0.2f seconds\n", winner->name, ticks*tick_length);
+				return 0;
+			}
+
+			ticks += 1;
 		}
 
 		SDL_framerateDelay(&fps_manager);
-		ticks += 1;
 		sample_ticks++;
 	}
 
