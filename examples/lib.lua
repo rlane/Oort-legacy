@@ -109,3 +109,19 @@ function sign(x)
 		return 1
 	end
 end
+
+function select(t, fn)
+	local r = {}
+	for k, v in pairs(t) do
+		if fn(k,v) then r[k] = v end
+	end
+	return r
+end
+
+function selecti(t, fn)
+	local r = {}
+	for k, v in ipairs(t) do
+		if fn(v) then table.insert(r, v) end
+	end
+	return r
+end
