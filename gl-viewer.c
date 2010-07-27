@@ -27,7 +27,7 @@ const double zoom_force = 0.1;
 static int screen_width = 1024;
 static int screen_height = 768;
 static complex double view_pos = 0.0;
-static double view_scale = 32.0;
+static double view_scale = 8.0;
 
 static complex double S(complex double p)
 {
@@ -67,7 +67,14 @@ static void render_ship(struct ship *s, void *unused)
 	Uint32 team_color = s->team->color;
 	double x = creal(sp), y = cimag(sp);
 
-	glColor32(team_color | 0xAA);
+	if (!strcmp(s->class->name, "mothership")) {
+		glColor32(team_color | 0xEE);
+	} else if (!strcmp(s->class->name, "fighter")) {
+		glColor32(team_color | 0xAA);
+	} else {
+		glColor32(0x88888800 | 0x55);
+	}
+
 	render_circle(x, y, sr);
 
 	glBegin(GL_LINE_STRIP);
