@@ -4,19 +4,17 @@ local x, y = position()
 
 thrust(math.random()*2*math.pi, 5)
 sleep(16)
+local target_selector = function(k,c) return c.team == enemy_team() and c.class ~= "missile" end
+local target_id, t = pick(sensor_contacts(), target_selector)
 
-local contacts = sensor_contacts()
-local enemy_contacts = select(contacts, function(k,c) return c.team == enemy_team() and c.class ~= "missile" end)
-local enemy_ids = keys(enemy_contacts)
-local n = table.maxn(enemy_ids)
-if not n then explode() end
-local target_id = enemy_ids[math.random(n)]
+if not t then
+	printf("no target\n")
+	sleep(64)
+	explode()
+end
 
 while true do
-	local x, y = position()
-	local vx, vy = velocity()
-	local contacts = sensor_contacts()
-	local t = contacts[target_id]
+	t = sensor_contacts()[target_id]
 
 	if not t then
 		printf("lost target\n")
@@ -24,10 +22,12 @@ while true do
 		explode()
 	end
 	
+	local x, y = position()
 	if distance(t.x, t.y, x, y) < 3 then
 		explode()
 	end
 
+	local vx, vy = velocity()
 	local a = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, 30, math.huge)
 	if a then
 		thrust(a, 10)
