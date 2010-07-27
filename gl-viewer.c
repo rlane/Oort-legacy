@@ -29,6 +29,7 @@ static int screen_height = 768;
 static complex double view_pos = 0.0;
 static double view_scale = 8.0;
 static int paused = 0;
+static int single_step = 0;
 
 static complex double S(complex double p)
 {
@@ -252,6 +253,10 @@ int main(int argc, char **argv)
 				case SDLK_SPACE:
 					paused = !paused;
 					break;
+				case SDLK_RETURN:
+					paused = 0;
+					single_step = 1;
+					break;
 				default:
 					break;
 				}
@@ -301,6 +306,11 @@ int main(int argc, char **argv)
 			}
 
 			ticks += 1;
+		}
+
+		if (single_step) {
+			paused = 1;
+			single_step = 0;
 		}
 
 		SDL_framerateDelay(&fps_manager);
