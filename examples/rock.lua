@@ -50,5 +50,9 @@ while true do
 		spawn("little_missile", "examples/little_missile.lua")
 	end
 
+	if math.random(200) == 7 then
+		spawn("fighter", "examples/orbit.lua")
+	end
+
 	yield()
 end

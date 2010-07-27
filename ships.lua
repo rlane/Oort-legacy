@@ -2,13 +2,13 @@ ships = {}
 
 ships.fighter = {
 	radius = 4/32,
-	hull = 1,
+	hull = 10,
 	guns = {
 		main = {
 			bullet_mass = 0.010,
 			bullet_velocity = 40,
 			bullet_ttl = 0.5,
-			reload_time = 0.10,
+			reload_time = 0.30,
 		}
 	},
 	explosion = {
@@ -20,7 +20,7 @@ ships.fighter = {
 }
 
 local flak = {
-	bullet_mass = 0.1,
+	bullet_mass = 0.01,
 	bullet_velocity = 25,
 	bullet_ttl = 0.5,
 	reload_time = 0.15,
@@ -50,7 +50,7 @@ ships.mothership = {
 
 ships.missile = {
 	radius = 1/32,
-	hull = 0.1,
+	hull = 1,
 	guns = {},
 	explosion = {
 		count = 128,
@@ -67,7 +67,7 @@ ships.little_missile = {
 	guns = {},
 	explosion = {
 		count = 16,
-		mass = 0.1,
+		mass = 0.01,
 		velocity = 2,
 		ttl = 1,
 	},
