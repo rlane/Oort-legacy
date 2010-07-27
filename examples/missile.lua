@@ -5,10 +5,10 @@ local x, y = position()
 thrust(math.random()*2*math.pi, 5)
 sleep(16)
 
-local t = pick_close_enemy(x, y, enemy_team(), 100, 1)
-if not t then
-	explode()
-end
+local enemy_contacts = selecti(sensor_contacts(), function(c) return c.team == enemy_team() and c.class ~= "missile" end)
+local n = table.maxn(enemy_contacts)
+if n == 0 then explode() end
+local t = enemy_contacts[math.random(n)]
 
 while true do
 	local x, y = position()
