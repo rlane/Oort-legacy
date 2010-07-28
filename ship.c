@@ -12,6 +12,7 @@
 #include "bullet.h"
 #include "ship.h"
 #include "team.h"
+#include "task.h"
 
 #define LW_VERBOSE 0
 
@@ -349,7 +350,7 @@ int ship_ai_run(struct ship *s, int len)
 	}
 }
 
-void ship_tick_one(struct ship *s, void *unused)
+void ship_tick_one(struct ship *s)
 {
 	if (ticks % TAIL_TICKS == 0) {
 		s->tail[s->tail_head++] = s->physics->p;
@@ -364,7 +365,11 @@ void ship_tick_one(struct ship *s, void *unused)
 
 void ship_tick(double t)
 {
-	g_list_foreach(all_ships, (GFunc)ship_tick_one, NULL);
+	GList *e;
+	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
+		task((task_func)ship_tick_one, e->data, NULL);
+	}
+	task_wait();
 }
 
 struct ship *ship_create(const char *filename, const char *class_name)

@@ -10,6 +10,7 @@
 #include "bullet.h"
 #include "team.h"
 #include "scenario.h"
+#include "task.h"
 
 int ticks = 0;
 GList *bullet_hits = NULL;
@@ -52,6 +53,8 @@ static void check_bullet_hits(double tick_length)
 
 int game_init(int seed, const char *scenario)
 {
+	task_init();
+
 	prng = g_rand_new_with_seed(seed);
 
 	printf("loading ships...\n");
@@ -94,6 +97,7 @@ void game_purge(void)
 
 void game_shutdown(void)
 {
+	task_shutdown();
 	ship_shutdown();
 	bullet_shutdown();
 	team_shutdown();

@@ -8,13 +8,14 @@ CFLAGS=-I/usr/include/lua5.1 \
 LDFLAGS=-l$(LUA) \
         `sdl-config --libs` \
         `pkg-config glib-2.0 --libs` \
+				`pkg-config gthread-2.0 --libs` \
         -lSDL_gfx -lGL -lGLU
 
 all: gl-viewer recorder
 
-gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o team.o
+gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
 
-recorder: recorder.o ship.o physics.o bullet.o game.o scenario.o team.o
+recorder: recorder.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
 
 test_check_collision: test_check_collision.o physics.o
 
