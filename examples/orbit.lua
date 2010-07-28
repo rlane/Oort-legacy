@@ -6,7 +6,7 @@ sleep(32)
 local i = math.random(1,256)
 local t = nil
 local bullet_lifetime = 0.5
-local bullet_speed = 40
+local bullet_speed = 20
 local max_target_distance = bullet_speed*bullet_lifetime
 local orbit_x = 0
 local orbit_y = 0

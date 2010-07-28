@@ -5,10 +5,10 @@ ships.fighter = {
 	hull = 10,
 	guns = {
 		main = {
-			bullet_mass = 0.010,
-			bullet_velocity = 40,
+			bullet_mass = 0.05,
+			bullet_velocity = 20,
 			bullet_ttl = 0.5,
-			reload_time = 0.30,
+			reload_time = 0.15,
 		}
 	},
 	explosion = {
