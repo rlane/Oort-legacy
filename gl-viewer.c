@@ -66,6 +66,8 @@ static void render_circle(double x, double y, double r)
 	glEnd();
 }
 
+void physics_tick_one(struct physics *q, const double *ta);
+
 static void render_ship(struct ship *s, void *unused)
 {
 	complex double sp = S(s->physics->p);
@@ -103,6 +105,19 @@ static void render_ship(struct ship *s, void *unused)
 	if (s == picked) {
 		glColor32(0xCCCCCCAA);
 		render_circle(x, y, sr + 5);
+
+		glColor32(0x49D5CEAA);
+		glBegin(GL_LINE_STRIP);
+		glVertex3f(x, y, 0);
+		struct physics q = *s->physics;
+		int i;
+		for (i = 0; i < 1/tick_length; i++) {
+			physics_tick_one(&q, &tick_length);
+			vec2 sp = S(q.p);
+			glVertex3f(creal(sp), cimag(sp), 0);
+		}
+		glEnd();
+
 		if (s->dead) {
 			picked = NULL;
 		}
