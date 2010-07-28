@@ -6,8 +6,10 @@
 #include <math.h>
 #include <glib.h>
 
+#define GL_GLEXT_PROTOTYPES
 #include <SDL.h>
 #include <SDL_framerate.h>
+#include <SDL_gfxPrimitives_font.h>
 #include <SDL_opengl.h>
 
 #include "game.h"
@@ -30,6 +32,8 @@ static complex double view_pos = 0.0;
 static double view_scale = 8.0;
 static int paused = 0;
 static int single_step = 0;
+static struct ship *picked = NULL;
+static GLubyte font[256*8];
 
 static complex double S(complex double p)
 {
@@ -95,6 +99,14 @@ static void render_ship(struct ship *s, void *unused)
 		sp = sp2;
 	}
 	glEnd();
+
+	if (s == picked) {
+		glColor32(0xCCCCCCAA);
+		render_circle(x, y, sr + 5);
+		if (s->dead) {
+			picked = NULL;
+		}
+	}
 }
 
 static void render_bullet(struct bullet *b, void *unused)
@@ -142,11 +154,55 @@ static void get_resolution(void)
 	}
 }
 
+static struct ship *pick(vec2 p)
+{
+	GList *es;
+	for (es = g_list_first(all_ships); es; es = g_list_next(es)) {
+		struct ship *s = es->data;
+		if (distance(s->physics->p, p) < s->physics->r) {
+			return s;
+		}
+	}
+	return NULL;
+}
+
+static void glWrite(int x, int y, const char *str)
+{
+	glWindowPos2i(x, y);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
+
+	char c;
+	while ((c = *str++)) {
+		glBitmap(8, 8, 4, 4, 10, 0, font + 8*c);
+	}
+}
+
+static void glPrintf(int x, int y, const char *fmt, ...)
+{
+	static char buf[1024];
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, ap);
+	va_end(ap);
+	glWrite(x, y, buf);
+}
+
+static void font_init(void)
+{
+	int i, j;
+	for (i = 0; i < 256; i++) {
+		for (j = 0; j < 8; j++) {
+			font[i*8 + j] = gfxPrimitivesFontdata[i*8 + (7-j)];
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	SDL_Event event;
 
 	get_resolution();
+	font_init();
 
 	printf("initializing SDL..\n");
 
@@ -271,6 +327,9 @@ int main(int argc, char **argv)
 				}
 
 				switch (event.button.button) {
+				case SDL_BUTTON_LEFT:
+					picked = pick(W(C(event.button.x, event.button.y)));
+					break;
 				case SDL_BUTTON_WHEELUP:
 					view_scale *= 1.1;
 					break;
@@ -293,6 +352,16 @@ int main(int argc, char **argv)
 		g_list_foreach(all_ships, (GFunc)render_ship, NULL);
 		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
 		g_list_foreach(bullet_hits, (GFunc)render_bullet_hit, NULL);
+
+		if (picked) {
+			const int x = 15, y = 70, dy = 12;
+			glColor32(0xAAFFFFAA);
+			glPrintf(x, y-0*dy, "%s %.8s", picked->class->name, picked->api_id);
+			glPrintf(x, y-1*dy, "hull: %.2f", picked->hull);
+			glPrintf(x, y-2*dy, "position: " VEC2_FMT, VEC2_ARG(picked->physics->p));
+			glPrintf(x, y-3*dy, "velocity: " VEC2_FMT, VEC2_ARG(picked->physics->v));
+			glPrintf(x, y-4*dy, "thrust: " VEC2_FMT, VEC2_ARG(picked->physics->thrust));
+		}
 
 		SDL_GL_SwapBuffers();
 
