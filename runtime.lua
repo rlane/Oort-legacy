@@ -65,8 +65,8 @@ function recv()
 	return sys_recv()
 end
 
-function spawn(class, filename)
-	sys_spawn(class, filename)
+function spawn(class, filename, orders)
+	sys_spawn(class, filename, orders)
 end
 
 function explode()
@@ -141,6 +141,8 @@ function sandbox(f)
 
 		dofile = safe_dofile,
 		io = { write = io.write },
+
+		orders = orders,
 	}
 
 	env.math = copy_table(math, {})

@@ -23,13 +23,14 @@ static int scn_team(lua_State *L)
 
 static int scn_ship(lua_State *L)
 {
-	const char *ship_class_name = lua_tolstring(L, 1, NULL);
-	const char *filename = lua_tolstring(L, 2, NULL);
-	const char *team_name = lua_tolstring(L, 3, NULL);
-	double x = lua_tonumber(L, 4);
-	double y = lua_tonumber(L, 5);
+	const char *ship_class_name = luaL_checkstring(L, 1);
+	const char *filename = luaL_checkstring(L, 2);
+	const char *team_name = luaL_checkstring(L, 3);
+	double x = luaL_checknumber(L, 4);
+	double y = luaL_checknumber(L, 5);
+	const char *orders = luaL_optstring(L, 6, "");
 	struct team *team = team_lookup(team_name);
-	struct ship *s = ship_create(filename, ship_class_name);
+	struct ship *s = ship_create(filename, ship_class_name, orders);
 	s->physics->p = C(x,y);
 	s->physics->v = 0;
 	s->team = team;

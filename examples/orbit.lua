@@ -1,5 +1,7 @@
 dofile("examples/lib.lua")
 
+--print("orders:", orders)
+
 thrust(math.pi/2, 1)
 sleep(32)
 

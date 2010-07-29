@@ -43,15 +43,15 @@ while true do
 	end
 
 	if math.random(1,100) == 7 then
-		spawn("missile", "examples/missile.lua")
+		spawn("missile", "examples/missile.lua", "")
 	end
 
 	if math.random(50) == 7 then
-		spawn("little_missile", "examples/little_missile.lua")
+		spawn("little_missile", "examples/little_missile.lua", "")
 	end
 
 	if math.random(200) == 7 then
-		spawn("fighter", "examples/orbit.lua")
+		spawn("fighter", "examples/orbit.lua", "foo")
 	end
 
 	yield()

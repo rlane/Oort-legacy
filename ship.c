@@ -250,7 +250,8 @@ static int api_spawn(lua_State *L)
 	struct ship *s = lua_ship(L);
 	const char *class_name = lua_tolstring(L, 1, NULL);
 	const char *filename = lua_tolstring(L, 2, NULL);
-	struct ship *child = ship_create(filename, class_name);
+	const char *orders = lua_tolstring(L, 3, NULL);
+	struct ship *child = ship_create(filename, class_name, orders);
 	if (!child) {
 		fprintf(stderr, "failed to create ship %s:%s\n", class_name, filename);
 		return 0;
@@ -268,7 +269,7 @@ static int api_die(lua_State *L)
 	return lua_yield(L, 0);
 }	
 
-static int ai_create(const char *filename, struct ship *s)
+static int ai_create(const char *filename, struct ship *s, const char *orders)
 {
 	lua_State *G, *L;
 
@@ -293,6 +294,9 @@ static int ai_create(const char *filename, struct ship *s)
 
 	lua_pushnumber(G, s->id);
 	lua_setglobal(G, "ship_id");
+
+	lua_pushstring(G, orders);
+	lua_setglobal(G, "orders");
 
 	if (luaL_dofile(G, "runtime.lua")) {
 		fprintf(stderr, "Failed to load runtime: %s\n", lua_tostring(G, -1));
@@ -372,7 +376,7 @@ void ship_tick(double t)
 	task_wait();
 }
 
-struct ship *ship_create(const char *filename, const char *class_name)
+struct ship *ship_create(const char *filename, const char *class_name, const char *orders)
 {
 	struct ship *s = g_slice_new0(struct ship);
 
@@ -385,7 +389,7 @@ struct ship *ship_create(const char *filename, const char *class_name)
 		return NULL;
 	}
 
-	if (ai_create(filename, s)) {
+	if (ai_create(filename, s, orders)) {
 		fprintf(stderr, "failed to create AI\n");
 		return NULL;
 	}
