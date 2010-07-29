@@ -469,7 +469,6 @@ static double lua_getfield_double(lua_State *L, int index, const char *key)
 {
 	lua_getfield(L, -1, key);
 	double v = lua_tonumber(L, -1);
-	printf(" %s = %g\n", key, v);
 	lua_pop(L, 1);
 	return v;
 }
@@ -490,7 +489,7 @@ int load_ship_classes(const char *filename)
 	lua_getglobal(L, "ships");
 
 	if (lua_isnil(L, 1)) {
-		fprintf(stderr, "Fail to load ships from %s: 'ships' table not defined\n", filename);
+		fprintf(stderr, "Failed to load ships from %s: 'ships' table not defined\n", filename);
 		lua_close(L);
 		return -1;
 	}
@@ -500,7 +499,6 @@ int load_ship_classes(const char *filename)
 	lua_pushnil(L);
 	while (lua_next(L, 1) != 0) {
 		char *name = g_strdup(lua_tolstring(L, -2, NULL));
-		printf("loading ship %s\n", name);
 		struct ship_class *c = g_slice_new(struct ship_class);
 		c->name = name;
 		c->radius = lua_getfield_double(L, -1, "radius");

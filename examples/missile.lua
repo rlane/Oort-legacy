@@ -8,7 +8,7 @@ local target_selector = function(k,c) return c.team == enemy_team() and c.class 
 local target_id, t = pick(sensor_contacts(), target_selector)
 
 if not t then
-	printf("no target\n")
+	--printf("no target\n")
 	thrust(0, 0)
 	sleep(64)
 	explode()
@@ -18,7 +18,7 @@ while true do
 	t = sensor_contacts()[target_id]
 
 	if not t then
-		printf("lost target\n")
+		--printf("lost target\n")
 		thrust(0, 0)
 		sleep(64)
 		explode()
