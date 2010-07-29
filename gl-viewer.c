@@ -188,7 +188,7 @@ static void glWrite(int x, int y, const char *str)
 
 	char c;
 	while ((c = *str++)) {
-		glBitmap(8, 8, 4, 4, 10, 0, font + 8*c);
+		glBitmap(8, 8, 4, 4, 9, 0, font + 8*c);
 	}
 }
 
