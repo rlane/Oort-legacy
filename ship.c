@@ -385,12 +385,13 @@ struct ship *ship_create(const char *filename, const char *class_name, const cha
 	s->class = g_hash_table_lookup(ship_classes, class_name);
 	if (!s->class) {
 		fprintf(stderr, "class '%s' not found\n", class_name);
-		// XXX free
+		g_slice_free(struct ship, s);
 		return NULL;
 	}
 
 	if (ai_create(filename, s, orders)) {
 		fprintf(stderr, "failed to create AI\n");
+		g_slice_free(struct ship, s);
 		return NULL;
 	}
 
