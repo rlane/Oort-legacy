@@ -54,7 +54,7 @@ static void glColor32(Uint32 c)
 
 static void render_circle(double x, double y, double r)
 {
-	int n = r < 8 ? 8 : r+1;
+	int n = MAX(8, MIN(r, 64));
 	double da = 2*M_PI/n, a = 0;
 	int i;
 
