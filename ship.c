@@ -46,8 +46,8 @@ static struct ship *lua_ship(lua_State *L)
 static int api_thrust(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
-	double a = luaL_optnumber(L, 1, 0);
-	double f = luaL_optnumber(L, 2, 0);
+	double a = luaL_checknumber(L, 1);
+	double f = luaL_checknumber(L, 2);
 	s->physics->thrust = f * (cos(a) + sin(a)*I);
 	//printf("thrust x=%g y=%g\n", creal(s->physics->thrust), cimag(s->physics->thrust));
 	return 0;
@@ -79,14 +79,16 @@ static int api_create_bullet(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
 
-	double x = lua_tonumber(L, 1);
-	double y = lua_tonumber(L, 2);
-	double vx = lua_tonumber(L, 3);
-	double vy = lua_tonumber(L, 4);
-	double m = lua_tonumber(L, 5);
-	double ttl = lua_tonumber(L, 6);
+	double x = luaL_checknumber(L, 1);
+	double y = luaL_checknumber(L, 2);
+	double vx = luaL_checknumber(L, 3);
+	double vy = luaL_checknumber(L, 4);
+	double m = luaL_checknumber(L, 5);
+	double ttl = luaL_checknumber(L, 6);
 
 	struct bullet *b = bullet_create();
+	if (!b) return luaL_error(L, "bullet creation failed");
+
 	b->team = s->team;
 	b->physics->p = C(x,y);
 	b->physics->v = C(vx,vy);
@@ -170,10 +172,10 @@ static int api_random(lua_State *L)
 		guint32 begin, end;
 		if (n == 1) {
 			begin = 1;
-			end = lua_tointeger(L, -1);
+			end = luaL_checklong(L, 1);
 		} else {
-			begin = lua_tointeger(L, -2);
-			end = lua_tointeger(L, -1);
+			begin = luaL_checklong(L, 1);
+			end = luaL_checklong(L, 2);
 		}
 		lua_settop(L, 0);
 		if (begin < end) {
@@ -181,12 +183,10 @@ static int api_random(lua_State *L)
 		} else if (begin == end) {
 			lua_pushnumber(L, begin);
 		} else {
-			lua_pushstring(L, "end must be >= begin");
-			lua_error(L);
+			return luaL_error(L, "end must be >= begin");
 		}
 	} else {
-		lua_pushstring(L, "too many arguments");
-		lua_error(L);
+		return luaL_error(L, "too many arguments");
 	}
 	
 	return 1;
@@ -202,7 +202,7 @@ static int api_send(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
 	size_t len;
-	const char *ldata = lua_tolstring(L, -1, &len);
+	const char *ldata = luaL_checklstring(L, 1, &len);
 
 	char *data = malloc(len);
 	if (!data) abort();
@@ -248,14 +248,13 @@ static int api_recv(lua_State *L)
 static int api_spawn(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
-	const char *class_name = lua_tolstring(L, 1, NULL);
-	const char *filename = lua_tolstring(L, 2, NULL);
-	const char *orders = lua_tolstring(L, 3, NULL);
+	const char *class_name = luaL_checkstring(L, 1);
+	const char *filename = luaL_checkstring(L, 2);
+	const char *orders = luaL_checkstring(L, 3);
+
 	struct ship *child = ship_create(filename, class_name, orders);
-	if (!child) {
-		fprintf(stderr, "failed to create ship %s:%s\n", class_name, filename);
-		return 0;
-	}
+	if (!child) return luaL_error(L, "failed to create ship");
+
 	child->physics->p = s->physics->p;
 	child->physics->v = s->physics->v;
 	child->team = s->team;

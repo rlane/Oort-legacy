@@ -15,8 +15,8 @@
 
 static int scn_team(lua_State *L)
 {
-	const char *name = lua_tolstring(L, 1, NULL);
-	long color = lua_tointeger(L, 2);
+	const char *name = luaL_checkstring(L, 1);
+	long color = luaL_checklong(L, 2);
 	team_create(name, color);
 	return 0;
 }
@@ -29,8 +29,13 @@ static int scn_ship(lua_State *L)
 	double x = luaL_checknumber(L, 4);
 	double y = luaL_checknumber(L, 5);
 	const char *orders = luaL_optstring(L, 6, "");
+
 	struct team *team = team_lookup(team_name);
+	if (!team) return luaL_argerror(L, 3, "invalid team");
+
 	struct ship *s = ship_create(filename, ship_class_name, orders);
+	if (!s) return luaL_error(L, "ship creation failed");
+
 	s->physics->p = C(x,y);
 	s->physics->v = 0;
 	s->team = team;
@@ -39,16 +44,14 @@ static int scn_ship(lua_State *L)
 
 int load_scenario(const char *filename)
 {
-	lua_State *L;
+	lua_State *L = luaL_newstate();
 
-	L = luaL_newstate();
 	luaL_openlibs(L);
-
 	lua_register(L, "team", scn_team);
 	lua_register(L, "ship", scn_ship);
 
 	if (luaL_dofile(L, filename)) {
-		fprintf(stderr, "Failed to loading scenario %s: %s\n", filename, lua_tostring(L, -1));
+		fprintf(stderr, "Failed to load scenario %s: %s\n", filename, lua_tostring(L, -1));
 		lua_close(L);
 		return -1;
 	}
