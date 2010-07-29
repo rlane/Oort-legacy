@@ -11,13 +11,24 @@ LDFLAGS=-l$(LUA) \
 				`pkg-config gthread-2.0 --libs` \
         -lSDL_gfx -lGL -lGLU
 
-all: gl-viewer recorder
+common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
+common_objects = $(common_sources:.c=.o)
 
-gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
+all: gl-viewer recorder test_check_collision
 
-recorder: recorder.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
+%.d: %.c
+				@set -e; rm -f $@; \
+				$(CC) -M $(CFLAGS) $< > $@.$$$$; \
+				sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+				rm -f $@.$$$$
+
+-include $(common_sources:.c=.d)
+
+gl-viewer: gl-viewer.o $(common_objects)
+
+recorder: recorder.o $(common_objects)
 
 test_check_collision: test_check_collision.o physics.o
 
 clean:
-	rm -f *.o gl-viewer test_check_collision
+	rm -f *.o *.d gl-viewer recorder test_check_collision

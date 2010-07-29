@@ -1,5 +1,6 @@
 *.swp
 *.o
+*.d
 gl-viewer
 test_check_collision
 recorder
