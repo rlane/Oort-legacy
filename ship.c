@@ -329,26 +329,27 @@ static void count_hook(lua_State *L, lua_Debug *a)
 	lua_yield(L, 0);
 }
 
-int ship_ai_run(struct ship *s, int len)
+static int ship_ai_run(struct ship *s, int len)
 {
 	int result;
-	double returned;
 	lua_State *L = s->lua;
 
 	lua_sethook(L, count_hook, LUA_MASKCOUNT, len);
 
 	result = lua_resume(L, 0);
 	if (result == LUA_YIELD) {
-		if (LW_VERBOSE) fprintf(stderr, "script yielded\n");
 		return 1;
 	} else if (result == 0) {
-		/* Get the returned value at the top of the stack (index -1) */
-		returned = lua_tonumber(L, -1);
-		if (LW_VERBOSE) fprintf(stderr, "script returned: %.0f\n", returned);
-		lua_pop(L, 1);	/* Take the returned value out of the stack */
+		fprintf(stderr, "ship %.8s terminated\n", s->api_id);
 		return 0;
 	} else {
-		fprintf(stderr, "script error: %s\n", lua_tostring(L, -1));
+		fprintf(stderr, "ship %.8s error: %s\nbacktrace:\n", s->api_id, lua_tostring(L, -1));
+		lua_Debug ar;
+		int i;
+		for (i = 0; lua_getstack(L, i, &ar); i++) {
+			if (!lua_getinfo(L, "nSl", &ar)) abort();
+			fprintf(stderr, "  %d: %s %s %s @ %s:%d\n", i, ar.what, ar.namewhat, ar.name, ar.short_src, ar.currentline);
+		}
 		return 0;
 	}
 }
