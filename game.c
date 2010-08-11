@@ -16,6 +16,7 @@ int ticks = 0;
 GList *bullet_hits = NULL;
 double current_time = 0.0;
 GRand *prng = NULL;
+FILE *trace_file = NULL;
 
 static void handle_bullet_hit(struct ship *s, struct bullet *b, vec2 cp)
 {

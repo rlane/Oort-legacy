@@ -21,6 +21,15 @@ int main(int argc, char **argv)
 	int sample_ticks = 0;
 	int seed = getpid() ^ time(NULL);
 	const char *scenario = argc > 1 ? argv[1] : "scenarios/basic.lua";
+	char *trace_filename;
+
+	if ((trace_filename = getenv("RISC_TRACE"))) {
+		trace_file = fopen(trace_filename, "w");
+		if (!trace_file) {
+			fprintf(stderr, "could not open trace file\n");
+			return 1;
+		}
+	}
 
 	if (game_init(seed, scenario)) {
 		fprintf(stderr, "initialization failed\n");

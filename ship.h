@@ -31,6 +31,8 @@ struct ship {
 	int tail_head;
 	int last_shot_tick;
 	GQueue *mq;
+	guint64 line_start_time;
+	char line_info[256];
 };
 
 extern const struct ship_class fighter, mothership;

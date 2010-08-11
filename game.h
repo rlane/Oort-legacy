@@ -20,5 +20,6 @@ extern int ticks;
 extern double current_time;
 extern GList *bullet_hits;
 extern GRand *prng;
+extern FILE *trace_file;
 
 #endif
