@@ -33,6 +33,10 @@ struct ship {
 	GQueue *mq;
 	guint64 line_start_time;
 	char line_info[256];
+	struct {
+		int on;
+		vec2 a, b;
+	} debug_box;
 };
 
 extern const struct ship_class fighter, mothership;

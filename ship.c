@@ -288,6 +288,27 @@ static int api_die(lua_State *L)
 	return lua_yield(L, 0);
 }	
 
+static int api_debug_box(lua_State *L)
+{
+	double x1,y1,x2,y2;
+	struct ship *s = lua_ship(L);
+	x1 = luaL_checknumber(L, 1);
+	y1 = luaL_checknumber(L, 2);
+	x2 = luaL_checknumber(L, 3);
+	y2 = luaL_checknumber(L, 4);
+	s->debug_box.on = 1;
+	s->debug_box.a = C(x1,y1);
+	s->debug_box.b = C(x2,y2);
+	return 0;
+}
+
+static int api_debug_box_off(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	s->debug_box.on = 0;
+	return 0;
+}
+
 static int ai_create(const char *filename, struct ship *s, const char *orders)
 {
 	lua_State *G, *L;
@@ -309,6 +330,8 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 	lua_register(G, "sys_recv", api_recv);
 	lua_register(G, "sys_spawn", api_spawn);
 	lua_register(G, "sys_die", api_die);
+	lua_register(G, "sys_debug_box", api_debug_box);
+	lua_register(G, "sys_debug_box_off", api_debug_box_off);
 
 	lua_registry_set(G, RKEY_SHIP, s);
 

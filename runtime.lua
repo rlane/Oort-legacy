@@ -94,6 +94,14 @@ function explode()
 	sys_die()
 end
 
+function debug_box(x1,y1,x2,y2)
+	sys_debug_box(x1,y1,x2,y2)
+end
+
+function debug_box_off()
+	sys_debug_box_off()
+end
+
 sandbox_api = {
 	thrust = thrust,
 	position = position,
@@ -107,6 +115,8 @@ sandbox_api = {
 	recv = recv,
 	spawn = spawn,
 	explode = explode,
+	debug_box = debug_box,
+	debug_box_off = debug_box_off,
 }
 
 function copy_table(t, t2)
