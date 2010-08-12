@@ -10,10 +10,12 @@ local t = nil
 local bullet_lifetime = 0.5
 local bullet_speed = 20
 local max_target_distance = bullet_speed*bullet_lifetime
-local orbit_x = 0
-local orbit_y = 0
+local origin = { x = 0, y = 0, vx = 0, vy = 0 }
 local target_selector = function(k,c) return c.team == enemy_team() and c.class ~= "little_missile" end
-local target_id = nil
+local follow_target = nil
+local follow_target_retry = 0
+local fire_target = nil
+local fire_target_retry = 0
 
 local function fire_score(c)
 	local x,y = position()
@@ -32,39 +34,48 @@ while true do
 		print("msg: " .. msg)
 	end
 
-	local target
-	if target_id then target = sensor_contact(target_id) end
-
-	if not target then
-		local contacts = sensor_contacts()
-		target_id, target = pick(contacts, target_selector)
-	end
-
 	local x, y = position()
-
-	local follow
-	if distance(x,y,0,0) < 50 and target then
-		follow = target
-	else
-		follow = { x = 0, y = 0, vx = 0, vy = 0 }
-	end
-
-	i = i + 1
-	if i >= 256 then
-		i = 0
-	end
-
 	local vx, vy = velocity()
 
-	if i % 8 == 0 then
+	if not follow_target and follow_target_retry == 16 then
+		local follow_target_id
 		local contacts = sensor_contacts()
-		local t2 = min_by(contacts, fire_score)
-		if t2 then
-			local a2 = lead(x, y, t2.x, t2.y, vx, vy, t2.vx, t2.vy, bullet_speed, bullet_lifetime)
-			if a2 then
-				fire("main", a2+R(-0.04,0.04))
-			end
+		follow_target_id, follow_target = pick(contacts, target_selector)
+	elseif not follow_target then
+		follow_target_retry = follow_target_retry + 1
+	else
+		follow_target = sensor_contact(follow_target.id)
+	end
+
+	local follow
+	if follow_target and distance(x,y,0,0) < 50 then
+		follow = follow_target
+	else
+		follow = origin
+	end
+	debug_box(follow.x-1, follow.y-1, follow.x+1, follow.y+1)
+
+	if not fire_target and fire_target_retry == 16 then
+		fire_target = min_by(sensor_contacts(), fire_score)
+		fire_target_retry = 0
+	elseif not fire_target then
+		fire_target_retry = fire_target_retry + 1
+	else
+		fire_target = sensor_contact(fire_target.id)
+	end
+
+	if fire_target then
+		local t = fire_target
+		local a = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, bullet_speed, bullet_lifetime)
+		if a then
+			local spread = 0.04
+			fire("main", a+R(-spread,spread))
+		else
+			fire_target = nil
 		end
+		--debug_box(t.x-1, t.y-1, t.x+1, t.y+1)
+	else
+		--debug_box_off()
 	end
 
 	local a = lead(x, y, follow.x, follow.y, vx, vy, follow.vx, follow.vy, 10, math.huge)
