@@ -32,11 +32,11 @@ while true do
 		print("msg: " .. msg)
 	end
 
-	local contacts = sensor_contacts()
 	local target
-	if target_id then target = contacts[target_id] end
+	if target_id then target = sensor_contact(target_id) end
 
 	if not target then
+		local contacts = sensor_contacts()
 		target_id, target = pick(contacts, target_selector)
 	end
 
@@ -57,6 +57,7 @@ while true do
 	local vx, vy = velocity()
 
 	if i % 8 == 0 then
+		local contacts = sensor_contacts()
 		local t2 = min_by(contacts, fire_score)
 		if t2 then
 			local a2 = lead(x, y, t2.x, t2.y, vx, vy, t2.vx, t2.vy, bullet_speed, bullet_lifetime)

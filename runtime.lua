@@ -53,6 +53,10 @@ function sensor_contacts()
 	return sys_sensor_contacts()
 end
 
+function sensor_contact(id)
+	return sys_sensor_contact(id)
+end
+
 function class()
 	return sys_class();
 end
@@ -98,6 +102,7 @@ sandbox_api = {
 	yield = yield,
 	team = team,
 	sensor_contacts = sensor_contacts,
+	sensor_contact = sensor_contact,
 	send = send,
 	recv = recv,
 	spawn = spawn,

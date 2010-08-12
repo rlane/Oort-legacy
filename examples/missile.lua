@@ -15,7 +15,7 @@ if not t then
 end
 
 while true do
-	t = sensor_contacts()[target_id]
+	t = sensor_contact(target_id)
 
 	if not t then
 		--printf("lost target\n")

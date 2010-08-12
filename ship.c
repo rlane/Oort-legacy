@@ -99,46 +99,65 @@ static int api_create_bullet(lua_State *L)
 	return 0;
 }
 
-static int api_sensor_contacts(lua_State *L)
+static void make_sensor_contact(lua_State *L, struct ship *s)
 {
 	lua_newtable(L);
+
+	lua_pushstring(L, "id");
+	lua_pushlstring(L, s->api_id, API_ID_SIZE);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "team");
+	lua_pushstring(L, s->team->name);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "class");
+	lua_pushstring(L, s->class->name);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "x"); // index 3
+	lua_pushnumber(L, creal(s->physics->p)); // index 4
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "y"); // index 3
+	lua_pushnumber(L, cimag(s->physics->p)); // index 4
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "vx");
+	lua_pushnumber(L, creal(s->physics->v));
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "vy");
+	lua_pushnumber(L, cimag(s->physics->v));
+	lua_settable(L, -3);
+}
+
+static int api_sensor_contacts(lua_State *L)
+{
 	GList *e;
+	lua_newtable(L);
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s = e->data;
 		lua_pushstring(L, s->api_id);
-		lua_newtable(L);
-
-		lua_pushstring(L, "id");
-		lua_pushlstring(L, s->api_id, API_ID_SIZE);
-		lua_settable(L, -3);
-
-		lua_pushstring(L, "team");
-		lua_pushstring(L, s->team->name);
-		lua_settable(L, -3);
-
-		lua_pushstring(L, "class");
-		lua_pushstring(L, s->class->name);
-		lua_settable(L, -3);
-
-		lua_pushstring(L, "x"); // index 3
-		lua_pushnumber(L, creal(s->physics->p)); // index 4
-		lua_settable(L, -3);
-
-		lua_pushstring(L, "y"); // index 3
-		lua_pushnumber(L, cimag(s->physics->p)); // index 4
-		lua_settable(L, -3);
-
-		lua_pushstring(L, "vx");
-		lua_pushnumber(L, creal(s->physics->v));
-		lua_settable(L, -3);
-
-		lua_pushstring(L, "vy");
-		lua_pushnumber(L, cimag(s->physics->v));
-		lua_settable(L, -3);
-
+		make_sensor_contact(L, s);
 		lua_settable(L, -3);
 	}
 	return 1;
+}
+
+static int api_sensor_contact(lua_State *L)
+{
+	GList *e;
+	const char *id = luaL_checkstring(L, 1);
+	lua_pop(L, 1);
+	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
+		struct ship *s = e->data;
+		if (!strncmp(s->api_id, id, sizeof(s->api_id))) {
+			make_sensor_contact(L, s);
+			return 1;
+		}
+	}
+	return 0;
 }
 
 static int api_team(lua_State *L)
@@ -281,6 +300,7 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 	lua_register(G, "sys_velocity", api_velocity);
 	lua_register(G, "sys_create_bullet", api_create_bullet);
 	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
+	lua_register(G, "sys_sensor_contact", api_sensor_contact);
 	lua_register(G, "sys_team", api_team);
 	lua_register(G, "sys_class", api_class);
 	lua_register(G, "sys_time", api_time);
