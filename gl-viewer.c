@@ -26,8 +26,8 @@ static const int FPS = 32;
 static const double tick_length = 1.0/32.0;
 const double zoom_force = 0.1;
 
-static int screen_width = 1024;
-static int screen_height = 768;
+static int screen_width = 640;
+static int screen_height = 480;
 static complex double view_pos = 0.0;
 static double view_scale = 8.0;
 static int paused = 0;
@@ -173,6 +173,10 @@ static void get_resolution(void)
 {
 	char *s;
 
+	const SDL_VideoInfo *vid_info = SDL_GetVideoInfo();
+	screen_width = vid_info->current_w;
+	screen_height = vid_info->current_h;
+
 	if ((s = getenv("RISC_W"))) {
 		screen_width = atoi(s);
 	}
@@ -180,6 +184,8 @@ static void get_resolution(void)
 	if ((s = getenv("RISC_H"))) {
 		screen_height = atoi(s);
 	}
+
+	printf("using resolution %dx%d\n", screen_width, screen_height);
 }
 
 static struct ship *pick(vec2 p)
@@ -229,7 +235,6 @@ int main(int argc, char **argv)
 {
 	SDL_Event event;
 
-	get_resolution();
 	font_init();
 
 	printf("initializing SDL..\n");
@@ -239,6 +244,8 @@ int main(int argc, char **argv)
 		fprintf(stderr,"Failed to initialize SDL Video!\n");
 		exit(1);
 	}
+
+	get_resolution();
 
 	SDL_initFramerate(&fps_manager);
 	SDL_setFramerate(&fps_manager, FPS);
