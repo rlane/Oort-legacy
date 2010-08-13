@@ -202,6 +202,7 @@ static struct ship *pick(vec2 p)
 
 static void glWrite(int x, int y, const char *str)
 {
+#ifndef WINDOWS
 	glWindowPos2i(x, y);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 
@@ -209,6 +210,7 @@ static void glWrite(int x, int y, const char *str)
 	while ((c = *str++)) {
 		glBitmap(8, 8, 4, 4, 9, 0, font + 8*c);
 	}
+#endif
 }
 
 static void glPrintf(int x, int y, const char *fmt, ...)

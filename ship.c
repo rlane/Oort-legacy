@@ -367,12 +367,16 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 
 static guint64 thread_ns(void)
 {
+#ifdef WINDOWS
+	return 0;
+#else
 	struct timespec ts;
 	if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts)) {
 		perror("glock_gettime");
 		abort();
 	}
 	return ts.tv_nsec + ts.tv_sec*(1000*1000*1000);
+#endif
 }
 
 static void debug_hook(lua_State *L, lua_Debug *a)
