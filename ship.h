@@ -16,6 +16,7 @@ struct ship_class {
 #define TAIL_SEGMENTS 16
 #define TAIL_TICKS 4
 #define API_ID_SIZE 8
+#define MAX_DEBUG_LINES 32
 
 struct ship {
 	int id;
@@ -34,9 +35,11 @@ struct ship {
 	guint64 line_start_time;
 	char line_info[256];
 	struct {
-		int on;
-		vec2 a, b;
-	} debug_box;
+		int num_lines;
+		struct {
+			vec2 a, b;
+		} lines[MAX_DEBUG_LINES];
+	} debug;
 };
 
 extern const struct ship_class fighter, mothership;

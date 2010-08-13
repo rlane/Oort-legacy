@@ -163,3 +163,17 @@ function keys(t)
 	end
 	return r
 end
+
+function debug_square(x,y,l)
+	debug_line(x-l, y-l, x+l, y-l)
+	debug_line(x+l, y-l, x+l, y+l)
+	debug_line(x+l, y+l, x-l, y+l)
+	debug_line(x-l, y+l, x-l, y-l)
+end
+
+function debug_diamond(x,y,l)
+	debug_line(x, y-l, x+l, y)
+	debug_line(x+l, y, x, y+l)
+	debug_line(x, y+l, x-l, y)
+	debug_line(x-l, y, x, y-l)
+end

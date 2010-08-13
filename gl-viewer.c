@@ -118,16 +118,15 @@ static void render_ship(struct ship *s, void *unused)
 		}
 		glEnd();
 
-		if (s->debug_box.on) {
-			vec2 sa = S(s->debug_box.a);
-			vec2 sb = S(s->debug_box.b);
-			glBegin(GL_LINE_LOOP);
+		glColor32(0x49D5CEAA);
+		glBegin(GL_LINES);
+		for (i = 0; i < s->debug.num_lines; i++) {
+			vec2 sa = S(s->debug.lines[i].a);
+			vec2 sb = S(s->debug.lines[i].b);
 			glVertex3f(creal(sa), cimag(sa), 0);
-			glVertex3f(creal(sb), cimag(sa), 0);
 			glVertex3f(creal(sb), cimag(sb), 0);
-			glVertex3f(creal(sa), cimag(sb), 0);
-			glEnd();
 		}
+		glEnd();
 
 		if (s->dead) {
 			picked = NULL;

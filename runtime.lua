@@ -115,8 +115,8 @@ sandbox_api = {
 	recv = recv,
 	spawn = spawn,
 	explode = explode,
-	debug_box = debug_box,
-	debug_box_off = debug_box_off,
+	debug_line = sys_debug_line,
+	clear_debug_lines = sys_clear_debug_lines,
 }
 
 function copy_table(t, t2)

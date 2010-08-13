@@ -34,6 +34,7 @@ while true do
 		print("msg: " .. msg)
 	end
 
+	clear_debug_lines()
 	local x, y = position()
 	local vx, vy = velocity()
 
@@ -53,7 +54,7 @@ while true do
 	else
 		follow = origin
 	end
-	debug_box(follow.x-1, follow.y-1, follow.x+1, follow.y+1)
+	debug_square(follow.x, follow.y, 0.5)
 
 	if not fire_target and fire_target_retry == 16 then
 		fire_target = min_by(sensor_contacts(), fire_score)
@@ -66,6 +67,7 @@ while true do
 
 	if fire_target then
 		local t = fire_target
+		debug_diamond(t.x, t.y, 0.5)
 		local a = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, bullet_speed, bullet_lifetime)
 		if a then
 			local spread = 0.04
