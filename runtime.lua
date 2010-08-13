@@ -7,14 +7,6 @@ function thrust(a,f)
 	sys_thrust(a,f)
 end
 
-function position()
-	return sys_position()
-end
-
-function velocity()
-	return sys_velocity()
-end
-
 function fire(name, a)
 	local x,y,v,vx,vy,m,ttl
 	local gun = my_class.guns[name]
@@ -31,22 +23,14 @@ function fire(name, a)
 		last_fire_times[name] = sys_time()
 	end
 
-	x, y = position()
+	x, y = sys_position()
 	v = gun.bullet_velocity
-	vx, vy = velocity()
+	vx, vy = sys_velocity()
 	vx = vx + math.cos(a)*v
 	vy = vy + math.sin(a)*v
 	m = gun.bullet_mass
 	ttl = gun.bullet_ttl
 	sys_create_bullet(x,y,vx,vy,m,ttl)
-end
-
-function yield()
-	sys_yield()
-end
-
-function team()
-	return sys_team()
 end
 
 function sensor_contacts()
@@ -55,10 +39,6 @@ end
 
 function sensor_contact(id)
 	return sys_sensor_contact(id)
-end
-
-function class()
-	return sys_class();
 end
 
 function send(msg)
@@ -74,8 +54,8 @@ function spawn(class, filename, orders)
 end
 
 function explode()
-	local x, y = position()
-	local vx, vy = velocity()
+	local x, y = sys_position()
+	local vx, vy = sys_velocity()
 	local i
 	local n = 128
 	local exp = my_class.explosion
@@ -94,21 +74,13 @@ function explode()
 	sys_die()
 end
 
-function debug_box(x1,y1,x2,y2)
-	sys_debug_box(x1,y1,x2,y2)
-end
-
-function debug_box_off()
-	sys_debug_box_off()
-end
-
 sandbox_api = {
 	thrust = thrust,
-	position = position,
-	velocity = velocity,
+	position = sys_position,
+	velocity = sys_velocity,
 	fire = fire,
-	yield = yield,
-	team = team,
+	yield = sys_yield,
+	team = sys_team,
 	sensor_contacts = sensor_contacts,
 	sensor_contact = sensor_contact,
 	send = send,
