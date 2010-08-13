@@ -32,6 +32,7 @@ static complex double view_pos = 0.0;
 static double view_scale = 8.0;
 static int paused = 0;
 static int single_step = 0;
+static int render_all_debug_lines = 0;
 static struct ship *picked = NULL;
 static GLubyte font[256*8];
 
@@ -117,7 +118,9 @@ static void render_ship(struct ship *s, void *unused)
 			glVertex3f(creal(sp), cimag(sp), 0);
 		}
 		glEnd();
+	}
 
+	if (s == picked || render_all_debug_lines) {
 		glColor32(0x49D5CEAA);
 		glBegin(GL_LINES);
 		for (i = 0; i < s->debug.num_lines; i++) {
@@ -127,10 +130,10 @@ static void render_ship(struct ship *s, void *unused)
 			glVertex3f(creal(sb), cimag(sb), 0);
 		}
 		glEnd();
+	}
 
-		if (s->dead) {
-			picked = NULL;
-		}
+	if (s == picked && s->dead) {
+		picked = NULL;
 	}
 }
 
@@ -337,6 +340,9 @@ int main(int argc, char **argv)
 				case SDLK_RETURN:
 					paused = 0;
 					single_step = 1;
+					break;
+				case SDLK_y:
+					render_all_debug_lines = !render_all_debug_lines;
 					break;
 				default:
 					break;
