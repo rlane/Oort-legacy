@@ -21,7 +21,6 @@ char RKEY_SHIP[1];
 
 GList *all_ships = NULL;
 static GHashTable *ship_classes = NULL;
-static int next_ship_id = 1;
 
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
@@ -338,9 +337,6 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
-	lua_pushnumber(G, s->id);
-	lua_setglobal(G, "ship_id");
-
 	lua_pushstring(G, orders);
 	lua_setglobal(G, "orders");
 
@@ -451,8 +447,6 @@ void ship_tick(double t)
 struct ship *ship_create(const char *filename, const char *class_name, const char *orders)
 {
 	struct ship *s = g_slice_new0(struct ship);
-
-	s->id = next_ship_id++;
 
 	s->class = g_hash_table_lookup(ship_classes, class_name);
 	if (!s->class) {

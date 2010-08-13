@@ -19,7 +19,6 @@ struct ship_class {
 #define MAX_DEBUG_LINES 32
 
 struct ship {
-	int id;
 	const char api_id[API_ID_SIZE];
 	const struct ship_class *class;
 	struct team *team;
