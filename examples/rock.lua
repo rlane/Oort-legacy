@@ -74,11 +74,19 @@ while true do
 	end
 
 	if math.random(1,100) == 7 then
-		spawn("missile", "examples/missile.lua", "")
+		local target_selector = function(k,c) return c.team == enemy_team() and c.class == "mothership" end
+		local target_id, t = pick(sensor_contacts(), target_selector)
+		if target_id then
+			spawn("missile", "examples/missile.lua", target_id)
+		end
 	end
 
 	if math.random(50) == 7 then
-		spawn("little_missile", "examples/little_missile.lua", "")
+		local target_selector = function(k,c) return c.team == enemy_team() and c.class ~= "little_missile" end
+		local target_id, t = pick(sensor_contacts(), target_selector)
+		if target_id then
+			spawn("little_missile", "examples/little_missile.lua", target_id)
+		end
 	end
 
 	if math.random(200) == 7 then

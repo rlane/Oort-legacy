@@ -1,18 +1,9 @@
 dofile("examples/lib.lua")
 
-local x, y = position()
+local target_id = orders
 
 thrust(math.random()*2*math.pi, 5)
 sleep(16)
-local target_selector = function(k,c) return c.team == enemy_team() and c.class == "mothership" end
-local target_id, t = pick(sensor_contacts(), target_selector)
-
-if not t then
-	--printf("no target\n")
-	thrust(0, 0)
-	sleep(64)
-	explode()
-end
 
 while true do
 	t = sensor_contact(target_id)
@@ -23,6 +14,9 @@ while true do
 		sleep(64)
 		explode()
 	end
+
+	clear_debug_lines()
+	debug_diamond(t.x, t.y, 0.3)
 	
 	local x, y = position()
 	if distance(t.x, t.y, x, y) < 3 then

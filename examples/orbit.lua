@@ -102,5 +102,9 @@ while true do
 		thrust(a, 10)
 	end
 
+	if follow_target and math.random(1000) == 7 then
+		spawn("little_missile", "examples/little_missile.lua", follow_target.id)
+	end
+
 	yield()
 end
