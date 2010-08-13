@@ -50,7 +50,7 @@ ships.mothership = {
 
 ships.missile = {
 	radius = 1/32,
-	hull = 1,
+	hull = 0.2,
 	guns = {},
 	explosion = {
 		count = 128,
@@ -66,7 +66,7 @@ ships.little_missile = {
 	hull = 0.1,
 	guns = {},
 	explosion = {
-		count = 16,
+		count = 32,
 		mass = 0.01,
 		velocity = 2,
 		ttl = 1,
