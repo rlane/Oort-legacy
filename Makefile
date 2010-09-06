@@ -14,7 +14,7 @@ LDFLAGS=-l$(LUA) \
 common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
 common_objects = $(common_sources:.c=.o)
 
-all: gl-viewer recorder test_check_collision
+all: risc risc-dedicated test_check_collision
 
 %.d: %.c
 				@set -e; rm -f $@; \
@@ -24,11 +24,11 @@ all: gl-viewer recorder test_check_collision
 
 -include $(common_sources:.c=.d)
 
-gl-viewer: gl-viewer.o $(common_objects)
+risc: risc.o $(common_objects)
 
-recorder: recorder.o $(common_objects)
+risc-dedicated: risc-dedicated.o $(common_objects)
 
 test_check_collision: test_check_collision.o physics.o
 
 clean:
-	rm -f *.o *.d gl-viewer recorder test_check_collision
+	rm -f *.o *.d risc risc-dedicated test_check_collision

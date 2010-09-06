@@ -12,13 +12,13 @@ LDFLAGS=-l$(LUA) \
         -L/System/Library/Frameworks/OpenGL.framework/Libraries \
         -framework OpenGL -framework GLUT
 
-all: gl-viewer recorder
+all: risc risc-dedicated
 
-gl-viewer: gl-viewer.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
+risc: risc.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
 
-recorder: recorder.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
+risc-dedicated: risc-dedicated.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
 
 test_check_collision: test_check_collision.o physics.o
 
 clean:
-	rm -f *.o gl-viewer test_check_collision
+	rm -f *.o risc test_check_collision

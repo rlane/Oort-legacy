@@ -1,6 +1,6 @@
 *.swp
 *.o
 *.d
-gl-viewer
+risc
+risc-dedicated
 test_check_collision
-recorder

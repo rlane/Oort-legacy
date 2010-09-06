@@ -24,7 +24,7 @@ LDFLAGS=\
 common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
 common_objects = $(common_sources:.c=.o)
 
-all: gl-viewer.exe recorder.exe
+all: risc.exe risc-dedicated.exe
 
 %.d: %.c
 				@set -e; rm -f $@; \
@@ -34,11 +34,11 @@ all: gl-viewer.exe recorder.exe
 
 -include $(common_sources:.c=.d)
 
-gl-viewer.exe: gl-viewer.o $(common_objects)
+risc.exe: risc.o $(common_objects)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-recorder.exe: recorder.o $(common_objects)
+risc-dedicated.exe: risc-dedicated.o $(common_objects)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 clean:
-	rm -f *.o *.d gl-viewer.exe recorder.exe
+	rm -f *.o *.d risc.exe risc-dedicated.exe
