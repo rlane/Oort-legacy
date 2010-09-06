@@ -200,6 +200,14 @@ static struct ship *pick(vec2 p)
 	return NULL;
 }
 
+static void zoom(double f)
+{
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+	view_pos = (1-zoom_force)*view_pos + zoom_force * W(C(x,y));
+	view_scale *= f;
+}
+
 static void glWrite(int x, int y, const char *str)
 {
 #ifndef WINDOWS
@@ -254,6 +262,7 @@ int main(int argc, char **argv)
 
 	SDL_WM_SetCaption("RISC", "RISC");
 	SDL_ShowCursor(SDL_ENABLE);
+	SDL_EnableKeyRepeat(200,100);
 
 	atexit(SDL_Quit);
 
@@ -325,23 +334,11 @@ int main(int argc, char **argv)
 
 			if (event.type == SDL_KEYDOWN) {
 				switch (event.key.keysym.sym) {
-				case SDLK_UP:
-					view_pos -= C(0,1);
-					break;
-				case SDLK_DOWN:
-					view_pos += C(0,1);
-					break;
-				case SDLK_LEFT:
-					view_pos -= C(1,0);
-					break;
-				case SDLK_RIGHT:
-					view_pos -= C(-1,0);
-					break;
 				case SDLK_z:
-					view_scale *= 1.1;
+					zoom(1.1);
 					break;
 				case SDLK_x:
-					view_scale /= 1.1;
+					zoom(1.0/1.1);
 					break;
 				case SDLK_SPACE:
 					paused = !paused;
@@ -361,9 +358,6 @@ int main(int argc, char **argv)
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
 				if (event.button.button == SDL_BUTTON_WHEELUP ||
 				    event.button.button == SDL_BUTTON_WHEELDOWN) {
-					int x, y;
-					SDL_GetMouseState(&x, &y);
-					view_pos = (1-zoom_force)*view_pos + zoom_force * W(C(x,y));
 				}
 
 				switch (event.button.button) {
@@ -371,10 +365,10 @@ int main(int argc, char **argv)
 					picked = pick(W(C(event.button.x, event.button.y)));
 					break;
 				case SDL_BUTTON_WHEELUP:
-					view_scale *= 1.1;
+					zoom(1.1);
 					break;
 				case SDL_BUTTON_WHEELDOWN:
-					view_scale /= 1.1;
+					zoom(1.0/1.1);
 					break;
 				default:
 					break;
