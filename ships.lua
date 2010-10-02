@@ -3,6 +3,7 @@ ships = {}
 ships.fighter = {
 	radius = 4/32,
 	hull = 10,
+	max_acc = 10,
 	cost = 200,
 	guns = {
 		main = {
@@ -15,6 +16,7 @@ ships.fighter = {
 	},
 	explosion = {
 		count = 16,
+		mass = 0.1,
 		velocity = 2,
 		ttl = 1,
 	},
@@ -37,6 +39,7 @@ local flak = {
 ships.mothership = {
 	radius = 10/32,
 	hull = 1000,
+	max_acc = 2,
 	cost = 2000,
 	guns = {
 		main = {
@@ -52,6 +55,7 @@ ships.mothership = {
 	},
 	explosion = {
 		count = 256,
+		mass = 1,
 		velocity = 2,
 		ttl = 2,
 	},
@@ -66,6 +70,7 @@ ships.mothership = {
 ships.missile = {
 	radius = 1/32,
 	hull = 0.2,
+	max_acc = 10,
 	cost = 40,
 	guns = {},
 	explosion = {
@@ -85,6 +90,7 @@ ships.missile = {
 ships.little_missile = {
 	radius = 0.5/32,
 	hull = 0.1,
+	max_acc = 20,
 	cost = 20,
 	guns = {},
 	explosion = {

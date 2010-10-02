@@ -99,6 +99,12 @@ in their energy characteristics; for example, motherships have a large energy
 supply that regenerates quickly while missiles have a small energy supply that
 does not regenerate at all.
 
+#### Thrust
+
+The thrust() function takes an angle and acceleration. The maximum value of the
+acceleration depends on the ship class. The engine will accelerate the ship
+using these values until the next time thrust() is called.
+
 #### Spawning
 
 A ship can call the spawn() function to create a new ship. This costs a large

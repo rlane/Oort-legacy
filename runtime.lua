@@ -9,8 +9,16 @@ function energy()
 	return _energy
 end
 
-function thrust(a,f)
-	sys_thrust(a,f)
+function thrust(a,acc)
+	if acc < 0 then
+		return
+	end
+
+	if acc > my_class.max_acc then
+		acc = my_class.max_acc
+	end
+
+	sys_thrust(a,acc)
 end
 
 function fire(name, a)

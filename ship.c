@@ -48,7 +48,7 @@ static int api_thrust(lua_State *L)
 	struct ship *s = lua_ship(L);
 	double a = luaL_checknumber(L, 1);
 	double f = luaL_checknumber(L, 2);
-	s->physics->thrust = f * (cos(a) + sin(a)*I);
+	s->physics->thrust = f * (cos(a) + sin(a)*I) * s->physics->m;
 	//printf("thrust x=%g y=%g\n", creal(s->physics->thrust), cimag(s->physics->thrust));
 	return 0;
 }

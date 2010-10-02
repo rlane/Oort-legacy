@@ -26,7 +26,7 @@ while true do
 	local vx, vy = velocity()
 	local a = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, 30, math.huge)
 	if a then
-		thrust(a, 20)
+		thrust(a, 30)
 	else
 		explode()
 	end
