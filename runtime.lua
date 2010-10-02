@@ -54,6 +54,14 @@ function sensor_contact(id)
 end
 
 function send(msg)
+	local cost = string.len(msg)
+
+	if _energy < cost then
+		return
+	else
+		_energy = _energy - cost
+	end
+
 	sys_send(msg)
 end
 
