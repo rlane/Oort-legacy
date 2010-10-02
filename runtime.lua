@@ -61,8 +61,21 @@ function recv()
 	return sys_recv()
 end
 
-function spawn(class, filename, orders)
-	sys_spawn(class, filename, orders)
+function spawn(class_name, filename, orders)
+	class = ships[class_name]
+
+	if not class then
+		error(string.format("class %s does not exist", class_name))
+		return
+	end
+
+	if _energy < class.cost then
+		return
+	else
+		_energy = _energy - class.cost
+	end
+
+	sys_spawn(class_name, filename, orders)
 end
 
 function explode()

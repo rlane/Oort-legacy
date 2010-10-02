@@ -84,8 +84,11 @@ directory. A summary of the API is given below.
 The available ship classes are specified by the ships.lua file.
 
 Every ship has an energy supply with a certain recharge rate and a limited
-capacity. Energy is used to fire guns. If a ship attempts to fire a gun without
-having enough energy, the fire action is ignored.
+capacity. Energy is used to fire guns and spawn ships. If a ship attempts an
+action without having the required energy it is ignored.
+
+to fire a gun without
+having enough energy, the fire action is ignored. 
 
 Graphical simulator
 -------------------
