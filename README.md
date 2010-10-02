@@ -53,6 +53,8 @@ directory. A summary of the API is given below.
 
 - velocity() - returns a tuple (vx, vy).
 
+- energy() - return the ship's current energy level.
+
 - team() - returns the name of this ship's team.
 
 - thrust(angle, force) - start thrusting in the given direction.
@@ -80,6 +82,10 @@ directory. A summary of the API is given below.
 ### Ships
 
 The available ship classes are specified by the ships.lua file.
+
+Every ship has an energy supply with a certain recharge rate and a limited
+capacity. Energy is used to fire guns. If a ship attempts to fire a gun without
+having enough energy, the fire action is ignored.
 
 Graphical simulator
 -------------------

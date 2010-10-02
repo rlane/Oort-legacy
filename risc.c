@@ -388,13 +388,14 @@ int main(int argc, char **argv)
 		g_list_foreach(bullet_hits, (GFunc)render_bullet_hit, NULL);
 
 		if (picked) {
-			const int x = 15, y = 70, dy = 12;
+			const int x = 15, y = 82, dy = 12;
 			glColor32(0xAAFFFFAA);
 			glPrintf(x, y-0*dy, "%s %.8s", picked->class->name, picked->api_id);
 			glPrintf(x, y-1*dy, "hull: %.2f", picked->hull);
 			glPrintf(x, y-2*dy, "position: " VEC2_FMT, VEC2_ARG(picked->physics->p));
 			glPrintf(x, y-3*dy, "velocity: " VEC2_FMT, VEC2_ARG(picked->physics->v));
 			glPrintf(x, y-4*dy, "thrust: " VEC2_FMT, VEC2_ARG(picked->physics->thrust));
+			glPrintf(x, y-5*dy, "energy: %g", ship_get_energy(picked));
 		}
 
 		SDL_GL_SwapBuffers();

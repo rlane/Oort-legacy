@@ -437,6 +437,20 @@ void ship_tick_one(struct ship *s)
 		int ret = ship_ai_run(s, 10000);
 		if (!ret) s->ai_dead = 1;
 	}
+
+	if (!s->ai_dead) {
+		lua_getglobal(s->global_lua, "tick_hook");
+		lua_call(s->global_lua, 0, 0);
+	}
+}
+
+double ship_get_energy(struct ship *s)
+{
+	lua_getglobal(s->global_lua, "energy");
+	lua_call(s->global_lua, 0, 1);
+	double e = lua_tonumber(s->global_lua, -1);
+	lua_pop(s->global_lua, 1);
+	return e;
 }
 
 void ship_tick(double t)

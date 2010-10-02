@@ -9,6 +9,7 @@ ships.fighter = {
 			bullet_velocity = 20,
 			bullet_ttl = 0.5,
 			reload_time = 0.15,
+			cost = 1,
 		}
 	},
 	explosion = {
@@ -16,7 +17,12 @@ ships.fighter = {
 		velocity = 2,
 		ttl = 1,
 	},
-	count_for_victory = true
+	count_for_victory = true,
+	energy = {
+		initial = 50,
+		rate = 10,
+		limit = 100,
+	}
 }
 
 local flak = {
@@ -24,6 +30,7 @@ local flak = {
 	bullet_velocity = 25,
 	bullet_ttl = 0.5,
 	reload_time = 0.15,
+	cost = 1,
 }
 
 ships.mothership = {
@@ -35,6 +42,7 @@ ships.mothership = {
 			bullet_velocity = 5,
 			bullet_ttl = 10,
 			reload_time = 1.0,
+			cost = 20,
 		},
 		flak1 = flak,
 		flak2 = flak,
@@ -45,7 +53,12 @@ ships.mothership = {
 		velocity = 2,
 		ttl = 2,
 	},
-	count_for_victory = true
+	count_for_victory = true,
+	energy = {
+		initial = 500,
+		rate = 100,
+		limit = 1000,
+	}
 }
 
 ships.missile = {
@@ -58,7 +71,12 @@ ships.missile = {
 		velocity = 4,
 		ttl = 0.5,
 	},
-	count_for_victory = false
+	count_for_victory = false,
+	energy = {
+		initial = 20,
+		rate = 0,
+		limit = 20,
+	}
 }
 
 ships.little_missile = {
@@ -71,5 +89,10 @@ ships.little_missile = {
 		velocity = 2,
 		ttl = 1,
 	},
-	count_for_victory = false
+	count_for_victory = false,
+	energy = {
+		initial = 10,
+		rate = 0,
+		limit = 10,
+	}
 }

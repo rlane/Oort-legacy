@@ -2,6 +2,12 @@ dofile("ships.lua")
 
 local my_class = ships[sys_class()]
 local last_fire_times = {}
+local _energy = my_class.energy.initial
+local energy_tick_rate = my_class.energy.rate / 32.0
+
+function energy()
+	return _energy
+end
 
 function thrust(a,f)
 	sys_thrust(a,f)
@@ -16,6 +22,12 @@ function fire(name, a)
 	end
 
 	local last_fire_time = last_fire_times[name]
+
+	if _energy < gun.cost then
+		return
+	else
+		_energy = _energy - gun.cost
+	end
 
 	if last_fire_time and last_fire_time + gun.reload_time > sys_time() then
 		return
@@ -78,6 +90,7 @@ sandbox_api = {
 	thrust = thrust,
 	position = sys_position,
 	velocity = sys_velocity,
+	energy = energy,
 	fire = fire,
 	yield = sys_yield,
 	team = sys_team,
@@ -109,6 +122,13 @@ end
 function debug_count_hook()
 	print("preempted", sys_class(), ship_id)
 	print(debug.traceback())
+end
+
+function tick_hook()
+	_energy = _energy + energy_tick_rate
+	if _energy > my_class.energy.limit then
+		_energy = my_class.energy.limit
+	end
 end
 
 function sandbox(f)
