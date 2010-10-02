@@ -36,6 +36,10 @@ Lua file for each ship. This is useful for testing, but in the future this will
 likely be changed so that each team has a single AI (which can behave
 differently depending on the ship).
 
+### Victory condition
+
+The team with the last ship alive (not counting missiles) is the winner.
+
 ### AI
 
 Every ship in the game is controlled by a Lua program that calls functions
@@ -79,16 +83,68 @@ directory. A summary of the API is given below.
 
 - clear\_debug\_lines()
 
+- orders - a string global containing the orders for this ship as set by the
+           spawn() function.
+
 ### Ships
 
 The available ship classes are specified by the ships.lua file.
 
+#### Energy
+
 Every ship has an energy supply with a certain recharge rate and a limited
 capacity. Energy is used to fire guns and spawn ships. If a ship attempts an
-action without having the required energy it is ignored.
+action without having the required energy it is ignored. The ship classes vary
+in their energy characteristics; for example, motherships have a large energy
+supply that regenerates quickly while missiles have a small energy supply that
+does not regenerate at all.
 
-to fire a gun without
-having enough energy, the fire action is ignored. 
+#### Spawning
+
+A ship can call the spawn() function to create a new ship. This costs a large
+amount of energy that depends on the specified class. Missiles are just another
+class of ships in RISC, so to launch a missile simply spawn it with orders of
+where to go.
+
+#### Guns
+
+Each ship has zero or more guns determined by its class. The guns are named,
+and you pass this name to the fire() function. Guns have varying bullet
+masses, bullet velocities, bullet lifetimes, reload times, and energy
+costs to fire. The gun's bullet velocity is added to the ship velocity.
+Whenever a bullet impacts a ship it does damage equal to its kinetic
+energy relative to the ship.
+
+#### Hull
+
+Hull strength varies among ship classes. When a bullet damages a ship its
+relative kinetic energy is subtracted from the ship's hull strength. If a
+ship's hull strength falls below zero it is destroyed.
+
+#### Self-destruct
+
+The explode() function causes the ship to self-destruct. An explosion (spray of
+bullets) is created and the ship is destroyed. The characteristics of the
+explosion depend on the ship class, but it is important to note that because
+the shrapnel velocities are added to the ship velocity a fast-moving ship will
+have a more conical shrapnel pattern. Calling explode() should be rare for most
+ship classes, but it is the typical behavior for missiles.
+
+#### Radio
+
+A simple broadcast radio is currently implemented. Sending a message on the
+radio costs energy equal to the number of bytes sent. Calling the recv()
+function returns the next message received by the ship, or nil if the queue
+is empty. Multicast and radio jamming are future development items.
+
+#### Sensors
+
+The sensor\_contacts() function returns a table of all the ships detected by
+this ships sensors. This is currently all other ships in the battle, but this
+will change to be all ships within a certain range. Each contact is table with
+the keys id, team, class, x, y, vx, vy. Most of these are self explanatory. The
+id field can be passed to the sensor\_contact() function to return just the
+information for the given ship, which is significantly more efficient.
 
 Graphical simulator
 -------------------
