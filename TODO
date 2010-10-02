@@ -7,3 +7,4 @@ Make risc-dedicated not link with opengl
 Implement angular motion
 Draw prettier ships
 Limit thrust/firing arcs
+Add debugger interface
