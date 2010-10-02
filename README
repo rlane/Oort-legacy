@@ -1,0 +1,8 @@
+RISC is a programming game currently in early development. Two or more space
+fleets, each ship individually controlled by the player's Lua code, battle in
+2-dimensional space. The game simulates Newtonian physics, with the temporary
+simplification that ships can thrust and shoot in any direction.
+
+Linux users will need development headers for glib, sdl, sdl_gfx, opengl, and
+lua5.1. Use of luajit is recommended - set the LUA make variable to the name of
+your luajit library (luajit-5.1 on Arch).
