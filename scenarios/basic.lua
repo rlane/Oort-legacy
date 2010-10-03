@@ -7,8 +7,8 @@ team("blue",  0x0000FF00)
 team("green", 0x00FF0000)
 
 for i = 1,32 do
-	ship("fighter", "examples/orbit.lua", "blue", R(15,20), R(10,20))
-	ship("fighter", "examples/orbit.lua", "green", R(-15,-20), R(-20,-10))
+	ship("fighter", "examples/orbit.lua", "blue", R(20,15), R(20,10))
+	ship("fighter", "examples/orbit.lua", "green", R(-20,-15), R(-10,-20))
 end
 
 function mothership_circle(X, Y, n, r, filename, team)
@@ -20,5 +20,5 @@ function mothership_circle(X, Y, n, r, filename, team)
 	end
 end
 
-mothership_circle(0, -40, 3, 5, "examples/rock.lua", "green")
-mothership_circle(0, 40, 3, 5, "examples/rock.lua", "blue")
+mothership_circle(-40, 0, 3, 5, "examples/rock.lua", "green")
+mothership_circle(40, 0, 3, 5, "examples/rock.lua", "blue")
