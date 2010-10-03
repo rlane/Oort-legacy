@@ -1,6 +1,4 @@
 Limit classes ships can spawn
-Limit memory allocation per ship
-Improve locking/make lockless
 Limit sensor range
 Implement shields
 Thrust/shield consume energy
