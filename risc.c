@@ -91,9 +91,22 @@ static void render_ship(struct ship *s, void *unused)
 		glVertex3f(-0.70, 0.71, 0);
 		glVertex3f(1, 0, 0);
 		glEnd();
-	} else {
+	} else if (!strcmp(s->class->name, "missile")) {
 		glColor32(0x88888800 | 0x55);
 		render_circle(5);
+	} else if (!strcmp(s->class->name, "little_missile")) {
+		glColor32(0x88888800 | 0x55);
+		glBegin(GL_LINES);
+		glVertex3f(-0.70, -0.71, 0);
+		glVertex3f(-0.2, 0, 0);
+		glVertex3f(-0.70, 0.71, 0);
+		glVertex3f(-0.2, 0, 0);
+		glVertex3f(-0.2, 0, 0);
+		glVertex3f(1, 0, 0);
+		glEnd();
+	} else {
+		glColor32(0x88888800 | 0x55);
+		render_circle(8);
 	}
 
 	glPopMatrix();
