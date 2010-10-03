@@ -114,5 +114,6 @@ later.
 Contributing
 ------------
 
-I haven't set up a mailing list yet, so for now please use the GitHub wiki for
-discussion and send me pull requests to submit patches.
+Mailing list: risc-game-dev@lists.sourceforge.net.
+
+Subscribe at https://lists.sourceforge.net/lists/listinfo/risc-game-dev.
