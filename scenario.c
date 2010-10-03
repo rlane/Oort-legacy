@@ -42,13 +42,25 @@ static int scn_ship(lua_State *L)
 	return 0;
 }
 
-int load_scenario(const char *filename)
+int load_scenario(const char *filename, int num_teams, char **teams)
 {
 	lua_State *L = luaL_newstate();
 
 	luaL_openlibs(L);
 	lua_register(L, "team", scn_team);
 	lua_register(L, "ship", scn_ship);
+
+	lua_pushnumber(L, num_teams);
+	lua_setglobal(L, "N");
+
+	lua_newtable(L);
+	int i;
+	for (i = 0; i < num_teams; i++) {
+		lua_pushnumber(L, i);
+		lua_pushstring(L, teams[i]);
+		lua_settable(L, -3);
+	}
+	lua_setglobal(L, "AI");
 
 	if (luaL_dofile(L, filename)) {
 		fprintf(stderr, "Failed to load scenario %s: %s\n", filename, lua_tostring(L, -1));

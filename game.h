@@ -10,7 +10,7 @@ struct bullet_hit {
 	vec2 cp;
 };
 
-int game_init(int seed, const char *scenario);
+int game_init(int seed, const char *scenario, int num_teams, char **teams);
 void game_tick(double tick_length);
 void game_purge();
 void game_shutdown();

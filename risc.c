@@ -369,9 +369,22 @@ int main(int argc, char **argv)
 	glPointSize(1.0);
 
 	int seed = getpid() ^ time(NULL);
-	const char *scenario = argc > 1 ? argv[1] : "scenarios/basic.lua";
 
-	if (game_init(seed, scenario)) {
+	int num_teams;
+	char *scenario;
+	char **teams;
+
+	if (argc == 1) {
+		scenario = NULL;
+		num_teams = 0;
+		teams = NULL;
+	} else {
+		scenario = argv[1];
+		num_teams = argc - 2;
+		teams = argv+2;
+	}
+
+	if (game_init(seed, scenario, num_teams, teams)) {
 		fprintf(stderr, "initialization failed\n");
 		return 1;
 	}

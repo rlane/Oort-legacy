@@ -120,6 +120,7 @@ sandbox_api = {
 	position = sys_position,
 	velocity = sys_velocity,
 	energy = energy,
+	class = sys_class,
 	fire = fire,
 	yield = sys_yield,
 	team = sys_team,

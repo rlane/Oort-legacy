@@ -31,10 +31,8 @@ watch a demo scenario.
 
 The initial configuration of the fleets is controlled by a scenario file, which
 is just Lua code with builtin functions to create teams and spawn ships. See
-the examples in the scenarios/ directory. Currently the scenario specifies the
-Lua file for each ship. This is useful for testing, but in the future this will
-likely be changed so that each team has a single AI (which can behave
-differently depending on the ship).
+the examples in the scenarios/ directory. A scenario is given a number (global
+"N") of AI filenames (global "AI") which it can assign to teams.
 
 ### Victory condition
 
@@ -60,6 +58,8 @@ directory. A summary of the API is given below.
 - energy() - return the ship's current energy level.
 
 - team() - returns the name of this ship's team.
+
+- class() - returns the name of this ship's class.
 
 - thrust(angle, force) - start thrusting in the given direction.
 

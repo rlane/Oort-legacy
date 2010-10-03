@@ -18,6 +18,9 @@ double current_time = 0.0;
 GRand *prng = NULL;
 FILE *trace_file = NULL;
 
+static const char *default_scenario = "scenarios/basic.lua";
+static char *default_teams[] = { "examples/switch.lua", "examples/switch.lua" };
+
 static void handle_bullet_hit(struct ship *s, struct bullet *b, vec2 cp)
 {
 	b->dead = 1;
@@ -52,7 +55,7 @@ static void check_bullet_hits(double tick_length)
 	}
 }
 
-int game_init(int seed, const char *scenario)
+int game_init(int seed, const char *scenario, int num_teams, char **teams)
 {
 	task_init();
 
@@ -66,8 +69,14 @@ int game_init(int seed, const char *scenario)
 
 	printf("loading scenario...\n");
 
-	if (load_scenario(scenario)) {
-		return 1;
+	if (scenario) {
+		if (load_scenario(scenario, num_teams, teams)) {
+			return 1;
+		}
+	} else {
+		if (load_scenario(default_scenario, sizeof(default_teams)/sizeof(*default_teams), default_teams)) {
+			return 1;
+		}
 	}
 
 	return 0;
