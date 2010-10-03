@@ -53,7 +53,7 @@ static void glColor32(Uint32 c)
 	glColor4ub((c >> 24) & 0xFF, (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF);
 }
 
-static void render_circle(double x, double y, double r)
+static void render_circle(double r)
 {
 	int n = MAX(8, MIN(r, 64));
 	double da = 2*M_PI/n, a = 0;
@@ -62,7 +62,7 @@ static void render_circle(double x, double y, double r)
 	glBegin(GL_LINE_STRIP);
 	for (i = 0; i < (n+1); i++) {
 		a += da;
-		glVertex3f(x + cos(a)*r, y + sin(a)*r, 0);
+		glVertex3f(cos(a)*r, sin(a)*r, 0);
 	}
 	glEnd();
 }
@@ -76,26 +76,28 @@ static void render_ship(struct ship *s, void *unused)
 	Uint32 team_color = s->team->color;
 	double x = creal(sp), y = cimag(sp);
 
+	double angle = atan2(cimag(s->physics->v), creal(s->physics->v));
+	glPushMatrix();
+	glTranslated(x, y, 0);
+	glScaled(view_scale, view_scale, view_scale);
+	glRotated(rad2deg(angle), 0, 0, 1);
+
 	if (!strcmp(s->class->name, "mothership")) {
 		glColor32(team_color | 0xEE);
-		render_circle(x, y, sr);
+		render_circle(s->class->radius);
 	} else if (!strcmp(s->class->name, "fighter")) {
 		glColor32(team_color | 0xAA);
-		double angle = atan2(cimag(s->physics->v), creal(s->physics->v));
-		glPushMatrix();
-		glTranslated(x, y, 0);
-		glScaled(view_scale, view_scale, view_scale);
-		glRotated(rad2deg(angle), 0, 0, 1);
 		glBegin(GL_LINE_LOOP);
 		glVertex3f(-0.1, -0.1, 0);
 		glVertex3f(-0.1, 0.1, 0);
 		glVertex3f(0.1, 0, 0);
 		glEnd();
-		glPopMatrix();
 	} else {
 		glColor32(0x88888800 | 0x55);
-		render_circle(x, y, sr);
+		render_circle(s->class->radius);
 	}
+
+	glPopMatrix();
 
 	glBegin(GL_LINE_STRIP);
 	glVertex3f(x, y, 0);
@@ -116,7 +118,11 @@ static void render_ship(struct ship *s, void *unused)
 
 	if (s == picked) {
 		glColor32(0xCCCCCCAA);
-		render_circle(x, y, sr + 5);
+
+		glPushMatrix();
+		glTranslated(x, y, 0);
+		render_circle(sr + 5);
+		glPopMatrix();
 
 		glColor32(0x49D5CEAA);
 		glBegin(GL_LINE_STRIP);
