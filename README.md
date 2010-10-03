@@ -172,6 +172,8 @@ Pause: space
 
 Single-step: enter
 
+Save screenshot to "screenshot.tga": 'p'
+
 Non-graphical simulator
 -----------------------
 

@@ -5,6 +5,10 @@
 #include <sys/time.h>
 #include <math.h>
 #include <glib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 #define GL_GLEXT_PROTOTYPES
 #include <SDL.h>
@@ -18,6 +22,7 @@
 #include "bullet.h"
 #include "scenario.h"
 #include "team.h"
+#include "tga.h"
 
 static SDL_Surface *screen;
 static FPSmanager fps_manager;
@@ -271,6 +276,38 @@ static void font_init(void)
 	}
 }
 
+static void screenshot(void)
+{
+	char *filename = "screenshot.tga";
+	int fd;
+	struct tga_header *tga;
+	size_t data_size = 3 * screen_width * screen_height;
+	size_t map_size = (sizeof(*tga) + data_size + 4095) & (~0 << 12);
+	
+	if ((fd = open(filename, O_CREAT|O_TRUNC|O_RDWR, S_IRUSR|S_IWUSR)) < 0) {
+		perror("open");
+		return;
+	}
+
+	lseek(fd, sizeof(*tga) + data_size - 1, SEEK_SET);
+	write(fd, "\x00", 1);
+
+	if ((tga = mmap(NULL, map_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILED) {
+		perror("mmap");
+		close(fd);
+		return;
+	}
+
+	*tga = tga_defaults;
+	tga->width = screen_width;
+	tga->height = screen_height;
+
+	glReadPixels(0, 0, screen_width, screen_height, GL_BGR, GL_UNSIGNED_BYTE, tga->data);
+
+	munmap(tga, map_size);
+	close(fd);
+}
+
 int main(int argc, char **argv)
 {
 	SDL_Event event;
@@ -379,6 +416,9 @@ int main(int argc, char **argv)
 					break;
 				case SDLK_y:
 					render_all_debug_lines = !render_all_debug_lines;
+					break;
+				case SDLK_p:
+					screenshot();
 					break;
 				default:
 					break;
