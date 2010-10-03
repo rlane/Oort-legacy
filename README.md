@@ -155,9 +155,8 @@ information for the given ship, which is significantly more efficient.
 Graphical simulator
 -------------------
 
-The "risc" binary renders the battle with OpenGL. Currently the graphics are
-crude and all ships are represented by circles of the team's color. Missiles
-are smaller grey circles. The simulation speed is limited to real time (32 hz).
+The "risc" binary renders the battle with OpenGL. The simulation speed is
+limited to real time (32 hz).
 
 ### Controls
 
