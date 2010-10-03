@@ -38,7 +38,44 @@ differently depending on the ship).
 
 ### AI
 
-The best reference for the AI is currently the Lua files in the examples/ directory.
+Every ship in the game is controlled by a Lua program that calls functions
+provided by RISC to thrust, fire, etc. Each ship is given a timeslice per tick
+and preempted when its time is up. Execution resumes where it left off on the
+next tick. The ships run in independent Lua VMs and do not share any data. All
+coordination must be accomplished using ship orders and the radio.
+
+The best reference for the RISC API is currently the Lua files in the examples/
+directory. A summary of the API is given below.
+
+#### RISC API
+
+- position()
+
+- velocity()
+
+- team()
+
+- thrust(angle, force)
+
+- fire(name, angle)
+
+- sensor\_contacts()
+
+- sensor\_contact(id)
+
+- send(msg)
+
+- recv()
+
+- spawn(class, filename, orders)
+
+- yield()
+
+- explode()
+
+- debug\_line(x1, y1, x2, y2)
+
+- clear\_debug\_lines()
 
 ### Ships
 
