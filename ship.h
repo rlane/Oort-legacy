@@ -25,6 +25,11 @@ struct ship {
 	struct physics *physics;
 	double energy, hull;
 	lua_State *lua, *global_lua;
+	struct {
+		lua_Alloc allocator;
+		void *allocator_ud;
+		int cur, limit;
+	} mem;
 	GRand *prng;
 	int dead, ai_dead;
 	complex double tail[TAIL_SEGMENTS];

@@ -22,6 +22,7 @@ char RKEY_SHIP[1];
 GList *all_ships = NULL;
 static GHashTable *ship_classes = NULL;
 static GStaticMutex _api_lock = G_STATIC_MUTEX_INIT;
+static const ai_mem_limit = 1<<20;
 
 static void api_lock(void)
 {
@@ -335,11 +336,24 @@ static int api_clear_debug_lines(lua_State *L)
 	return 0;
 }
 
+static void *ai_allocator(struct ship *s, void *ptr, size_t osize, size_t nsize)
+{
+	s->mem.cur += (nsize - osize);
+	if (nsize > osize && s->mem.cur > s->mem.limit) {
+		return NULL;
+	}
+	return s->mem.allocator(s->mem.allocator_ud, ptr, osize, nsize);
+}
+
 static int ai_create(const char *filename, struct ship *s, const char *orders)
 {
 	lua_State *G, *L;
 
 	G = luaL_newstate();
+	s->mem.cur = 0;
+	s->mem.limit = ai_mem_limit;
+	s->mem.allocator = lua_getallocf(G, &s->mem.allocator_ud);
+	lua_setallocf(G, (lua_Alloc)ai_allocator, s);
 	luaL_openlibs(G);
 	lua_register(G, "sys_thrust", api_thrust);
 	lua_register(G, "sys_yield", api_yield);
