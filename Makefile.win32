@@ -1,25 +1,23 @@
-CC=i586-mingw32msvc-gcc
+# Arch linux:
+# yaourt -S mingw32-gcc mingw32-sdl mingw32-glib2 mingw32-lua mingw32-sdl_gfx zip
+# mingw32-gettext dependency needs x86_64 added to its PKGBUILD
+# make pkg
 
-LUAJIT=/tmp/winluajit
-GLIB=/tmp/winglib-dev
-SDL=/tmp/winsdl
-SDL_GFX=/tmp/winsdl-gfx
+CC=i486-mingw32-gcc
+MINGW=/usr/i486-mingw32
+LIB=$(MINGW)/lib
+INC=$(MINGW)/include
+BIN=$(MINGW)/bin
 
 CFLAGS=\
   -DWINDOWS \
-  -I$(LUAJIT)/src \
-  -I$(SDL)/include/SDL -D_GNU_SOURCE=1 \
-  -I$(GLIB)/include/glib-2.0 \
-  -I$(GLIB)/lib/glib-2.0/include/ \
-  -I$(SDL_GFX)/include \
+  -I$(INC) \
+  -I$(INC)/SDL \
+  -I$(INC)/glib-2.0 \
+  -I$(LIB)/glib-2.0/include \
   -g -O2 -march=native -Wall
 
-LDFLAGS=\
-  -L$(GLIB)/lib -lglib-2.0 -lgthread-2.0 \
-  -L$(SDL)/lib -mwindows -lmingw32 -lSDLmain -lSDL \
-  -L$(SDL_GFX)/lib -lSDL_gfx \
-  -L$(LUAJIT)/src -llua51 \
-  -lopengl32 -lglu32
+LDFLAGS=-L$(LIB) -lglib-2.0 -lgthread-2.0 -mwindows -lmingw32 -lSDLmain -lSDL -lSDL_gfx -llua -lopengl32 -lglu32
 
 common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
 common_objects = $(common_sources:.c=.o)
@@ -39,6 +37,18 @@ risc.exe: risc.o $(common_objects)
 
 risc-dedicated.exe: risc-dedicated.o $(common_objects)
 	$(CC) $^ -o $@ $(LDFLAGS)
+
+pkg: risc-win32.zip
+
+DLLS=libcharset-1.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll libgobject-2.0-0.dll \
+     libgthread-2.0-0.dll libiconv-2.dll libintl-8.dll lua51.dll SDL.dll zlib1.dll SDL_gfx.dll
+
+risc-win32.zip: risc.exe risc-dedicated.exe
+	rm -rf risc-win32 risc-win32.zip
+	mkdir risc-win32
+	cp -r risc.exe risc-dedicated.exe $(addprefix $(BIN)/,$(DLLS)) *.lua scenarios examples README.md TODO risc-win32/
+	zip -MM -r risc-win32 risc-win32 
+	rm -r risc-win32
 
 clean:
 	rm -f *.o *.d risc.exe risc-dedicated.exe

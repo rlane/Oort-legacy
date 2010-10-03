@@ -8,7 +8,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#ifndef WINDOWS
 #include <sys/mman.h>
+#endif
 
 #define GL_GLEXT_PROTOTYPES
 #include <SDL.h>
@@ -278,6 +281,7 @@ static void font_init(void)
 
 static void screenshot(void)
 {
+#ifndef WINDOWS
 	char *filename = "screenshot.tga";
 	int fd;
 	struct tga_header *tga;
@@ -306,6 +310,7 @@ static void screenshot(void)
 
 	munmap(tga, map_size);
 	close(fd);
+#endif
 }
 
 int main(int argc, char **argv)
