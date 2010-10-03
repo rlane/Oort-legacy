@@ -116,4 +116,4 @@ Contributing
 
 Mailing list: risc-game-dev@lists.sourceforge.net.
 
-Subscribe at https://lists.sourceforge.net/lists/listinfo/risc-game-dev.
+Subscribe at [https://lists.sourceforge.net/lists/listinfo/risc-game-dev](https://lists.sourceforge.net/lists/listinfo/risc-game-dev).
