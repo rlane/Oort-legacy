@@ -24,8 +24,12 @@ and sdl\_gfx headers. A future task is to document/streamline this process.
 Gameplay
 --------
 
-To start the game, run risc /path/to/scenario. Omit the scenario argument to
-watch a demo scenario.
+To start the game, run risc /path/to/scenario /path/to/ai[s]. Omit
+the scenario argument to watch a demo scenario. Example command lines:
+
+    risc
+    risc scenarios/basic.lua examples/switch.lua examples/switch.lua
+    risc scenarios/missile_practice.lua examples/rock.lua
 
 ### Scenarios
 
