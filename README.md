@@ -77,7 +77,8 @@ directory. A summary of the API is given below.
 
 - send(msg) - broadcast a message to all friendly ships.
 
-- recv() - receive the next message off the queue.
+- recv() - receive the next message from the radio. Returns nil if there are no
+messages on the queue.
 
 - spawn(class, filename, orders) - spawn a ship.
 
@@ -90,7 +91,7 @@ directory. A summary of the API is given below.
 - clear\_debug\_lines()
 
 - orders - a string global containing the orders for this ship as set by the
-           spawn() function.
+spawn() function.
 
 ### Ships
 
