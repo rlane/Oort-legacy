@@ -7,6 +7,8 @@
 #include "physics.h"
 
 GList *all_physics = NULL;
+static GList *new_physics = NULL;
+static GStaticMutex new_physics_lock = G_STATIC_MUTEX_INIT;
 
 struct physics *physics_create(void)
 {
@@ -14,7 +16,9 @@ struct physics *physics_create(void)
 	q->p = q->p0 = q->v = q->thrust = 0.0 + 0.0*I;
 	q->a = q->av = 0.0;
 	q->m = q->r = 1.0;
-	all_physics = g_list_append(all_physics, q);
+	g_static_mutex_lock(&new_physics_lock);
+	new_physics = g_list_append(new_physics, q);
+	g_static_mutex_unlock(&new_physics_lock);
 	return q;
 }
 
@@ -90,5 +94,7 @@ int physics_check_collision(struct physics *q1, struct physics *q2, double inter
 
 void physics_tick(double t)
 {
+	all_physics = g_list_concat(all_physics, new_physics);
+	new_physics = NULL;
 	g_list_foreach(all_physics, (GFunc)physics_tick_one, &t);
 }

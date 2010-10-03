@@ -20,19 +20,11 @@
 char RKEY_SHIP[1];
 
 GList *all_ships = NULL;
+static GList *new_ships = NULL;
+static GStaticMutex new_ships_lock = G_STATIC_MUTEX_INIT;
 static GHashTable *ship_classes = NULL;
-static GStaticMutex _api_lock = G_STATIC_MUTEX_INIT;
+static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;
 static const ai_mem_limit = 1<<20;
-
-static void api_lock(void)
-{
-	g_static_mutex_lock(&_api_lock);
-}
-
-static void api_unlock(void)
-{
-	g_static_mutex_unlock(&_api_lock);
-}
 
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
@@ -98,9 +90,7 @@ static int api_create_bullet(lua_State *L)
 	double m = luaL_checknumber(L, 5);
 	double ttl = luaL_checknumber(L, 6);
 
-	api_lock();
 	struct bullet *b = bullet_create();
-	api_unlock();
 	if (!b) return luaL_error(L, "bullet creation failed");
 
 	b->team = s->team;
@@ -149,14 +139,12 @@ static int api_sensor_contacts(lua_State *L)
 {
 	GList *e;
 	lua_newtable(L);
-	api_lock();
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s = e->data;
 		lua_pushstring(L, s->api_id);
 		make_sensor_contact(L, s);
 		lua_settable(L, -3);
 	}
-	api_unlock();
 	return 1;
 }
 
@@ -165,16 +153,13 @@ static int api_sensor_contact(lua_State *L)
 	GList *e;
 	const char *id = luaL_checkstring(L, 1);
 	lua_pop(L, 1);
-	api_lock();
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s = e->data;
 		if (!strncmp(s->api_id, id, sizeof(s->api_id))) {
 			make_sensor_contact(L, s);
-			api_unlock();
 			return 1;
 		}
 	}
-	api_unlock();
 	return 0;
 }
 
@@ -251,7 +236,8 @@ static int api_send(lua_State *L)
 	msg->len = len;
 	msg->data = data;
 
-	api_lock();
+	g_static_mutex_lock(&radio_lock);
+
 	GList *e;
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s2 = e->data;
@@ -259,12 +245,13 @@ static int api_send(lua_State *L)
 		msg->refcount++;
 		g_queue_push_tail(s2->mq, msg);
 	}
-	api_unlock();
 	
 	if (--msg->refcount == 0) {
 		free(msg->data);
 		g_slice_free(struct msg, msg);
 	}
+
+	g_static_mutex_unlock(&radio_lock);
 		
 	return 0;	
 }
@@ -273,16 +260,21 @@ static int api_recv(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
 
-	api_lock();
+	g_static_mutex_lock(&radio_lock);
+
 	struct msg *msg = g_queue_pop_head(s->mq);
-	api_unlock();
-	if (!msg) return 0;
+	if (!msg) {
+		g_static_mutex_unlock(&radio_lock);
+		return 0;
+	}
 	lua_pushlstring(L, msg->data, msg->len);
 
 	if (--msg->refcount == 0) {
 		free(msg->data);
 		g_slice_free(struct msg, msg);
 	}
+
+	g_static_mutex_unlock(&radio_lock);
 
 	return 1;
 }
@@ -294,9 +286,7 @@ static int api_spawn(lua_State *L)
 	const char *filename = luaL_checkstring(L, 2);
 	const char *orders = luaL_checkstring(L, 3);
 
-	api_lock();
 	struct ship *child = ship_create(filename, class_name, orders);
-	api_unlock();
 	if (!child) return luaL_error(L, "failed to create ship");
 
 	child->physics->p = s->physics->p;
@@ -493,6 +483,8 @@ double ship_get_energy(struct ship *s)
 
 void ship_tick(double t)
 {
+	all_ships = g_list_concat(all_ships, new_ships);
+	new_ships = NULL;
 	GList *e;
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		task((task_func)ship_tick_one, e->data, NULL);
@@ -537,7 +529,9 @@ struct ship *ship_create(const char *filename, const char *class_name, const cha
 
 	snprintf((char*)s->api_id, sizeof(s->api_id), "%08x", g_rand_int(prng));
 
-	all_ships = g_list_append(all_ships, s);
+	g_static_mutex_lock(&new_ships_lock);
+	new_ships = g_list_append(new_ships, s);
+	g_static_mutex_unlock(&new_ships_lock);
 
 	return s;
 }

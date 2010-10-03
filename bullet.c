@@ -7,6 +7,8 @@
 #include "physics.h"
 
 GList *all_bullets = NULL;
+static GList *new_bullets = NULL;
+static GStaticMutex new_bullets_lock = G_STATIC_MUTEX_INIT;
 
 struct bullet *bullet_create(void)
 {
@@ -16,7 +18,9 @@ struct bullet *bullet_create(void)
 	b->physics->m = 0.1;
 	b->ttl = 1;
 	b->dead = 0;
-	all_bullets = g_list_append(all_bullets, b);
+	g_static_mutex_lock(&new_bullets_lock);
+	new_bullets = g_list_append(new_bullets, b);
+	g_static_mutex_unlock(&new_bullets_lock);
 	return b;
 }
 
@@ -39,8 +43,15 @@ void bullet_purge(void)
 	}
 }
 
+void bullet_promote(void)
+{
+	all_bullets = g_list_concat(all_bullets, new_bullets);
+	new_bullets = NULL;
+}
+
 void bullet_shutdown(void)
 {
+	bullet_promote();
 	g_list_foreach(all_bullets, (GFunc)bullet_destroy, NULL);
 }
 
@@ -55,6 +66,7 @@ void bullet_tick_one(struct bullet *b, double *ta)
 
 void bullet_tick(double t)
 {
+	bullet_promote();
 	g_list_foreach(all_bullets, (GFunc)bullet_tick_one, &t);
 }
 
