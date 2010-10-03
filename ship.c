@@ -24,7 +24,7 @@ static GList *new_ships = NULL;
 static GStaticMutex new_ships_lock = G_STATIC_MUTEX_INIT;
 static GHashTable *ship_classes = NULL;
 static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;
-static const ai_mem_limit = 1<<20;
+static const int ai_mem_limit = 1<<20;
 
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
