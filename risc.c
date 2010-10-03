@@ -87,8 +87,8 @@ static void render_ship(struct ship *s, void *unused)
 	} else if (!strcmp(s->class->name, "fighter")) {
 		glColor32(team_color | 0xAA);
 		glBegin(GL_LINE_LOOP);
-		glVertex3f(-1, -1, 0);
-		glVertex3f(-1, 1, 0);
+		glVertex3f(-0.70, -0.71, 0);
+		glVertex3f(-0.70, 0.71, 0);
 		glVertex3f(1, 0, 0);
 		glEnd();
 	} else {
