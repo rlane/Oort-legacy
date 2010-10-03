@@ -12,19 +12,20 @@ simplification that ships can thrust and shoot in any direction.
 Compilation
 -----------
 
-Linux users will need development headers for glib, sdl, sdl_gfx, opengl, and
+Linux users will need development headers for glib, sdl, sdl\_gfx, opengl, and
 lua5.1. Use of luajit is recommended - set the LUA make variable to the name of
 your luajit library (luajit-5.1 on Arch).
 
 There are makefiles for OS X and Windows. OS X users will need equivalent
 libraries development headers as Linux. The Windows makefile uses mingw to
 crosscompile and requires manually downloading appropriate luajit, glib, sdl,
-and sdl_gfx headers. A future task is to document/streamline this process.
+and sdl\_gfx headers. A future task is to document/streamline this process.
 
 Gameplay
 --------
 
-To start the game, run risc /path/to/scenario.
+To start the game, run risc /path/to/scenario. Omit the scenario argument to
+watch a demo scenario.
 
 ### Scenarios
 
