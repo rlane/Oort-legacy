@@ -49,29 +49,29 @@ directory. A summary of the API is given below.
 
 #### RISC API
 
-- position()
+- position() - returns a tuple (x,y).
 
-- velocity()
+- velocity() - returns a tuple (vx, vy).
 
-- team()
+- team() - returns the name of this ship's team.
 
-- thrust(angle, force)
+- thrust(angle, force) - start thrusting in the given direction.
 
-- fire(name, angle)
+- fire(name, angle) - fire the gun named "name" in the given direction.
 
-- sensor\_contacts()
+- sensor\_contacts() - returns a table of all the sensor contacts in range.
 
-- sensor\_contact(id)
+- sensor\_contact(id) - given an id from from sensor\_contacts, return just that contact.
 
-- send(msg)
+- send(msg) - broadcast a message to all friendly ships.
 
-- recv()
+- recv() - receive the next message off the queue.
 
-- spawn(class, filename, orders)
+- spawn(class, filename, orders) - spawn a ship.
 
-- yield()
+- yield() - deschedule the program until the next tick.
 
-- explode()
+- explode() - self-destruct.
 
 - debug\_line(x1, y1, x2, y2)
 
