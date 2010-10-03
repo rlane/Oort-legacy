@@ -78,13 +78,24 @@ static void render_ship(struct ship *s, void *unused)
 
 	if (!strcmp(s->class->name, "mothership")) {
 		glColor32(team_color | 0xEE);
+		render_circle(x, y, sr);
 	} else if (!strcmp(s->class->name, "fighter")) {
 		glColor32(team_color | 0xAA);
+		double angle = atan2(cimag(s->physics->v), creal(s->physics->v));
+		glPushMatrix();
+		glTranslated(x, y, 0);
+		glScaled(view_scale, view_scale, view_scale);
+		glRotated(rad2deg(angle), 0, 0, 1);
+		glBegin(GL_LINE_LOOP);
+		glVertex3f(-0.1, -0.1, 0);
+		glVertex3f(-0.1, 0.1, 0);
+		glVertex3f(0.1, 0, 0);
+		glEnd();
+		glPopMatrix();
 	} else {
 		glColor32(0x88888800 | 0x55);
+		render_circle(x, y, sr);
 	}
-
-	render_circle(x, y, sr);
 
 	glBegin(GL_LINE_STRIP);
 	glVertex3f(x, y, 0);

@@ -14,4 +14,9 @@ void physics_destroy(struct physics *);
 void physics_tick(double t);
 int physics_check_collision(struct physics *q1, struct physics *q2, double interval, complex double *cp);
 
+static inline double rad2deg(double a)
+{
+	return a * 57.29578;
+}
+
 #endif
