@@ -44,6 +44,36 @@ The best reference for the AI is currently the Lua files in the examples/ direct
 
 The available ship classes are specified by the ships.lua file.
 
+Graphical simulator
+-------------------
+
+The "risc" binary renders the battle with OpenGL. Currently the graphics are
+crude and all ships are represented by circles of the team's color. Missiles
+are smaller grey circles. The simulation speed is limited to real time (32 hz).
+
+### Controls
+
+Zoom: scroll wheel, or 'z' and 'x'
+
+Select a ship by clicking on it. This will display various information about
+the ship in the lower left corner. If the ship AI has drawn any debug graphics
+they will be displayed.
+
+Toggle all debug graphics: 'y'
+
+Pause: space
+
+Single-step: enter
+
+Non-graphical simulator
+-----------------------
+
+The "risc-dedicated" binary runs the simulation and outputs which team won. It
+isn't framerate-limited and so can run much more quickly. It currently links
+against OpenGL anyway, this is a bug. A future task is to have risc-dedicated
+output a recording of the battle that can be replayed in a graphical viewer
+later.
+
 Contributing
 ------------
 
