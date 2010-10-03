@@ -193,4 +193,4 @@ Subscribe at [https://lists.sourceforge.net/lists/listinfo/risc-game-dev](https:
 Screenshot
 ----------
 
-![RISC screenshot](wiki/screenshot-1.png)
+![RISC screenshot](risc/wiki/screenshot-1.png)
