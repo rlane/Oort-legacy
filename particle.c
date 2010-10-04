@@ -30,9 +30,10 @@ void particle_shower(enum particle_type type,
 	for (i = 0; i < count; i++) {
 		float a = (float)(g_random_double() * G_PI * 2);
 		float s = (float)g_random_double()*s_max;
+		complex float dp = (complex float)(g_random_double()*v);
 		int life = g_random_int_range(life_min,life_max);
 		complex float dv = cosf(a) * s + I * sinf(a) * s;
-		particle_create(type, p, v + dv, life);
+		particle_create(type, dp+p, v + dv, life);
 	}
 }
 

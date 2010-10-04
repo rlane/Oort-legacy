@@ -46,7 +46,7 @@ DLLS=libcharset-1.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll li
 risc-win32.zip: risc.exe risc-dedicated.exe
 	rm -rf risc-win32 risc-win32.zip
 	mkdir risc-win32
-	cp -r risc.exe risc-dedicated.exe $(addprefix $(BIN)/,$(DLLS)) *.lua scenarios/*.lua examples/*.lua README.md TODO risc-win32/
+	cp -r risc.exe risc-dedicated.exe $(addprefix $(BIN)/,$(DLLS)) *.lua scenarios/ examples/ README.md TODO risc-win32/
 	zip -MM -r risc-win32 risc-win32 
 	rm -r risc-win32
 

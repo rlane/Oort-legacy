@@ -178,20 +178,15 @@ static void render_ship(struct ship *s, void *unused)
 
 static void render_bullet(struct bullet *b, void *unused)
 {
-	complex double p2, sp1, sp2;
-	p2 = b->physics->p + b->physics->v/32;
-	sp1 = S(b->physics->p);
-	sp2 = S(p2);
-
 	if (!paused) {
-		particle_shower(PARTICLE_BULLET, p2, b->physics->v/46, 0.01f, 8, 16, 4);
+		particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, 0.001f, 8, 16, 6);
 	}
 }
 
 static void render_bullet_hit(struct bullet_hit *hit, void *unused)
 {
 	if (!paused) {
-		particle_shower(PARTICLE_HIT, hit->cp, 0.0f, 0.1f, 2, 20, hit->e*100);
+		particle_shower(PARTICLE_HIT, hit->cp, 0.0f, 0.1f, 1, 20, hit->e*100);
 	}
 }
 
@@ -204,7 +199,7 @@ static void render_particles(void)
 		if (c->ticks_left == 0) continue;
 		complex float p = S(c->p);
 		if (c->type == PARTICLE_HIT) {
-			glColor4ub(255, 200, 200, c->ticks_left);
+			glColor4ub(255, 200, 200, c->ticks_left*8);
 		} else if (c->type == PARTICLE_BULLET) {
 			glColor4ub(255, 0, 0, c->ticks_left*16);
 		}
