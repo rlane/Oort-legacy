@@ -26,6 +26,8 @@ all: risc risc-dedicated test_check_collision
 
 risc: risc.o particle.o $(common_objects)
 
+particlebench: particlebench.o particle.o $(common_objects)
+
 risc-dedicated: risc-dedicated.o $(common_objects)
 
 test_check_collision: test_check_collision.o physics.o

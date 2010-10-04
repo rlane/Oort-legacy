@@ -4,5 +4,6 @@
 *.exe
 risc
 risc-dedicated
+particlebench
 test_check_collision
 risc-win32.zip
