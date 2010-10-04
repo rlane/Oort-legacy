@@ -179,7 +179,7 @@ static void render_ship(struct ship *s, void *unused)
 static void render_bullet(struct bullet *b, void *unused)
 {
 	if (!paused) {
-		particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, 0.01f, 8, 16, 6);
+		particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, 0.01f, 15, 16, 3);
 	}
 }
 
@@ -342,6 +342,7 @@ int main(int argc, char **argv)
 	printf("initializing OpenGL..\n");
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 	screen = SDL_SetVideoMode(screen_width, screen_height, 32, SDL_OPENGL | SDL_FULLSCREEN);
 
 	if (!screen) {
@@ -372,7 +373,7 @@ int main(int argc, char **argv)
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POINT_SMOOTH);
 	glLineWidth(1.2);
-	glPointSize(1.0);
+	glPointSize(2.5);
 
 	int seed = getpid() ^ time(NULL);
 
