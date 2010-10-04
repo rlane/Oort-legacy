@@ -179,7 +179,7 @@ static void render_ship(struct ship *s, void *unused)
 static void render_bullet(struct bullet *b, void *unused)
 {
 	if (!paused) {
-		particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, 0.001f, 8, 16, 6);
+		particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, 0.01f, 8, 16, 6);
 	}
 }
 
