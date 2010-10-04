@@ -193,7 +193,7 @@ static void render_bullet(struct bullet *b, void *unused)
 		glEnd();
 	} else {
 		if (!paused) {
-			particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, 0.01f, 15, 16, 3);
+			particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, MIN(b->physics->m/5,0.1), 7, 8, 3);
 		}
 	}
 }
@@ -224,19 +224,21 @@ static void render_bullet_hit(struct bullet_hit *hit, void *unused)
 static void render_particles(void)
 {
 	int i;
-	glBegin(GL_POINTS);
 	for (i = 0; i < MAX_PARTICLES; i++) {
 		struct particle *c = &particles[i];
 		if (c->ticks_left == 0) continue;
 		complex float p = S(c->p);
 		if (c->type == PARTICLE_HIT) {
+			glPointSize(3);
 			glColor4ub(255, 200, 200, c->ticks_left*8);
 		} else if (c->type == PARTICLE_BULLET) {
-			glColor4ub(255, 0, 0, c->ticks_left*16);
+			glPointSize(1.2);
+			glColor4ub(255, 0, 0, c->ticks_left*32);
 		}
+		glBegin(GL_POINTS);
 		glVertex3f(creal(p), cimag(p), 0);
+		glEnd();
 	}
-	glEnd();
 }
 
 static void get_resolution(void)
@@ -350,6 +352,7 @@ int main(int argc, char **argv)
 	SDL_Event event;
 
 	font_init();
+	memset(particles, 0, sizeof(particles));
 
 	printf("initializing SDL..\n");
 
@@ -404,7 +407,6 @@ int main(int argc, char **argv)
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POINT_SMOOTH);
 	glLineWidth(1.2);
-	glPointSize(2.5);
 
 	int seed = getpid() ^ time(NULL);
 
@@ -440,8 +442,11 @@ int main(int argc, char **argv)
 			double fps = (1000.0*1000*sample_ticks/usecs);
 			printf("%g FPS\n", fps);
 			if (fps < 16 && !simple_graphics) {
-				printf("reverting to simple graphics\n");
-				simple_graphics = 1;
+				static int fps_fail;
+				if (++fps_fail > 4) {
+					printf("reverting to simple graphics\n");
+					simple_graphics = 1;
+				}
 			}
 			sample_ticks = 0;
 			last_sample_time = now;
