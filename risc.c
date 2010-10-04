@@ -44,6 +44,7 @@ static int single_step = 0;
 static int render_all_debug_lines = 0;
 static struct ship *picked = NULL;
 static GLubyte font[256*8];
+static int simple_graphics = 0;
 
 static complex double S(complex double p)
 {
@@ -178,15 +179,45 @@ static void render_ship(struct ship *s, void *unused)
 
 static void render_bullet(struct bullet *b, void *unused)
 {
-	if (!paused) {
-		particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, 0.01f, 15, 16, 3);
+	if (simple_graphics) {
+		complex double p2, sp1, sp2;
+		p2 = b->physics->p + b->physics->v/32;
+		sp1 = S(b->physics->p);
+		sp2 = S(p2);
+
+		glBegin(GL_LINE_STRIP);
+		glColor32(0xFF000000);
+		glVertex3f(creal(sp1), cimag(sp1), 0);
+		glColor32(0xFF0000FF);
+		glVertex3f(creal(sp2), cimag(sp2), 0);
+		glEnd();
+	} else {
+		if (!paused) {
+			particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, 0.01f, 15, 16, 3);
+		}
 	}
 }
 
 static void render_bullet_hit(struct bullet_hit *hit, void *unused)
 {
-	if (!paused) {
-		particle_shower(PARTICLE_HIT, hit->cp, 0.0f, 0.1f, 1, 20, hit->e*100);
+	if (simple_graphics) {
+		complex double sp = S(hit->cp);
+		double x = creal(sp), y = cimag(sp);
+		glColor32(0xAAAA22FF);
+
+		glBegin(GL_LINE_STRIP);
+		glVertex3f(x-2, y-2, 0);
+		glVertex3f(x+2, y+2, 0);
+		glEnd();
+
+		glBegin(GL_LINE_STRIP);
+		glVertex3f(x+2, y-2, 0);
+		glVertex3f(x-2, y+2, 0);
+		glEnd();
+	} else {
+		if (!paused) {
+			particle_shower(PARTICLE_HIT, hit->cp, 0.0f, 0.1f, 1, 20, hit->e*100);
+		}
 	}
 }
 
@@ -406,7 +437,12 @@ int main(int argc, char **argv)
 			struct timeval now;
 			gettimeofday(&now, NULL);
 			long usecs = (now.tv_sec-last_sample_time.tv_sec)*(1000*1000) + (now.tv_usec - last_sample_time.tv_usec);
-			printf("%g FPS\n", (1000.0*1000*sample_ticks/usecs));
+			double fps = (1000.0*1000*sample_ticks/usecs);
+			printf("%g FPS\n", fps);
+			if (fps < 16 && !simple_graphics) {
+				printf("reverting to simple graphics\n");
+				simple_graphics = 1;
+			}
 			sample_ticks = 0;
 			last_sample_time = now;
 		}
@@ -468,7 +504,9 @@ int main(int argc, char **argv)
 
 		if (!paused) {
 			game_tick(tick_length);
-			particle_tick();
+			if (!simple_graphics) {
+				particle_tick();
+			}
 		}
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -477,7 +515,10 @@ int main(int argc, char **argv)
 		g_list_foreach(all_ships, (GFunc)render_ship, NULL);
 		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
 		g_list_foreach(bullet_hits, (GFunc)render_bullet_hit, NULL);
-		render_particles();
+
+		if (!simple_graphics) {
+			render_particles();
+		}
 
 		if (picked) {
 			const int x = 15, y = 82, dy = 12;
