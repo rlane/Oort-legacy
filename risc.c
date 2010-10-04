@@ -26,6 +26,7 @@
 #include "scenario.h"
 #include "team.h"
 #include "tga.h"
+#include "particle.h"
 
 static SDL_Surface *screen;
 static FPSmanager fps_manager;
@@ -182,28 +183,33 @@ static void render_bullet(struct bullet *b, void *unused)
 	sp1 = S(b->physics->p);
 	sp2 = S(p2);
 
-	glBegin(GL_LINE_STRIP);
-	glColor32(0xFF000000);
-	glVertex3f(creal(sp1), cimag(sp1), 0);
-	glColor32(0xFF0000FF);
-	glVertex3f(creal(sp2), cimag(sp2), 0);
-	glEnd();
+	if (!paused) {
+		particle_shower(PARTICLE_BULLET, p2, b->physics->v/46, 0.01f, 8, 16, 4);
+	}
 }
 
 static void render_bullet_hit(struct bullet_hit *hit, void *unused)
 {
-	complex double sp = S(hit->cp);
-	double x = creal(sp), y = cimag(sp);
-	glColor32(0xAAAA22FF);
+	if (!paused) {
+		particle_shower(PARTICLE_HIT, hit->cp, 0.0f, 0.1f, 2, 20, hit->e*100);
+	}
+}
 
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(x-2, y-2, 0);
-	glVertex3f(x+2, y+2, 0);
-	glEnd();
-
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(x+2, y-2, 0);
-	glVertex3f(x-2, y+2, 0);
+static void render_particles(void)
+{
+	int i;
+	glBegin(GL_POINTS);
+	for (i = 0; i < MAX_PARTICLES; i++) {
+		struct particle *c = &particles[i];
+		if (c->ticks_left == 0) continue;
+		complex float p = S(c->p);
+		if (c->type == PARTICLE_HIT) {
+			glColor4ub(255, 200, 200, c->ticks_left);
+		} else if (c->type == PARTICLE_BULLET) {
+			glColor4ub(255, 0, 0, c->ticks_left*16);
+		}
+		glVertex3f(creal(p), cimag(p), 0);
+	}
 	glEnd();
 }
 
@@ -466,6 +472,7 @@ int main(int argc, char **argv)
 
 		if (!paused) {
 			game_tick(tick_length);
+			particle_tick();
 		}
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -474,6 +481,7 @@ int main(int argc, char **argv)
 		g_list_foreach(all_ships, (GFunc)render_ship, NULL);
 		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
 		g_list_foreach(bullet_hits, (GFunc)render_bullet_hit, NULL);
+		render_particles();
 
 		if (picked) {
 			const int x = 15, y = 82, dy = 12;

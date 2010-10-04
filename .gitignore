@@ -1,6 +1,8 @@
 *.swp
 *.o
 *.d
+*.exe
 risc
 risc-dedicated
 test_check_collision
+risc-win32.zip

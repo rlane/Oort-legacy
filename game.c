@@ -36,6 +36,7 @@ static void handle_bullet_hit(struct ship *s, struct bullet *b, vec2 cp)
 		hit->s = s;
 		hit->b = b;
 		hit->cp = cp;
+		hit->e = hit_energy;
 		bullet_hits = g_list_prepend(bullet_hits, hit);
 	}
 }

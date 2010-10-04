@@ -8,6 +8,7 @@ struct bullet_hit {
 	struct ship *s;
 	struct bullet *b;
 	vec2 cp;
+	double e;
 };
 
 int game_init(int seed, const char *scenario, int num_teams, char **teams);

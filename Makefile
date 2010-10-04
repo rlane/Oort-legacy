@@ -24,7 +24,7 @@ all: risc risc-dedicated test_check_collision
 
 -include $(common_sources:.c=.d)
 
-risc: risc.o $(common_objects)
+risc: risc.o particle.o $(common_objects)
 
 risc-dedicated: risc-dedicated.o $(common_objects)
 

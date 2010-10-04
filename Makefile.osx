@@ -14,7 +14,7 @@ LDFLAGS=-l$(LUA) \
 
 all: risc risc-dedicated
 
-risc: risc.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
+risc: risc.o ship.o physics.o bullet.o game.o scenario.o team.o task.o particle.o
 
 risc-dedicated: risc-dedicated.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
 
