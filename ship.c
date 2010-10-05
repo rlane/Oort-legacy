@@ -381,7 +381,6 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 	if (luaL_loadfile(L, filename)) {
 		fprintf(stderr, "Couldn't load file %s: %s\n", filename, lua_tostring(L, -1));
 		lua_close(L);
-		lua_close(G);
 		return 1;
 	}
 
