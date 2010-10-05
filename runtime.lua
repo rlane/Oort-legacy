@@ -180,6 +180,7 @@ function sandbox(f)
 		io = { write = io.write },
 
 		orders = orders,
+		ships = copy_table(ships, {})
 	}
 
 	env.math = copy_table(math, {})

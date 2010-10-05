@@ -2,15 +2,14 @@ dofile("examples/lib.lua")
 
 --print("orders:", orders)
 local my_team = team()
+local my_ship = ships[class()]
 
 thrust(math.pi/2, 1)
 sleep(32)
 
 local i = math.random(1,256)
 local t = nil
-local bullet_lifetime = 0.5
-local bullet_speed = 20
-local max_target_distance = bullet_speed*bullet_lifetime
+local max_target_distance = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl
 local origin = { x = 0, y = 0, vx = 0, vy = 0 }
 local target_selector = function(k,c) return c.team ~= my_team and c.class ~= "little_missile" end
 local follow_target = nil
@@ -69,7 +68,7 @@ while true do
 	if fire_target then
 		local t = fire_target
 		debug_diamond(t.x, t.y, 0.5)
-		local a = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, bullet_speed, bullet_lifetime)
+		local a = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
 		if a then
 			local spread = 0.04
 			fire("main", a+R(-spread,spread))

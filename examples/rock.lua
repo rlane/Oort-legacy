@@ -1,15 +1,10 @@
 dofile("examples/lib.lua")
 
 local my_team = team()
+local my_ship = ships[class()]
 
 local i = 0
 local t = nil
-
-local main_bullet_lifetime = 10
-local main_bullet_speed = 5
-
-local flak_bullet_lifetime = 0.5
-local flak_bullet_speed = 25
 
 local main_target = nil
 local main_target_retry = 0
@@ -26,7 +21,7 @@ while true do
 	if not main_target and main_target_retry == 16 then
 		local x, y = position()
 		local vx, vy = velocity()
-		main_target = pick_close_enemy(x, y, main_bullet_speed*main_bullet_lifetime, 0.5)
+		main_target = pick_close_enemy(x, y, my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl, 0.5)
 		main_target_retry = 0
 	elseif not main_target then
 		main_target_retry = main_target_retry + 1
@@ -38,7 +33,7 @@ while true do
 		local x, y = position()
 		local vx, vy = velocity()
 		local t = main_target
-		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, main_bullet_speed, main_bullet_lifetime)
+		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
 		if a2 then
 			fire("main", a2)
 		else
@@ -49,18 +44,18 @@ while true do
 	if not flak_target and flak_target_retry == 16 then
 		local x, y = position()
 		local vx, vy = velocity()
-		flak_target = pick_close_enemy(x, y, flak_bullet_speed*flak_bullet_lifetime, 0.3)
+		flak_target = pick_close_enemy(x, y, my_ship.guns.flak.bullet_velocity*my_ship.guns.flak.bullet_ttl, 0.3)
 	elseif not flak_target then
 		flak_target_retry = flak_target_retry + 1
 	else
 		flak_target = sensor_contact(flak_target.id)
 	end
 
-	if flak_target then
+	if flak_target and my_ship.guns.flak then
 		local x, y = position()
 		local vx, vy = velocity()
 		local t = flak_target
-		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, flak_bullet_speed, flak_bullet_lifetime)
+		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, my_ship.guns.flak.bullet_velocity, my_ship.guns.flak.bullet_ttl)
 		if a2 then
 			local spread = 0.1
 			for i = 1,3 do
