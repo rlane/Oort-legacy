@@ -1,4 +1,5 @@
 target_debug = false
+local my_team = team()
 
 function printf(...)
 	io.write(string.format(...))
@@ -55,11 +56,11 @@ function distance(x1, y1, x2, y2)
 	return math.sqrt((x2 - x1)^2 + (y2-y1)^2)
 end
 
-function pick_close_enemy(x, y, enemy_team, max_dist, prob)
+function pick_close_enemy(x, y, max_dist, prob)
 	local contacts = sensor_contacts()
 	local t = nil
 	for k, c in pairs(contacts) do
-		if c.team == enemy_team and distance(c.x, c.y, x, y) < max_dist and c.class ~= "missile" and (not t or (math.random() < prob)) then
+		if c.team ~= my_team and distance(c.x, c.y, x, y) < max_dist and c.class ~= "missile" and (not t or (math.random() < prob)) then
 			t = c
 		end
 	end
@@ -95,15 +96,6 @@ function min_by(t,fn)
 		end
 	end
 	return best_value
-end
-
-function enemy_team()
-	local my_team = team()
-	if my_team == "green" then
-		return "blue"
-	else
-		return "green"
-	end
 end
 
 function R(a,b)

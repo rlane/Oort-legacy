@@ -1,5 +1,7 @@
 dofile("examples/lib.lua")
 
+local my_team = team()
+
 local i = 0
 local t = nil
 
@@ -24,7 +26,7 @@ while true do
 	if not main_target and main_target_retry == 16 then
 		local x, y = position()
 		local vx, vy = velocity()
-		main_target = pick_close_enemy(x, y, enemy_team(), main_bullet_speed*main_bullet_lifetime, 0.5)
+		main_target = pick_close_enemy(x, y, main_bullet_speed*main_bullet_lifetime, 0.5)
 		main_target_retry = 0
 	elseif not main_target then
 		main_target_retry = main_target_retry + 1
@@ -47,7 +49,7 @@ while true do
 	if not flak_target and flak_target_retry == 16 then
 		local x, y = position()
 		local vx, vy = velocity()
-		flak_target = pick_close_enemy(x, y, enemy_team(), flak_bullet_speed*flak_bullet_lifetime, 0.3)
+		flak_target = pick_close_enemy(x, y, flak_bullet_speed*flak_bullet_lifetime, 0.3)
 	elseif not flak_target then
 		flak_target_retry = flak_target_retry + 1
 	else
@@ -74,7 +76,7 @@ while true do
 	end
 
 	if math.random(1,100) == 7 then
-		local target_selector = function(k,c) return c.team == enemy_team() and c.class == "mothership" end
+		local target_selector = function(k,c) return c.team ~= my_team and c.class == "mothership" end
 		local target_id, t = pick(sensor_contacts(), target_selector)
 		if target_id then
 			spawn("missile", "examples/missile.lua", target_id)
@@ -82,7 +84,7 @@ while true do
 	end
 
 	if math.random(50) == 7 then
-		local target_selector = function(k,c) return c.team == enemy_team() and c.class ~= "little_missile" end
+		local target_selector = function(k,c) return c.team ~= my_team and c.class ~= "little_missile" end
 		local target_id, t = pick(sensor_contacts(), target_selector)
 		if target_id then
 			spawn("little_missile", "examples/little_missile.lua", target_id)

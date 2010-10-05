@@ -1,6 +1,7 @@
 dofile("examples/lib.lua")
 
 --print("orders:", orders)
+local my_team = team()
 
 thrust(math.pi/2, 1)
 sleep(32)
@@ -11,7 +12,7 @@ local bullet_lifetime = 0.5
 local bullet_speed = 20
 local max_target_distance = bullet_speed*bullet_lifetime
 local origin = { x = 0, y = 0, vx = 0, vy = 0 }
-local target_selector = function(k,c) return c.team == enemy_team() and c.class ~= "little_missile" end
+local target_selector = function(k,c) return c.team ~= my_team and c.class ~= "little_missile" end
 local follow_target = nil
 local follow_target_retry = 0
 local fire_target = nil
@@ -19,7 +20,7 @@ local fire_target_retry = 0
 
 local function fire_score(c)
 	local x,y = position()
-	if c.team ~= enemy_team() then
+	if c.team == my_team then
 		return math.huge
 	elseif c.id == target_id then
 		return 0
