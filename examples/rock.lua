@@ -41,7 +41,7 @@ while true do
 		end
 	end
 
-	if not flak_target and flak_target_retry == 16 then
+	if my_ship.guns.flak and not flak_target and flak_target_retry == 16 then
 		local x, y = position()
 		local vx, vy = velocity()
 		flak_target = pick_close_enemy(x, y, my_ship.guns.flak.bullet_velocity*my_ship.guns.flak.bullet_ttl, 0.3)
@@ -51,7 +51,7 @@ while true do
 		flak_target = sensor_contact(flak_target.id)
 	end
 
-	if flak_target and my_ship.guns.flak then
+	if flak_target then
 		local x, y = position()
 		local vx, vy = velocity()
 		local t = flak_target
