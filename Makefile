@@ -14,6 +14,9 @@ LDFLAGS=-l$(LUA) \
 common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
 common_objects = $(common_sources:.c=.o)
 
+gl_sources = particle.o gl13.c glutil.c
+gl_objects = $(gl_sources:.c=.o)
+
 all: risc risc-dedicated test_check_collision
 
 %.d: %.c
@@ -24,9 +27,9 @@ all: risc risc-dedicated test_check_collision
 
 -include $(common_sources:.c=.d)
 
-risc: risc.o particle.o $(common_objects)
+risc: risc.o $(gl_objects) $(common_objects)
 
-particlebench: particlebench.o particle.o $(common_objects)
+particlebench: particlebench.o $(gl_objects) $(common_objects)
 
 risc-dedicated: risc-dedicated.o $(common_objects)
 

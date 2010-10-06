@@ -12,6 +12,7 @@ struct physics {
 struct physics *physics_create(void);
 void physics_destroy(struct physics *);
 void physics_tick(double t);
+void physics_tick_one(struct physics *q, const double *ta);
 int physics_check_collision(struct physics *q1, struct physics *q2, double interval, complex double *cp);
 
 static inline double rad2deg(double a)

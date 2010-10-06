@@ -28,7 +28,7 @@ void physics_destroy(struct physics *q)
 	g_slice_free(struct physics, q);
 }
 
-void physics_tick_one(struct physics *q, double *ta)
+void physics_tick_one(struct physics *q, const double *ta)
 {
 	double t = *ta;
 	complex double acc = q->thrust*t/q->m;

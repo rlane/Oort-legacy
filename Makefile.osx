@@ -12,13 +12,17 @@ LDFLAGS=-l$(LUA) \
         -L/System/Library/Frameworks/OpenGL.framework/Libraries \
         -framework OpenGL -framework GLUT
 
+common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
+common_objects = $(common_sources:.c=.o)
+
+gl_sources = particle.o gl13.c glutil.c
+gl_objects = $(gl_sources:.c=.o)
+
 all: risc risc-dedicated
 
-risc: risc.o ship.o physics.o bullet.o game.o scenario.o team.o task.o particle.o
+risc: risc.o $(gl_objects) $(common_objects)
 
-risc-dedicated: risc-dedicated.o ship.o physics.o bullet.o game.o scenario.o team.o task.o
-
-test_check_collision: test_check_collision.o physics.o
+risc-dedicated: risc-dedicated.o $(common_objects)
 
 clean:
 	rm -f *.o risc test_check_collision

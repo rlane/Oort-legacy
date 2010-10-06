@@ -22,6 +22,9 @@ LDFLAGS=-L$(LIB) -lglib-2.0 -lgthread-2.0 -mwindows -lmingw32 -lSDLmain -lSDL -l
 common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
 common_objects = $(common_sources:.c=.o)
 
+gl_sources = particle.o gl13.c glutil.c
+gl_objects = $(gl_sources:.c=.o)
+
 all: risc.exe risc-dedicated.exe
 
 %.d: %.c
@@ -32,7 +35,7 @@ all: risc.exe risc-dedicated.exe
 
 -include $(common_sources:.c=.d)
 
-risc.exe: risc.o particle.o $(common_objects)
+risc.exe: risc.o particle.o $(common_objects) $(gl_objects)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 risc-dedicated.exe: risc-dedicated.o $(common_objects)
