@@ -41,10 +41,10 @@ while true do
 		end
 	end
 
-	if my_ship.guns.flak and not flak_target and flak_target_retry == 16 then
+	if my_ship.guns.flak1 and not flak_target and flak_target_retry == 16 then
 		local x, y = position()
 		local vx, vy = velocity()
-		flak_target = pick_close_enemy(x, y, my_ship.guns.flak.bullet_velocity*my_ship.guns.flak.bullet_ttl, 0.3)
+		flak_target = pick_close_enemy(x, y, my_ship.guns.flak1.bullet_velocity*my_ship.guns.flak1.bullet_ttl, 0.3)
 	elseif not flak_target then
 		flak_target_retry = flak_target_retry + 1
 	else
@@ -55,7 +55,7 @@ while true do
 		local x, y = position()
 		local vx, vy = velocity()
 		local t = flak_target
-		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, my_ship.guns.flak.bullet_velocity, my_ship.guns.flak.bullet_ttl)
+		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, my_ship.guns.flak1.bullet_velocity, my_ship.guns.flak1.bullet_ttl)
 		if a2 then
 			local spread = 0.1
 			for i = 1,3 do
