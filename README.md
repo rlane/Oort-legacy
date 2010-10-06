@@ -93,9 +93,12 @@ messages on the queue.
 - orders - a string global containing the orders for this ship as set by the
 spawn() function.
 
+- ships - a global table containing all the properties of each ship class.
+
 ### Ships
 
-The available ship classes are specified by the ships.lua file.
+The available ship classes are specified by the ships.lua file. This table is
+available to the AI in the "ships" global.
 
 #### Energy
 
