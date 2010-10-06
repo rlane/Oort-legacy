@@ -466,6 +466,7 @@ void ship_tick_one(struct ship *s)
 	}
 
 	if (!s->ai_dead) {
+		lua_sethook(s->global_lua, NULL, 0, 0);
 		lua_getglobal(s->global_lua, "tick_hook");
 		lua_call(s->global_lua, 0, 0);
 	}
