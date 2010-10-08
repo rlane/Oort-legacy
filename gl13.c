@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <stdio.h>
 #include <complex.h>
 #include <sys/time.h>
@@ -9,10 +10,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define GL_GLEXT_PROTOTYPES
-#include <SDL.h>
-#include <SDL_framerate.h>
-#include <SDL_opengl.h>
+#ifdef GDK_WINDOWING_QUARTZ
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 #include "game.h"
 #include "physics.h"
@@ -31,7 +33,7 @@ static complex double S(complex double p)
 				 (I * screen_height/2);
 }
 
-static void glColor32(Uint32 c)
+static void glColor32(guint32 c)
 {
 	glColor4ub((c >> 24) & 0xFF, (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF);
 }
@@ -52,7 +54,7 @@ static void render_circle(int n)
 static void render_ship(struct ship *s, void *unused)
 {
 	complex double sp = S(s->physics->p);
-	Uint32 team_color = s->team->color;
+	guint32 team_color = s->team->color;
 	double x = creal(sp), y = cimag(sp);
 	double angle = atan2(cimag(s->physics->v), creal(s->physics->v));
 	double scale = view_scale * s->class->radius;
@@ -101,7 +103,7 @@ static void render_ship(struct ship *s, void *unused)
 		complex double sp2 = S(s->tail[j]);
 		if (isnan(sp2))
 			break;
-		Uint32 color = team_color | (64-(64/TAIL_SEGMENTS)*i);
+		guint32 color = team_color | (64-(64/TAIL_SEGMENTS)*i);
 
 		glColor32(color);
 		glVertex3f(creal(sp2), cimag(sp2), 0);
@@ -236,6 +238,4 @@ void render_gl13(void)
 			glPrintf(x, y-4*dy, "thrust: " VEC2_FMT, VEC2_ARG(picked->physics->thrust));
 			glPrintf(x, y-5*dy, "energy: %g", ship_get_energy(picked));
 		}
-
-		SDL_GL_SwapBuffers();
 }

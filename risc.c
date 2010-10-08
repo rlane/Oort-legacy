@@ -253,6 +253,7 @@ int main(int argc, char **argv)
 		}
 
 		render_gl13();
+		SDL_GL_SwapBuffers();
 
 		if (!paused) {
 			game_purge();

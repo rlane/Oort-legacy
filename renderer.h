@@ -1,7 +1,6 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-extern SDL_Surface *screen;
 extern int screen_width;
 extern int screen_height;
 extern complex double view_pos;
