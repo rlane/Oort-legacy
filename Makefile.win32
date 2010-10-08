@@ -42,6 +42,7 @@ risc-dedicated.exe: risc-dedicated.o $(common_objects)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 pkg: risc-win32.zip
+	cp $< risc-win32-`git log --pretty=format:%h -1`.zip
 
 DLLS=libcharset-1.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll libgobject-2.0-0.dll \
      libgthread-2.0-0.dll libiconv-2.dll libintl-8.dll lua51.dll SDL.dll zlib1.dll SDL_gfx.dll
