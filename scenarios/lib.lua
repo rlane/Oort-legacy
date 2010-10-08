@@ -12,11 +12,12 @@ colors = {
 	royalblue = 0x4350E000,
 	sushi = 0x92A53100,
 	pueblo = 0x752F2300,
-	zuccini = 0x0C260B00,
+	zucchini = 0x0C260B00,
 	turquoise = 0x44E5BD00,
 	sapphire = 0x0D1E7C00,
 	denim = 0x1653CE00,
 	ruby = 0xD6176600,
+	eggplant = 0x7C005D00,
 }
 
 indexed_colors = {}
