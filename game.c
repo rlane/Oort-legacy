@@ -90,6 +90,7 @@ void game_tick(double tick_length)
 	ship_tick(tick_length);
 	bullet_tick(tick_length);
 	current_time += tick_length;
+	ticks += 1;
 }
 
 static void free_bullet_hit(struct bullet_hit *h)

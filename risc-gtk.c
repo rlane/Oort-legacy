@@ -151,8 +151,6 @@ idle (GtkWidget *widget)
 			printf("Team '%s' is victorious in %0.2f seconds\n", winner->name, ticks*tick_length);
 			paused = 1;
 		}
-
-		ticks += 1;
 	}
 
 	if (single_step) {
