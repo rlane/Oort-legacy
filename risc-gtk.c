@@ -94,14 +94,7 @@ reshape (GtkWidget         *widget,
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
     return FALSE;
 
-	screen_width = allocation.width;
-	screen_height = allocation.height;
-  glViewport (0, 0, allocation.width, allocation.height);
-  glMatrixMode (GL_PROJECTION);
-  glLoadIdentity ();
-	glOrtho(0.0f, allocation.width, allocation.height, 0.0f, -1.0f, 1.0f);
-  glMatrixMode (GL_MODELVIEW);
-  glLoadIdentity ();
+	reshape_gl13(allocation.width, allocation.height);
 
   gdk_gl_drawable_gl_end (gldrawable);
   /*** OpenGL END ***/
@@ -120,14 +113,7 @@ init(GtkWidget *widget,
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
     return;
 
-	glEnable( GL_TEXTURE_2D );
-	glClearColor( 0.0f, 0.0f, 0.03f, 0.0f );
-	glShadeModel(GL_SMOOTH);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glEnable(GL_LINE_SMOOTH);
-	glEnable(GL_POINT_SMOOTH);
-	glLineWidth(1.2);
+	init_gl13();
 
   gdk_gl_drawable_gl_end (gldrawable);
   /*** OpenGL END ***/

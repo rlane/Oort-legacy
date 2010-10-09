@@ -252,6 +252,30 @@ void render_gl13(void)
 		}
 }
 
+void init_gl13(void)
+{
+	glEnable( GL_TEXTURE_2D );
+	glClearColor( 0.0f, 0.0f, 0.03f, 0.0f );
+	glShadeModel(GL_SMOOTH);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POINT_SMOOTH);
+	glLineWidth(1.2);
+}
+
+void reshape_gl13(int width, int height)
+{
+	screen_width = width;
+	screen_height = height;
+  glViewport (0, 0, width, height);
+  glMatrixMode (GL_PROJECTION);
+  glLoadIdentity ();
+	glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();
+}
+
 static complex double W(complex double o)
 {
 	return view_pos + (o - (screen_width/2) - (I * screen_height/2))/view_scale;

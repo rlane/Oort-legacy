@@ -31,28 +31,29 @@ static const double tick_length = 1.0/32.0;
 
 SDL_Surface *screen;
 
-static void get_resolution(void)
+static void get_resolution(int *width, int *height)
 {
 	char *s;
 
 	const SDL_VideoInfo *vid_info = SDL_GetVideoInfo();
-	screen_width = vid_info->current_w;
-	screen_height = vid_info->current_h;
+	*width = vid_info->current_w;
+	*height = vid_info->current_h;
 
 	if ((s = getenv("RISC_W"))) {
-		screen_width = atoi(s);
+		*width = atoi(s);
 	}
 
 	if ((s = getenv("RISC_H"))) {
-		screen_height = atoi(s);
+		*height = atoi(s);
 	}
 
-	printf("using resolution %dx%d\n", screen_width, screen_height);
+	printf("using resolution %dx%d\n", *width, *height);
 }
 
 int main(int argc, char **argv)
 {
 	SDL_Event event;
+	int width, height;
 
 	font_init();
 	memset(particles, 0, sizeof(particles));
@@ -65,7 +66,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	get_resolution();
+	get_resolution(&width, &height);
 
 	SDL_initFramerate(&fps_manager);
 	SDL_setFramerate(&fps_manager, FPS);
@@ -80,36 +81,15 @@ int main(int argc, char **argv)
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
-	screen = SDL_SetVideoMode(screen_width, screen_height, 32, SDL_OPENGL | SDL_FULLSCREEN);
+	screen = SDL_SetVideoMode(width, height, 32, SDL_OPENGL | SDL_FULLSCREEN);
 
 	if (!screen) {
 		fprintf(stderr, "Failed to set video mode: %s\n", SDL_GetError());
 		exit(1);
 	}
 
-	glEnable( GL_TEXTURE_2D );
-
-	glClearColor( 0.0f, 0.0f, 0.03f, 0.0f );
-
-	glViewport(0, 0, screen_width, screen_height);
-
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	glOrtho(0.0f, screen_width, screen_height, 0.0f, -1.0f, 1.0f);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glShadeModel(GL_SMOOTH);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glEnable(GL_LINE_SMOOTH);
-	glEnable(GL_POINT_SMOOTH);
-	glLineWidth(1.2);
+	init_gl13();
+	reshape_gl13(width, height);
 
 	int seed = getpid() ^ time(NULL);
 
