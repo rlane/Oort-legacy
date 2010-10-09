@@ -1,5 +1,5 @@
 # Arch linux:
-# yaourt -S mingw32-gcc mingw32-sdl mingw32-glib2 mingw32-lua mingw32-sdl_gfx zip
+# yaourt -S mingw32-gcc mingw32-sdl mingw32-glib2 mingw32-gtk2 mingw32-lua mingw32-sdl_gfx mingw32-gtkglext zip vala
 # mingw32-gettext dependency needs x86_64 added to its PKGBUILD
 # make pkg
 
@@ -8,16 +8,16 @@ MINGW=/usr/i486-mingw32
 LIB=$(MINGW)/lib
 INC=$(MINGW)/include
 BIN=$(MINGW)/bin
+PKG_CONFIG_PATH="/usr/i486-mingw32/lib/pkgconfig/"
+PKGS=gtk+-2.0 gtkglext-1.0 glib-2.0 gthread-2.0 lua
+PKG_CFLAGS=`PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags $(PKGS)`
+PKG_LIBS=`PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(PKGS)`
 
-CFLAGS=\
-  -DWINDOWS \
-  -I$(INC) \
-  -I$(INC)/SDL \
-  -I$(INC)/glib-2.0 \
-  -I$(LIB)/glib-2.0/include \
-  -g -O2 -march=native -Wall
+CFLAGS= -DWINDOWS -I. -I$(INC) $(PKG_CFLAGS) -g -O2 -march=native -Wall
+LDFLAGS=-L$(LIB) $(PKG_LIBS) -mwindows -lmingw32 -lSDL_gfx -lopengl32 -lglu32
 
-LDFLAGS=-L$(LIB) -lglib-2.0 -lgthread-2.0 -mwindows -lmingw32 -lSDLmain -lSDL -lSDL_gfx -llua -lopengl32 -lglu32
+#SDL_CFLAGS=-I$(INC)/SDL
+#SDL_LDFLAGS=-lSDLmain -lSDL 
 
 common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
 common_objects = $(common_sources:.c=.o)
@@ -25,7 +25,7 @@ common_objects = $(common_sources:.c=.o)
 gl_sources = particle.o gl13.c glutil.c
 gl_objects = $(gl_sources:.c=.o)
 
-all: risc.exe risc-dedicated.exe
+all: risc-gtk-vala.exe risc-dedicated.exe
 
 %.d: %.c
 				@set -e; rm -f $@; \
@@ -35,24 +35,42 @@ all: risc.exe risc-dedicated.exe
 
 -include $(common_sources:.c=.d)
 
-risc.exe: risc.o particle.o $(common_objects) $(gl_objects)
+%.c: %.vala vapi/risc.vapi
+	valac -o $@ -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg risc --vapidir vapi $<
+
+risc.exe: risc.o $(common_objects) $(gl_objects)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 risc-dedicated.exe: risc-dedicated.o $(common_objects)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
+DLLS=\
+	libatk-1.0-0.dll libcairo-2.dll libexpat-1.dll libfontconfig-1.dll libfreetype-6.dll \
+	libgdk_pixbuf-2.0-0.dll libgdkglext-win32-1.0-0.dll libgdk-win32-2.0-0.dll libgio-2.0-0.dll \
+	libglib-2.0-0.dll libgmodule-2.0-0.dll libgobject-2.0-0.dll libgthread-2.0-0.dll \
+	libgtkglext-win32-1.0-0.dll libgtk-win32-2.0-0.dll libiconv-2.dll libintl-8.dll libpango-1.0-0.dll \
+	libpangocairo-1.0-0.dll libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpng14.dll zlib1.dll \
+	libpixman-1-0.dll
+
+.PHONY: risc-win32
+risc-win32: risc.exe risc-dedicated.exe
+	rm -rf risc-win32
+	mkdir risc-win32
+	cp risc.exe risc-dedicated.exe $(addprefix $(BIN)/,$(DLLS)) risc-win32/
+	cp ships.lua runtime.lua risc-win32/
+	dos2unix --u2d < README.md > risc-win32/README.txt
+	dos2unix --u2d < TODO > risc-win32/TODO.txt
+	mkdir risc-win32/scenarios
+	cp scenarios/*.lua risc-win32/scenarios
+	mkdir risc-win32/examples
+	cp examples/*.lua risc-win32/examples
+
+risc-win32.zip: risc-win32
+	zip -MM -r risc-win32 risc-win32 
+
 pkg: risc-win32.zip
 	cp $< risc-win32-`git log --pretty=format:%h -1`.zip
-
-DLLS=libcharset-1.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll libgobject-2.0-0.dll \
-     libgthread-2.0-0.dll libiconv-2.dll libintl-8.dll lua51.dll SDL.dll zlib1.dll SDL_gfx.dll
-
-risc-win32.zip: risc.exe risc-dedicated.exe
-	rm -rf risc-win32 risc-win32.zip
-	mkdir risc-win32
-	cp -r risc.exe risc-dedicated.exe $(addprefix $(BIN)/,$(DLLS)) *.lua scenarios/ examples/ README.md TODO risc-win32/
-	zip -MM -r risc-win32 risc-win32 
-	rm -r risc-win32
+	@echo created risc-win32-`git log --pretty=format:%h -1`.zip
 
 clean:
-	rm -f *.o *.d risc.exe risc-dedicated.exe
+	rm -rf *.o *.d *.exe risc-win32 risc-win32.zip
