@@ -5,7 +5,7 @@ CFLAGS=-I/usr/include/lua5.1 \
        `pkg-config glib-2.0 --cflags` \
        `pkg-config gtk+-2.0 --cflags` \
        `pkg-config gtkglext-1.0 --cflags` \
-       -g -O2 -march=native -Wall
+       -g -O2 -march=native -Wall -I.
 
 LDFLAGS=-l$(LUA) \
         `sdl-config --libs` \
@@ -38,6 +38,11 @@ particlebench: particlebench.o $(gl_objects) $(common_objects)
 risc-dedicated: risc-dedicated.o $(common_objects)
 
 risc-gtk: risc-gtk.o $(gl_objects) $(common_objects)
+
+%.c: %.vala vapi/risc.vapi
+	valac -o $@ -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg risc --vapidir vapi $<
+
+risc-gtk-vala: risc-gtk-vala.c $(gl_objects) $(common_objects)
 
 test_check_collision: test_check_collision.o physics.o
 
