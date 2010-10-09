@@ -4,10 +4,6 @@
 #include <math.h>
 #include <glib.h>
 
-#define GL_GLEXT_PROTOTYPES
-#include <SDL.h>
-#include <SDL_opengl.h>
-
 #include "particle.h"
 
 struct particle particles[MAX_PARTICLES];
