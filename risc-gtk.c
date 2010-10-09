@@ -144,9 +144,7 @@ idle (GtkWidget *widget)
 	if (!paused) {
 		game_purge();
 		game_tick(tick_length);
-		if (!simple_graphics) {
-			particle_tick();
-		}
+		particle_tick();
 
 		struct team *winner;
 		if ((winner = game_check_victory())) {
@@ -275,7 +273,7 @@ button_press_event( GtkWidget *widget, GdkEventButton *event )
 
 	switch (event->button) {
 		case 1:
-			picked = pick(x,y);
+			pick(x,y);
 			break;
 		case 4:
 			zoom(x, y, 1.1);

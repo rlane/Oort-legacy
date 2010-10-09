@@ -124,13 +124,6 @@ int main(int argc, char **argv)
 			long usecs = (now.tv_sec-last_sample_time.tv_sec)*(1000*1000) + (now.tv_usec - last_sample_time.tv_usec);
 			double fps = (1000.0*1000*sample_ticks/usecs);
 			printf("%g FPS\n", fps);
-			if (fps < 16 && !simple_graphics) {
-				static int fps_fail;
-				if (++fps_fail > 4) {
-					printf("reverting to simple graphics\n");
-					simple_graphics = 1;
-				}
-			}
 			sample_ticks = 0;
 			last_sample_time = now;
 		}
@@ -179,7 +172,7 @@ int main(int argc, char **argv)
 
 				switch (event.button.button) {
 				case SDL_BUTTON_LEFT:
-					picked = pick(event.button.x, event.button.y);
+					pick(event.button.x, event.button.y);
 					break;
 				case SDL_BUTTON_WHEELUP:
 					zoom(event.button.x, event.button.y, 1.1);
@@ -195,12 +188,10 @@ int main(int argc, char **argv)
 
 		if (!paused) {
 			game_tick(tick_length);
-			if (!simple_graphics) {
-				particle_tick();
-			}
+			particle_tick();
 		}
 
-		render_gl13();
+		render_gl13(paused);
 		SDL_GL_SwapBuffers();
 
 		if (!paused) {

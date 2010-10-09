@@ -227,8 +227,10 @@ static void render_particles(void)
 	}
 }
 
-void render_gl13(void)
+void render_gl13( int _paused)
 {
+	paused = _paused;
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 
@@ -281,17 +283,18 @@ static complex double W(complex double o)
 	return view_pos + (o - (screen_width/2) - (I * screen_height/2))/view_scale;
 }
 
-struct ship *pick(int x, int y)
+void pick(int x, int y)
 {
 	vec2 p = W(C(x, y));
 	GList *es;
 	for (es = g_list_first(all_ships); es; es = g_list_next(es)) {
 		struct ship *s = es->data;
 		if (distance(s->physics->p, p) < s->physics->r) {
-			return s;
+			picked = s;
+			return;
 		}
 	}
-	return NULL;
+	picked = NULL;
 }
 
 void zoom(int x, int y, double f)
