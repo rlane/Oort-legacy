@@ -43,42 +43,6 @@ static gboolean is_sync = TRUE;
 
 static const int FPS = 32;
 static const double tick_length = 1.0/32.0;
-const double zoom_force = 0.1;
-
-int screen_width = 640;
-int screen_height = 480;
-complex double view_pos = 0.0;
-double view_scale = 16.0;
-int paused = 0;
-int single_step = 0;
-int render_all_debug_lines = 0;
-struct ship *picked = NULL;
-int simple_graphics = 0;
-
-static complex double W(complex double o)
-{
-	return view_pos + (o - (screen_width/2) - (I * screen_height/2))/view_scale;
-}
-
-static struct ship *pick(vec2 p)
-{
-	GList *es;
-	for (es = g_list_first(all_ships); es; es = g_list_next(es)) {
-		struct ship *s = es->data;
-		if (distance(s->physics->p, p) < s->physics->r) {
-			return s;
-		}
-	}
-	return NULL;
-}
-
-static void zoom(double f)
-{
-	int x, y;
-	gdk_window_get_pointer(main_window, &x, &y, NULL);
-	view_pos = (1-zoom_force)*view_pos + zoom_force * W(C(x,y));
-	view_scale *= f;
-}
 
 static gboolean
 draw (GtkWidget      *widget,
@@ -280,13 +244,15 @@ key (GtkWidget   *widget,
      gpointer     data)
 {
   GtkAllocation allocation;
+	int x, y;
+	gdk_window_get_pointer(main_window, &x, &y, NULL);
 
   switch (event->keyval) {
 		case GDK_z:
-			zoom(1.1);
+			zoom(x, y, 1.1);
 			break;
 		case GDK_x:
-			zoom(1.0/1.1);
+			zoom(x, y, 1.0/1.1);
 			break;
 		case GDK_space:
 			paused = !paused;
@@ -319,17 +285,17 @@ button_press_event( GtkWidget *widget, GdkEventButton *event )
 {
 	printf("button %d\n", event->button);
 	int x,y;
+	gdk_window_get_pointer(main_window, &x, &y, NULL);
 
 	switch (event->button) {
 		case 1:
-			gdk_window_get_pointer(main_window, &x, &y, NULL);
-			picked = pick(W(C(x, y)));
+			picked = pick(x,y);
 			break;
 		case 4:
-			zoom(1.1);
+			zoom(x, y, 1.1);
 			break;
 		case 5:
-			zoom(1.0/1.1);
+			zoom(x, y, 1.0/1.1);
 			break;
 		default:
 			break;

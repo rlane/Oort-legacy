@@ -26,6 +26,18 @@
 #include "glutil.h"
 #include "renderer.h"
 
+const double zoom_force = 0.1;
+
+int screen_width = 640;
+int screen_height = 480;
+complex double view_pos = 0.0;
+double view_scale = 16.0;
+int paused = 0;
+int single_step = 0;
+int render_all_debug_lines = 0;
+struct ship *picked = NULL;
+int simple_graphics = 0;
+
 static complex double S(complex double p)
 {
 	return (p - view_pos) * view_scale +
@@ -238,4 +250,28 @@ void render_gl13(void)
 			glPrintf(x, y-4*dy, "thrust: " VEC2_FMT, VEC2_ARG(picked->physics->thrust));
 			glPrintf(x, y-5*dy, "energy: %g", ship_get_energy(picked));
 		}
+}
+
+static complex double W(complex double o)
+{
+	return view_pos + (o - (screen_width/2) - (I * screen_height/2))/view_scale;
+}
+
+struct ship *pick(int x, int y)
+{
+	vec2 p = W(C(x, y));
+	GList *es;
+	for (es = g_list_first(all_ships); es; es = g_list_next(es)) {
+		struct ship *s = es->data;
+		if (distance(s->physics->p, p) < s->physics->r) {
+			return s;
+		}
+	}
+	return NULL;
+}
+
+void zoom(int x, int y, double f)
+{
+	view_pos = (1-zoom_force)*view_pos + zoom_force * W(C(x,y));
+	view_scale *= f;
 }

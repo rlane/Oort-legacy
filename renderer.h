@@ -3,7 +3,6 @@
 
 extern int screen_width;
 extern int screen_height;
-extern complex double view_pos;
 extern double view_scale;
 extern int paused;
 extern int single_step;
@@ -12,5 +11,7 @@ extern struct ship *picked;
 extern int simple_graphics;
 
 void render_gl13(void);
+void zoom(int x, int y, double f);
+struct ship *pick(int x, int y);
 
 #endif
