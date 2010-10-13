@@ -2,6 +2,23 @@ using Gtk;
 using Gdk;
 
 namespace RISC {
+	class MenuBuilder : GLib.Object {
+		public delegate void MenuAction();
+		public void leaf(MenuShell parent, string label, MenuAction action) {
+			var item = new MenuItem.with_label(label);
+			parent.append(item);
+			item.activate.connect((widget) => action());
+		}
+
+		public delegate void MenuBuilder(MenuShell parent);
+		public void menu(MenuShell parent, string label, MenuBuilder builder) {
+			var item = new MenuItem.with_label(label);
+			var menu = new Menu();
+			item.set_submenu(menu);
+			parent.append(item);
+			builder(menu);
+		}
+	}
 
 	class MainWindow : Gtk.Window {
 		private DrawingArea drawing_area;
@@ -13,15 +30,38 @@ namespace RISC {
 			this.destroy.connect(Gtk.main_quit);
 			set_reallocate_redraws(true);
 
+			var vbox = new VBox(false, 0);
+			vbox.pack_start(make_menubar(), false, false, 0);
+			vbox.pack_start(make_drawing_area(), true, true, 0);
+			add(vbox);
+
+			GLib.Timeout.add(31, tick);
+		}
+
+		private MenuBar make_menubar() {
+			var menubar = new MenuBar();
+			var b = new MenuBuilder();
+
+			b.menu(menubar, "Game", parent => {
+				b.leaf(parent, "New", () => { });
+				b.leaf(parent, "Quit", () => { Gtk.main_quit(); });
+			});
+
+			b.menu(menubar, "Help", parent => {
+				b.leaf(parent, "About", () => { });
+			});
+
+			return menubar;
+		}
+
+		private DrawingArea make_drawing_area() {
 			drawing_area = new DrawingArea();
-			drawing_area.set_size_request(1024, 768);
+			//drawing_area.set_size_request(1024, 768);
 
 			var glconfig = new GLConfig.by_mode(GLConfigMode.RGBA | GLConfigMode.DOUBLE);
-
 			WidgetGL.set_gl_capability(drawing_area, glconfig, null, true, GLRenderType.RGBA_TYPE);
 
 			drawing_area.add_events(Gdk.EventMask.BUTTON_PRESS_MASK);
-
 			drawing_area.realize.connect(on_realize_event);
 			drawing_area.configure_event.connect(on_configure_event);
 			drawing_area.expose_event.connect(on_expose_event);
@@ -29,9 +69,7 @@ namespace RISC {
 			drawing_area.button_press_event.connect(on_button_press_event);
 			drawing_area.scroll_event.connect(on_scroll_event);
 
-			add(drawing_area);
-
-			GLib.Timeout.add(31, tick);
+			return drawing_area;
 		}
 
 		private bool tick() {
