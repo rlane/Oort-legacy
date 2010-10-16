@@ -34,6 +34,9 @@ namespace RISC {
 			vbox.pack_start(make_menubar(), false, false, 0);
 			vbox.pack_start(make_drawing_area(), true, true, 0);
 			add(vbox);
+			show_all();
+
+			RISC.game_init(42, "scenarios/furball.lua", { "examples/orbit.lua" });
 
 			GLib.Timeout.add(31, tick);
 		}
@@ -43,7 +46,7 @@ namespace RISC {
 			var b = new MenuBuilder();
 
 			b.menu(menubar, "Game", parent => {
-				b.leaf(parent, "New", () => { });
+				b.leaf(parent, "New", () => { new_game(); });
 				b.leaf(parent, "Quit", () => { Gtk.main_quit(); });
 			});
 
@@ -70,6 +73,13 @@ namespace RISC {
 			drawing_area.scroll_event.connect(on_scroll_event);
 
 			return drawing_area;
+		}
+
+		public void new_game() {
+			var w = new NewGameWindow();
+			w.transient_for = this;
+			w.start_game.connect(start_game);
+			w.show();
 		}
 
 		private bool tick() {
@@ -201,26 +211,83 @@ namespace RISC {
 
 			return true;
 		}
+
+		public void start_game(int seed, string scenario, string[] ais) {
+			RISC.game_shutdown();
+			if (RISC.game_init(seed, scenario, ais) != 0) {
+				error("initialization failed\n");
+			}
+		}
 	}
 
+	class NewGameWindow : Gtk.Dialog {
+		private Widget ok_button;
+		private FileChooserButton scenario_chooser;
+		private FileChooserButton[] ai_choosers;
+
+		public NewGameWindow() {
+			this.title = "New Game";
+			this.has_separator = false;
+			this.border_width = 5;
+			set_default_size(350, 100);
+
+			this.ai_choosers = new FileChooserButton[4];
+			this.vbox.spacing = 10;
+			this.vbox.pack_start(new Label("Scenario:"), false, false, 0);
+			scenario_chooser = new FileChooserButton("Select scenario", Gtk.FileChooserAction.OPEN);
+			this.vbox.pack_start(scenario_chooser, false, false, 0);
+			this.vbox.pack_start(new Label("AIs:"), false, false, 0);
+			var i = 0;
+			for (i = 0; i < 4; i++) {
+				ai_choosers[i] = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
+				this.vbox.pack_start(ai_choosers[i], false, false, 0);
+			}
+
+			add_button(STOCK_CLOSE, ResponseType.CLOSE);
+			this.ok_button = add_button(STOCK_OK, ResponseType.APPLY);
+			this.ok_button.sensitive = false;
+
+			this.response.connect(on_response);
+			this.scenario_chooser.file_set.connect( () => {
+					this.ok_button.sensitive = this.scenario_chooser.get_filename() != null;
+			});
+
+			show_all();
+		}
+
+		private void on_response (Dialog source, int response_id) {
+			switch (response_id) {
+			case ResponseType.APPLY:
+				var n = 0;
+				for (var i = 0; i < 4; i++) {
+					if (ai_choosers[i].get_filename() != null) n++;
+				}
+				var ais = new string[n];
+				for (var i = 0; i < n; i++) {
+					ais[i] = ai_choosers[i].get_filename();
+				}
+				start_game(5, scenario_chooser.get_filename(), ais);
+				destroy();
+				break;
+			case ResponseType.CLOSE:
+				destroy();
+				break;
+			}
+		}
+
+		public signal void start_game(int seed, string scenario, string[] ais);
+	}
 }
 
 int main(string[] args) {
 	Gtk.init(ref args);
 	Gtk.gl_init(ref args);
 
-	int seed = 5;
-
 	if (!Thread.supported ()) {
 		error ("Cannot run without thread support.");
 	}
 
-	if (RISC.game_init(seed, null, 0, null) != 0) {
-		error("initialization failed\n");
-	}
-
-	var sample = new RISC.MainWindow();
-	sample.show_all();
+	var mainwin = new RISC.MainWindow();
 
 	Gtk.main();
 

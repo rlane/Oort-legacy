@@ -11,7 +11,7 @@ struct bullet_hit {
 	double e;
 };
 
-int game_init(int seed, const char *scenario, int num_teams, char **teams);
+int game_init(int seed, const char *scenario, char **teams, int num_teams);
 void game_tick(double tick_length);
 void game_purge();
 void game_shutdown();

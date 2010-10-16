@@ -17,11 +17,13 @@ namespace RISC {
 		public void pick(int x, int y);
 
 		[CCode (cname = "game_init")]
-		public int game_init(int seed, string? foo, int n, string? bar);
+		public int game_init(int seed, string scenario, string[] ais);
 		[CCode (cname = "game_purge")]
 		public void game_purge();
 		[CCode (cname = "game_tick")]
 		public void game_tick(double tick_length);
+		[CCode (cname = "game_shutdown")]
+		public void game_shutdown();
 
 		[CCode (cname = "particle_tick")]
 		public void particle_tick();

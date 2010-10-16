@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 		teams = argv+2;
 	}
 
-	if (game_init(seed, scenario, num_teams, teams)) {
+	if (game_init(seed, scenario, teams, num_teams)) {
 		fprintf(stderr, "initialization failed\n");
 		return 1;
 	}

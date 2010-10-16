@@ -56,7 +56,7 @@ static void check_bullet_hits(double tick_length)
 	}
 }
 
-int game_init(int seed, const char *scenario, int num_teams, char **teams)
+int game_init(int seed, const char *scenario, char **teams, int num_teams)
 {
 	task_init();
 
