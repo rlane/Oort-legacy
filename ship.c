@@ -22,7 +22,7 @@ char RKEY_SHIP[1];
 GList *all_ships = NULL;
 static GList *new_ships = NULL;
 static GStaticMutex new_ships_lock = G_STATIC_MUTEX_INIT;
-static GHashTable *ship_classes = NULL;
+static GHashTable *ship_classes;
 static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;
 static const int ai_mem_limit = 1<<20;
 
@@ -577,8 +577,12 @@ static int free_ship_class(char *name, struct ship_class *class)
 void ship_shutdown(void)
 {
 	g_list_foreach(all_ships, (GFunc)ship_destroy, NULL);
-	g_hash_table_foreach_remove(ship_classes, (GHRFunc)free_ship_class, NULL);
-	g_hash_table_destroy(ship_classes);
+
+	if (ship_classes) {
+		g_hash_table_foreach_remove(ship_classes, (GHRFunc)free_ship_class, NULL);
+		g_hash_table_destroy(ship_classes);
+		ship_classes = NULL;
+	}
 }
 
 static double lua_getfield_double(lua_State *L, int index, const char *key)

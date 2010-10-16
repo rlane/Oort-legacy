@@ -113,7 +113,7 @@ void game_shutdown(void)
 	ship_shutdown();
 	bullet_shutdown();
 	team_shutdown();
-	g_rand_free(prng);
+	if (prng) g_rand_free(prng);
 }
 
 struct team *game_check_victory(void)

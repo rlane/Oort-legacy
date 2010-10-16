@@ -36,7 +36,7 @@ namespace RISC {
 			add(vbox);
 			show_all();
 
-			RISC.game_init(42, "scenarios/furball.lua", { "examples/orbit.lua" });
+			start_demo_game();
 
 			GLib.Timeout.add(31, tick);
 		}
@@ -47,6 +47,7 @@ namespace RISC {
 
 			b.menu(menubar, "Game", parent => {
 				b.leaf(parent, "New", () => { new_game(); });
+				b.leaf(parent, "Stop", () => { start_demo_game(); });
 				b.leaf(parent, "Quit", () => { Gtk.main_quit(); });
 			});
 
@@ -226,6 +227,10 @@ namespace RISC {
 			if (RISC.game_init(seed, scenario, ais) != 0) {
 				error("initialization failed\n");
 			}
+		}
+
+		public void start_demo_game() {
+			start_game(42, "scenarios/furball.lua", { "examples/orbit.lua" });
 		}
 	}
 

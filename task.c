@@ -15,10 +15,10 @@ struct task_data {
 
 static void worker(struct task_data *t);
 
-static GThreadPool *thread_pool = NULL;
+static GThreadPool *thread_pool;
 static GCond *task_cvar;
 static GMutex *task_lock;
-static int tasks_in_flight = 0;
+static int tasks_in_flight;
 
 void task_init(void)
 {
@@ -26,6 +26,7 @@ void task_init(void)
 	thread_pool = g_thread_pool_new((GFunc)worker, NULL, THREAD_POOL_SIZE, TRUE, NULL);
 	task_cvar = g_cond_new();
 	task_lock = g_mutex_new();
+	tasks_in_flight = 0;
 }
 
 static void worker(struct task_data *t)
@@ -63,5 +64,18 @@ void task_wait(void)
 
 void task_shutdown(void)
 {
-	g_thread_pool_free(thread_pool, FALSE, TRUE);
+	if (thread_pool) {
+		g_thread_pool_free(thread_pool, FALSE, TRUE);
+		thread_pool = NULL;
+	}
+
+	if (task_cvar) {
+		g_cond_free(task_cvar);
+		task_cvar = NULL;
+	}
+
+	if (task_lock) {
+		g_mutex_free(task_lock);
+		task_lock = NULL;
+	}
 }
