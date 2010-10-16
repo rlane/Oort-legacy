@@ -51,7 +51,7 @@ namespace RISC {
 			});
 
 			b.menu(menubar, "Help", parent => {
-				b.leaf(parent, "About", () => { });
+				b.leaf(parent, "About", show_about);
 			});
 
 			return menubar;
@@ -79,6 +79,15 @@ namespace RISC {
 			var w = new NewGameWindow();
 			w.transient_for = this;
 			w.start_game.connect(start_game);
+			w.show();
+		}
+
+		public void show_about() {
+			var w = new AboutDialog();
+			w.transient_for = this;
+			w.authors = { "Rich Lane", null };
+			w.version = "alpha";
+			w.response.connect( (response_id) => { w.destroy(); });
 			w.show();
 		}
 
