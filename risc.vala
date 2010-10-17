@@ -225,7 +225,8 @@ namespace RISC {
 		public void start_game(int seed, string scenario, string[] ais) {
 			RISC.game_shutdown();
 			if (RISC.game_init(seed, scenario, ais) != 0) {
-				error("initialization failed\n");
+				warning("initialization failed\n");
+				start_demo_game();
 			}
 		}
 
