@@ -10,11 +10,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#ifdef GDK_WINDOWING_QUARTZ
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
+#include <GL/glew.h>
 
 #include "game.h"
 #include "physics.h"
@@ -256,6 +252,11 @@ void render_gl13( int _paused)
 
 void init_gl13(void)
 {
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "glewInit failed\n");
+		abort();
+	}
+
 	glEnable( GL_TEXTURE_2D );
 	glClearColor( 0.0f, 0.0f, 0.03f, 0.0f );
 	glShadeModel(GL_SMOOTH);
@@ -264,6 +265,14 @@ void init_gl13(void)
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POINT_SMOOTH);
 	glLineWidth(1.2);
+
+#if 0
+	printf("Vendor: %s\n", glGetString(GL_VENDOR));
+	printf("Renderer: %s\n", glGetString(GL_RENDERER));
+	printf("GL Version: %s\n", glGetString(GL_VERSION));
+	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	printf("Extensions:\n%s\n", glGetString(GL_EXTENSIONS));
+#endif
 }
 
 void reshape_gl13(int width, int height)

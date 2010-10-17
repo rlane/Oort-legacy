@@ -1,5 +1,5 @@
 LUAPKG:=$(shell pkg-config --exists luajit && echo luajit || echo lua)
-PKGS:=glib-2.0 gtk+-2.0 gtkglext-1.0 gthread-2.0 $(LUAPKG)
+PKGS:=glib-2.0 gtk+-2.0 gtkglext-1.0 gthread-2.0 glew $(LUAPKG)
 
 CFLAGS:=`pkg-config --cflags $(PKGS)` -g -O2 -march=native -Wall -I.
 LDFLAGS:=`pkg-config --libs $(PKGS)` -lGL -lGLU

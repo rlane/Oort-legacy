@@ -9,7 +9,7 @@ LIB=$(MINGW)/lib
 INC=$(MINGW)/include
 BIN=$(MINGW)/bin
 PKG_CONFIG_PATH="/usr/i486-mingw32/lib/pkgconfig/"
-PKGS=gtk+-2.0 gtkglext-1.0 glib-2.0 gthread-2.0 lua
+PKGS=gtk+-2.0 gtkglext-1.0 glib-2.0 gthread-2.0 lua glew
 PKG_CFLAGS=`PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags $(PKGS)`
 PKG_LIBS=`PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(PKGS)`
 
