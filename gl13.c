@@ -41,11 +41,6 @@ static complex double S(complex double p)
 				 (I * screen_height/2);
 }
 
-static void glColor32(guint32 c)
-{
-	glColor4ub((c >> 24) & 0xFF, (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF);
-}
-
 static void render_circle(int n)
 {
 	double da = 2*M_PI/n, a = 0;

@@ -59,6 +59,11 @@ void glPrintf(int x, int y, const char *fmt, ...)
 	glWrite(x, y, buf);
 }
 
+void glColor32(guint32 c)
+{
+	glColor4ub((c >> 24) & 0xFF, (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF);
+}
+
 void screenshot(const char *filename)
 {
 #ifndef WINDOWS
