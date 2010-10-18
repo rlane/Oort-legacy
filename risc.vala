@@ -25,6 +25,14 @@ namespace RISC {
 		private bool paused;
 		private bool single_step;
 
+		enum GameState {
+			DEMO,
+			RUNNING,
+			FINISHED,
+		}
+
+		private GameState game_state;
+
 		public MainWindow() {
 			this.title = "RISC";
 			this.destroy.connect(Gtk.main_quit);
@@ -98,13 +106,13 @@ namespace RISC {
 				game_tick(1.0/32);
 				particle_tick();
 
-				/*
-					 struct team *winner;
-					 if ((winner = game_check_victory())) {
-					 printf("Team '%s' is victorious in %0.2f seconds\n", winner->name, ticks*tick_length);
-					 paused = 1;
-					 }
-					 */
+/*
+				struct team *winner;
+				if ((winner = game_check_victory())) {
+					printf("Team '%s' is victorious in %0.2f seconds\n", winner->name, ticks*tick_length);
+					paused = 1;
+				}
+*/
 			}
 
 			if (single_step) {
@@ -137,10 +145,25 @@ namespace RISC {
 			GLContext glcontext = WidgetGL.get_gl_context(widget);
 			GLDrawable gldrawable = WidgetGL.get_gl_drawable(widget);
 
+			var rect = drawing_area.allocation;
+
 			if (!gldrawable.gl_begin(glcontext))
 				return false;
 
 			render_gl13(paused);
+			
+			switch (game_state) {
+			case GameState.DEMO:
+				glColor32((uint32)0xFFFFFFAA);
+				glPrintf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
+				break;
+			case GameState.RUNNING:
+				break;
+			case GameState.FINISHED:
+				glColor32((uint32)0xFFFFFFAA);
+				glPrintf(rect.width/2-4*9, rect.height-50, "Game Over");
+				break;
+			}
 
 			gldrawable.swap_buffers();
 
@@ -227,11 +250,14 @@ namespace RISC {
 			if (RISC.game_init(seed, scenario, ais) != 0) {
 				warning("initialization failed\n");
 				start_demo_game();
+			} else {
+				game_state = GameState.RUNNING;
 			}
 		}
 
 		public void start_demo_game() {
 			start_game(42, "scenarios/furball.lua", { "examples/orbit.lua" });
+			game_state = GameState.DEMO;
 		}
 	}
 
