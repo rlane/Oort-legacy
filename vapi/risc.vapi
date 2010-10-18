@@ -30,6 +30,8 @@ namespace RISC {
 
 		[CCode (cname = "screenshot")]
 		public void screenshot(string filename);
+		[CCode (cname = "glPrintf")]
+		public void glPrintf(int x, int y, string fmt, ...);
 		[CCode (cname = "glColor32")]
 		void glColor32(uint32 c);
 }

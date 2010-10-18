@@ -19,26 +19,27 @@
 #include <GL/gl.h>
 #endif
 
+#include <SDL/SDL_gfxPrimitives_font.h>
+
 #include "tga.h"
 #include "renderer.h"
 
 static GLubyte font[256*8];
 
+extern void font_init(void) __attribute__ ((constructor));
+
 void font_init(void)
 {
-#if 0
 	int i, j;
 	for (i = 0; i < 256; i++) {
 		for (j = 0; j < 8; j++) {
 			font[i*8 + j] = gfxPrimitivesFontdata[i*8 + (7-j)];
 		}
 	}
-#endif
 }
 
 void glWrite(int x, int y, const char *str)
 {
-#if 0
 	glWindowPos2i(x, y);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 
@@ -46,7 +47,6 @@ void glWrite(int x, int y, const char *str)
 	while ((c = *str++)) {
 		glBitmap(8, 8, 4, 4, 9, 0, font + 8*c);
 	}
-#endif
 }
 
 void glPrintf(int x, int y, const char *fmt, ...)
