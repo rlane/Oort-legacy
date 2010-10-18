@@ -218,11 +218,10 @@ namespace RISC {
 
 		private bool on_button_press_event(Widget widget, EventButton event) {
 			int x, y;
-			get_pointer(out x, out y);
+			widget.get_pointer(out x, out y);
 
 			switch (event.button) {
 				case 1:
-					print("picking\n");
 					pick(x,y);
 					break;
 				default:
