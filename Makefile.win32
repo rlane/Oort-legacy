@@ -1,5 +1,5 @@
 # Arch linux:
-# yaourt -S mingw32-gcc mingw32-sdl mingw32-glib2 mingw32-gtk2 mingw32-lua mingw32-sdl_gfx mingw32-gtkglext zip vala
+# yaourt -S mingw32-gcc mingw32-sdl mingw32-glib2 mingw32-gtk2 mingw32-lua mingw32-sdl_gfx mingw32-gtkglext mingw32-glew zip vala
 # mingw32-gettext dependency needs x86_64 added to its PKGBUILD
 # make pkg
 
@@ -9,12 +9,12 @@ LIB=$(MINGW)/lib
 INC=$(MINGW)/include
 BIN=$(MINGW)/bin
 PKG_CONFIG_PATH="/usr/i486-mingw32/lib/pkgconfig/"
-PKGS=gtk+-2.0 gtkglext-1.0 glib-2.0 gthread-2.0 lua glew
+PKGS=gtk+-2.0 gtkglext-1.0 glib-2.0 gthread-2.0 lua
 PKG_CFLAGS=`PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags $(PKGS)`
 PKG_LIBS=`PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(PKGS)`
 
 CFLAGS= -DWINDOWS -I. -I$(INC) $(PKG_CFLAGS) -g -O2 -march=native -Wall
-LDFLAGS=-L$(LIB) $(PKG_LIBS) -mwindows -lmingw32 -lSDL_gfx -lopengl32 -lglu32
+LDFLAGS=-L$(LIB) $(PKG_LIBS) -mwindows -lmingw32 -lSDL_gfx -lopengl32 -lglu32 -lglew32
 
 #SDL_CFLAGS=-I$(INC)/SDL
 #SDL_LDFLAGS=-lSDLmain -lSDL 
@@ -25,7 +25,7 @@ common_objects = $(common_sources:.c=.o)
 gl_sources = particle.o gl13.c glutil.c
 gl_objects = $(gl_sources:.c=.o)
 
-all: risc-gtk-vala.exe risc-dedicated.exe
+all: risc.exe risc-dedicated.exe
 
 %.d: %.c
 				@set -e; rm -f $@; \
@@ -50,7 +50,7 @@ DLLS=\
 	libglib-2.0-0.dll libgmodule-2.0-0.dll libgobject-2.0-0.dll libgthread-2.0-0.dll \
 	libgtkglext-win32-1.0-0.dll libgtk-win32-2.0-0.dll libiconv-2.dll libintl-8.dll libpango-1.0-0.dll \
 	libpangocairo-1.0-0.dll libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpng14.dll zlib1.dll \
-	libpixman-1-0.dll
+	libpixman-1-0.dll glew32.dll
 
 .PHONY: risc-win32
 risc-win32: risc.exe risc-dedicated.exe
