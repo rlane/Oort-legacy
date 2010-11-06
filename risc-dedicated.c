@@ -6,6 +6,11 @@
 #include <math.h>
 #include <glib.h>
 
+#define VALGRIND
+#ifdef VALGRIND
+#include <valgrind/callgrind.h>
+#endif
+
 #include "game.h"
 #include "physics.h"
 #include "ship.h"
@@ -21,6 +26,7 @@ int main(int argc, char **argv)
 	struct timeval last_sample_time;
 	int sample_ticks = 0;
 	int seed = envtol("RISC_SEED", getpid() ^ time(NULL));
+	int max_ticks = envtol("RISC_MAX_TICKS", -1);
 	char *trace_filename;
 
 	if ((trace_filename = getenv("RISC_TRACE"))) {
@@ -62,7 +68,24 @@ int main(int argc, char **argv)
 			last_sample_time = now;
 		}
 
+		if (max_ticks >= 0 && ticks >= max_ticks) {
+			printf("exiting after %d ticks\n", ticks);
+			break;
+		}
+
+#ifdef VALGRIND
+		if (ticks > 10) {
+			CALLGRIND_START_INSTRUMENTATION;
+		}
+#endif
+
 		game_tick(tick_length);
+
+#ifdef VALGRIND
+		if (ticks > 10) {
+			CALLGRIND_STOP_INSTRUMENTATION;
+		}
+#endif
 
 		game_purge();
 
@@ -72,7 +95,6 @@ int main(int argc, char **argv)
 			break;
 		}
 
-		ticks += 1;
 		sample_ticks++;
 	}
 

@@ -13,7 +13,7 @@
 #include "task.h"
 #include "util.h"
 
-int ticks = 0;
+int ticks;
 GList *bullet_hits = NULL;
 double current_time = 0.0;
 GRand *prng = NULL;
@@ -62,6 +62,8 @@ int game_init(int seed, const char *scenario, char **teams, int num_teams)
 	task_init(envtol("RISC_NUM_THREADS", 8));
 
 	prng = g_rand_new_with_seed(seed);
+
+	ticks = 0;
 
 	printf("loading ships...\n");
 
