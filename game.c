@@ -11,6 +11,7 @@
 #include "team.h"
 #include "scenario.h"
 #include "task.h"
+#include "util.h"
 
 int ticks = 0;
 GList *bullet_hits = NULL;
@@ -54,25 +55,6 @@ static void check_bullet_hits(double tick_length)
 			}
 		}
 	}
-}
-
-long envtol(const char *key, long def)
-{
-	const char *value = getenv(key);
-
-	if (!value) {
-		return def;
-	}
-
-	char *endptr;
-	long l = strtol(value, &endptr, 10);
-
-	if (endptr == value || *endptr) {
-		fprintf(stderr, "invalid value for %s, defaulting to %ld\n", key, def);
-		return def;
-	}
-
-	return l;
 }
 
 int game_init(int seed, const char *scenario, char **teams, int num_teams)

@@ -12,6 +12,7 @@
 #include "bullet.h"
 #include "scenario.h"
 #include "team.h"
+#include "util.h"
 
 static const double tick_length = 1.0/32.0;
 
@@ -19,7 +20,7 @@ int main(int argc, char **argv)
 {
 	struct timeval last_sample_time;
 	int sample_ticks = 0;
-	int seed = getpid() ^ time(NULL);
+	int seed = envtol("RISC_SEED", getpid() ^ time(NULL));
 	char *trace_filename;
 
 	if ((trace_filename = getenv("RISC_TRACE"))) {
