@@ -6,8 +6,6 @@
 
 #include "task.h"
 
-#define THREAD_POOL_SIZE 8
-
 struct task_data {
 	task_func f;
 	void *arg1, *arg2;
@@ -20,10 +18,10 @@ static GCond *task_cvar;
 static GMutex *task_lock;
 static int tasks_in_flight;
 
-void task_init(void)
+void task_init(int thread_pool_size)
 {
 	g_thread_init(NULL);
-	thread_pool = g_thread_pool_new((GFunc)worker, NULL, THREAD_POOL_SIZE, TRUE, NULL);
+	thread_pool = g_thread_pool_new((GFunc)worker, NULL, thread_pool_size, TRUE, NULL);
 	task_cvar = g_cond_new();
 	task_lock = g_mutex_new();
 	tasks_in_flight = 0;

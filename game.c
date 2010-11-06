@@ -56,9 +56,28 @@ static void check_bullet_hits(double tick_length)
 	}
 }
 
+long envtol(const char *key, long def)
+{
+	const char *value = getenv(key);
+
+	if (!value) {
+		return def;
+	}
+
+	char *endptr;
+	long l = strtol(value, &endptr, 10);
+
+	if (endptr == value || *endptr) {
+		fprintf(stderr, "invalid value for %s, defaulting to %ld\n", key, def);
+		return def;
+	}
+
+	return l;
+}
+
 int game_init(int seed, const char *scenario, char **teams, int num_teams)
 {
-	task_init();
+	task_init(envtol("RISC_NUM_THREADS", 8));
 
 	prng = g_rand_new_with_seed(seed);
 
