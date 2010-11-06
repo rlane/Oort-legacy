@@ -104,7 +104,7 @@ static int api_create_bullet(lua_State *L)
 
 static void make_sensor_contact(lua_State *L, struct ship *s)
 {
-	lua_newtable(L);
+	lua_createtable(L, 0, 7);
 
 	lua_pushstring(L, "id");
 	lua_pushlstring(L, s->api_id, API_ID_SIZE);
