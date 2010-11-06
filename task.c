@@ -21,10 +21,12 @@ static int tasks_in_flight;
 void task_init(int thread_pool_size)
 {
 	g_thread_init(NULL);
-	thread_pool = g_thread_pool_new((GFunc)worker, NULL, thread_pool_size, TRUE, NULL);
-	task_cvar = g_cond_new();
-	task_lock = g_mutex_new();
-	tasks_in_flight = 0;
+	if (thread_pool_size > 0) {
+		thread_pool = g_thread_pool_new((GFunc)worker, NULL, thread_pool_size, TRUE, NULL);
+		task_cvar = g_cond_new();
+		task_lock = g_mutex_new();
+		tasks_in_flight = 0;
+	}
 }
 
 static void worker(struct task_data *t)
@@ -40,28 +42,36 @@ static void worker(struct task_data *t)
 
 void task(task_func f, void *arg1, void *arg2)
 {
-	struct task_data *t = g_slice_new(struct task_data);
-	t->f = f;
-	t->arg1 = arg1;
-	t->arg2 = arg2;
+	if (thread_pool) {
+		struct task_data *t = g_slice_new(struct task_data);
+		t->f = f;
+		t->arg1 = arg1;
+		t->arg2 = arg2;
 
-	g_mutex_lock(task_lock);
-	tasks_in_flight++;
-	g_mutex_unlock(task_lock);
+		g_mutex_lock(task_lock);
+		tasks_in_flight++;
+		g_mutex_unlock(task_lock);
 
-	g_thread_pool_push(thread_pool, t, NULL);
+		g_thread_pool_push(thread_pool, t, NULL);
+	} else {
+		f(arg1, arg2);
+	}
 }
 
 void task_wait(void)
 {
-	g_mutex_lock(task_lock);
-	while (tasks_in_flight > 0)
-		g_cond_wait(task_cvar, task_lock);
-	g_mutex_unlock(task_lock);
+	if (thread_pool) {
+		g_mutex_lock(task_lock);
+		while (tasks_in_flight > 0)
+			g_cond_wait(task_cvar, task_lock);
+		g_mutex_unlock(task_lock);
+	}
 }
 
 void task_shutdown(void)
 {
+	g_assert(tasks_in_flight == 0);
+
 	if (thread_pool) {
 		g_thread_pool_free(thread_pool, FALSE, TRUE);
 		thread_pool = NULL;
