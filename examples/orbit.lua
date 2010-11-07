@@ -40,7 +40,7 @@ while true do
 
 	if not follow_target and follow_target_retry == 16 then
 		local contacts = sensor_contacts()
-		follow_target = pick(contacts, target_selector)
+		_, follow_target = pick(contacts, target_selector)
 	elseif not follow_target then
 		follow_target_retry = follow_target_retry + 1
 	else
