@@ -20,6 +20,7 @@
 
 char RKEY_SHIP[1];
 char UKEY_SENSOR_CONTACT[1];
+char UKEY_TEAM[1];
 
 GList *all_ships = NULL;
 static GList *new_ships = NULL;
@@ -104,6 +105,42 @@ static int api_create_bullet(lua_State *L)
 	return 0;
 }
 
+struct ud_team {
+	const void *magic;
+	const struct team *team;
+};
+
+static void make_team(lua_State *L, const struct team *team)
+{
+	struct ud_team *u = lua_newuserdata(L, sizeof(*u));
+	u->magic = UKEY_TEAM;
+	u->team = team;
+}
+
+static int api_team(lua_State *L)
+{
+	struct ship *s = lua_ship(L);
+	make_team(L, s->team);
+	return 1;
+}
+
+static struct ud_team *to_team(lua_State *L, int index)
+{
+	struct ud_team *u = lua_touserdata(L, index);
+	if (u->magic != UKEY_TEAM) {
+		u = NULL;
+	}
+	luaL_argcheck(L, u != NULL, 1, "team expected");
+	return u;
+}
+
+static int api_team_tostring(lua_State *L)
+{
+	struct ud_team *u = to_team(L, -1);
+	lua_pushstring(L, u->team->name);
+	return 1;
+}
+
 struct sensor_contact {
 	void *magic;
 	guint32 id;
@@ -145,7 +182,7 @@ static int api_sensor_contact_id(lua_State *L)
 static int api_sensor_contact_team(lua_State *L)
 {
 	struct sensor_contact *c = to_sensor_contact(L, 1);
-	lua_pushstring(L, c->team->name);
+	make_team(L, c->team);
 	return 1;
 }
 
@@ -204,13 +241,6 @@ static int api_sensor_contact(lua_State *L)
 		}
 	}
 	return 0;
-}
-
-static int api_team(lua_State *L)
-{
-	struct ship *s = lua_ship(L);
-	lua_pushstring(L, s->team->name);
-	return 1;
 }
 
 static int api_class(lua_State *L)
@@ -428,6 +458,7 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
+	// sensor contact metatable
 	lua_pushlightuserdata(G, UKEY_SENSOR_CONTACT);
 	lua_createtable(G, 0, 1);
 
@@ -455,6 +486,16 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 	lua_settable(G, -3);
 
 	lua_settable(G, -3);
+	lua_settable(G, LUA_REGISTRYINDEX);
+
+	// team metatable
+	lua_pushlightuserdata(G, UKEY_TEAM);
+	lua_createtable(G, 0, 1);
+
+	lua_pushstring(G, "__tostring");
+	lua_pushcfunction(G, api_team_tostring);
+	lua_settable(G, -3);
+
 	lua_settable(G, LUA_REGISTRYINDEX);
 
 	lua_pushstring(G, orders);
