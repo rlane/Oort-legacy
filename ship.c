@@ -7,6 +7,7 @@
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
+#include <stdint.h>
 
 #include "game.h"
 #include "physics.h"
@@ -107,7 +108,7 @@ static void make_sensor_contact(lua_State *L, struct ship *s)
 	lua_createtable(L, 0, 7);
 
 	lua_pushstring(L, "id");
-	lua_pushlstring(L, s->api_id, API_ID_SIZE);
+	lua_pushlightuserdata(L, (void*)(uintptr_t)s->api_id);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "team");
@@ -139,9 +140,10 @@ static int api_sensor_contacts(lua_State *L)
 {
 	GList *e;
 	lua_newtable(L);
-	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
+	int i;
+	for (e = g_list_first(all_ships), i = 1; e; e = g_list_next(e), i++) {
 		struct ship *s = e->data;
-		lua_pushstring(L, s->api_id);
+		lua_pushlightuserdata(L, (void*)(uintptr_t)s->api_id);
 		make_sensor_contact(L, s);
 		lua_settable(L, -3);
 	}
@@ -151,11 +153,12 @@ static int api_sensor_contacts(lua_State *L)
 static int api_sensor_contact(lua_State *L)
 {
 	GList *e;
-	const char *id = luaL_checkstring(L, 1);
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	guint32 id = (guint32)(uintptr_t)lua_touserdata(L, 1);
 	lua_pop(L, 1);
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s = e->data;
-		if (!strncmp(s->api_id, id, sizeof(s->api_id))) {
+		if (id == s->api_id) {
 			make_sensor_contact(L, s);
 			return 1;
 		}
@@ -326,6 +329,24 @@ static int api_clear_debug_lines(lua_State *L)
 	return 0;
 }
 
+static int api_serialize_id(lua_State *L)
+{
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	guint32 id = (guint32)(uintptr_t)lua_touserdata(L, 1);
+	char *buf = (char*)&id;
+	lua_pushlstring(L, buf, sizeof(id));
+	return 1;
+}
+
+static int api_deserialize_id(lua_State *L)
+{
+	const char *buf = luaL_checkstring(L, 1);
+	const guint32 *ibuf = (void*)buf;
+	guint32 id = *ibuf;
+	lua_pushlightuserdata(L, (void*)(uintptr_t)id);
+	return 1;
+}
+
 static void *ai_allocator(struct ship *s, void *ptr, size_t osize, size_t nsize)
 {
 	s->mem.cur += (nsize - osize);
@@ -362,6 +383,8 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 	lua_register(G, "sys_die", api_die);
 	lua_register(G, "sys_debug_line", api_debug_line);
 	lua_register(G, "sys_clear_debug_lines", api_clear_debug_lines);
+	lua_register(G, "sys_serialize_id", api_serialize_id);
+	lua_register(G, "sys_deserialize_id", api_deserialize_id);
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
@@ -417,7 +440,7 @@ static void debug_hook(lua_State *L, lua_Debug *a)
 		unsigned long elapsed = thread_ns() - s->line_start_time;
 		if (lua_getinfo(L, "nSl", a) == 0) abort();
 		if (s->line_start_time != 0) {
-			fprintf(trace_file, "%ld\t%s\t%s\n", elapsed, s->api_id, s->line_info);
+			fprintf(trace_file, "%ld\t%u\t%s\n", elapsed, s->api_id, s->line_info);
 		}
 		snprintf(s->line_info, sizeof(s->line_info), "%s\t%s:%d",
 				     a->name, a->short_src, a->currentline);
@@ -439,10 +462,10 @@ static int ship_ai_run(struct ship *s, int len)
 	if (result == LUA_YIELD) {
 		return 1;
 	} else if (result == 0) {
-		fprintf(stderr, "ship %.8s terminated\n", s->api_id);
+		fprintf(stderr, "ship %u terminated\n", s->api_id);
 		return 0;
 	} else {
-		fprintf(stderr, "ship %.8s error: %s\nbacktrace:\n", s->api_id, lua_tostring(L, -1));
+		fprintf(stderr, "ship %u error: %s\nbacktrace:\n", s->api_id, lua_tostring(L, -1));
 		lua_Debug ar;
 		int i;
 		for (i = 0; lua_getstack(L, i, &ar); i++) {
@@ -526,8 +549,7 @@ struct ship *ship_create(const char *filename, const char *class_name, const cha
 
 	s->prng = g_rand_new_with_seed(g_rand_int(prng));
 	s->mq = g_queue_new();
-
-	snprintf((char*)s->api_id, sizeof(s->api_id), "%08x", g_rand_int(prng));
+	s->api_id = g_rand_int(prng);
 
 	g_static_mutex_lock(&new_ships_lock);
 	new_ships = g_list_append(new_ships, s);

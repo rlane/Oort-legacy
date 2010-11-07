@@ -132,6 +132,8 @@ sandbox_api = {
 	explode = explode,
 	debug_line = sys_debug_line,
 	clear_debug_lines = sys_clear_debug_lines,
+	serialize_id = sys_serialize_id,
+	deserialize_id = sys_deserialize_id,
 }
 
 function copy_table(t, t2)

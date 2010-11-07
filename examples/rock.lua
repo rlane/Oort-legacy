@@ -76,7 +76,7 @@ while true do
 		local target_selector = function(k,c) return c.team ~= my_team and c.class == "mothership" end
 		local target_id, t = pick(sensor_contacts(), target_selector)
 		if target_id then
-			spawn("missile", "examples/missile.lua", target_id)
+			spawn("missile", "examples/missile.lua", serialize_id(target_id))
 		end
 	end
 
@@ -84,7 +84,7 @@ while true do
 		local target_selector = function(k,c) return c.team ~= my_team and c.class ~= "little_missile" end
 		local target_id, t = pick(sensor_contacts(), target_selector)
 		if target_id then
-			spawn("little_missile", "examples/little_missile.lua", target_id)
+			spawn("little_missile", "examples/little_missile.lua", serialize_id(target_id))
 		end
 	end
 

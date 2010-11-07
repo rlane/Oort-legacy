@@ -15,11 +15,10 @@ struct ship_class {
 
 #define TAIL_SEGMENTS 16
 #define TAIL_TICKS 4
-#define API_ID_SIZE 8
 #define MAX_DEBUG_LINES 32
 
 struct ship {
-	const char api_id[API_ID_SIZE];
+	guint32 api_id;
 	const struct ship_class *class;
 	struct team *team;
 	struct physics *physics;
