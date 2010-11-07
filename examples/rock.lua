@@ -26,14 +26,15 @@ while true do
 	elseif not main_target then
 		main_target_retry = main_target_retry + 1
 	else
-		main_target = sensor_contact(main_target.id)
+		main_target = sensor_contact(main_target:id())
 	end
 
 	if main_target then
 		local x, y = position()
 		local vx, vy = velocity()
-		local t = main_target
-		local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
+		local tx, ty = main_target:position()
+		local tvx, tvy = main_target:velocity()
+		local a2 = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
 		if a2 then
 			fire("main", a2)
 		else
@@ -49,14 +50,15 @@ while true do
 		elseif not flak_target then
 			flak_target_retry = flak_target_retry + 1
 		else
-			flak_target = sensor_contact(flak_target.id)
+			flak_target = sensor_contact(flak_target:id())
 		end
 
 		if flak_target then
 			local x, y = position()
 			local vx, vy = velocity()
-			local t = flak_target
-			local a2 = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, my_ship.guns.flak1.bullet_velocity, my_ship.guns.flak1.bullet_ttl)
+			local tx, ty = flak_target:position()
+			local tvx, tvy = flak_target:velocity()
+			local a2 = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.flak1.bullet_velocity, my_ship.guns.flak1.bullet_ttl)
 			if a2 then
 				local spread = 0.1
 				for i = 1,3 do
@@ -73,7 +75,7 @@ while true do
 	end
 
 	if math.random(1,100) == 7 then
-		local target_selector = function(k,c) return c.team ~= my_team and c.class == "mothership" end
+		local target_selector = function(k,c) return c:team() ~= my_team and c:class() == "mothership" end
 		local target_id, t = pick(sensor_contacts(), target_selector)
 		if target_id then
 			spawn("missile", "examples/missile.lua", serialize_id(target_id))
@@ -81,7 +83,7 @@ while true do
 	end
 
 	if math.random(50) == 7 then
-		local target_selector = function(k,c) return c.team ~= my_team and c.class ~= "little_missile" end
+		local target_selector = function(k,c) return c:team() ~= my_team and c:class() ~= "little_missile" end
 		local target_id, t = pick(sensor_contacts(), target_selector)
 		if target_id then
 			spawn("little_missile", "examples/little_missile.lua", serialize_id(target_id))

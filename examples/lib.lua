@@ -60,14 +60,17 @@ function pick_close_enemy(x, y, max_dist, prob)
 	local contacts = sensor_contacts()
 	local t = nil
 	for k, c in pairs(contacts) do
-		if c.team ~= my_team and distance(c.x, c.y, x, y) < max_dist and c.class ~= "missile" and (not t or (math.random() < prob)) then
+		local cx, cy = c:position()
+		if c:team() ~= my_team and distance(cx, cy, x, y) < max_dist and c:class() ~= "missile" and (not t or (math.random() < prob)) then
 			t = c
 		end
 	end
 
 	if target_debug then
 		if t then
-			printf("target %s p=(%0.2g, %0.2g) v=(%0.2g, %0.2g)\n", t.class, t.x, t.y, t.vx, t.vy);
+			local tx, ty = t:position()
+			local tvx, tvy = t:velocity()
+			printf("target %s p=(%0.2g, %0.2g) v=(%0.2g, %0.2g)\n", t.class, tx, ty, tvx, tvy);
 		else
 			printf("no target\n")
 		end

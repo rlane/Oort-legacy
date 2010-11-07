@@ -11,7 +11,7 @@ local i = math.random(1,256)
 local t = nil
 local max_target_distance = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl
 local origin = { x = 0, y = 0, vx = 0, vy = 0 }
-local target_selector = function(k,c) return c.team ~= my_team and c.class ~= "little_missile" end
+local target_selector = function(k,c) return c:team() ~= my_team and c:class() ~= "little_missile" end
 local follow_target = nil
 local follow_target_retry = 0
 local fire_target = nil
@@ -19,12 +19,12 @@ local fire_target_retry = 0
 
 local function fire_score(c)
 	local x,y = position()
-	if c.team == my_team then
+	if c:team() == my_team then
 		return math.huge
-	elseif c.id == target_id then
+	elseif c:id() == target_id then
 		return 0
 	else
-		return distance(x,y,c.x,c.y)
+		return distance(x,y,c:position())
 	end
 end
 
@@ -45,16 +45,26 @@ while true do
 	elseif not follow_target then
 		follow_target_retry = follow_target_retry + 1
 	else
-		follow_target = sensor_contact(follow_target.id)
+		follow_target = sensor_contact(follow_target:id())
 	end
 
 	local follow
 	if follow_target and distance(x,y,0,0) < 50 then
 		follow = follow_target
 	else
-		follow = origin
+		follow = nil
 	end
-	debug_square(follow.x, follow.y, 0.5)
+
+	local follow_x, follow_y
+	local follow_vx, follow_vy
+	if follow == nil then
+		follow_x, follow_y = 0, 0
+		follow_vx, follow_vy = 0, 0
+	else
+		follow_x, follow_y = follow:position()
+		follow_vx, follow_vy = follow:velocity()
+	end
+	debug_square(follow_x, follow_y, 0.5)
 
 	if not fire_target and fire_target_retry == 16 then
 		fire_target = min_by(sensor_contacts(), fire_score)
@@ -62,13 +72,14 @@ while true do
 	elseif not fire_target then
 		fire_target_retry = fire_target_retry + 1
 	else
-		fire_target = sensor_contact(fire_target.id)
+		fire_target = sensor_contact(fire_target:id())
 	end
 
 	if fire_target then
-		local t = fire_target
-		debug_diamond(t.x, t.y, 0.5)
-		local a = lead(x, y, t.x, t.y, vx, vy, t.vx, t.vy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
+		local tx, ty = fire_target:position()
+		local tvx, tvy = fire_target:velocity()
+		debug_diamond(tx, ty, 0.5)
+		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
 		if a then
 			local spread = 0.04
 			fire("main", a+R(-spread,spread))
@@ -80,11 +91,11 @@ while true do
 		--debug_box_off()
 	end
 
-	local a = lead(x, y, follow.x, follow.y, vx, vy, follow.vx, follow.vy, 10, math.huge)
+	local a = lead(x, y, follow_x, follow_y, vx, vy, follow_vx, follow_vy, 10, math.huge)
 	if a then
 		local k = math.random(10)
 		if k < 7 then
-			local f = math.min(5, 1.0*math.sqrt(distance(x, y, follow.x, follow.y)))
+			local f = math.min(5, 1.0*math.sqrt(distance(x, y, follow_x, follow_y)))
 			local nvx = vx + f * math.cos(a)
 			local nvy = vy + f * math.sin(a)
 			--if distance(0, 0, nvx, nvy) < 10 then
@@ -103,7 +114,7 @@ while true do
 	end
 
 	if follow_target and math.random(1000) == 7 then
-		spawn("little_missile", "examples/little_missile.lua", serialize_id(follow_target.id))
+		spawn("little_missile", "examples/little_missile.lua", serialize_id(follow_target:id()))
 	end
 
 	yield()

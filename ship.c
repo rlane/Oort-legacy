@@ -103,37 +103,67 @@ static int api_create_bullet(lua_State *L)
 	return 0;
 }
 
+struct sensor_contact {
+	guint32 id;
+	const struct team *team;
+	const struct ship_class *class;
+	vec2 p, v;
+};
+
 static void make_sensor_contact(lua_State *L, struct ship *s)
 {
-	lua_createtable(L, 0, 7);
+	struct sensor_contact *c = lua_newuserdata(L, sizeof(*c));
+	c->id = s->api_id;
+	c->team = s->team;
+	c->class = s->class;
+	c->p = s->physics->p;
+	c->v = s->physics->v;
+	luaL_getmetatable(L, "sensor_contact");
+	lua_setmetatable(L, -2);
+}
 
-	lua_pushstring(L, "id");
-	lua_pushlightuserdata(L, (void*)(uintptr_t)s->api_id);
-	lua_settable(L, -3);
+static struct sensor_contact *to_sensor_contact(lua_State *L, int index)
+{
+	struct sensor_contact *c = luaL_checkudata(L, 1, "sensor_contact");
+	luaL_argcheck(L, c != NULL, 1, "sensor contact expected");
+	return c;
+}
 
-	lua_pushstring(L, "team");
-	lua_pushstring(L, s->team->name);
-	lua_settable(L, -3);
+static int api_sensor_contact_id(lua_State *L)
+{
+	struct sensor_contact *c = to_sensor_contact(L, 1);
+	lua_pushlightuserdata(L, (void*)(uintptr_t)c->id);
+	return 1;
+}
 
-	lua_pushstring(L, "class");
-	lua_pushstring(L, s->class->name);
-	lua_settable(L, -3);
+static int api_sensor_contact_team(lua_State *L)
+{
+	struct sensor_contact *c = to_sensor_contact(L, 1);
+	lua_pushstring(L, c->team->name);
+	return 1;
+}
 
-	lua_pushstring(L, "x"); // index 3
-	lua_pushnumber(L, creal(s->physics->p)); // index 4
-	lua_settable(L, -3);
+static int api_sensor_contact_class(lua_State *L)
+{
+	struct sensor_contact *c = to_sensor_contact(L, 1);
+	lua_pushstring(L, c->class->name);
+	return 1;
+}
 
-	lua_pushstring(L, "y"); // index 3
-	lua_pushnumber(L, cimag(s->physics->p)); // index 4
-	lua_settable(L, -3);
+static int api_sensor_contact_position(lua_State *L)
+{
+	struct sensor_contact *c = to_sensor_contact(L, 1);
+	lua_pushnumber(L, creal(c->p));
+	lua_pushnumber(L, cimag(c->p));
+	return 2;
+}
 
-	lua_pushstring(L, "vx");
-	lua_pushnumber(L, creal(s->physics->v));
-	lua_settable(L, -3);
-
-	lua_pushstring(L, "vy");
-	lua_pushnumber(L, cimag(s->physics->v));
-	lua_settable(L, -3);
+static int api_sensor_contact_velocity(lua_State *L)
+{
+	struct sensor_contact *c = to_sensor_contact(L, 1);
+	lua_pushnumber(L, creal(c->v));
+	lua_pushnumber(L, cimag(c->v));
+	return 2;
 }
 
 static int api_sensor_contacts(lua_State *L)
@@ -387,6 +417,34 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 	lua_register(G, "sys_deserialize_id", api_deserialize_id);
 
 	lua_registry_set(G, RKEY_SHIP, s);
+
+	luaL_newmetatable(G, "sensor_contact");
+
+	lua_pushstring(G, "__index");
+	lua_createtable(G, 0, 5);
+
+	lua_pushstring(G, "id");
+	lua_pushcfunction(G, api_sensor_contact_id);
+	lua_settable(G, -3);
+
+	lua_pushstring(G, "team");
+	lua_pushcfunction(G, api_sensor_contact_team);
+	lua_settable(G, -3);
+
+	lua_pushstring(G, "class");
+	lua_pushcfunction(G, api_sensor_contact_class);
+	lua_settable(G, -3);
+
+	lua_pushstring(G, "position");
+	lua_pushcfunction(G, api_sensor_contact_position);
+	lua_settable(G, -3);
+
+	lua_pushstring(G, "velocity");
+	lua_pushcfunction(G, api_sensor_contact_velocity);
+	lua_settable(G, -3);
+
+	lua_settable(G, -3);
+	lua_pop(G, 1);
 
 	lua_pushstring(G, orders);
 	lua_setglobal(G, "orders");
