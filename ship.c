@@ -112,7 +112,7 @@ struct sensor_contact {
 	vec2 p, v;
 };
 
-static void make_sensor_contact(lua_State *L, struct ship *s)
+static void make_sensor_contact(lua_State *L, struct ship *s, int metatable_index)
 {
 	struct sensor_contact *c = lua_newuserdata(L, sizeof(*c));
 	c->magic = UKEY_SENSOR_CONTACT;
@@ -121,8 +121,7 @@ static void make_sensor_contact(lua_State *L, struct ship *s)
 	c->class = s->class;
 	c->p = s->physics->p;
 	c->v = s->physics->v;
-	lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
-	lua_gettable(L, LUA_REGISTRYINDEX);
+	lua_pushvalue(L, metatable_index);
 	lua_setmetatable(L, -2);
 }
 
@@ -176,11 +175,14 @@ static int api_sensor_contact_velocity(lua_State *L)
 static int api_sensor_contacts(lua_State *L)
 {
 	GList *e;
+	lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
+	lua_rawget(L, LUA_REGISTRYINDEX);
+	int metatable_index = lua_gettop(L);
 	lua_createtable(L, g_list_length(all_ships), 0);
 	int i;
 	for (e = g_list_first(all_ships), i = 1; e; e = g_list_next(e), i++) {
 		struct ship *s = e->data;
-		make_sensor_contact(L, s);
+		make_sensor_contact(L, s, metatable_index);
 		lua_rawseti(L, -2, i);
 	}
 	return 1;
@@ -195,7 +197,9 @@ static int api_sensor_contact(lua_State *L)
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		struct ship *s = e->data;
 		if (id == s->api_id) {
-			make_sensor_contact(L, s);
+			lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
+			lua_rawget(L, LUA_REGISTRYINDEX);
+			make_sensor_contact(L, s, lua_gettop(L));
 			return 1;
 		}
 	}
