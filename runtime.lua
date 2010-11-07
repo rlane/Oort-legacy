@@ -4,6 +4,7 @@ local my_class = ships[sys_class()]
 local last_fire_times = {}
 local _energy = my_class.energy.initial
 local energy_tick_rate = my_class.energy.rate / 32.0
+local debug_preemption = false
 
 function energy()
 	return _energy
@@ -152,8 +153,10 @@ function safe_dofile(name)
 end
 
 function debug_count_hook()
-	print("preempted", sys_class(), ship_id)
-	print(debug.traceback())
+	if debug_preemption then
+		print("preempted", sys_class(), ship_id)
+		print(debug.traceback())
+	end
 end
 
 function tick_hook()
