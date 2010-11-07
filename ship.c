@@ -19,6 +19,7 @@
 #define LW_VERBOSE 0
 
 char RKEY_SHIP[1];
+char UKEY_SENSOR_CONTACT[1];
 
 GList *all_ships = NULL;
 static GList *new_ships = NULL;
@@ -104,6 +105,7 @@ static int api_create_bullet(lua_State *L)
 }
 
 struct sensor_contact {
+	void *magic;
 	guint32 id;
 	const struct team *team;
 	const struct ship_class *class;
@@ -113,18 +115,23 @@ struct sensor_contact {
 static void make_sensor_contact(lua_State *L, struct ship *s)
 {
 	struct sensor_contact *c = lua_newuserdata(L, sizeof(*c));
+	c->magic = UKEY_SENSOR_CONTACT;
 	c->id = s->api_id;
 	c->team = s->team;
 	c->class = s->class;
 	c->p = s->physics->p;
 	c->v = s->physics->v;
-	luaL_getmetatable(L, "sensor_contact");
+	lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
+	lua_gettable(L, LUA_REGISTRYINDEX);
 	lua_setmetatable(L, -2);
 }
 
 static struct sensor_contact *to_sensor_contact(lua_State *L, int index)
 {
-	struct sensor_contact *c = luaL_checkudata(L, 1, "sensor_contact");
+	struct sensor_contact *c = lua_touserdata(L, index);
+	if (c->magic != UKEY_SENSOR_CONTACT) {
+		c = NULL;
+	}
 	luaL_argcheck(L, c != NULL, 1, "sensor contact expected");
 	return c;
 }
@@ -418,7 +425,8 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
-	luaL_newmetatable(G, "sensor_contact");
+	lua_pushlightuserdata(G, UKEY_SENSOR_CONTACT);
+	lua_createtable(G, 0, 1);
 
 	lua_pushstring(G, "__index");
 	lua_createtable(G, 0, 5);
@@ -444,7 +452,7 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 	lua_settable(G, -3);
 
 	lua_settable(G, -3);
-	lua_pop(G, 1);
+	lua_settable(G, LUA_REGISTRYINDEX);
 
 	lua_pushstring(G, orders);
 	lua_setglobal(G, "orders");
