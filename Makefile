@@ -1,7 +1,8 @@
 LUAPKG:=$(shell pkg-config --exists luajit && echo luajit || echo lua)
+VALGRIND_CFLAGS=$(shell pkg-config --exists valgrind && echo -D VALGRIND `pkg-config --cflags valgrind`)
 PKGS:=glib-2.0 gtk+-2.0 gtkglext-1.0 gthread-2.0 glew $(LUAPKG)
 
-CFLAGS:=`pkg-config --cflags $(PKGS)` -g -O2 -march=native -Wall -I.
+CFLAGS:=`pkg-config --cflags $(PKGS)` -g -O2 -march=native -Wall -I. $(VALGRIND_CFLAGS)
 LDFLAGS:=`pkg-config --libs $(PKGS)` -lGL -lGLU
 
 common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c util.c
@@ -33,7 +34,7 @@ risc-dedicated: risc-dedicated.o $(common_objects)
 particlebench: particlebench.o $(gl_objects) $(common_objects)
 
 benchmark: risc-dedicated
-	RISC_NUM_THREADS=0 RISC_MAX_TICKS=100 valgrind --tool=callgrind ./risc-dedicated scenarios/benchmark.lua
+	RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no ./risc-dedicated scenarios/benchmark.lua
 
 clean:
 	rm -f *.o *.d risc risc-dedicated particlebench

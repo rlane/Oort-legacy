@@ -6,9 +6,9 @@
 #include <math.h>
 #include <glib.h>
 
-#define VALGRIND
 #ifdef VALGRIND
-#include <valgrind/callgrind.h>
+#include <callgrind.h>
+static int callgrind_collection_started = 0;
 #endif
 
 #include "game.h"
@@ -74,16 +74,20 @@ int main(int argc, char **argv)
 		}
 
 #ifdef VALGRIND
-		if (ticks > 10) {
-			CALLGRIND_START_INSTRUMENTATION;
+		if (ticks == 10) {
+			callgrind_collection_started = 1;
+		}
+
+		if (callgrind_collection_started) {
+			CALLGRIND_TOGGLE_COLLECT;
 		}
 #endif
 
 		game_tick(tick_length);
 
 #ifdef VALGRIND
-		if (ticks > 10) {
-			CALLGRIND_STOP_INSTRUMENTATION;
+		if (callgrind_collection_started) {
+			CALLGRIND_TOGGLE_COLLECT;
 		}
 #endif
 
