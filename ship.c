@@ -176,13 +176,12 @@ static int api_sensor_contact_velocity(lua_State *L)
 static int api_sensor_contacts(lua_State *L)
 {
 	GList *e;
-	lua_createtable(L, 0, g_list_length(all_ships));
+	lua_createtable(L, g_list_length(all_ships), 0);
 	int i;
 	for (e = g_list_first(all_ships), i = 1; e; e = g_list_next(e), i++) {
 		struct ship *s = e->data;
-		lua_pushlightuserdata(L, (void*)(uintptr_t)s->api_id);
 		make_sensor_contact(L, s);
-		lua_rawset(L, -3);
+		lua_rawseti(L, -2, i);
 	}
 	return 1;
 }

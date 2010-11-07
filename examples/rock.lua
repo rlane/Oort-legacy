@@ -76,17 +76,17 @@ while true do
 
 	if math.random(1,100) == 7 then
 		local target_selector = function(k,c) return c:team() ~= my_team and c:class() == "mothership" end
-		local target_id, t = pick(sensor_contacts(), target_selector)
-		if target_id then
-			spawn("missile", "examples/missile.lua", serialize_id(target_id))
+		local _, t = pick(sensor_contacts(), target_selector)
+		if t then
+			spawn("missile", "examples/missile.lua", serialize_id(t:id()))
 		end
 	end
 
 	if math.random(50) == 7 then
 		local target_selector = function(k,c) return c:team() ~= my_team and c:class() ~= "little_missile" end
-		local target_id, t = pick(sensor_contacts(), target_selector)
-		if target_id then
-			spawn("little_missile", "examples/little_missile.lua", serialize_id(target_id))
+		local _, t = pick(sensor_contacts(), target_selector)
+		if t then
+			spawn("little_missile", "examples/little_missile.lua", serialize_id(t:id()))
 		end
 	end
 

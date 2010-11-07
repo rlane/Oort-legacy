@@ -39,9 +39,8 @@ while true do
 	local vx, vy = velocity()
 
 	if not follow_target and follow_target_retry == 16 then
-		local follow_target_id
 		local contacts = sensor_contacts()
-		follow_target_id, follow_target = pick(contacts, target_selector)
+		follow_target = pick(contacts, target_selector)
 	elseif not follow_target then
 		follow_target_retry = follow_target_retry + 1
 	else
