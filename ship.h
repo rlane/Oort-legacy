@@ -54,5 +54,6 @@ void ship_shutdown();
 void ship_tick(double t);
 int load_ship_classes(const char *filename);
 double ship_get_energy(struct ship *s);
+struct ship *lua_ship(lua_State *L);
 
 #endif

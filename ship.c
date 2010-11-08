@@ -15,12 +15,12 @@
 #include "ship.h"
 #include "team.h"
 #include "task.h"
+#include "api_sensors.h"
+#include "api_team.h"
 
 #define LW_VERBOSE 0
 
 char RKEY_SHIP[1];
-char UKEY_SENSOR_CONTACT[1];
-char UKEY_TEAM[1];
 
 GList *all_ships = NULL;
 static GList *new_ships = NULL;
@@ -45,7 +45,7 @@ static void *lua_registry_get(lua_State *L, void *key)
 	return value;
 }
 
-static struct ship *lua_ship(lua_State *L)
+struct ship *lua_ship(lua_State *L)
 {
 	return lua_registry_get(L, RKEY_SHIP);
 }
@@ -102,144 +102,6 @@ static int api_create_bullet(lua_State *L)
 	b->physics->m = m;
 	b->ttl = ttl;
 
-	return 0;
-}
-
-struct ud_team {
-	const void *magic;
-	const struct team *team;
-};
-
-static void make_team(lua_State *L, const struct team *team)
-{
-	struct ud_team *u = lua_newuserdata(L, sizeof(*u));
-	u->magic = UKEY_TEAM;
-	u->team = team;
-}
-
-static int api_team(lua_State *L)
-{
-	struct ship *s = lua_ship(L);
-	make_team(L, s->team);
-	return 1;
-}
-
-static struct ud_team *to_team(lua_State *L, int index)
-{
-	struct ud_team *u = lua_touserdata(L, index);
-	if (u->magic != UKEY_TEAM) {
-		u = NULL;
-	}
-	luaL_argcheck(L, u != NULL, 1, "team expected");
-	return u;
-}
-
-static int api_team_tostring(lua_State *L)
-{
-	struct ud_team *u = to_team(L, -1);
-	lua_pushstring(L, u->team->name);
-	return 1;
-}
-
-struct sensor_contact {
-	void *magic;
-	guint32 id;
-	const struct team *team;
-	const struct ship_class *class;
-	vec2 p, v;
-};
-
-static void make_sensor_contact(lua_State *L, struct ship *s, int metatable_index)
-{
-	struct sensor_contact *c = lua_newuserdata(L, sizeof(*c));
-	c->magic = UKEY_SENSOR_CONTACT;
-	c->id = s->api_id;
-	c->team = s->team;
-	c->class = s->class;
-	c->p = s->physics->p;
-	c->v = s->physics->v;
-	lua_pushvalue(L, metatable_index);
-	lua_setmetatable(L, -2);
-}
-
-static struct sensor_contact *to_sensor_contact(lua_State *L, int index)
-{
-	struct sensor_contact *c = lua_touserdata(L, index);
-	if (c->magic != UKEY_SENSOR_CONTACT) {
-		c = NULL;
-	}
-	luaL_argcheck(L, c != NULL, 1, "sensor contact expected");
-	return c;
-}
-
-static int api_sensor_contact_id(lua_State *L)
-{
-	struct sensor_contact *c = to_sensor_contact(L, 1);
-	lua_pushlightuserdata(L, (void*)(uintptr_t)c->id);
-	return 1;
-}
-
-static int api_sensor_contact_team(lua_State *L)
-{
-	struct sensor_contact *c = to_sensor_contact(L, 1);
-	make_team(L, c->team);
-	return 1;
-}
-
-static int api_sensor_contact_class(lua_State *L)
-{
-	struct sensor_contact *c = to_sensor_contact(L, 1);
-	lua_pushstring(L, c->class->name);
-	return 1;
-}
-
-static int api_sensor_contact_position(lua_State *L)
-{
-	struct sensor_contact *c = to_sensor_contact(L, 1);
-	lua_pushnumber(L, creal(c->p));
-	lua_pushnumber(L, cimag(c->p));
-	return 2;
-}
-
-static int api_sensor_contact_velocity(lua_State *L)
-{
-	struct sensor_contact *c = to_sensor_contact(L, 1);
-	lua_pushnumber(L, creal(c->v));
-	lua_pushnumber(L, cimag(c->v));
-	return 2;
-}
-
-static int api_sensor_contacts(lua_State *L)
-{
-	GList *e;
-	lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
-	lua_rawget(L, LUA_REGISTRYINDEX);
-	int metatable_index = lua_gettop(L);
-	lua_createtable(L, g_list_length(all_ships), 0);
-	int i;
-	for (e = g_list_first(all_ships), i = 1; e; e = g_list_next(e), i++) {
-		struct ship *s = e->data;
-		make_sensor_contact(L, s, metatable_index);
-		lua_rawseti(L, -2, i);
-	}
-	return 1;
-}
-
-static int api_sensor_contact(lua_State *L)
-{
-	GList *e;
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	guint32 id = (guint32)(uintptr_t)lua_touserdata(L, 1);
-	lua_pop(L, 1);
-	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
-		struct ship *s = e->data;
-		if (id == s->api_id) {
-			lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
-			lua_rawget(L, LUA_REGISTRYINDEX);
-			make_sensor_contact(L, s, lua_gettop(L));
-			return 1;
-		}
-	}
 	return 0;
 }
 
@@ -458,45 +320,8 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 
 	lua_registry_set(G, RKEY_SHIP, s);
 
-	// sensor contact metatable
-	lua_pushlightuserdata(G, UKEY_SENSOR_CONTACT);
-	lua_createtable(G, 0, 1);
-
-	lua_pushstring(G, "__index");
-	lua_createtable(G, 0, 5);
-
-	lua_pushstring(G, "id");
-	lua_pushcfunction(G, api_sensor_contact_id);
-	lua_settable(G, -3);
-
-	lua_pushstring(G, "team");
-	lua_pushcfunction(G, api_sensor_contact_team);
-	lua_settable(G, -3);
-
-	lua_pushstring(G, "class");
-	lua_pushcfunction(G, api_sensor_contact_class);
-	lua_settable(G, -3);
-
-	lua_pushstring(G, "position");
-	lua_pushcfunction(G, api_sensor_contact_position);
-	lua_settable(G, -3);
-
-	lua_pushstring(G, "velocity");
-	lua_pushcfunction(G, api_sensor_contact_velocity);
-	lua_settable(G, -3);
-
-	lua_settable(G, -3);
-	lua_settable(G, LUA_REGISTRYINDEX);
-
-	// team metatable
-	lua_pushlightuserdata(G, UKEY_TEAM);
-	lua_createtable(G, 0, 1);
-
-	lua_pushstring(G, "__tostring");
-	lua_pushcfunction(G, api_team_tostring);
-	lua_settable(G, -3);
-
-	lua_settable(G, LUA_REGISTRYINDEX);
+	ud_sensor_contact_register(G);
+	ud_team_register(G);
 
 	lua_pushstring(G, orders);
 	lua_setglobal(G, "orders");

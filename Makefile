@@ -5,7 +5,7 @@ PKGS:=glib-2.0 gtk+-2.0 gtkglext-1.0 gthread-2.0 glew $(LUAPKG)
 CFLAGS:=`pkg-config --cflags $(PKGS)` -g -O2 -march=native -Wall -I. $(VALGRIND_CFLAGS)
 LDFLAGS:=`pkg-config --libs $(PKGS)` -lGL -lGLU
 
-common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c util.c
+common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c util.c api_sensors.c api_team.c
 common_objects = $(common_sources:.c=.o)
 
 gl_sources = particle.o gl13.c glutil.c
