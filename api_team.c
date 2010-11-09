@@ -29,6 +29,9 @@ void ud_team_new(lua_State *L, const struct team *team)
 	struct ud_team *u = lua_newuserdata(L, sizeof(*u));
 	u->magic = UKEY_TEAM;
 	u->team = team;
+	lua_pushlightuserdata(L, UKEY_TEAM);
+	lua_rawget(L, LUA_REGISTRYINDEX);
+	lua_setmetatable(L, -2);
 }
 
 static struct ud_team *ud_team_cast(lua_State *L, int index)
@@ -48,13 +51,26 @@ static int ud_team_tostring(lua_State *L)
 	return 1;
 }
 
+static int ud_team_eq(lua_State *L)
+{
+	struct ud_team *a = ud_team_cast(L, 1);
+	struct ud_team *b = ud_team_cast(L, 2);
+	if (!a || !b) luaL_error(L, "bad args");
+	lua_pushboolean(L, a->team == b->team);
+	return 1;
+}
+
 void ud_team_register(lua_State *L)
 {
 	lua_pushlightuserdata(L, UKEY_TEAM);
-	lua_createtable(L, 0, 1);
+	lua_createtable(L, 0, 2);
 
 	lua_pushstring(L, "__tostring");
 	lua_pushcfunction(L, ud_team_tostring);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "__eq");
+	lua_pushcfunction(L, ud_team_eq);
 	lua_settable(L, -3);
 
 	lua_settable(L, LUA_REGISTRYINDEX);
