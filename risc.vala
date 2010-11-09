@@ -44,8 +44,6 @@ namespace RISC {
 			add(vbox);
 			show_all();
 
-			start_demo_game();
-
 			GLib.Timeout.add(31, tick);
 		}
 
@@ -328,6 +326,12 @@ int main(string[] args) {
 	}
 
 	var mainwin = new RISC.MainWindow();
+
+	if (args.length <= 1) {
+		mainwin.start_demo_game();
+	} else {
+		mainwin.start_game(0, args[1], args[2:(args.length)]);
+	}
 
 	Gtk.main();
 

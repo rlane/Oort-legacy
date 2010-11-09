@@ -13,7 +13,7 @@ team("green", 0x00FF0000)
 blue_code = "examples/switch.lua"
 green_code = "examples/switch.lua"
 
-for i = 1,128 do
+for i = 1,512 do
 	ship("fighter", blue_code, "blue", R(20,15), R(20,10))
 	ship("fighter", green_code, "green", R(-20,-15), R(-10,-20))
 end
