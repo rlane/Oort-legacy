@@ -85,16 +85,17 @@ int main(int argc, char **argv)
 
 		game_tick(tick_length);
 
+		game_purge();
+
+		struct team *winner = game_check_victory();
+
 #ifdef VALGRIND
 		if (callgrind_collection_started) {
 			CALLGRIND_TOGGLE_COLLECT;
 		}
 #endif
 
-		game_purge();
-
-		struct team *winner;
-		if ((winner = game_check_victory())) {
+		if (winner) {
 			printf("Team '%s' is victorious in %0.2f seconds\n", winner->name, ticks*tick_length);
 			break;
 		}
