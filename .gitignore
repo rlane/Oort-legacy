@@ -14,3 +14,4 @@ core
 risc-win32
 risc-gtk
 risc-gtk-vala
+callgrind.out*
