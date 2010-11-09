@@ -34,7 +34,7 @@ risc-dedicated: risc-dedicated.o $(common_objects)
 particlebench: particlebench.o $(gl_objects) $(common_objects)
 
 benchmark: risc-dedicated
-	RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no ./risc-dedicated scenarios/benchmark.lua
+	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./risc-dedicated scenarios/benchmark.lua
 
 clean:
 	rm -f *.o *.d risc risc-dedicated particlebench
