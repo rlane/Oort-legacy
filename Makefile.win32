@@ -3,6 +3,11 @@
 # mingw32-gettext dependency needs x86_64 added to its PKGBUILD
 # make pkg
 
+# There's a bug in mingw32-gtk2 2.20 that causes gtkglext to draw to the entire
+# window. Modify the mingw32-gtk2 PKGBUILD to use 2.16.6, remove the ico and
+# bmp loaders, and add --without-jasper to the configure arguments. Then
+# install a modified gtkglext without the gtk-2.20 patch.
+
 CC=i486-mingw32-gcc
 MINGW=/usr/i486-mingw32
 LIB=$(MINGW)/lib
