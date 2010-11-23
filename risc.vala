@@ -66,7 +66,7 @@ namespace RISC {
 
 		private DrawingArea make_drawing_area() {
 			drawing_area = new DrawingArea();
-			//drawing_area.set_size_request(1024, 768);
+			drawing_area.set_size_request(1024, 768);
 
 			var glconfig = new GLConfig.by_mode(GLConfigMode.RGBA | GLConfigMode.DOUBLE);
 			WidgetGL.set_gl_capability(drawing_area, glconfig, null, true, GLRenderType.RGBA_TYPE);
