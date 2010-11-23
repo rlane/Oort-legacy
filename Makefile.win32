@@ -19,7 +19,7 @@ LDFLAGS=-L$(LIB) $(PKG_LIBS) -mwindows -lmingw32 -lSDL_gfx -lopengl32 -lglu32 -l
 #SDL_CFLAGS=-I$(INC)/SDL
 #SDL_LDFLAGS=-lSDLmain -lSDL 
 
-common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c
+common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c api_sensors.c api_team.c util.c
 common_objects = $(common_sources:.c=.o)
 
 gl_sources = particle.o gl13.c glutil.c
