@@ -83,10 +83,20 @@ namespace RISC {
 		}
 
 		public void new_game() {
-			var w = new NewGameWindow();
-			w.transient_for = this;
-			w.start_game.connect(start_game);
-			w.show();
+			var scenario_chooser = new FileChooserDialog("Select scenario", this, Gtk.FileChooserAction.OPEN);
+			scenario_chooser.add_button(Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT);
+			scenario_chooser.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
+			scenario_chooser.response.connect( (response_id) => {
+				if (response_id == Gtk.ResponseType.ACCEPT) {
+					var filename = scenario_chooser.get_filename();
+					var w = new NewGameWindow(filename);
+					w.transient_for = this;
+					w.start_game.connect(start_game);
+					w.show();
+				}
+				scenario_chooser.destroy();
+			});
+			scenario_chooser.show();
 		}
 
 		public void show_about() {
@@ -260,25 +270,29 @@ namespace RISC {
 
 	class NewGameWindow : Gtk.Dialog {
 		private Widget ok_button;
-		private FileChooserButton scenario_chooser;
 		private FileChooserButton[] ai_choosers;
+		private string scenario_filename;
+		private int min_teams;
+		private int max_teams;
 
-		public NewGameWindow() {
+		public NewGameWindow(string scenario_filename) {
+			this.min_teams = 1;
+			this.max_teams = 4;
 			this.title = "New Game";
 			this.has_separator = false;
 			this.border_width = 5;
+			this.scenario_filename = scenario_filename;
 			set_default_size(350, 100);
 
 			this.ai_choosers = new FileChooserButton[4];
 			this.vbox.spacing = 10;
-			this.vbox.pack_start(new Label("Scenario:"), false, false, 0);
-			scenario_chooser = new FileChooserButton("Select scenario", Gtk.FileChooserAction.OPEN);
-			this.vbox.pack_start(scenario_chooser, false, false, 0);
 			this.vbox.pack_start(new Label("AIs:"), false, false, 0);
 			var i = 0;
-			for (i = 0; i < 4; i++) {
-				ai_choosers[i] = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
-				this.vbox.pack_start(ai_choosers[i], false, false, 0);
+			for (i = 0; i < this.max_teams; i++) {
+				var chooser = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
+				chooser.file_set.connect(on_ai_change);
+				this.ai_choosers[i] = chooser;
+				this.vbox.pack_start(chooser, false, false, 0);
 			}
 
 			add_button(STOCK_CLOSE, ResponseType.CLOSE);
@@ -286,11 +300,19 @@ namespace RISC {
 			this.ok_button.sensitive = false;
 
 			this.response.connect(on_response);
-			this.scenario_chooser.file_set.connect( () => {
-					this.ok_button.sensitive = this.scenario_chooser.get_filename() != null;
-			});
 
 			show_all();
+		}
+
+		private void on_ai_change() {
+			var cnt = 0;
+			var j = 0;
+			for (j = 0; j < this.max_teams; j++) {
+				if (ai_choosers[j].get_filename() != null) {
+					cnt++;
+				}
+			}
+			this.ok_button.sensitive = cnt >= min_teams;
 		}
 
 		private void on_response (Dialog source, int response_id) {
@@ -304,7 +326,7 @@ namespace RISC {
 				for (var i = 0; i < n; i++) {
 					ais[i] = ai_choosers[i].get_filename();
 				}
-				start_game(5, scenario_chooser.get_filename(), ais);
+				start_game(5, scenario_filename, ais);
 				destroy();
 				break;
 			case ResponseType.CLOSE:
