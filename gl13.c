@@ -26,13 +26,14 @@ const double zoom_force = 0.1;
 
 int screen_width = 640;
 int screen_height = 480;
-complex double view_pos = 0.0;
-double view_scale = 16.0;
-int paused = 0;
-int single_step = 0;
-int render_all_debug_lines = 0;
-struct ship *picked = NULL;
-int simple_graphics = 0;
+
+complex double view_pos;
+double view_scale;
+int paused;
+int single_step;
+int render_all_debug_lines;
+struct ship *picked;
+int simple_graphics;
 
 static complex double S(complex double p)
 {
@@ -280,6 +281,17 @@ void reshape_gl13(int width, int height)
 	glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
+}
+
+void reset_gl13()
+{
+	view_pos = 0.0;
+	view_scale = 16.0;
+	paused = 0;
+	single_step = 0;
+	render_all_debug_lines = 0;
+	picked = NULL;
+	simple_graphics = 0;
 }
 
 static complex double W(complex double o)

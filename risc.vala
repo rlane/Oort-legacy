@@ -194,6 +194,7 @@ namespace RISC {
 				return;
 
 			init_gl13();
+			reset_gl13();
 
 			gldrawable.gl_end();
 		}
@@ -261,6 +262,7 @@ namespace RISC {
 
 		public void start_game(int seed, string scenario, string[] ais) {
 			RISC.game_shutdown();
+			reset_gl13();
 			if (RISC.game_init(seed, scenario, ais) != 0) {
 				warning("initialization failed\n");
 				start_demo_game();

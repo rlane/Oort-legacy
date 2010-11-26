@@ -6,6 +6,8 @@
 namespace RISC {
     [CCode (cname = "init_gl13")]
     public void init_gl13();
+    [CCode (cname = "reset_gl13")]
+    public void reset_gl13();
     [CCode (cname = "render_gl13")]
     public void render_gl13(bool paused);
     [CCode (cname = "reshape_gl13")]
