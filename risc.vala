@@ -332,6 +332,7 @@ namespace RISC {
 		private ScenarioMetadata scn;
 
 		private Widget ok_button;
+		private Entry seed_entry;
 		private FileChooserButton[] ai_choosers;
 
 		public NewGameWindow(ScenarioMetadata scn) {
@@ -356,6 +357,13 @@ namespace RISC {
 				this.ai_choosers[i] = chooser;
 				this.vbox.pack_start(chooser, false, false, 0);
 			}
+
+			var seed_hbox = new Gtk.HBox(false, 5);
+			seed_hbox.pack_start(new Label("Seed:"));
+			this.seed_entry = new Gtk.Entry();
+			this.seed_entry.text = "0";
+			seed_hbox.pack_start(seed_entry, false, false, 0);
+			this.vbox.pack_start(seed_hbox, false, false, 0);
 
 			add_button(STOCK_CLOSE, ResponseType.CLOSE);
 			this.ok_button = add_button(STOCK_OK, ResponseType.APPLY);
@@ -388,7 +396,7 @@ namespace RISC {
 				for (var i = 0; i < n; i++) {
 					ais[i] = ai_choosers[i].get_filename(); // XXX
 				}
-				start_game(5, scn.filename, ais);
+				start_game(seed_entry.text.to_int(), scn.filename, ais);
 				destroy();
 				break;
 			case ResponseType.CLOSE:
