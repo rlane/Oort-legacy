@@ -1,3 +1,9 @@
+-- name: Furball
+-- author: Rich Lane
+-- version: 1.0
+-- description: 
+-- min_teams: 1
+-- max_teams: 4
 dofile("scenarios/lib.lua")
 
 M = 32

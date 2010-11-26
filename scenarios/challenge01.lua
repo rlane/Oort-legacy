@@ -1,3 +1,9 @@
+-- name: Challenge 1
+-- author: Rich Lane
+-- version: 1.0
+-- description: 
+-- min_teams: 1
+-- max_teams: 1
 dofile("scenarios/lib.lua")
 
 if N ~= 1 then

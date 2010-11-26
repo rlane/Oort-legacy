@@ -25,7 +25,7 @@ luacheck:
 -include $(common_sources:.c=.d)
 
 %.c: %.vala vapi/risc.vapi
-	valac -o $@ -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg risc --vapidir vapi $<
+	valac -o $@ -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --vapidir vapi $<
 
 risc: risc.o $(gl_objects) $(common_objects)
 

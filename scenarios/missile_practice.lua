@@ -1,3 +1,9 @@
+-- name: Challenge 1
+-- author: Rich Lane
+-- version: 1.0
+-- description: 
+-- min_teams: 1
+-- max_teams: 1
 if N ~= 1 then
 	error("this scenario only supports 1 team")
 end

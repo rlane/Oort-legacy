@@ -1,3 +1,10 @@
+-- name: basic
+-- author: Rich Lane
+-- version: 1.0
+-- description: Motherships and fighters
+-- min_teams: 2
+-- max_teams: 2
+
 if N ~= 2 then
 	error("this scenario only supports 2 teams")
 end

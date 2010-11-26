@@ -1,7 +1,18 @@
 using Gtk;
 using Gdk;
+using Lua;
 
 namespace RISC {
+	struct ScenarioMetadata {
+		public string filename;
+		public string name;
+		public string author;
+		public string version;
+		public string description;
+		public int min_teams;
+		public int max_teams;
+	}
+
 	class MenuBuilder : GLib.Object {
 		public delegate void MenuAction();
 		public void leaf(MenuShell parent, string label, MenuAction action) {
@@ -88,11 +99,7 @@ namespace RISC {
 			scenario_chooser.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
 			scenario_chooser.response.connect( (response_id) => {
 				if (response_id == Gtk.ResponseType.ACCEPT) {
-					var filename = scenario_chooser.get_filename();
-					var w = new NewGameWindow(filename);
-					w.transient_for = this;
-					w.start_game.connect(start_game);
-					w.show();
+					configure_scenario(scenario_chooser.get_filename());
 				}
 				scenario_chooser.destroy();
 			});
@@ -266,29 +273,82 @@ namespace RISC {
 			start_game(42, "scenarios/furball.lua", { "examples/orbit.lua" });
 			game_state = GameState.DEMO;
 		}
+
+		delegate string? GetStr(string k);
+
+		public void configure_scenario(string scenario_filename) {
+			var L = new Lua.LuaVM();
+			L.open_libs();
+			L.push_string(scenario_filename);
+			L.set_global("filename");
+			if (L.do_file("scenario_parser.lua")) {
+				stderr.printf("Failed to parse scenario: %s\n", L.to_string(-1));
+				return;
+			}
+
+			var errors = 0;
+
+			GetStr getstr = (k) => {
+				L.get_field(-1, k);
+				if (L.is_string(-1)) {
+					var v = L.to_string(-1);
+					L.pop(1);
+					return v;
+				} else {
+					L.pop(1);
+					stderr.printf("missing field %s\n", k);
+					errors++;
+					return null;
+				}
+			};
+
+			var scn = ScenarioMetadata();
+			scn.filename = scenario_filename;
+			scn.name = getstr("name");
+			scn.author = getstr("author");
+			scn.version = getstr("version");
+			scn.description = getstr("description");
+			string min_teams_str = getstr("min_teams");
+			string max_teams_str = getstr("max_teams");
+
+			if (errors > 0) {
+				stderr.printf("missing required fields\n");
+				return;
+			}
+
+			scn.min_teams = min_teams_str.to_int();
+			scn.max_teams = max_teams_str.to_int();
+
+			var w = new NewGameWindow(scn);
+			w.transient_for = this;
+			w.start_game.connect(start_game);
+			w.show();
+		}
 	}
 
 	class NewGameWindow : Gtk.Dialog {
+		private ScenarioMetadata scn;
+
 		private Widget ok_button;
 		private FileChooserButton[] ai_choosers;
-		private string scenario_filename;
-		private int min_teams;
-		private int max_teams;
 
-		public NewGameWindow(string scenario_filename) {
-			this.min_teams = 1;
-			this.max_teams = 4;
+		public NewGameWindow(ScenarioMetadata scn) {
+			this.scn = scn;
 			this.title = "New Game";
 			this.has_separator = false;
 			this.border_width = 5;
-			this.scenario_filename = scenario_filename;
 			set_default_size(350, 100);
 
-			this.ai_choosers = new FileChooserButton[4];
 			this.vbox.spacing = 10;
+
+			var metadata_str = "Name: %s\nDescription: %s\nTeams: %d to %d\n".printf(scn.name, scn.description, scn.min_teams, scn.max_teams);
+			var metadata_label = new Label(metadata_str);
+			this.vbox.pack_start(metadata_label, false, false, 0);
+
 			this.vbox.pack_start(new Label("AIs:"), false, false, 0);
+			this.ai_choosers = new FileChooserButton[4];
 			var i = 0;
-			for (i = 0; i < this.max_teams; i++) {
+			for (i = 0; i < this.scn.max_teams; i++) {
 				var chooser = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
 				chooser.file_set.connect(on_ai_change);
 				this.ai_choosers[i] = chooser;
@@ -307,26 +367,26 @@ namespace RISC {
 		private void on_ai_change() {
 			var cnt = 0;
 			var j = 0;
-			for (j = 0; j < this.max_teams; j++) {
+			for (j = 0; j < this.scn.max_teams; j++) {
 				if (ai_choosers[j].get_filename() != null) {
 					cnt++;
 				}
 			}
-			this.ok_button.sensitive = cnt >= min_teams;
+			this.ok_button.sensitive = cnt >= this.scn.min_teams;
 		}
 
 		private void on_response (Dialog source, int response_id) {
 			switch (response_id) {
 			case ResponseType.APPLY:
 				var n = 0;
-				for (var i = 0; i < 4; i++) {
+				for (var i = 0; i < this.scn.max_teams; i++) {
 					if (ai_choosers[i].get_filename() != null) n++;
 				}
 				var ais = new string[n];
 				for (var i = 0; i < n; i++) {
-					ais[i] = ai_choosers[i].get_filename();
+					ais[i] = ai_choosers[i].get_filename(); // XXX
 				}
-				start_game(5, scenario_filename, ais);
+				start_game(5, scn.filename, ais);
 				destroy();
 				break;
 			case ResponseType.CLOSE:

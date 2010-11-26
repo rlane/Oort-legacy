@@ -1,3 +1,10 @@
+-- name: benchmark
+-- author: Rich Lane
+-- version: 1.0
+-- description: 
+-- min_teams: 2
+-- max_teams: 2
+
 if N ~= 0 then
 	error("this scenario takes no arguments")
 end
