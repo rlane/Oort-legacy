@@ -94,9 +94,9 @@ namespace RISC {
 		}
 
 		public void new_game() {
-			var scenario_chooser = new FileChooserDialog("Select scenario", this, Gtk.FileChooserAction.OPEN);
-			scenario_chooser.add_button(Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT);
-			scenario_chooser.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
+			var scenario_chooser = new FileChooserDialog("Select scenario", this, Gtk.FileChooserAction.OPEN,
+			                                             Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT,
+																									 Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
 			scenario_chooser.response.connect( (response_id) => {
 				if (response_id == Gtk.ResponseType.ACCEPT) {
 					configure_scenario(scenario_chooser.get_filename());
