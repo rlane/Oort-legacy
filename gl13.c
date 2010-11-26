@@ -236,7 +236,7 @@ void render_gl13( int _paused)
 		if (picked) {
 			const int x = 15, y = 82, dy = 12;
 			glColor32(0xAAFFFFAA);
-			glPrintf(x, y-0*dy, "%s %.8s", picked->class->name, picked->api_id);
+			glPrintf(x, y-0*dy, "%s %.8x", picked->class->name, picked->api_id);
 			glPrintf(x, y-1*dy, "hull: %.2f", picked->hull);
 			glPrintf(x, y-2*dy, "position: " VEC2_FMT, VEC2_ARG(picked->physics->p));
 			glPrintf(x, y-3*dy, "velocity: " VEC2_FMT, VEC2_ARG(picked->physics->v));
