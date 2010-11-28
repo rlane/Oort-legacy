@@ -29,6 +29,13 @@ int main(int argc, char **argv)
 	int max_ticks = envtol("RISC_MAX_TICKS", -1);
 	char *trace_filename;
 
+	if (!find_data_dir()) {
+		fprintf(stderr, "could not find data dir (set RISC_DATA)\n");
+		return 1;
+	} else {
+		fprintf(stderr, "using data dir %s\n", data_dir);
+	}
+
 	if ((trace_filename = getenv("RISC_TRACE"))) {
 		trace_file = fopen(trace_filename, "w");
 		if (!trace_file) {

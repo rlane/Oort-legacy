@@ -41,7 +41,7 @@ all: risc.exe risc-dedicated.exe
 -include $(common_sources:.c=.d)
 
 %.c: %.vala vapi/risc.vapi
-	valac -o $@ -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg risc --vapidir vapi $<
+	valac -o $@ -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --vapidir vapi $<
 
 risc.exe: risc.o $(common_objects) $(gl_objects)
 	$(CC) $^ -o $@ $(LDFLAGS)
@@ -62,7 +62,7 @@ risc-win32: risc.exe risc-dedicated.exe
 	rm -rf risc-win32
 	mkdir risc-win32
 	cp risc.exe risc-dedicated.exe $(addprefix $(BIN)/,$(DLLS)) risc-win32/
-	cp ships.lua runtime.lua risc-win32/
+	cp ships.lua runtime.lua scenario_parser.lua risc-win32/
 	dos2unix --u2d < README.md > risc-win32/README.txt
 	dos2unix --u2d < TODO > risc-win32/TODO.txt
 	mkdir risc-win32/scenarios

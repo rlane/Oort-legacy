@@ -1,11 +1,11 @@
 # Ubuntu 10.10
 # core: build-essential pkg-config libglib2.0-dev libluajit-5.1-dev
-# ui: valac libglew1.5-dev libgtk2.0-dev libgtkglext1-dev
+# ui: valac libglew1.5-dev libgtk2.0-dev libgtkglext1-dev libsdl-gfx1.2-dev
 
 LUAPKG:=$(shell pkg-config --exists luajit && echo luajit || echo lua)
 VALGRIND_CFLAGS=$(shell pkg-config --exists valgrind && echo -D VALGRIND `pkg-config --cflags valgrind`)
 CORE_PKGS:=glib-2.0 gthread-2.0 $(LUAPKG)
-UI_PKGS:=gtk+-2.0 gtkglext-1.0 glew
+UI_PKGS:=gtk+-2.0 gtkglext-1.0 glew # SDL_gfx
 
 CORE_CFLAGS:=`pkg-config --cflags $(CORE_PKGS)` -g -O2 -march=native -Wall -I. $(VALGRIND_CFLAGS)
 CORE_LDFLAGS:=`pkg-config --libs $(CORE_PKGS)`
@@ -47,7 +47,22 @@ risc-dedicated: risc-dedicated.o $(core_objects)
 benchmark: risc-dedicated
 	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./risc-dedicated scenarios/benchmark.lua
 
+challenge: risc-dedicated
+	./risc-dedicated scenarios/challenge01.lua solutions/challenge01.lua
+	./risc-dedicated scenarios/challenge02.lua solutions/challenge02.lua
+	./risc-dedicated scenarios/challenge02.lua solutions/challenge03.lua
+
+install: risc risc-dedicated
+	install -d $(DESTDIR)/usr/bin
+	install risc risc-dedicated $(DESTDIR)/usr/bin
+	install -d $(DESTDIR)/usr/share/risc
+	install ships.lua runtime.lua scenario_parser.lua $(DESTDIR)/usr/share/risc
+	install -d $(DESTDIR)/usr/share/risc/examples
+	install examples/*.lua $(DESTDIR)/usr/share/risc/examples
+	install -d $(DESTDIR)/usr/share/risc/scenarios
+	install scenarios/*.lua $(DESTDIR)/usr/share/risc/scenarios
+
 clean:
 	rm -f *.o *.d risc risc-dedicated particlebench
 
-.PHONY: all clean benchmark luacheck
+.PHONY: all clean benchmark luacheck install

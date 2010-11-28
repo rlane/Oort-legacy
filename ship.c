@@ -17,6 +17,7 @@
 #include "task.h"
 #include "api_sensors.h"
 #include "api_team.h"
+#include "util.h"
 
 #define LW_VERBOSE 0
 
@@ -326,7 +327,10 @@ static int ai_create(const char *filename, struct ship *s, const char *orders)
 	lua_pushstring(G, orders);
 	lua_setglobal(G, "orders");
 
-	if (luaL_dofile(G, "runtime.lua")) {
+	lua_pushstring(G, data_dir);
+	lua_setglobal(G, "data_dir");
+
+	if (luaL_dofile(G, data_path("runtime.lua"))) {
 		fprintf(stderr, "Failed to load runtime: %s\n", lua_tostring(G, -1));
 		lua_close(G);
 		return 1;

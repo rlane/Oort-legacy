@@ -1,4 +1,4 @@
-dofile("ships.lua")
+dofile(data_dir .. "/ships.lua")
 
 local my_class = ships[sys_class()]
 local last_fire_times = {}
@@ -185,6 +185,7 @@ function sandbox(f)
 		io = { write = io.write },
 
 		orders = orders,
+		data_dir = data_dir,
 		ships = copy_table(ships, {})
 	}
 

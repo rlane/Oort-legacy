@@ -1,4 +1,4 @@
-dofile("examples/lib.lua")
+dofile(data_dir .. "/examples/lib.lua")
 
 local target_id = deserialize_id(orders)
 

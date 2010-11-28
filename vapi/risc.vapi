@@ -2,6 +2,7 @@
 [CCode (cheader_filename = "game.h")]
 [CCode (cheader_filename = "particle.h")]
 [CCode (cheader_filename = "glutil.h")]
+[CCode (cheader_filename = "util.h")]
 
 namespace RISC {
     [CCode (cname = "init_gl13")]
@@ -36,4 +37,9 @@ namespace RISC {
 		public void glPrintf(int x, int y, string fmt, ...);
 		[CCode (cname = "glColor32")]
 		void glColor32(uint32 c);
+		
+		[CCode (cname = "find_data_dir")]
+		public bool find_data_dir();
+		[CCode (cname = "data_path")]
+		public string data_path(string subpath);
 }

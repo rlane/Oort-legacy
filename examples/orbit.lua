@@ -1,4 +1,4 @@
-dofile("examples/lib.lua")
+dofile(data_dir .. "/examples/lib.lua")
 
 --print("orders:", orders)
 local my_team = team()
@@ -113,7 +113,7 @@ while true do
 	end
 
 	if follow_target and math.random(1000) == 7 then
-		spawn("little_missile", "examples/little_missile.lua", serialize_id(follow_target:id()))
+		spawn("little_missile", data_dir .. "/examples/little_missile.lua", serialize_id(follow_target:id()))
 	end
 
 	yield()

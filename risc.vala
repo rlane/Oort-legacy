@@ -272,7 +272,7 @@ namespace RISC {
 		}
 
 		public void start_demo_game() {
-			start_game(42, "scenarios/furball.lua", { "examples/orbit.lua" });
+			start_game(42, data_path("scenarios/furball.lua"), { data_path("examples/orbit.lua") });
 			game_state = GameState.DEMO;
 		}
 
@@ -283,7 +283,7 @@ namespace RISC {
 			L.open_libs();
 			L.push_string(scenario_filename);
 			L.set_global("filename");
-			if (L.do_file("scenario_parser.lua")) {
+			if (L.do_file(data_path("scenario_parser.lua"))) {
 				stderr.printf("Failed to parse scenario: %s\n", L.to_string(-1));
 				return;
 			}
@@ -415,6 +415,10 @@ int main(string[] args) {
 
 	if (!Thread.supported ()) {
 		error ("Cannot run without thread support.");
+	}
+
+	if (!RISC.find_data_dir()) {
+		error("could not find data dir (set RISC_DATA)");
 	}
 
 	var mainwin = new RISC.MainWindow();

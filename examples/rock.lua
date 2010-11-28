@@ -1,4 +1,4 @@
-dofile("examples/lib.lua")
+dofile(data_dir .. "/examples/lib.lua")
 
 local my_team = team()
 local my_ship = ships[class()]
@@ -78,7 +78,7 @@ while true do
 		local target_selector = function(k,c) return c:team() ~= my_team and c:class() == "mothership" end
 		local _, t = pick(sensor_contacts(), target_selector)
 		if t then
-			spawn("missile", "examples/missile.lua", serialize_id(t:id()))
+			spawn("missile", data_dir .. "/examples/missile.lua", serialize_id(t:id()))
 		end
 	end
 
@@ -86,12 +86,12 @@ while true do
 		local target_selector = function(k,c) return c:team() ~= my_team and c:class() ~= "little_missile" end
 		local _, t = pick(sensor_contacts(), target_selector)
 		if t then
-			spawn("little_missile", "examples/little_missile.lua", serialize_id(t:id()))
+			spawn("little_missile", data_dir .. "/examples/little_missile.lua", serialize_id(t:id()))
 		end
 	end
 
 	if math.random(200) == 7 then
-		spawn("fighter", "examples/orbit.lua", "foo")
+		spawn("fighter", data_dir .. "/examples/orbit.lua", "foo")
 	end
 
 	yield()

@@ -12,4 +12,4 @@ team("blue",  0x0000FF00)
 team("green", 0x00FF0000)
 
 ship("mothership", AI[0], "green", -10, 0)
-ship("mothership", "examples/target.lua", "blue", 10, 0)
+ship("mothership", data_dir .. "/examples/target.lua", "blue", 10, 0)

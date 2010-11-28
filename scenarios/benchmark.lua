@@ -17,8 +17,8 @@ end
 team("blue",  0x0000FF00)
 team("green", 0x00FF0000)
 
-blue_code = "examples/switch.lua"
-green_code = "examples/switch.lua"
+blue_code = data_dir .. "/examples/switch.lua"
+green_code = data_dir .. "/examples/switch.lua"
 
 for i = 1,512 do
 	ship("fighter", blue_code, "blue", R(20,15), R(20,10))

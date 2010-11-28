@@ -4,7 +4,7 @@
 -- description: 
 -- min_teams: 1
 -- max_teams: 4
-dofile("scenarios/lib.lua")
+dofile(data_dir .. "/scenarios/lib.lua")
 
 M = 32
 W = 30

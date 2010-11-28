@@ -12,6 +12,7 @@
 #include "ship.h"
 #include "physics.h"
 #include "team.h"
+#include "util.h"
 
 static int scn_team(lua_State *L)
 {
@@ -49,6 +50,9 @@ int load_scenario(const char *filename, int num_teams, char **teams)
 	luaL_openlibs(L);
 	lua_register(L, "team", scn_team);
 	lua_register(L, "ship", scn_ship);
+
+	lua_pushstring(L, data_dir);
+	lua_setglobal(L, "data_dir");
 
 	lua_pushnumber(L, num_teams);
 	lua_setglobal(L, "N");
