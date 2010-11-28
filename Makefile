@@ -1,15 +1,19 @@
 LUAPKG:=$(shell pkg-config --exists luajit && echo luajit || echo lua)
 VALGRIND_CFLAGS=$(shell pkg-config --exists valgrind && echo -D VALGRIND `pkg-config --cflags valgrind`)
-PKGS:=glib-2.0 gtk+-2.0 gtkglext-1.0 gthread-2.0 glew $(LUAPKG)
+CORE_PKGS:=glib-2.0 gthread-2.0 $(LUAPKG)
+UI_PKGS:=gtk+-2.0 gtkglext-1.0 glew
 
-CFLAGS:=`pkg-config --cflags $(PKGS)` -g -O2 -march=native -Wall -I. $(VALGRIND_CFLAGS)
-LDFLAGS:=`pkg-config --libs $(PKGS)` -lGL -lGLU
+CORE_CFLAGS:=`pkg-config --cflags $(CORE_PKGS)` -g -O2 -march=native -Wall -I. $(VALGRIND_CFLAGS)
+CORE_LDFLAGS:=`pkg-config --libs $(CORE_PKGS)`
 
-common_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c util.c api_sensors.c api_team.c
-common_objects = $(common_sources:.c=.o)
+UI_CFLAGS:=$(CORE_CFLAGS) `pkg-config --cflags $(UI_PKGS)`
+UI_LDFLAGS:=$(CORE_LDFLAGS) `pkg-config --libs $(UI_PKGS)` -lGL -lGLU
 
-gl_sources = particle.o gl13.c glutil.c
-gl_objects = $(gl_sources:.c=.o)
+core_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c util.c api_sensors.c api_team.c
+core_objects = $(core_sources:.c=.o)
+
+ui_sources = particle.c gl13.c glutil.c
+ui_objects = $(ui_sources:.c=.o)
 
 all: luacheck risc risc-dedicated
 
@@ -18,20 +22,23 @@ luacheck:
 
 %.d: %.c
 				@set -e; rm -f $@; \
-				$(CC) -M $(CFLAGS) $< > $@.$$$$; \
+				$(CC) -M $(CORE_CFLAGS) $< > $@.$$$$; \
 				sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 				rm -f $@.$$$$
 
--include $(common_sources:.c=.d)
+-include $(core_sources:.c=.d)
 
 %.c: %.vala vapi/risc.vapi
 	valac -o $@ -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --vapidir vapi $<
 
-risc: risc.o $(gl_objects) $(common_objects)
+$(core_objects) risc-dedicated.o : CFLAGS = $(CORE_CFLAGS)
+$(ui_objects) risc.o : CFLAGS = $(UI_CFLAGS)
 
-risc-dedicated: risc-dedicated.o $(common_objects)
+risc: LDFLAGS = $(UI_LDFLAGS)
+risc: risc.o $(ui_objects) $(core_objects)
 
-particlebench: particlebench.o $(gl_objects) $(common_objects)
+risc-dedicated: LDFLAGS = $(CORE_LDFLAGS)
+risc-dedicated: risc-dedicated.o $(core_objects)
 
 benchmark: risc-dedicated
 	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./risc-dedicated scenarios/benchmark.lua
