@@ -1,3 +1,7 @@
+# Ubuntu 10.10
+# core: build-essential pkg-config libglib2.0-dev libluajit-5.1-dev
+# ui: valac libglew1.5-dev libgtk2.0-dev libgtkglext1-dev
+
 LUAPKG:=$(shell pkg-config --exists luajit && echo luajit || echo lua)
 VALGRIND_CFLAGS=$(shell pkg-config --exists valgrind && echo -D VALGRIND `pkg-config --cflags valgrind`)
 CORE_PKGS:=glib-2.0 gthread-2.0 $(LUAPKG)
