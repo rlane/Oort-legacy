@@ -18,8 +18,9 @@ PKGS=gtk+-2.0 gtkglext-1.0 glib-2.0 gthread-2.0 lua
 PKG_CFLAGS=`PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags $(PKGS)`
 PKG_LIBS=`PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(PKGS)`
 
-CFLAGS= -DWINDOWS -I. -I$(INC) $(PKG_CFLAGS) -g -O2 -march=native -Wall
-LDFLAGS=-L$(LIB) $(PKG_LIBS) -mwindows -lmingw32 -lSDL_gfx -lopengl32 -lglu32 -lglew32
+CFLAGS := -DWINDOWS -I. -I$(INC) $(PKG_CFLAGS) -g -O2 -march=native -Wall
+CORE_LDFLAGS := -L$(LIB) $(PKG_LIBS) -lmingw32
+UI_LDFLAGS := $(CORE_LDFLAGS) -mwindows -lSDL_gfx -lopengl32 -lglu32 -lglew32
 
 #SDL_CFLAGS=-I$(INC)/SDL
 #SDL_LDFLAGS=-lSDLmain -lSDL 
@@ -31,6 +32,9 @@ gl_sources = particle.o gl13.c glutil.c
 gl_objects = $(gl_sources:.c=.o)
 
 all: risc.exe risc-dedicated.exe
+
+risc.exe: LDFLAGS=$(UI_LDFLAGS)
+risc-dedicated.exe: LDFLAGS=$(CORE_LDFLAGS)
 
 %.d: %.c
 				@set -e; rm -f $@; \
@@ -76,6 +80,13 @@ risc-win32.zip: risc-win32
 pkg: risc-win32.zip
 	cp $< risc-win32-`git log --pretty=format:%h -1`.zip
 	@echo created risc-win32-`git log --pretty=format:%h -1`.zip
+
+installer: risc-installer-win32.exe
+	cp $< risc-win32-installer-`git log --pretty=format:%h -1`.exe
+	@echo created risc-win32-installer-`git log --pretty=format:%h -1`.exe
+
+risc-installer-win32.exe: risc-win32 installer.nsi
+	makensis installer.nsi
 
 clean:
 	rm -rf *.o *.d *.exe risc-win32 risc-win32.zip
