@@ -1,5 +1,3 @@
-dofile(data_dir .. "/examples/lib.lua")
-
 thrust(1.57, 10)
 for i = 1,10 do
 	yield()

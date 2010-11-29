@@ -1,5 +1,3 @@
-dofile(data_dir .. "/examples/lib.lua")
-
 --print("orders:", orders)
 local my_team = team()
 local my_ship = ships[class()]

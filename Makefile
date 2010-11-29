@@ -50,7 +50,7 @@ benchmark: risc-dedicated
 challenge: risc-dedicated
 	./risc-dedicated scenarios/challenge01.lua solutions/challenge01.lua
 	./risc-dedicated scenarios/challenge02.lua solutions/challenge02.lua
-	./risc-dedicated scenarios/challenge02.lua solutions/challenge03.lua
+	./risc-dedicated scenarios/challenge03.lua solutions/challenge03.lua
 
 install: risc risc-dedicated
 	install -d $(DESTDIR)/usr/bin

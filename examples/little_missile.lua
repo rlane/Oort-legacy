@@ -1,5 +1,3 @@
-dofile(data_dir .. "/examples/lib.lua")
-
 local target_id = deserialize_id(orders)
 
 thrust(math.random()*2*math.pi, 10)

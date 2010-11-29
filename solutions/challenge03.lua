@@ -1,5 +1,3 @@
-dofile(data_dir .. "/examples/lib.lua")
-
 function target_selector(k,c)
 	return c:team() ~= team()
 end
@@ -14,6 +12,6 @@ while true do
 	local tx, ty = t:position()
 	local tvx, tvy = t:velocity()
 	local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
-	fire("main", a)
+	if (a) then fire("main", a) end
 	yield()
 end

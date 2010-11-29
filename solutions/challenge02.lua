@@ -1,5 +1,3 @@
-dofile(data_dir .. "/examples/lib.lua")
-
 function target_selector(k,c)
 	return c:team() ~= team()
 end

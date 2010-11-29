@@ -30,6 +30,8 @@ static GHashTable *ship_classes;
 static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;
 static const int ai_mem_limit = 1<<20;
 
+void ship_destroy(struct ship *s);
+
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
 	lua_pushlightuserdata(L, key);
@@ -222,12 +224,11 @@ static int api_spawn(lua_State *L)
 	const char *filename = luaL_checkstring(L, 2);
 	const char *orders = luaL_checkstring(L, 3);
 
-	struct ship *child = ship_create(filename, class_name, orders);
+	struct ship *child = ship_create(filename, class_name, s->team, orders);
 	if (!child) return luaL_error(L, "failed to create ship");
 
 	child->physics->p = s->physics->p;
 	child->physics->v = s->physics->v;
-	child->team = s->team;
 	return 0;
 }
 
@@ -454,19 +455,16 @@ void ship_tick(double t)
 	task_wait();
 }
 
-struct ship *ship_create(const char *filename, const char *class_name, const char *orders)
+struct ship *ship_create(const char *filename, const char *class_name,
+		                     struct team *team, const char *orders)
 {
 	struct ship *s = g_slice_new0(struct ship);
+
+	s->team = team;
 
 	s->class = g_hash_table_lookup(ship_classes, class_name);
 	if (!s->class) {
 		fprintf(stderr, "class '%s' not found\n", class_name);
-		g_slice_free(struct ship, s);
-		return NULL;
-	}
-
-	if (ai_create(filename, s, orders)) {
-		fprintf(stderr, "failed to create AI\n");
 		g_slice_free(struct ship, s);
 		return NULL;
 	}
@@ -493,6 +491,12 @@ struct ship *ship_create(const char *filename, const char *class_name, const cha
 	g_static_mutex_lock(&new_ships_lock);
 	new_ships = g_list_append(new_ships, s);
 	g_static_mutex_unlock(&new_ships_lock);
+
+	if (ai_create(filename, s, orders)) {
+		fprintf(stderr, "failed to create AI\n");
+		ship_destroy(s);
+		return NULL;
+	}
 
 	return s;
 }
