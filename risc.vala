@@ -97,6 +97,9 @@ namespace RISC {
 			var scenario_chooser = new FileChooserDialog("Select scenario", this, Gtk.FileChooserAction.OPEN,
 			                                             Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT,
 																									 Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
+			try {
+				scenario_chooser.add_shortcut_folder(data_path("scenarios"));
+			} catch (GLib.Error e) {}
 			scenario_chooser.response.connect( (response_id) => {
 				if (response_id == Gtk.ResponseType.ACCEPT) {
 					configure_scenario(scenario_chooser.get_filename());
@@ -354,6 +357,9 @@ namespace RISC {
 			for (i = 0; i < this.scn.max_teams; i++) {
 				var chooser = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
 				chooser.file_set.connect(on_ai_change);
+				try {
+					chooser.add_shortcut_folder(data_path("examples"));
+				} catch (GLib.Error e) {}
 				this.ai_choosers[i] = chooser;
 				this.vbox.pack_start(chooser, false, false, 0);
 			}
