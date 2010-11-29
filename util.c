@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <glib.h>
+#include <string.h>
 
 char *data_dir = NULL;
 
@@ -56,7 +57,7 @@ gboolean find_data_dir(void)
 char *data_path(const char *subpath)
 {
 	int len = strlen(data_dir) + strlen(subpath);
-	char *path = malloc(len + 1);
+	char *path = malloc(len + 2);
 	if (!path) abort();
 	sprintf(path, "%s/%s", data_dir, subpath);
 	return path;
