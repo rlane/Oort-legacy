@@ -181,11 +181,10 @@ function sandbox(f)
 		type = type,
 		unpack = unpack,
 
-		dofile = safe_dofile,
+		-- dofile = safe_dofile,
 		io = { write = io.write },
 
 		orders = orders,
-		data_dir = data_dir,
 		ships = copy_table(ships, {})
 	}
 
