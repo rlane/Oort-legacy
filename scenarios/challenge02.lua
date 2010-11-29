@@ -10,8 +10,8 @@ if N ~= 1 then
 	error("this scenario only supports 1 team")
 end
 
-team("green", 0x00FF0000)
-team("eggplant", colors.eggplant)
+team("green", AI[0], 0x00FF0000)
+team("eggplant", data_dir .. "/examples/challenge02.lua", colors.eggplant)
 
-ship("fighter", AI[0], "green", 0, 0)
-ship("fighter", data_dir .. "/examples/challenge02.lua", "eggplant", R(-2,2), R(-2,2))
+ship("fighter", "green", 0, 0)
+ship("fighter", "eggplant", R(-2,2), R(-2,2))

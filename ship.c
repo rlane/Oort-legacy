@@ -221,8 +221,8 @@ static int api_spawn(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
 	const char *class_name = luaL_checkstring(L, 1);
-	const char *filename = luaL_checkstring(L, 2);
-	const char *orders = luaL_checkstring(L, 3);
+	const char *orders = luaL_checkstring(L, 2);
+	const char *filename = s->team->filename;
 
 	struct ship *child = ship_create(filename, class_name, s->team, orders);
 	if (!child) return luaL_error(L, "failed to create ship");

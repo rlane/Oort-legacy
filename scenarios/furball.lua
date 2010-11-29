@@ -16,9 +16,9 @@ end
 
 for ti = 1,N do
 	local name = indexed_colors[ti]
-	team(name, colors[name])
+	team(name, AI[ti-1], colors[name])
 	print("team " .. name .. " is " .. AI[ti-1])
 	for i = 1,M do
-		ship("fighter", AI[ti-1], name, R(-W,W), R(-H,H))
+		ship("fighter", name, R(-W,W), R(-H,H))
 	end
 end

@@ -78,7 +78,7 @@ function recv()
 	return sys_recv()
 end
 
-function spawn(class_name, filename, orders)
+function spawn(class_name, orders)
 	class = ships[class_name]
 
 	if not class then
@@ -92,7 +92,7 @@ function spawn(class_name, filename, orders)
 		_energy = _energy - class.cost
 	end
 
-	sys_spawn(class_name, filename, orders)
+	sys_spawn(class_name, orders)
 end
 
 function explode()

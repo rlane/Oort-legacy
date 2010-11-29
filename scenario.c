@@ -17,24 +17,24 @@
 static int scn_team(lua_State *L)
 {
 	const char *name = luaL_checkstring(L, 1);
-	long color = luaL_checklong(L, 2);
-	team_create(name, color);
+	const char *filename = luaL_checkstring(L, 2);
+	long color = luaL_checklong(L, 3);
+	team_create(name, filename, color);
 	return 0;
 }
 
 static int scn_ship(lua_State *L)
 {
 	const char *ship_class_name = luaL_checkstring(L, 1);
-	const char *filename = luaL_checkstring(L, 2);
-	const char *team_name = luaL_checkstring(L, 3);
-	double x = luaL_checknumber(L, 4);
-	double y = luaL_checknumber(L, 5);
-	const char *orders = luaL_optstring(L, 6, "");
+	const char *team_name = luaL_checkstring(L, 2);
+	double x = luaL_checknumber(L, 3);
+	double y = luaL_checknumber(L, 4);
+	const char *orders = luaL_optstring(L, 5, "");
 
 	struct team *team = team_lookup(team_name);
-	if (!team) return luaL_argerror(L, 3, "invalid team");
+	if (!team) return luaL_argerror(L, 2, "invalid team");
 
-	struct ship *s = ship_create(filename, ship_class_name, team, orders);
+	struct ship *s = ship_create(team->filename, ship_class_name, team, orders);
 	if (!s) return luaL_error(L, "ship creation failed");
 
 	s->physics->p = C(x,y);

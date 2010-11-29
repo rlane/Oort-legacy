@@ -9,10 +9,11 @@
 
 GList *all_teams = NULL;
 
-struct team *team_create(const char *name, int color)
+struct team *team_create(const char *name, const char *filename, int color)
 {
 	struct team *t = g_slice_new(struct team);
 	t->name = strdup(name);
+	t->filename = strdup(filename);
 	t->color = color;
 	t->ships = 0;
 	all_teams = g_list_append(all_teams, t);
@@ -23,6 +24,7 @@ void team_destroy(struct team *t)
 {
 	all_teams = g_list_remove(all_teams, t);
 	free(t->name);
+	free(t->filename);
 	g_slice_free(struct team, t);
 }
 
