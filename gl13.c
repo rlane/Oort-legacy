@@ -240,8 +240,8 @@ void render_gl13( int _paused)
 			glPrintf(x, y-0*dy, "%s %.8x", picked->class->name, picked->api_id);
 			glPrintf(x, y-1*dy, "hull: %.2f", picked->hull);
 			glPrintf(x, y-2*dy, "position: " VEC2_FMT, VEC2_ARG(picked->physics->p));
-			glPrintf(x, y-3*dy, "velocity: " VEC2_FMT, VEC2_ARG(picked->physics->v));
-			glPrintf(x, y-4*dy, "thrust: " VEC2_FMT, VEC2_ARG(picked->physics->thrust));
+			glPrintf(x, y-3*dy, "velocity: " VEC2_FMT " %g", VEC2_ARG(picked->physics->v), cabs(picked->physics->v));
+			glPrintf(x, y-4*dy, "thrust: " VEC2_FMT " %g", VEC2_ARG(picked->physics->thrust), cabs(picked->physics->thrust));
 			glPrintf(x, y-5*dy, "energy: %g", ship_get_energy(picked));
 		}
 }
