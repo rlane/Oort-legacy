@@ -18,6 +18,8 @@ namespace RISC {
 		public int zoom(int x, int y, double force);
 		[CCode (cname = "pick")]
 		public void pick(int x, int y);
+    [CCode (cname = "emit_particles")]
+    public void emit_particles();
 
 		[CCode (cname = "game_init")]
 		public int game_init(int seed, string scenario, string[] ais);

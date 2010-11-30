@@ -122,6 +122,7 @@ namespace RISC {
 			if (!paused) {
 				game_purge();
 				game_tick(1.0/32);
+				emit_particles();
 				particle_tick();
 
 /*
