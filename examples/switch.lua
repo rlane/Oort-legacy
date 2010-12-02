@@ -1,12 +1,9 @@
-local c = class()
+local my_class = class()
+local my_team = team()
+local my_ship = ships[my_class]
 
-if c == "fighter" then
-	--print("orders:", orders)
-	local my_team = team()
-	local my_ship = ships[class()]
-
+if my_class == "fighter" then
 	thrust(math.pi/2, 1)
-	sleep(32)
 
 	local i = math.random(1,256)
 	local t = nil
@@ -17,6 +14,7 @@ if c == "fighter" then
 	local follow_target_retry = 0
 	local fire_target = nil
 	local fire_target_retry = 0
+	local burn_time = 32
 
 	local function fire_score(c)
 		local x,y = position()
@@ -91,38 +89,40 @@ if c == "fighter" then
 			--debug_box_off()
 		end
 
-		local a = lead(x, y, follow_x, follow_y, vx, vy, follow_vx, follow_vy, 10, math.huge)
-		if a then
-			local k = math.random(10)
-			if k < 7 then
-				local f = math.min(5, 1.0*math.sqrt(distance(x, y, follow_x, follow_y)))
-				local nvx = vx + f * math.cos(a)
-				local nvy = vy + f * math.sin(a)
-				--if distance(0, 0, nvx, nvy) < 10 then
-					thrust(a, f)
-				--end
-			elseif k < 8 then
-				a = normalize_angle(a + R(0.5,1) * sign(R(-1,1)))
-				thrust(a, 5)
+		if burn_time == 0 then
+			local dist = distance(x, y, follow_x, follow_y)
+			local speed = 1 + 1.0*math.sqrt(dist)
+			local a = lead(x, y, follow_x, follow_y, vx, vy, follow_vx, follow_vy, 10, math.huge)
+			if a then
+				local k = math.random(10)
+				if k < 7 then
+					thrust(a, my_ship.max_acc)
+					burn_time = 2
+				elseif k < 8 then
+					a = normalize_angle(a + R(0.5,1) * sign(R(-1,1)))
+					thrust(a, my_ship.max_acc)
+					burn_time = 2
+				else
+					a = normalize_angle(a + (math.pi/2) * sign(R(-1,1)))
+					thrust(a, my_ship.max_acc)
+					burn_time = 4
+				end
 			else
-				a = normalize_angle(a + (math.pi/2) * sign(R(-1,1)))
-				thrust(a, 5)
+				local a = angle_between(vx, vy, 0, 0)
+				thrust(a, 10)
+				burn_time = 10
 			end
 		else
-			local a = angle_between(vx, vy, 0, 0)
-			thrust(a, 10)
+			burn_time = burn_time - 1
 		end
 
-		if follow_target and math.random(1000) == 7 then
+		if follow_target and energy() > ships.little_missile.cost+40 and math.random(50) == 7 then
 			spawn("little_missile", serialize_id(follow_target:id()))
 		end
 
 		yield()
 	end
-elseif c == "mothership" then
-	local my_team = team()
-	local my_ship = ships[class()]
-
+elseif my_class == "mothership" then
 	local i = 0
 	local t = nil
 
@@ -216,17 +216,16 @@ elseif c == "mothership" then
 
 		yield()
 	end
-elseif c == "missile" then
+elseif my_class == "missile" or my_class == "little_missile" then
 	local target_id = deserialize_id(orders)
 
-	thrust(math.random()*2*math.pi, 5)
+	thrust(math.random()*2*math.pi, my_ship.max_acc)
 	sleep(16)
 
 	while true do
 		local t = sensor_contact(target_id)
 
 		if not t then
-			--printf("lost target\n")
 			thrust(0, 0)
 			sleep(64)
 			explode()
@@ -236,62 +235,24 @@ elseif c == "missile" then
 		local tvx, tvy = t:velocity()
 
 		clear_debug_lines()
-		debug_diamond(tx, ty, 0.3)
+		debug_diamond(tx, ty, 16*my_ship.radius)
 		
 		local x, y = position()
-		if distance(tx, ty, x, y) < 3 then
+		local vx, vy = velocity()
+
+		local ttt = distance(x, y, tx, ty) / (distance(vx, vy, tvx, tvy)+my_ship.explosion.velocity)
+		if ttt < 0.1 then
 			explode()
 		end
 
-		local vx, vy = velocity()
-		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, 30, math.huge)
+		local v = distance(0, 0, vx, vy)
+		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.max_acc+v, math.huge)
 		if a then
-			thrust(a, 5)
+			thrust(a, my_ship.max_acc)
 		else
 			explode()
 		end
 
-		yield()
-	end
-elseif c == "little_missile" then
-	local target_id = deserialize_id(orders)
-
-	thrust(math.random()*2*math.pi, 10)
-	sleep(16)
-
-	while true do
-		local t = sensor_contact(target_id)
-
-		if not t then
-			--printf("lost target\n")
-			thrust(0, 0)
-			sleep(64)
-			explode()
-		end
-
-		local tx, ty = t:position()
-		local tvx, tvy = t:velocity()
-
-		clear_debug_lines()
-		debug_diamond(tx, ty, 0.2)
-		
-		local x, y = position()
-		if distance(tx, ty, x, y) < 4 then
-			explode()
-		end
-
-		local vx, vy = velocity()
-		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, 30, math.huge)
-		if a then
-			thrust(a, 30)
-		else
-			explode()
-		end
-
-		yield()
-	end
-else
-	while true do
 		yield()
 	end
 end

@@ -1,5 +1,6 @@
 target_debug = false
 local my_team = team()
+local two_pi = math.pi * 2
 
 function printf(...)
 	io.write(string.format(...))
@@ -18,17 +19,19 @@ function angle_between(x1, y1, x2, y2)
 	dy = y2 - y1
 	a = math.atan2(dy, dx)
 	if (a < 0) then
-		a = 2*math.pi + a
+		a = two_pi + a
 	end
 	return a
 end
 
 -- a*x^2 + b*x + c
-function largest_root_of_quadratic_equation(a, b, c)
+function smallest_positive_root_of_quadratic_equation(a, b, c)
 	z = math.sqrt(b^2 - 4*a*c)
 	x1 = (b + z)/(2*a)
 	x2 = (b - z)/(2*a)
-	return math.max(x1, x2)
+	if x1 < 0 then return x2 end
+	if x2 < 0 then return x1 end
+	return math.min(x1, x2)
 end
 
 function lead(x1, y1, x2, y2, vx1, vy1, vx2, vy2, w, t_max)
@@ -40,7 +43,7 @@ function lead(x1, y1, x2, y2, vx1, vy1, vx2, vy2, w, t_max)
 	a = (dvx^2 + dvy^2) - w^2
 	b = 2 * (dx*dvx + dy*dvy)
 	c = dx^2 + dy^2
-	t = largest_root_of_quadratic_equation(a, b, c)
+	t = smallest_positive_root_of_quadratic_equation(a, b, c)
 	--printf("t=%.03g\n", t)
 	if t >= 0 and t <= t_max then
 		x3 = x2 + dvx*t
@@ -107,7 +110,6 @@ function R(a,b)
 end
 
 function normalize_angle(a)
-	two_pi = math.pi * 2
 	if a > two_pi then
 		return a - two_pi
 	elseif a < 0 then
