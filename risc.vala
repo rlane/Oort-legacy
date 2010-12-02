@@ -276,7 +276,7 @@ namespace RISC {
 		}
 
 		public void start_demo_game() {
-			start_game(42, data_path("scenarios/furball.lua"), { data_path("examples/orbit.lua") });
+			start_game(42, data_path("scenarios/furball.lua"), { data_path("examples/switch.lua") });
 			game_state = GameState.DEMO;
 		}
 
