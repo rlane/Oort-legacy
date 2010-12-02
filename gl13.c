@@ -119,11 +119,20 @@ static void render_ship(struct ship *s, void *unused)
 
 	if (s == picked) {
 		glColor32(0xCCCCCCAA);
-
 		glPushMatrix();
 		glTranslated(x, y, 0);
 		glScaled(scale, scale, scale);
 		render_circle(64);
+		glPopMatrix();
+
+		glColor32(0xCCCCCC77);
+		glPushMatrix();
+		glTranslated(x, y, 0);
+		glScaled(view_scale, view_scale, view_scale);
+		glBegin(GL_LINES);
+		glVertex3f(0, 0, 0);
+		glVertex3f(creal(s->physics->thrust), cimag(s->physics->thrust), 0);
+		glEnd();
 		glPopMatrix();
 
 		glColor32(0x49D5CEAA);
