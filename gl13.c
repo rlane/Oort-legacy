@@ -129,7 +129,7 @@ static void render_ship(struct ship *s, void *unused)
 		glVertex3f(x, y, 0);
 		struct physics q = *s->physics;
 		int i;
-		double tick_length = 32.0;
+		double tick_length = 1/32.0;
 		for (i = 0; i < 1/tick_length; i++) {
 			physics_tick_one(&q, &tick_length);
 			vec2 sp = S(q.p);
