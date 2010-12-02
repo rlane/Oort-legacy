@@ -98,7 +98,9 @@ static void render_ship(struct ship *s, void *unused)
 
 	glPopMatrix();
 
+	int tail_alpha_max = strstr(s->class->name, "missile") ? 16 : 64;
 	glBegin(GL_LINE_STRIP);
+	glColor32(team_color | tail_alpha_max);
 	glVertex3f(x, y, 0);
 	int i;
 	for (i = 0; i < TAIL_SEGMENTS-1; i++) {
@@ -107,7 +109,7 @@ static void render_ship(struct ship *s, void *unused)
 		complex double sp2 = S(s->tail[j]);
 		if (isnan(sp2))
 			break;
-		guint32 color = team_color | (64-(64/TAIL_SEGMENTS)*i);
+		guint32 color = team_color | (tail_alpha_max-(tail_alpha_max/TAIL_SEGMENTS)*i);
 
 		glColor32(color);
 		glVertex3f(creal(sp2), cimag(sp2), 0);
