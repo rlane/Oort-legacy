@@ -60,7 +60,7 @@ function distance(x1, y1, x2, y2)
 end
 
 function pick_close_enemy(x, y, max_dist, prob)
-	local contacts = sensor_contacts()
+	local contacts = sensor_contacts({})
 	local t = nil
 	for k, c in pairs(contacts) do
 		local cx, cy = c:position()

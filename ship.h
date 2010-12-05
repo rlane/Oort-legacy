@@ -47,6 +47,7 @@ struct ship {
 
 extern const struct ship_class fighter, mothership;
 extern GList *all_ships;
+extern GHashTable *ship_classes;
 
 struct ship *ship_create(const char *filename, const char *class_name, struct team *team, const char *orders);
 void ship_purge();

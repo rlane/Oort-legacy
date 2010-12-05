@@ -2,7 +2,7 @@ function target_selector(k,c)
 	return c:team() ~= team()
 end
 
-local contacts = sensor_contacts()
+local contacts = sensor_contacts({})
 local tid, t = pick(contacts, target_selector)
 
 while true do

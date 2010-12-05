@@ -7,7 +7,7 @@ if my_class == "fighter" then
 
 	local i = math.random(1,256)
 	local t = nil
-	local max_target_distance = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl
+	local max_target_distance = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl*1.5
 	local origin = { x = 0, y = 0, vx = 0, vy = 0 }
 	local target_selector = function(k,c) return c:team() ~= my_team and c:class() ~= "little_missile" end
 	local follow_target = nil
@@ -38,7 +38,7 @@ if my_class == "fighter" then
 		local vx, vy = velocity()
 
 		if not follow_target and follow_target_retry == 16 then
-			local contacts = sensor_contacts()
+			local contacts = sensor_contacts{}
 			_, follow_target = pick(contacts, target_selector)
 		elseif not follow_target then
 			follow_target_retry = follow_target_retry + 1
@@ -64,8 +64,13 @@ if my_class == "fighter" then
 		end
 		debug_square(follow_x, follow_y, 0.5)
 
-		if not fire_target and fire_target_retry == 16 then
-			fire_target = min_by(sensor_contacts(), fire_score)
+		local urgent_target = 
+			      min_by(sensor_contacts{ distance_lt = max_target_distance, class = "missile" }, fire_score) or
+			      min_by(sensor_contacts{ distance_lt = max_target_distance, class = "little_missile" }, fire_score)
+		if urgent_target then fire_target = urgent_target end
+
+		if not fire_target and fire_target_retry >= 16 then
+			fire_target = min_by(sensor_contacts{ distance_lt = max_target_distance }, fire_score)
 			fire_target_retry = 0
 		elseif not fire_target then
 			fire_target_retry = fire_target_retry + 1
@@ -116,7 +121,7 @@ if my_class == "fighter" then
 			burn_time = burn_time - 1
 		end
 
-		if follow_target and energy() > ships.little_missile.cost+40 and math.random(50) == 7 then
+		if follow_target and energy() > ships.little_missile.cost and math.random(50) == 7 then
 			spawn("little_missile", serialize_id(follow_target:id()))
 		end
 
@@ -195,8 +200,8 @@ elseif my_class == "mothership" then
 		end
 
 		if math.random(1,100) == 7 then
-			local target_selector = function(k,c) return c:team() ~= my_team and c:class() == "mothership" end
-			local _, t = pick(sensor_contacts(), target_selector)
+			local target_selector = function(k,c) return c:team() ~= my_team end
+			local _, t = pick(sensor_contacts{ class = "mothership" }, target_selector)
 			if t then
 				spawn("missile", serialize_id(t:id()))
 			end
@@ -204,7 +209,7 @@ elseif my_class == "mothership" then
 
 		if math.random(50) == 7 then
 			local target_selector = function(k,c) return c:team() ~= my_team and c:class() ~= "little_missile" end
-			local _, t = pick(sensor_contacts(), target_selector)
+			local _, t = pick(sensor_contacts({}), target_selector)
 			if t then
 				spawn("little_missile", serialize_id(t:id()))
 			end

@@ -54,8 +54,8 @@ function fire(name, a)
 	sys_create_bullet(x,y,vx,vy,m,ttl)
 end
 
-function sensor_contacts()
-	return sys_sensor_contacts()
+function sensor_contacts(query)
+	return sys_sensor_contacts(query)
 end
 
 function sensor_contact(id)

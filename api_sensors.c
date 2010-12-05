@@ -27,6 +27,15 @@ struct sensor_contact {
 	vec2 p, v;
 };
 
+struct sensor_query {
+	const struct team *team;
+	const struct ship_class *class;
+	double distance_lt, distance_gt;
+	double hull_lt, hull_gt;
+	unsigned int limit;
+	vec2 origin;
+};
+
 static void ud_sensor_contact_new(lua_State *L, struct ship *s, int metatable_index)
 {
 	struct sensor_contact *c = lua_newuserdata(L, sizeof(*c));
@@ -119,19 +128,107 @@ void ud_sensor_contact_register(lua_State *L)
 	lua_settable(L, LUA_REGISTRYINDEX);
 }
 
+void parse_sensor_query(lua_State *L, struct sensor_query *query, int idx)
+{
+	const char *str;
+	double num;
+	int i;
+	struct ship *s = lua_ship(L);
+
+	query->team = NULL;
+	query->origin = s->physics->p;
+
+	lua_pushstring(L, "class");
+	lua_rawget(L, idx);
+	if ((str = lua_tostring(L, -1))) {
+		query->class = g_hash_table_lookup(ship_classes, str);
+	} else {
+		query->class = NULL;
+	}
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "distance_lt");
+	lua_rawget(L, idx);
+	if ((num = lua_tonumber(L, -1))) {
+		query->distance_lt = num;
+	} else {
+		query->distance_lt = NAN;
+	}
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "distance_gt");
+	lua_rawget(L, idx);
+	if ((num = lua_tonumber(L, -1))) {
+		query->distance_gt = num;
+	} else {
+		query->distance_gt = NAN;
+	}
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "hull_lt");
+	lua_rawget(L, idx);
+	if ((num = lua_tonumber(L, -1))) {
+		query->hull_lt = num;
+	} else {
+		query->hull_lt = NAN;
+	}
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "hull_gt");
+	lua_rawget(L, idx);
+	if ((num = lua_tonumber(L, -1))) {
+		query->hull_gt = num;
+	} else {
+		query->hull_gt = NAN;
+	}
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "limit");
+	lua_rawget(L, idx);
+	if ((i = lua_tointeger(L, -1))) {
+		query->limit = i;
+	} else {
+		query->limit = -1;
+	}
+	lua_pop(L, 1);
+}
+
+int match_sensor_query(const struct sensor_query *query, const struct ship *s)
+{
+	if (query->team && query->team != s->team) return 0;
+	if (query->class && query->class != s->class) return 0;
+	double distance = cabs(query->origin - s->physics->p);
+	if (!isnan(query->distance_lt) && query->distance_lt <= distance) return 0;
+	if (!isnan(query->distance_gt) && query->distance_gt >= distance) return 0;
+	if (!isnan(query->hull_lt) && query->hull_lt <= s->hull) return 0;
+	if (!isnan(query->hull_gt) && query->hull_gt >= s->hull) return 0;
+	return 1;
+}
+
 int api_sensor_contacts(lua_State *L)
 {
-	GList *e;
+	struct sensor_query query;
+	luaL_checktype(L, 1, LUA_TTABLE);
+	parse_sensor_query(L, &query, 1);
+
 	lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
 	lua_rawget(L, LUA_REGISTRYINDEX);
 	int metatable_index = lua_gettop(L);
+
 	lua_createtable(L, g_list_length(all_ships), 0);
 	int i;
-	for (e = g_list_first(all_ships), i = 1; e; e = g_list_next(e), i++) {
+	GList *e;
+	for (e = g_list_first(all_ships), i = 1;
+			 e && i <= query.limit;
+			 e = g_list_next(e)) {
 		struct ship *s = e->data;
-		ud_sensor_contact_new(L, s, metatable_index);
-		lua_rawseti(L, -2, i);
+		if (match_sensor_query(&query, s)) {
+			ud_sensor_contact_new(L, s, metatable_index);
+			lua_rawseti(L, -2, i);
+			i++;
+		}
 	}
+
 	return 1;
 }
 

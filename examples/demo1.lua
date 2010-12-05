@@ -27,7 +27,7 @@ if my_class == "fighter" then
 			i = 0
 		end
 
-		local _, t = pick(sensor_contacts(), missile_selector)
+		local _, t = pick(sensor_contacts{}, missile_selector)
 		if t then
 			local vx, vy = velocity()
 			local tx, ty = t:position()
@@ -58,7 +58,7 @@ elseif my_class == "mothership" then
 
 		if energy() == my_ship.energy.limit and math.random(100) == 1 then
 			for i = 1,4 do
-				local _, t = pick(sensor_contacts(), fighter_selector)
+				local _, t = pick(sensor_contacts{}, fighter_selector)
 				if t then
 					spawn("little_missile", serialize_id(t:id()))
 				end

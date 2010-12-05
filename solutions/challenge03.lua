@@ -5,7 +5,7 @@ end
 my_ship = ships[class()]
 
 while true do
-	local contacts = sensor_contacts()
+	local contacts = sensor_contacts({})
 	local tid, t = pick(contacts, target_selector)
 	local x, y = position()
 	local vx, vy = velocity()
