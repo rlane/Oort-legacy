@@ -206,11 +206,14 @@ static void render_particles(void)
 		if (c->ticks_left == 0) continue;
 		complex float p = S(c->p);
 		if (c->type == PARTICLE_HIT) {
-			glPointSize(3);
+			glPointSize(0.3*c->ticks_left*view_scale/32);
 			glColor4ub(255, 200, 200, c->ticks_left*8);
 		} else if (c->type == PARTICLE_BULLET) {
-			glPointSize(1.2);
+			glPointSize(0.15*c->ticks_left*view_scale/32);
 			glColor4ub(255, 0, 0, c->ticks_left*32);
+		} else if (c->type == PARTICLE_ENGINE) {
+			glPointSize(0.1*c->ticks_left*view_scale/32);
+			glColor4ub(255, 217, 43, 10 + c->ticks_left*5);
 		}
 		glBegin(GL_POINTS);
 		glVertex3f(creal(p), cimag(p), 0);
@@ -246,18 +249,26 @@ void render_gl13( int _paused)
 	}
 }
 
+static void emit_ship(struct ship *s, void *unused)
+{
+	if (s->physics->thrust != C(0,0)) {
+		particle_shower(PARTICLE_ENGINE, s->physics->p, s->physics->v/32, -s->physics->thrust/32, 0.1, 1, 4, 8);
+	}
+}
+
 static void emit_bullet(struct bullet *b, void *unused)
 {
-	particle_shower(PARTICLE_BULLET, b->physics->p, b->physics->v/63, MIN(b->physics->m/5,0.1), 7, 8, 3);
+	particle_shower(PARTICLE_BULLET, b->physics->p, 0.0f, b->physics->v/63, MIN(b->physics->m/5,0.1), 7, 8, 3);
 }
 
 static void emit_bullet_hit(struct bullet_hit *hit, void *unused)
 {
-	particle_shower(PARTICLE_HIT, hit->cp, 0.0f, 0.1f, 1, 20, hit->e*100);
+	particle_shower(PARTICLE_HIT, hit->cp, hit->s->physics->v/32, 0.0f, 0.1f, 1, 20, hit->e*100);
 }
 
 void emit_particles(void)
 {
+	g_list_foreach(all_ships, (GFunc)emit_ship, NULL);
 	g_list_foreach(all_bullets, (GFunc)emit_bullet, NULL);
 	g_list_foreach(bullet_hits, (GFunc)emit_bullet_hit, NULL);
 }

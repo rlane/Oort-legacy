@@ -3,6 +3,7 @@
 #include <complex.h>
 #include <math.h>
 #include <glib.h>
+#include <stdio.h>
 
 #include "particle.h"
 
@@ -17,7 +18,7 @@ void particle_create(enum particle_type type,
 }
 
 void particle_shower(enum particle_type type,
-		                 complex float p, complex float v, float s_max,
+		                 complex float p0, complex float v0, complex float v, float s_max,
 										 unsigned short life_min, unsigned short life_max,
 										 unsigned short count)
 {
@@ -28,9 +29,9 @@ void particle_shower(enum particle_type type,
 		float s = (float)g_random_double()*s_max;
 		float fdp = (float)g_random_double();
 		complex float dp = fdp*v;
-		int life = g_random_int_range(life_min,life_max);
+		int life = (life_min == life_max) ? life_min : g_random_int_range(life_min,life_max);
 		complex float dv = cosf(a) * s + I * sinf(a) * s;
-		particle_create(type, dp+p, dv+v, life);
+		particle_create(type, p0+dp, v0+v+dv, life);
 	}
 }
 
