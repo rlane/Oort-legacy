@@ -52,6 +52,12 @@ challenge: risc-dedicated
 	./risc-dedicated scenarios/challenge02.lua solutions/challenge02.lua
 	./risc-dedicated scenarios/challenge03.lua solutions/challenge03.lua
 
+run: risc-dedicated
+	./risc-dedicated scenarios/basic.lua examples/switch.lua examples/switch.lua
+
+run-ui: risc
+	./risc scenarios/basic.lua examples/switch.lua examples/switch.lua
+
 install: risc risc-dedicated
 	install -d $(DESTDIR)/usr/bin
 	install risc risc-dedicated $(DESTDIR)/usr/bin
@@ -65,4 +71,4 @@ install: risc risc-dedicated
 clean:
 	rm -f *.o *.d risc risc-dedicated particlebench
 
-.PHONY: all clean benchmark luacheck install
+.PHONY: all clean benchmark luacheck install run run-ui
