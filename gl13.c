@@ -258,7 +258,7 @@ static void emit_ship(struct ship *s, void *unused)
 
 static void emit_bullet(struct bullet *b, void *unused)
 {
-	particle_shower(PARTICLE_BULLET, b->physics->p, 0.0f, b->physics->v/63, MIN(b->physics->m/5,0.1), 7, 8, 3);
+	particle_shower(PARTICLE_BULLET, b->physics->p, 0.0f, b->physics->v/63, MIN(b->physics->m/5,0.1), 3, 4, 6);
 }
 
 static void emit_bullet_hit(struct bullet_hit *hit, void *unused)

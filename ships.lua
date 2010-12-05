@@ -7,11 +7,11 @@ ships.fighter = {
 	cost = 200,
 	guns = {
 		main = {
-			bullet_mass = 0.05,
-			bullet_velocity = 20,
-			bullet_ttl = 0.5,
-			reload_time = 0.15,
-			cost = 1,
+			bullet_mass = 0.001,
+			bullet_velocity = 40,
+			bullet_ttl = 0.2,
+			reload_time = 0.03,
+			cost = 0.3,
 		}
 	},
 	explosion = {
@@ -22,9 +22,9 @@ ships.fighter = {
 	},
 	count_for_victory = true,
 	energy = {
-		initial = 50,
-		rate = 10,
-		limit = 100,
+		initial = 20,
+		rate = 8,
+		limit = 50,
 	}
 }
 
@@ -69,9 +69,9 @@ ships.mothership = {
 
 ships.missile = {
 	radius = 1/32,
-	hull = 0.2,
+	hull = 0.1,
 	max_acc = 10,
-	cost = 40,
+	cost = 60,
 	guns = {},
 	explosion = {
 		count = 128,
@@ -89,9 +89,9 @@ ships.missile = {
 
 ships.little_missile = {
 	radius = 0.5/32,
-	hull = 0.1,
+	hull = 0.05,
 	max_acc = 20,
-	cost = 20,
+	cost = 40,
 	guns = {},
 	explosion = {
 		count = 32,
