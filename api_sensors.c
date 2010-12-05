@@ -28,7 +28,8 @@ struct sensor_contact {
 };
 
 struct sensor_query {
-	const struct team *team;
+	const struct team *my_team;
+	int enemy;
 	const struct ship_class *class;
 	double distance_lt, distance_gt;
 	double hull_lt, hull_gt;
@@ -135,8 +136,17 @@ void parse_sensor_query(lua_State *L, struct sensor_query *query, int idx)
 	int i;
 	struct ship *s = lua_ship(L);
 
-	query->team = NULL;
+	query->my_team = s->team;
 	query->origin = s->physics->p;
+
+	lua_pushstring(L, "enemy");
+	lua_rawget(L, idx);
+	if ((lua_isboolean(L, -1))) {
+		query->enemy = lua_toboolean(L, -1);
+	} else {
+		query->enemy = -1;
+	}
+	lua_pop(L, 1);
 
 	lua_pushstring(L, "class");
 	lua_rawget(L, idx);
@@ -195,7 +205,8 @@ void parse_sensor_query(lua_State *L, struct sensor_query *query, int idx)
 
 int match_sensor_query(const struct sensor_query *query, const struct ship *s)
 {
-	if (query->team && query->team != s->team) return 0;
+	if (query->enemy == 0 && query->my_team != s->team) return 0;
+	if (query->enemy == 1 && query->my_team == s->team) return 0;
 	if (query->class && query->class != s->class) return 0;
 	double distance = cabs(query->origin - s->physics->p);
 	if (!isnan(query->distance_lt) && query->distance_lt <= distance) return 0;
