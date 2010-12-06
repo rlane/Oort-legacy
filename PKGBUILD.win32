@@ -11,7 +11,7 @@ depends=()
 makedepends=('pkgconfig' 'vala' 'mingw32-gcc' 'mingw32-sdl' 'mingw32-glib2' 'mingw32-gtk2' 'mingw32-lua' 'mingw32-sdl_gfx' 'mingw32-gtkglext' 'mingw32-glew' 'zip')
 
 _gitroot="git://github.com/rlane/risc"
-_gitname="risc-win32"
+_gitname="risc"
 
 build() {
   cd "$srcdir"
@@ -32,10 +32,11 @@ build() {
   git clone "$srcdir/$_gitname" "$srcdir/$_gitname-build"
   cd "$srcdir/$_gitname-build"
 
-  make -f Makefile.win32 risc-installer-win32.exe
+  make -f Makefile.win32 all
 }
 
 package() {
   cd "$srcdir/$_gitname-build"
   make -f Makefile.win32 DESTDIR="$pkgdir" install
+  echo "Installer will be left at /opt/risc-win32/risc-installer-win32.exe"
 }
