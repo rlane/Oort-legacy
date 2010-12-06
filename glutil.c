@@ -36,12 +36,14 @@ void font_init(void)
 
 void glWrite(int x, int y, const char *str)
 {
-	glWindowPos2i(x, y);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
+	if (GLEW_ARB_window_pos) {
+		glWindowPos2i(x, y);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 
-	char c;
-	while ((c = *str++)) {
-		glBitmap(8, 8, 4, 4, 9, 0, font + 8*c);
+		char c;
+		while ((c = *str++)) {
+			glBitmap(8, 8, 4, 4, 9, 0, font + 8*c);
+		}
 	}
 }
 
