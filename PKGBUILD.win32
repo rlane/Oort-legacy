@@ -1,0 +1,41 @@
+# Maintainer: Rich Lane <rlane@club.cc.cmu.edu>
+
+pkgname=risc-win32-git
+pkgver=20101205
+pkgrel=1
+pkgdesc="A space fleet programming game - win32 installer"
+arch=('i686' 'x86_64')
+url="https://github.com/rlane/risc"
+license=("GPL")
+depends=()
+makedepends=('pkgconfig' 'vala' 'mingw32-gcc' 'mingw32-sdl' 'mingw32-glib2' 'mingw32-gtk2' 'mingw32-lua' 'mingw32-sdl_gfx' 'mingw32-gtkglext' 'mingw32-glew' 'zip')
+
+_gitroot="git://github.com/rlane/risc"
+_gitname="risc-win32"
+
+build() {
+  cd "$srcdir"
+
+  msg "Connecting to GIT server...."
+
+  if [[ -d $_gitname ]] ; then
+    cd $_gitname && git pull origin
+    msg "The local files are updated."
+  else
+    git clone $_gitroot $_gitname
+  fi
+
+  msg "GIT checkout done or server timeout"
+  msg "Starting make..."
+
+  rm -rf "$srcdir/$_gitname-build"
+  git clone "$srcdir/$_gitname" "$srcdir/$_gitname-build"
+  cd "$srcdir/$_gitname-build"
+
+  make -f Makefile.win32 risc-installer-win32.exe
+}
+
+package() {
+  cd "$srcdir/$_gitname-build"
+  make -f Makefile.win32 DESTDIR="$pkgdir" install
+}

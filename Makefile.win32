@@ -88,5 +88,9 @@ installer: risc-installer-win32.exe
 risc-installer-win32.exe: risc-win32 installer.nsi
 	makensis installer.nsi
 
+install: risc-installer-win32.exe
+	install -d $(DESTDIR)/opt/risc-win32
+	install risc-installer-win32.exe $(DESTDIR)/opt/risc-win32
+
 clean:
 	rm -rf *.o *.d *.exe risc-win32 risc-win32.zip
