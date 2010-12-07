@@ -18,6 +18,7 @@ struct bullet *bullet_create(void)
 	b->physics->m = 0.1;
 	b->ttl = 1;
 	b->dead = 0;
+	b->type = 0;
 	g_static_mutex_lock(&new_bullets_lock);
 	new_bullets = g_list_append(new_bullets, b);
 	g_static_mutex_unlock(&new_bullets_lock);

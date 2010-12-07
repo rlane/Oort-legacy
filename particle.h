@@ -3,7 +3,7 @@
 
 enum particle_type {
 	PARTICLE_HIT,
-	PARTICLE_BULLET,
+	PARTICLE_PLASMA,
 	PARTICLE_ENGINE,
 };
 

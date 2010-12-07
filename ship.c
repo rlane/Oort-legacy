@@ -95,6 +95,7 @@ static int api_create_bullet(lua_State *L)
 	double vy = luaL_checknumber(L, 4);
 	double m = luaL_checknumber(L, 5);
 	double ttl = luaL_checknumber(L, 6);
+	int type = luaL_checkint(L, 7);
 
 	struct bullet *b = bullet_create();
 	if (!b) return luaL_error(L, "bullet creation failed");
@@ -104,6 +105,7 @@ static int api_create_bullet(lua_State *L)
 	b->physics->v = C(vx,vy);
 	b->physics->m = m;
 	b->ttl = ttl;
+	b->type = type;
 
 	return 0;
 }

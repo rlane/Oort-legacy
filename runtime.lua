@@ -51,7 +51,7 @@ function fire(name, a)
 	vy = vy + math.sin(a)*v
 	m = gun.bullet_mass
 	ttl = gun.bullet_ttl
-	sys_create_bullet(x,y,vx,vy,m,ttl)
+	sys_create_bullet(x,y,vx,vy,m,ttl,gun.bullet_type)
 end
 
 function sensor_contacts(query)
@@ -110,7 +110,7 @@ function explode()
 		vy2 = vy + math.sin(a)*v
 		m = exp.mass
 		ttl = exp.ttl
-		sys_create_bullet(x,y,vx2,vy2,m,ttl)
+		sys_create_bullet(x,y,vx2,vy2,m,ttl,bullets.plasma)
 	end
 
 	sys_die()

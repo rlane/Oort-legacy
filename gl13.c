@@ -34,6 +34,8 @@ int single_step;
 int render_all_debug_lines;
 struct ship *picked;
 
+static GRand *gfx_prng;
+
 static complex double S(complex double p)
 {
 	return (p - view_pos) * view_scale +
@@ -167,17 +169,22 @@ static void render_ship(struct ship *s, void *unused)
 
 static void render_bullet(struct bullet *b, void *unused)
 {
-	complex double p2, sp1, sp2;
-	p2 = b->physics->p + b->physics->v/32;
-	sp1 = S(b->physics->p);
-	sp2 = S(p2);
+	if (b->type == BULLET_SLUG) {
+    complex double p1, p2, sp1, sp2;
+		vec2 dp = b->physics->v/64;
+		vec2 offset = g_rand_double(gfx_prng) * b->physics->v/64;
+		p1 = b->physics->p + offset;
+    p2 = b->physics->p + offset + dp;
+    sp1 = S(b->physics->p);
+    sp2 = S(p2);
 
-	glBegin(GL_LINE_STRIP);
-	glColor32(0xFF000000);
-	glVertex3f(creal(sp1), cimag(sp1), 0);
-	glColor32(0xFF0000FF);
-	glVertex3f(creal(sp2), cimag(sp2), 0);
-	glEnd();
+    glBegin(GL_LINE_STRIP);
+    glColor32(0x44444455);
+    glVertex3f(creal(sp1), cimag(sp1), 0);
+    glColor32(0x444444FF);
+    glVertex3f(creal(sp2), cimag(sp2), 0);
+    glEnd();
+	}
 }
 
 static void render_particles(void)
@@ -190,7 +197,7 @@ static void render_particles(void)
 		if (c->type == PARTICLE_HIT) {
 			glPointSize(0.3*c->ticks_left*view_scale/32);
 			glColor4ub(255, 200, 200, c->ticks_left*8);
-		} else if (c->type == PARTICLE_BULLET) {
+		} else if (c->type == PARTICLE_PLASMA) {
 			glPointSize(0.15*c->ticks_left*view_scale/32);
 			glColor4ub(255, 0, 0, c->ticks_left*32);
 		} else if (c->type == PARTICLE_ENGINE) {
@@ -205,6 +212,7 @@ static void render_particles(void)
 
 void render_gl13( int _paused)
 {
+	g_rand_set_seed(gfx_prng, ticks);
 	paused = _paused;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -235,7 +243,9 @@ static void emit_ship(struct ship *s, void *unused)
 
 static void emit_bullet(struct bullet *b, void *unused)
 {
-	particle_shower(PARTICLE_BULLET, b->physics->p, 0.0f, b->physics->v/63, MIN(b->physics->m/5,0.1), 3, 4, 6);
+	if (b->type == BULLET_PLASMA) {
+		particle_shower(PARTICLE_PLASMA, b->physics->p, 0.0f, b->physics->v/63, MIN(b->physics->m/5,0.1), 3, 4, 6);
+	}
 }
 
 static void emit_bullet_hit(struct bullet_hit *hit, void *unused)
@@ -252,6 +262,8 @@ void emit_particles(void)
 
 void init_gl13(void)
 {
+	gfx_prng = g_rand_new();
+
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "glewInit failed\n");
 		abort();

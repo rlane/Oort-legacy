@@ -1,3 +1,8 @@
+bullets = {
+	slug = 1,
+	plasma = 2,
+}
+
 ships = {}
 
 ships.fighter = {
@@ -7,6 +12,7 @@ ships.fighter = {
 	cost = 200,
 	guns = {
 		main = {
+			bullet_type = bullets.slug,
 			bullet_mass = 0.001,
 			bullet_velocity = 40,
 			bullet_ttl = 0.2,
@@ -32,6 +38,7 @@ local flak = {
 	bullet_mass = 0.01,
 	bullet_velocity = 25,
 	bullet_ttl = 0.5,
+	bullet_type = bullets.slug,
 	reload_time = 0.15,
 	cost = 1,
 }
@@ -46,6 +53,7 @@ ships.mothership = {
 			bullet_mass = 6,
 			bullet_velocity = 5,
 			bullet_ttl = 10,
+			bullet_type = bullets.plasma,
 			reload_time = 1.0,
 			cost = 20,
 		},

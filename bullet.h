@@ -3,11 +3,18 @@
 #ifndef BULLET_H
 #define BULLET_H
 
+// keep in sync with ships.lua
+enum bullet_type {
+	BULLET_SLUG = 1,
+	BULLET_PLASMA,
+};
+
 struct bullet {
 	struct physics *physics;
 	struct team *team;
 	double ttl;
 	int dead;
+	int type;
 };
 
 extern GList *all_bullets;
