@@ -33,7 +33,6 @@ int paused;
 int single_step;
 int render_all_debug_lines;
 struct ship *picked;
-int simple_graphics;
 
 static complex double S(complex double p)
 {
@@ -181,23 +180,6 @@ static void render_bullet(struct bullet *b, void *unused)
 	glEnd();
 }
 
-static void render_bullet_hit(struct bullet_hit *hit, void *unused)
-{
-	complex double sp = S(hit->cp);
-	double x = creal(sp), y = cimag(sp);
-	glColor32(0xAAAA22FF);
-
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(x-2, y-2, 0);
-	glVertex3f(x+2, y+2, 0);
-	glEnd();
-
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(x+2, y-2, 0);
-	glVertex3f(x-2, y+2, 0);
-	glEnd();
-}
-
 static void render_particles(void)
 {
 	int i;
@@ -229,13 +211,8 @@ void render_gl13( int _paused)
 	glLoadIdentity();
 
 	g_list_foreach(all_ships, (GFunc)render_ship, NULL);
-
-	if (!simple_graphics) {
-		render_particles();
-	} else {
-		g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
-		g_list_foreach(bullet_hits, (GFunc)render_bullet_hit, NULL);
-	}
+	g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
+	render_particles();
 
 	if (picked) {
 		const int x = 15, y = 82, dy = 12;
@@ -318,7 +295,6 @@ void reset_gl13()
 	single_step = 0;
 	render_all_debug_lines = 0;
 	picked = NULL;
-	simple_graphics = 0;
 }
 
 static complex double W(complex double o)
