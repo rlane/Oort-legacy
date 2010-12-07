@@ -34,8 +34,7 @@ if my_class == "fighter" then
 			local tvx, tvy = t:velocity()
 			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
 			if a then
-				local spread = 0.05
-				fire("main", a+R(-spread,spread))
+				fire("main", a)
 			end
 		end
 

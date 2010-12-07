@@ -16,6 +16,7 @@ ships.fighter = {
 			bullet_mass = 0.001,
 			bullet_velocity = 40,
 			bullet_ttl = 0.2,
+			spread = 0.1,
 			reload_time = 0.03,
 			cost = 0.3,
 		}
@@ -39,6 +40,7 @@ local flak = {
 	bullet_velocity = 25,
 	bullet_ttl = 0.5,
 	bullet_type = bullets.slug,
+	spread = 0.2,
 	reload_time = 0.15,
 	cost = 1,
 }
@@ -54,6 +56,7 @@ ships.mothership = {
 			bullet_velocity = 5,
 			bullet_ttl = 10,
 			bullet_type = bullets.plasma,
+			spread = 0.03,
 			reload_time = 1.0,
 			cost = 20,
 		},

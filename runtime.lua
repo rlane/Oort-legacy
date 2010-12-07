@@ -47,6 +47,7 @@ function fire(name, a)
 	x, y = sys_position()
 	v = gun.bullet_velocity
 	vx, vy = sys_velocity()
+	a = a + gun.spread*(math.random() - 0.5)
 	vx = vx + math.cos(a)*v
 	vy = vy + math.sin(a)*v
 	m = gun.bullet_mass

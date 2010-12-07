@@ -81,8 +81,7 @@ if my_class == "fighter" then
 			debug_diamond(tx, ty, 0.5)
 			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
 			if a then
-				local spread = 0.04
-				fire("main", a+R(-spread,spread))
+				fire("main", a)
 			else
 				fire_target = nil
 			end
@@ -182,9 +181,8 @@ elseif my_class == "mothership" then
 				local tvx, tvy = flak_target:velocity()
 				local a2 = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.flak1.bullet_velocity, my_ship.guns.flak1.bullet_ttl)
 				if a2 then
-					local spread = 0.1
 					for i = 1,3 do
-						fire("flak" .. i, a2+R(-spread,spread))
+						fire("flak" .. i, a2)
 					end
 				else
 					flak_target = nil
