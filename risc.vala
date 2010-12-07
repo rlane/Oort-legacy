@@ -35,6 +35,7 @@ namespace RISC {
 		private DrawingArea drawing_area;
 		private bool paused;
 		private bool single_step;
+		private Team *winner;
 
 		enum GameState {
 			DEMO,
@@ -125,13 +126,12 @@ namespace RISC {
 				particle_tick();
 				emit_particles();
 
-/*
-				struct team *winner;
-				if ((winner = game_check_victory())) {
-					printf("Team '%s' is victorious in %0.2f seconds\n", winner->name, ticks*tick_length);
-					paused = 1;
+				if (game_state == GameState.RUNNING) {
+					winner = game_check_victory();
+					if (winner != null) {
+						game_state = GameState.FINISHED;
+					}
 				}
-*/
 			}
 
 			if (single_step) {
@@ -180,7 +180,7 @@ namespace RISC {
 				break;
 			case GameState.FINISHED:
 				glColor32((uint32)0xFFFFFFAA);
-				glPrintf(rect.width/2-4*9, rect.height-50, "Game Over");
+				glPrintf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
 				break;
 			}
 

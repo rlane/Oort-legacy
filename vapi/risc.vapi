@@ -3,6 +3,7 @@
 [CCode (cheader_filename = "particle.h")]
 [CCode (cheader_filename = "glutil.h")]
 [CCode (cheader_filename = "util.h")]
+[CCode (cheader_filename = "team.h")]
 
 namespace RISC {
     [CCode (cname = "init_gl13")]
@@ -44,4 +45,15 @@ namespace RISC {
 		public bool find_data_dir();
 		[CCode (cname = "data_path")]
 		public string data_path(string subpath);
+
+    [CCode (cname = "struct team", destroy_function = "")]
+		public struct Team {
+			public uint32 color;
+			public string name;
+			public string filename;
+			public int ships;
+		}
+
+		[CCode (cname = "game_check_victory")]
+		public Team *game_check_victory();
 }
