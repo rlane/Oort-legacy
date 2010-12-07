@@ -169,6 +169,8 @@ static void render_ship(struct ship *s, void *unused)
 
 static void render_bullet(struct bullet *b, void *unused)
 {
+	if (b->dead) return;
+
 	if (b->type == BULLET_SLUG) {
     complex double p1, p2, sp1, sp2;
 		vec2 dp = b->physics->v/64;
