@@ -1,14 +1,29 @@
+Next:
 Moving average rotation graphics
-
+Make open dialogs start in default directories
+Thrust consumes energy
 Limit classes ships can spawn
+Display team name/color in scenario dialog
+Machine-readable risc-dedicated output
+Limit zoom range and view boundary
+Universe boundary
+
+Future:
 Limit sensor range
-Implement shields
-Thrust/shield consume energy
-Implement angular motion
 Multicast radio
-Limit thrust/firing arcs
+Add bomber and "bomb" missile class that can't thrust
 Radio jamming
 Sensor jamming - reduce range at which you can detect and be detected
-Add debugger interface
-Add "bomb" missile class that can't thrust
 Parse scenario in risc-dedicated
+Lock camera to ship
+Implement shields
+Default view origin and scale in scenario metadata
+Force seed in scenario metadata
+Timeout in scenario metadata
+Inline AI in scenario
+
+Maybe:
+Implement angular motion
+Limit thrust/firing arcs
+Player controls ship
+Add debugger interface
