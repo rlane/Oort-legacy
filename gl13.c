@@ -56,6 +56,31 @@ static void render_circle(int n)
 	glEnd();
 }
 
+static void triangle_fractal(int depth)
+{
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(0, -0.5, 0);
+	glVertex3f(0, 0.5, 0);
+	glVertex3f(0.8660254, 0, 0);
+	glEnd();
+
+	if (depth > 1) {
+		glPushMatrix();
+		glScaled(0.5, 0.5, 0.5);
+		glRotated(60, 0, 0, 1);
+		glTranslated(0.866, -0.433, 0);
+		triangle_fractal(depth-1);
+		glPopMatrix();
+
+		glPushMatrix();
+		glScaled(0.5, 0.5, 0.5);
+		glRotated(-60, 0, 0, 1);
+		glTranslated(0.866, 0.433, 0);
+		triangle_fractal(depth-1);
+		glPopMatrix();
+	}
+}
+
 static void render_ship(struct ship *s, void *unused)
 {
 	complex double sp = S(s->physics->p);
@@ -71,7 +96,20 @@ static void render_ship(struct ship *s, void *unused)
 
 	if (!strcmp(s->class->name, "mothership")) {
 		glColor32(team_color | 0xEE);
-		render_circle(64);
+		render_circle(8);
+		glPushMatrix();
+		glScaled(0.7, 0.7, 0.7);
+		render_circle(32);
+		glPopMatrix();
+		int i;
+		for (i = 0; i < 4; i++) {
+			glPushMatrix();
+			glRotated(22.5 + i*90, 0, 0, 1);
+			glTranslated(0.92, 0, 0);
+			glScaled(0.5, 0.5, 0.5);
+			triangle_fractal(5);
+			glPopMatrix();
+		}
 	} else if (!strcmp(s->class->name, "fighter")) {
 		glColor32(team_color | 0xAA);
 		glBegin(GL_LINE_LOOP);
