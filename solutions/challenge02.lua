@@ -10,7 +10,7 @@ while true do
 	local x, y = position()
 	local tx, ty = t:position()
 	local a = angle_between(x,y,tx,ty)
-	thrust(a,1)
+	thrust(a,2)
 	fire("main", a)
 	yield()
 end
