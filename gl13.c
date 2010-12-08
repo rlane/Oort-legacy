@@ -58,26 +58,39 @@ static void render_circle(int n)
 
 static void triangle_fractal(int depth)
 {
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(0, -0.5, 0);
-	glVertex3f(0.8660254, 0, 0);
-	glVertex3f(0, 0.5, 0);
-	glEnd();
+	const double alt = 0.8660254;
 
 	if (depth > 1) {
+		glBegin(GL_LINES);
+		glVertex3f(alt, 0, 0);
+		glVertex3f(3*alt/4, -0.125, 0);
+		glVertex3f(alt/4, -0.375, 0);
+		glVertex3f(0, -0.5, 0);
+		glVertex3f(alt, 0, 0);
+		glVertex3f(3*alt/4, 0.125, 0);
+		glVertex3f(alt/4, 0.375, 0);
+		glVertex3f(0, 0.5, 0);
+		glEnd();
+
 		glPushMatrix();
 		glScaled(0.5, 0.5, 0.5);
 		glRotated(60, 0, 0, 1);
-		glTranslated(0.866, -0.433, 0);
+		glTranslated(alt, -0.5, 0);
 		triangle_fractal(depth-1);
 		glPopMatrix();
 
 		glPushMatrix();
 		glScaled(0.5, 0.5, 0.5);
 		glRotated(-60, 0, 0, 1);
-		glTranslated(0.866, 0.433, 0);
+		glTranslated(alt, 0.5, 0);
 		triangle_fractal(depth-1);
 		glPopMatrix();
+	} else {
+		glBegin(GL_LINE_STRIP);
+		glVertex3f(0, -0.5, 0);
+		glVertex3f(alt, 0, 0);
+		glVertex3f(0, 0.5, 0);
+		glEnd();
 	}
 }
 
@@ -97,6 +110,10 @@ static void render_ship(struct ship *s, void *unused)
 	if (!strcmp(s->class->name, "mothership")) {
 		int depth = MIN(MAX(log2(view_scale), 2), 8);
 		glColor32(team_color | 0xEE);
+		glPushMatrix();
+		glScaled(0.5, 0.3, 0.3);
+		render_circle(5);
+		glPopMatrix();
 		triangle_fractal(depth);
 		glPushMatrix();
 		glRotated(180, 0, 0, 1);
