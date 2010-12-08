@@ -231,6 +231,7 @@ static int api_spawn(lua_State *L)
 
 	child->physics->p = s->physics->p;
 	child->physics->v = s->physics->v;
+	child->gfx.angle = atan2(cimag(s->physics->v), creal(s->physics->v));
 	return 0;
 }
 
@@ -418,11 +419,24 @@ static int ship_ai_run(struct ship *s, int len)
 	}
 }
 
+static double normalize_angle(double a)
+{
+	if (a < -M_PI) a += 2*M_PI;
+	if (a > M_PI) a -= 2*M_PI;
+	return a;
+}
+
 void ship_tick_one(struct ship *s)
 {
 	if (ticks % TAIL_TICKS == 0) {
 		s->tail[s->tail_head++] = s->physics->p;
 		if (s->tail_head == TAIL_SEGMENTS) s->tail_head = 0;
+	}
+
+	{
+		double v_angle = atan2(cimag(s->physics->v), creal(s->physics->v));
+		double da = normalize_angle(v_angle - s->gfx.angle);
+		s->gfx.angle = normalize_angle(s->gfx.angle + 0.05*da);
 	}
 
 	if (!s->ai_dead) {

@@ -99,7 +99,7 @@ static void render_ship(struct ship *s, void *unused)
 	complex double sp = S(s->physics->p);
 	guint32 team_color = s->team->color;
 	double x = creal(sp), y = cimag(sp);
-	double angle = atan2(cimag(s->physics->v), creal(s->physics->v));
+	double angle = s->gfx.angle;
 	double scale = view_scale * s->class->radius;
 
 	glPushMatrix();

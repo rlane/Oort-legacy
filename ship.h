@@ -43,6 +43,9 @@ struct ship {
 			vec2 a, b;
 		} lines[MAX_DEBUG_LINES];
 	} debug;
+	struct {
+		double angle;
+	} gfx;
 };
 
 extern const struct ship_class fighter, mothership;
