@@ -58,10 +58,10 @@ static void render_circle(int n)
 
 static void triangle_fractal(int depth)
 {
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_LINE_STRIP);
 	glVertex3f(0, -0.5, 0);
-	glVertex3f(0, 0.5, 0);
 	glVertex3f(0.8660254, 0, 0);
+	glVertex3f(0, 0.5, 0);
 	glEnd();
 
 	if (depth > 1) {
@@ -95,21 +95,13 @@ static void render_ship(struct ship *s, void *unused)
 	glRotated(rad2deg(angle), 0, 0, 1);
 
 	if (!strcmp(s->class->name, "mothership")) {
+		int depth = MIN(MAX(log2(view_scale), 2), 8);
 		glColor32(team_color | 0xEE);
-		render_circle(8);
+		triangle_fractal(depth);
 		glPushMatrix();
-		glScaled(0.7, 0.7, 0.7);
-		render_circle(32);
+		glRotated(180, 0, 0, 1);
+		triangle_fractal(depth);
 		glPopMatrix();
-		int i;
-		for (i = 0; i < 4; i++) {
-			glPushMatrix();
-			glRotated(22.5 + i*90, 0, 0, 1);
-			glTranslated(0.92, 0, 0);
-			glScaled(0.5, 0.5, 0.5);
-			triangle_fractal(5);
-			glPopMatrix();
-		}
 	} else if (!strcmp(s->class->name, "fighter")) {
 		glColor32(team_color | 0xAA);
 		glBegin(GL_LINE_LOOP);

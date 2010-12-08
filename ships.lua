@@ -46,7 +46,7 @@ local flak = {
 }
 
 ships.mothership = {
-	radius = 10/32,
+	radius = 1,
 	hull = 1000,
 	max_acc = 2,
 	cost = 2000,
