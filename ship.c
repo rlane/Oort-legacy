@@ -25,6 +25,7 @@ char RKEY_SHIP[1];
 
 GList *all_ships = NULL;
 GHashTable *ship_classes;
+void (*gfx_ship_create_cb)(struct ship *s);
 static GList *new_ships = NULL;
 static GStaticMutex new_ships_lock = G_STATIC_MUTEX_INIT;
 static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;
@@ -226,12 +227,9 @@ static int api_spawn(lua_State *L)
 	const char *orders = luaL_checkstring(L, 2);
 	const char *filename = s->team->filename;
 
-	struct ship *child = ship_create(filename, class_name, s->team, orders);
+	struct ship *child = ship_create(filename, class_name, s->team,
+			                             s->physics->p, s->physics->v, orders);
 	if (!child) return luaL_error(L, "failed to create ship");
-
-	child->physics->p = s->physics->p;
-	child->physics->v = s->physics->v;
-	child->gfx.angle = atan2(cimag(s->physics->v), creal(s->physics->v));
 	return 0;
 }
 
@@ -419,24 +417,11 @@ static int ship_ai_run(struct ship *s, int len)
 	}
 }
 
-static double normalize_angle(double a)
-{
-	if (a < -M_PI) a += 2*M_PI;
-	if (a > M_PI) a -= 2*M_PI;
-	return a;
-}
-
 void ship_tick_one(struct ship *s)
 {
 	if (ticks % TAIL_TICKS == 0) {
 		s->tail[s->tail_head++] = s->physics->p;
 		if (s->tail_head == TAIL_SEGMENTS) s->tail_head = 0;
-	}
-
-	{
-		double v_angle = atan2(cimag(s->physics->v), creal(s->physics->v));
-		double da = normalize_angle(v_angle - s->gfx.angle);
-		s->gfx.angle = normalize_angle(s->gfx.angle + 0.05*da);
 	}
 
 	if (!s->ai_dead) {
@@ -471,8 +456,8 @@ void ship_tick(double t)
 	task_wait();
 }
 
-struct ship *ship_create(const char *filename, const char *class_name,
-		                     struct team *team, const char *orders)
+struct ship *ship_create(const char *filename, const char *class_name, struct team *team,
+		                     vec2 p, vec2 v, const char *orders)
 {
 	struct ship *s = g_slice_new0(struct ship);
 
@@ -487,6 +472,8 @@ struct ship *ship_create(const char *filename, const char *class_name,
 
 	s->physics = physics_create();
 	s->physics->r = s->class->radius;
+	s->physics->p = p;
+	s->physics->v = v;
 
 	s->dead = 0;
 	s->ai_dead = 0;
@@ -512,6 +499,10 @@ struct ship *ship_create(const char *filename, const char *class_name,
 		fprintf(stderr, "failed to create AI\n");
 		ship_destroy(s);
 		return NULL;
+	}
+
+	if (gfx_ship_create_cb) {
+		gfx_ship_create_cb(s);
 	}
 
 	return s;

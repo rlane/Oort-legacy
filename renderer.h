@@ -4,6 +4,10 @@
 extern int paused;
 extern int single_step;
 
+struct gfx_class {
+	double rotfactor;
+};
+
 void init_gl13(void);
 void reset_gl13(void);
 void render_gl13(int paused, int render_all_debug_lines);

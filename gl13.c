@@ -36,6 +36,37 @@ struct ship *picked;
 
 static GRand *gfx_prng;
 
+static struct gfx_class gfx_fighter = {
+	.rotfactor = 0.5,
+};
+
+static struct gfx_class gfx_mothership = {
+	.rotfactor = 0.05,
+};
+
+static struct gfx_class gfx_missile = {
+	.rotfactor = 0.6,
+};
+
+static struct gfx_class gfx_little_missile = {
+	.rotfactor = 0.7,
+};
+
+const struct gfx_class *lookup_gfx_class(const char *name)
+{
+	if (!(strcmp(name, "fighter"))) return &gfx_fighter;
+	if (!(strcmp(name, "mothership"))) return &gfx_mothership;
+	if (!(strcmp(name, "missile"))) return &gfx_missile;
+	if (!(strcmp(name, "little_missile"))) return &gfx_little_missile;
+	return NULL;
+}
+
+static void gfx_ship_created(struct ship *s)
+{
+	s->gfx.class = lookup_gfx_class(s->class->name);
+	s->gfx.angle = atan2(cimag(s->physics->v), creal(s->physics->v));
+}
+
 static complex double S(complex double p)
 {
 	return (p - view_pos) * view_scale +
@@ -284,10 +315,23 @@ void render_gl13(int _paused, int _render_all_debug_lines)
 	}
 }
 
+static double normalize_angle(double a)
+{
+	if (a < -M_PI) a += 2*M_PI;
+	if (a > M_PI) a -= 2*M_PI;
+	return a;
+}
+
 static void emit_ship(struct ship *s, void *unused)
 {
 	if (s->physics->thrust != C(0,0)) {
 		particle_shower(PARTICLE_ENGINE, s->physics->p, s->physics->v/32, -s->physics->thrust/32, 0.1, 1, 4, 8);
+	}
+
+	if (s->gfx.class) {
+		double v_angle = atan2(cimag(s->physics->v), creal(s->physics->v));
+		double da = normalize_angle(v_angle - s->gfx.angle);
+		s->gfx.angle = normalize_angle(s->gfx.angle + s->gfx.class->rotfactor*da);
 	}
 }
 
@@ -335,6 +379,8 @@ void init_gl13(void)
 	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	printf("Extensions:\n%s\n", glGetString(GL_EXTENSIONS));
 #endif
+
+	gfx_ship_create_cb = gfx_ship_created;
 }
 
 void reshape_gl13(int width, int height)
