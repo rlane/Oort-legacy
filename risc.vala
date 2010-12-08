@@ -37,6 +37,7 @@ namespace RISC {
 		private bool single_step;
 		private bool render_all_debug_lines;
 		private Team *winner;
+		private Renderer renderer;
 
 		enum GameState {
 			DEMO,
@@ -50,6 +51,8 @@ namespace RISC {
 			this.title = "RISC";
 			this.destroy.connect(Gtk.main_quit);
 			set_reallocate_redraws(true);
+
+			this.renderer = new Renderer();
 
 			var vbox = new VBox(false, 0);
 			vbox.pack_start(make_menubar(), false, false, 0);
@@ -125,7 +128,7 @@ namespace RISC {
 				game_purge();
 				game_tick(1.0/32);
 				particle_tick();
-				RISC.GL13.emit_particles();
+				renderer.tick();
 
 				if (game_state == GameState.RUNNING) {
 					winner = game_check_victory();
@@ -154,7 +157,7 @@ namespace RISC {
 			if (!gldrawable.gl_begin(glcontext))
 				return false;
 
-			RISC.GL13.reshape(widget.allocation.width, widget.allocation.height);
+			renderer.reshape(widget.allocation.width, widget.allocation.height);
 
 			gldrawable.gl_end();
 			return true;
@@ -170,18 +173,18 @@ namespace RISC {
 			if (!gldrawable.gl_begin(glcontext))
 				return false;
 
-			RISC.GL13.render(paused, render_all_debug_lines);
+			renderer.render(paused, render_all_debug_lines);
 			
 			switch (game_state) {
 			case GameState.DEMO:
-				RISC.GL13.glColor32((uint32)0xFFFFFFAA);
-				RISC.GL13.glPrintf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
+				renderer.glColor32((uint32)0xFFFFFFAA);
+				renderer.glPrintf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
 				break;
 			case GameState.RUNNING:
 				break;
 			case GameState.FINISHED:
-				RISC.GL13.glColor32((uint32)0xFFFFFFAA);
-				RISC.GL13.glPrintf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
+				renderer.glColor32((uint32)0xFFFFFFAA);
+				renderer.glPrintf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
 				break;
 			}
 
@@ -198,8 +201,8 @@ namespace RISC {
 			if (!gldrawable.gl_begin(glcontext))
 				return;
 
-			RISC.GL13.init();
-			RISC.GL13.reset();
+			renderer.init();
+			renderer.reset();
 
 			gldrawable.gl_end();
 		}
@@ -211,10 +214,10 @@ namespace RISC {
 
 			switch (key) {
 				case "z":
-					RISC.GL13.zoom(x, y, 1.1);
+					renderer.zoom(x, y, 1.1);
 					break;
 				case "x":
-					RISC.GL13.zoom(x, y, 1.0/1.1);
+					renderer.zoom(x, y, 1.0/1.1);
 					break;
 				case "space":
 					paused = !paused;
@@ -243,7 +246,7 @@ namespace RISC {
 
 			switch (event.button) {
 				case 1:
-					RISC.GL13.pick(x,y);
+					renderer.pick(x,y);
 					break;
 				default:
 					break;
@@ -257,9 +260,9 @@ namespace RISC {
 			get_pointer(out x, out y);
 
 			if (event.direction == Gdk.ScrollDirection.UP) {
-				RISC.GL13.zoom(x, y, 1.1);
+				renderer.zoom(x, y, 1.1);
 			} else if (event.direction == Gdk.ScrollDirection.DOWN) {
-				RISC.GL13.zoom(x, y, 1.0/1.1);
+				renderer.zoom(x, y, 1.0/1.1);
 			}
 
 			return true;
@@ -267,7 +270,7 @@ namespace RISC {
 
 		public void start_game(int seed, string scenario, string[] ais) {
 			RISC.game_shutdown();
-			RISC.GL13.init();
+			renderer.init();
 			if (RISC.game_init(seed, scenario, ais) != 0) {
 				warning("initialization failed\n");
 				start_demo_game();

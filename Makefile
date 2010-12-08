@@ -17,7 +17,8 @@ core_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c ut
 core_objects = $(core_sources:.c=.o)
 
 ui_sources = particle.c gl13.c glutil.c
-ui_objects = $(ui_sources:.c=.o)
+ui_vala = risc.vala renderer.vala
+ui_objects = $(ui_sources:.c=.o) $(ui_vala:.vala=.o)
 
 all: luacheck risc risc-dedicated
 
@@ -32,14 +33,14 @@ luacheck:
 
 -include $(core_sources:.c=.d)
 
-%.c: %.vala vapi/risc.vapi
-	valac -o $@ -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --vapidir vapi $<
+$(ui_vala:.vala=.c): $(ui_vala) vapi/risc.vapi
+	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg gl --vapidir vapi $(ui_vala)
 
 $(core_objects) risc-dedicated.o : CFLAGS = $(CORE_CFLAGS)
-$(ui_objects) risc.o : CFLAGS = $(UI_CFLAGS)
+$(ui_objects) risc.o renderer.o : CFLAGS = $(UI_CFLAGS)
 
 risc: LDFLAGS = $(UI_LDFLAGS)
-risc: risc.o $(ui_objects) $(core_objects)
+risc: risc.o renderer.o $(ui_objects) $(core_objects)
 
 risc-dedicated: LDFLAGS = $(CORE_LDFLAGS)
 risc-dedicated: risc-dedicated.o $(core_objects)
@@ -69,6 +70,6 @@ install: risc risc-dedicated
 	install scenarios/*.lua $(DESTDIR)/usr/share/risc/scenarios
 
 clean:
-	rm -f *.o *.d risc risc-dedicated particlebench
+	rm -f *.o *.d risc risc-dedicated particlebench risc.c renderer.c
 
 .PHONY: all clean benchmark luacheck install run run-ui

@@ -1,8 +1,9 @@
 #include <glib.h>
+#include <stdio.h>
 #include "vector.h"
 
-#ifndef RISC_H
-#define RISC_H
+#ifndef GAME_H
+#define GAME_H
 
 struct bullet_hit {
 	struct ship *s;
