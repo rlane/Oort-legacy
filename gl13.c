@@ -250,10 +250,11 @@ static void render_particles(void)
 	}
 }
 
-void render_gl13( int _paused)
+void render_gl13(int _paused, int _render_all_debug_lines)
 {
 	g_rand_set_seed(gfx_prng, ticks);
 	paused = _paused;
+	render_all_debug_lines = _render_all_debug_lines;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();

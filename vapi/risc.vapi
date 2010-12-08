@@ -11,7 +11,7 @@ namespace RISC {
     [CCode (cname = "reset_gl13")]
     public void reset_gl13();
     [CCode (cname = "render_gl13")]
-    public void render_gl13(bool paused);
+    public void render_gl13(bool paused, bool render_all_debug_lines);
     [CCode (cname = "reshape_gl13")]
     public void reshape_gl13(int x, int y);
 
