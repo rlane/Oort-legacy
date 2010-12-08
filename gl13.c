@@ -23,6 +23,8 @@
 #include "renderer.h"
 
 const double zoom_force = 0.1;
+const double min_view_scale = 6;
+const double max_view_scale = 150;
 
 int screen_width = 640;
 int screen_height = 480;
@@ -426,6 +428,9 @@ void pick(int x, int y)
 
 void zoom(int x, int y, double f)
 {
-	view_pos = (1-zoom_force)*view_pos + zoom_force * W(C(x,y));
+	if (view_scale != min_view_scale && view_scale != max_view_scale) {
+		view_pos = (1-zoom_force)*view_pos + zoom_force * W(C(x,y));
+	}
 	view_scale *= f;
+	view_scale = MIN(MAX(view_scale, min_view_scale), max_view_scale);
 }

@@ -1,11 +1,9 @@
 Next:
-Moving average rotation graphics
 Make open dialogs start in default directories
 Thrust consumes energy
 Limit classes ships can spawn
 Display team name/color in scenario dialog
 Machine-readable risc-dedicated output
-Limit zoom range and view boundary
 Universe boundary
 Screenshot save dialog
 
@@ -19,6 +17,7 @@ Parse scenario in risc-dedicated
 Lock camera to ship
 Implement shields
 Default view origin and scale in scenario metadata
+Limit view boundary
 Force seed in scenario metadata
 Timeout in scenario metadata
 Inline AI in scenario
