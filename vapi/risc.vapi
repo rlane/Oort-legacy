@@ -30,6 +30,8 @@ namespace RISC {
 		public void pick(int x, int y);
     [CCode (cname = "emit_particles")]
     public void emit_particles();
+    [CCode (cname = "S")]
+		public Vector.Vec2 S(Vector.Vec2 p);
 	}
 
 		[CCode (cname = "game_init")]
@@ -74,13 +76,20 @@ namespace RISC {
 			public double m;
 		}
 
+		public enum BulletType {
+			[CCode (cname = "BULLET_SLUG")]
+			SLUG,
+			[CCode (cname = "BULLET_PLASMA")]
+			PLASMA,
+		}
+
     [CCode (cname = "struct bullet", destroy_function = "")]
 		[Compact]
 		public class Bullet {
 			public Physics physics;
 			public Team team;
 			public double ttl;
-			public int dead;
+			public bool dead;
 			public int type;
 		}
 

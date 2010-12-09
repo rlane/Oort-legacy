@@ -69,7 +69,7 @@ static void gfx_ship_created(struct ship *s)
 	s->gfx.angle = atan2(s->physics->v.y, s->physics->v.x); // XXX reversed?
 }
 
-static Vec2 S(Vec2 p)
+Vec2 S(Vec2 p)
 {
 	return vec2_add(vec2_scale(vec2_sub(p, view_pos), view_scale),
 		              vec2(screen_width/2, screen_height/2));
@@ -246,28 +246,6 @@ static void render_ship(struct ship *s, void *unused)
 	}
 }
 
-static void render_bullet(struct bullet *b, void *unused)
-{
-	if (b->dead) return;
-
-	if (b->type == BULLET_SLUG) {
-    Vec2 p1, p2, sp1, sp2;
-		Vec2 dp = vec2_scale(b->physics->v, 1.0/64);
-		Vec2 offset = vec2_scale(b->physics->v, g_rand_double(gfx_prng)/64);
-		p1 = vec2_add(b->physics->p, offset);
-    p2 = vec2_add(b->physics->p, vec2_add(offset, dp));
-    sp1 = S(b->physics->p);
-    sp2 = S(p2);
-
-    glBegin(GL_LINE_STRIP);
-    glColor32(0x44444455);
-    glVertex3f(sp1.x, sp1.y, 0);
-    glColor32(0x444444FF);
-    glVertex3f(sp2.x, sp2.y, 0);
-    glEnd();
-	}
-}
-
 static void render_particles(void)
 {
 	int i;
@@ -301,7 +279,6 @@ void render_gl13(int _paused, int _render_all_debug_lines)
 	glLoadIdentity();
 
 	g_list_foreach(all_ships, (GFunc)render_ship, NULL);
-	g_list_foreach(all_bullets, (GFunc)render_bullet, NULL);
 	render_particles();
 
 	if (picked) {

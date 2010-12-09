@@ -2,8 +2,12 @@ using GL;
 
 namespace RISC {
 	class Renderer {
+		Rand prng;
+
 		public void init() {
 			RISC.GL13.init();
+
+			prng = new Rand();
 
 			glEnable(GL_TEXTURE_2D);
 			glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
@@ -28,7 +32,32 @@ namespace RISC {
 		}
 
 		public void render(bool paused, bool render_all_debug_lines) {
+			prng.set_seed(0);
 			RISC.GL13.render(paused, render_all_debug_lines);
+
+			foreach (unowned Bullet b in RISC.all_bullets) {
+				render_bullet(b);
+			}
+		}
+
+		private void render_bullet(Bullet b) {
+			if (b.dead) return;
+
+			if (b.type == RISC.BulletType.SLUG) {
+				var dp = b.physics.v.scale(1.0/64);
+				var offset = b.physics.v.scale(prng.next_double()/64);
+				var p1 = b.physics.p.add(offset);
+				var p2 = b.physics.p.add(offset).add(dp);
+				var sp1 = RISC.GL13.S(p1);
+				var sp2 = RISC.GL13.S(p2);
+
+				glBegin(GL_LINE_STRIP);
+				RISC.GLUtil.color32(0x44444455);
+				glVertex3d(sp1.x, sp1.y, 0);
+				RISC.GLUtil.color32(0x444444FF);
+				glVertex3d(sp2.x, sp2.y, 0);
+				glEnd();
+			}
 		}
 
 		public void reshape(int width, int height) {

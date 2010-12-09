@@ -1,3 +1,5 @@
+#include <vector.h>
+
 #ifndef RENDERER_H
 #define RENDERER_H
 
@@ -15,5 +17,6 @@ void emit_particles(void);
 void reshape_gl13(int width, int height);
 void zoom(int x, int y, double f);
 void pick(int x, int y);
+Vec2 S(Vec2 p);
 
 #endif
