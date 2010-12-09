@@ -90,7 +90,31 @@ namespace RISC {
 			public Team team;
 			public double ttl;
 			public bool dead;
-			public int type;
+			public BulletType type;
+		}
+
+		public enum ParticleType {
+			[CCode (cname = "PARTICLE_HIT")]
+			HIT,
+			[CCode (cname = "PARTICLE_PLASMA")]
+			PLASMA,
+			[CCode (cname = "PARTICLE_ENGINE")]
+			ENGINE,
+		}
+
+    [CCode (cname = "struct particle", destroy_function = "")]
+		[Compact]
+		public class Particle {
+			public Vector.Vec2 p;
+			public Vector.Vec2 v;
+			public uint16 ticks_left;
+			public ParticleType type;
+
+			[CCode (cname = "particle_shower")]
+			public static void shower(ParticleType type,
+			                          Vector.Vec2 p0, Vector.Vec2 v0, Vector.Vec2 v,
+			                          double s_max, uint16 life_min, uint16 life_max,
+			                          uint16 count);
 		}
 
 		[CCode (cname = "game_check_victory")]

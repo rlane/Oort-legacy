@@ -1,4 +1,5 @@
 using GL;
+using Vector;
 
 namespace RISC {
 	class Renderer {
@@ -80,6 +81,13 @@ namespace RISC {
 
 		public void tick() {
 			RISC.GL13.emit_particles();
+
+			foreach (unowned Bullet b in RISC.all_bullets) {
+				if (b.type == BulletType.PLASMA) {
+					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1/63),
+							            double.min(b.physics.m/5,0.1), 3, 4, 6);
+				}
+			}
 		}
 	}
 

@@ -313,13 +313,6 @@ static void emit_ship(struct ship *s, void *unused)
 	}
 }
 
-static void emit_bullet(struct bullet *b, void *unused)
-{
-	if (b->type == BULLET_PLASMA) {
-		particle_shower(PARTICLE_PLASMA, b->physics->p, vec2(0,0), vec2_scale(b->physics->v, 1/63), MIN(b->physics->m/5,0.1), 3, 4, 6);
-	}
-}
-
 static void emit_bullet_hit(struct bullet_hit *hit, void *unused)
 {
 	particle_shower(PARTICLE_HIT, hit->cp, vec2_scale(hit->s->physics->v, 1/32), vec2(0,0), 0.1, 1, 20, hit->e*100);
@@ -328,7 +321,6 @@ static void emit_bullet_hit(struct bullet_hit *hit, void *unused)
 void emit_particles(void)
 {
 	g_list_foreach(all_ships, (GFunc)emit_ship, NULL);
-	g_list_foreach(all_bullets, (GFunc)emit_bullet, NULL);
 	g_list_foreach(bullet_hits, (GFunc)emit_bullet_hit, NULL);
 }
 
