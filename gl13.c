@@ -313,15 +313,9 @@ static void emit_ship(struct ship *s, void *unused)
 	}
 }
 
-static void emit_bullet_hit(struct bullet_hit *hit, void *unused)
-{
-	particle_shower(PARTICLE_HIT, hit->cp, vec2_scale(hit->s->physics->v, 1/32), vec2(0,0), 0.1, 1, 20, hit->e*100);
-}
-
 void emit_particles(void)
 {
 	g_list_foreach(all_ships, (GFunc)emit_ship, NULL);
-	g_list_foreach(bullet_hits, (GFunc)emit_bullet_hit, NULL);
 }
 
 void init_gl13(void)

@@ -88,6 +88,10 @@ namespace RISC {
 							            double.min(b.physics.m/5,0.1), 3, 4, 6);
 				}
 			}
+
+			foreach (unowned BulletHit hit in RISC.bullet_hits) {
+				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(1/32), vec2(0,0), 0.1, 1, 20, (uint16)(hit.e*100));
+			}
 		}
 	}
 
