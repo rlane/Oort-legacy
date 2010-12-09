@@ -54,6 +54,8 @@ namespace RISC {
 		}
 
 		public void glPrintf(int x, int y, string fmt, ...) {
+			va_list ap = va_list();
+			RISC.GL13.vprintf(x, y, fmt, ap);
 		}
 
 		public void glColor32(uint32 c) {

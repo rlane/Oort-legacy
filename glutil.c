@@ -47,14 +47,19 @@ void glWrite(int x, int y, const char *str)
 	}
 }
 
-void glPrintf(int x, int y, const char *fmt, ...)
+void glutil_vprintf(int x, int y, const char *fmt, va_list ap)
 {
 	static char buf[1024];
+	vsnprintf(buf, sizeof(buf), fmt, ap);
+	glWrite(x, y, buf);
+}
+
+void glPrintf(int x, int y, const char *fmt, ...)
+{
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, ap);
+	glutil_vprintf(x, y, fmt, ap);
 	va_end(ap);
-	glWrite(x, y, buf);
 }
 
 void glColor32(guint32 c)

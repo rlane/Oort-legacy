@@ -15,8 +15,8 @@ namespace RISC {
     public void render(bool paused, bool render_all_debug_lines);
     [CCode (cname = "reshape_gl13")]
     public void reshape(int x, int y);
-		[CCode (cname = "glPrintf")]
-		public void glPrintf(int x, int y, string fmt, ...);
+		[CCode (cname = "glutil_vprintf")]
+		public void vprintf(int x, int y, string fmt, va_list ap);
 		[CCode (cname = "glColor32")]
 		void glColor32(uint32 c);
 		[CCode (cname = "zoom")]
