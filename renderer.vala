@@ -52,14 +52,20 @@ namespace RISC {
 		public void tick() {
 			RISC.GL13.emit_particles();
 		}
+	}
 
-		public void glPrintf(int x, int y, string fmt, ...) {
+	namespace GLUtil {
+		public void printf(int x, int y, string fmt, ...) {
 			va_list ap = va_list();
 			RISC.GL13.vprintf(x, y, fmt, ap);
 		}
 
-		public void glColor32(uint32 c) {
-			RISC.GL13.glColor32(c);
+		public void color32(uint32 c) {
+			GLubyte r = (GLubyte) ((c >> 24) & 0xFF);
+			GLubyte g = (GLubyte) ((c >> 16) & 0xFF);
+			GLubyte b = (GLubyte) ((c >> 8) & 0xFF);
+			GLubyte a = (GLubyte) (c & 0xFF);
+			glColor4ub(r, g, b, a);
 		}
 	}
 }

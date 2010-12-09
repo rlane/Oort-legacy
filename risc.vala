@@ -177,14 +177,14 @@ namespace RISC {
 			
 			switch (game_state) {
 			case GameState.DEMO:
-				renderer.glColor32((uint32)0xFFFFFFAA);
-				renderer.glPrintf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
+				RISC.GLUtil.color32((uint32)0xFFFFFFAA);
+				RISC.GLUtil.printf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
 				break;
 			case GameState.RUNNING:
 				break;
 			case GameState.FINISHED:
-				renderer.glColor32((uint32)0xFFFFFFAA);
-				renderer.glPrintf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
+				RISC.GLUtil.color32((uint32)0xFFFFFFAA);
+				RISC.GLUtil.printf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
 				break;
 			}
 
