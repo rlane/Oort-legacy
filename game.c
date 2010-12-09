@@ -19,12 +19,12 @@ double current_time = 0.0;
 GRand *prng = NULL;
 FILE *trace_file = NULL;
 
-static void handle_bullet_hit(struct ship *s, struct bullet *b, vec2 cp)
+static void handle_bullet_hit(struct ship *s, struct bullet *b, Vec2 cp)
 {
 	b->dead = 1;
 	if (b->team != s->team) {
-		complex double dv = s->physics->v - b->physics->v;
-		double hit_energy = 0.5 * b->physics->m * distance(dv, 0);
+		Vec2 dv = vec2_sub(s->physics->v, b->physics->v);
+		double hit_energy = 0.5 * b->physics->m * vec2_abs(dv);
 		s->hull -= hit_energy;
 		if (s->hull <= 0) {
 			s->dead = 1;
@@ -46,7 +46,7 @@ static void check_bullet_hits(double tick_length)
 		struct ship *s = es->data;
 		for (eb = g_list_first(all_bullets); eb; eb = g_list_next(eb)) {
 			struct bullet *b = eb->data;
-			complex double cp;
+			Vec2 cp;
 			if (physics_check_collision(s->physics, b->physics, tick_length, &cp)) {
 				handle_bullet_hit(s, b, cp);
 			}

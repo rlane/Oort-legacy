@@ -24,7 +24,7 @@ struct sensor_contact {
 	guint32 id;
 	const struct team *team;
 	const struct ship_class *class;
-	vec2 p, v;
+	Vec2 p, v;
 };
 
 struct sensor_query {
@@ -34,7 +34,7 @@ struct sensor_query {
 	double distance_lt, distance_gt;
 	double hull_lt, hull_gt;
 	unsigned int limit;
-	vec2 origin;
+	Vec2 origin;
 };
 
 static void ud_sensor_contact_new(lua_State *L, struct ship *s, int metatable_index)
@@ -84,16 +84,16 @@ static int ud_sensor_contact_class(lua_State *L)
 static int ud_sensor_contact_position(lua_State *L)
 {
 	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	lua_pushnumber(L, creal(c->p));
-	lua_pushnumber(L, cimag(c->p));
+	lua_pushnumber(L, c->p.x);
+	lua_pushnumber(L, c->p.y);
 	return 2;
 }
 
 static int ud_sensor_contact_velocity(lua_State *L)
 {
 	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	lua_pushnumber(L, creal(c->v));
-	lua_pushnumber(L, cimag(c->v));
+	lua_pushnumber(L, c->v.x);
+	lua_pushnumber(L, c->v.y);
 	return 2;
 }
 
@@ -208,7 +208,7 @@ int match_sensor_query(const struct sensor_query *query, const struct ship *s)
 	if (query->enemy == 0 && query->my_team != s->team) return 0;
 	if (query->enemy == 1 && query->my_team == s->team) return 0;
 	if (query->class && query->class != s->class) return 0;
-	double distance = cabs(query->origin - s->physics->p);
+	double distance = vec2_distance(query->origin, s->physics->p);
 	if (!isnan(query->distance_lt) && query->distance_lt <= distance) return 0;
 	if (!isnan(query->distance_gt) && query->distance_gt >= distance) return 0;
 	if (!isnan(query->hull_lt) && query->hull_lt <= s->hull) return 0;

@@ -31,7 +31,7 @@ struct ship {
 	} mem;
 	GRand *prng;
 	int dead, ai_dead;
-	complex double tail[TAIL_SEGMENTS];
+	Vec2 tail[TAIL_SEGMENTS];
 	int tail_head;
 	int last_shot_tick;
 	GQueue *mq;
@@ -40,7 +40,7 @@ struct ship {
 	struct {
 		int num_lines;
 		struct {
-			vec2 a, b;
+			Vec2 a, b;
 		} lines[MAX_DEBUG_LINES];
 	} debug;
 	struct {
@@ -54,7 +54,7 @@ extern GList *all_ships;
 extern GHashTable *ship_classes;
 extern void (*gfx_ship_create_cb)(struct ship *s);
 
-struct ship *ship_create(const char *filename, const char *class_name, struct team *team, vec2 p, vec2 v, const char *orders);
+struct ship *ship_create(const char *filename, const char *class_name, struct team *team, Vec2 p, Vec2 v, const char *orders);
 void ship_purge();
 void ship_shutdown();
 void ship_tick(double t);

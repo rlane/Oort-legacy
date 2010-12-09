@@ -59,8 +59,7 @@ static int api_thrust(lua_State *L)
 	struct ship *s = lua_ship(L);
 	double a = luaL_checknumber(L, 1);
 	double f = luaL_checknumber(L, 2);
-	s->physics->thrust = f * (cos(a) + sin(a)*I) * s->physics->m;
-	//printf("thrust x=%g y=%g\n", creal(s->physics->thrust), cimag(s->physics->thrust));
+	s->physics->thrust = vec2_scale(vec2(cos(a), sin(a)), f * s->physics->m);
 	return 0;
 }
 
@@ -73,16 +72,16 @@ static int api_yield(lua_State *L)
 static int api_position(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
-	lua_pushnumber(L, creal(s->physics->p));
-	lua_pushnumber(L, cimag(s->physics->p));
+	lua_pushnumber(L, s->physics->p.x);
+	lua_pushnumber(L, s->physics->p.y);
 	return 2;
 }
 
 static int api_velocity(lua_State *L)
 {
 	struct ship *s = lua_ship(L);
-	lua_pushnumber(L, creal(s->physics->v));
-	lua_pushnumber(L, cimag(s->physics->v));
+	lua_pushnumber(L, s->physics->v.x);
+	lua_pushnumber(L, s->physics->v.y);
 	return 2;
 }
 
@@ -102,8 +101,8 @@ static int api_create_bullet(lua_State *L)
 	if (!b) return luaL_error(L, "bullet creation failed");
 
 	b->team = s->team;
-	b->physics->p = C(x,y);
-	b->physics->v = C(vx,vy);
+	b->physics->p = vec2(x,y);
+	b->physics->v = vec2(vx,vy);
 	b->physics->m = m;
 	b->ttl = ttl;
 	b->type = type;
@@ -252,8 +251,8 @@ static int api_debug_line(lua_State *L)
 	y1 = luaL_checknumber(L, 2);
 	x2 = luaL_checknumber(L, 3);
 	y2 = luaL_checknumber(L, 4);
-	s->debug.lines[i].a = C(x1,y1);
-	s->debug.lines[i].b = C(x2,y2);
+	s->debug.lines[i].a = vec2(x1,y1);
+	s->debug.lines[i].b = vec2(x2,y2);
 	return 0;
 }
 
@@ -457,7 +456,7 @@ void ship_tick(double t)
 }
 
 struct ship *ship_create(const char *filename, const char *class_name, struct team *team,
-		                     vec2 p, vec2 v, const char *orders)
+		                     Vec2 p, Vec2 v, const char *orders)
 {
 	struct ship *s = g_slice_new0(struct ship);
 
@@ -482,7 +481,7 @@ struct ship *ship_create(const char *filename, const char *class_name, struct te
 
 	int i;
 	for (i = 0; i < TAIL_SEGMENTS; i++) {
-		s->tail[i] = NAN;
+		s->tail[i] = vec2(NAN,NAN);
 	}
 
 	s->tail_head = 0;

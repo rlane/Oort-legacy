@@ -8,7 +8,7 @@
 struct bullet_hit {
 	struct ship *s;
 	struct bullet *b;
-	vec2 cp;
+	Vec2 cp;
 	double e;
 };
 

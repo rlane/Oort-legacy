@@ -13,7 +13,7 @@ static GStaticMutex new_physics_lock = G_STATIC_MUTEX_INIT;
 struct physics *physics_create(void)
 {
 	struct physics *q = g_slice_new(struct physics);
-	q->p = q->p0 = q->v = q->thrust = 0.0 + 0.0*I;
+	q->p = q->p0 = q->v = q->thrust = vec2(0,0);
 	q->a = q->av = 0.0;
 	q->m = q->r = 1.0;
 	g_static_mutex_lock(&new_physics_lock);
@@ -31,22 +31,10 @@ void physics_destroy(struct physics *q)
 void physics_tick_one(struct physics *q, const double *ta)
 {
 	double t = *ta;
-	complex double acc = q->thrust*t/q->m;
+	Vec2 acc = vec2_scale(q->thrust, t/q->m);
 	q->p0 = q->p;
-	q->p += (q->v + acc/2)*t;
-	q->v += acc;
-}
-
-double distance(complex double a, complex double b)
-{
-	double dx = creal(a) - creal(b);
-	double dy = cimag(a) - cimag(b);
-	return sqrt(dx*dx + dy*dy);
-}
-
-double dot(complex double a, complex double b)
-{
-	return creal(a)*creal(b) + cimag(a)*cimag(b);
+	q->p = vec2_add(q->p, vec2_scale(vec2_add(q->v, vec2_scale(acc, 0.5)), t));
+	q->v = vec2_add(q->v, acc);
 }
 
 double min(double a, double b)
@@ -56,12 +44,12 @@ double min(double a, double b)
 
 double collision_time(struct physics *q1, struct physics *q2)
 {
-	vec2 dv = q1->v - q2->v;
-	vec2 dp = q1->p - q2->p;
-	double a = dot(dv, dv);
-	double b = 2*dot(dp, dv);
+	Vec2 dv = vec2_sub(q1->v, q2->v);
+	Vec2 dp = vec2_sub(q1->p, q2->p);
+	double a = vec2_dot(dv, dv);
+	double b = 2*vec2_dot(dp, dv);
 	double r_sum = q1->r + q2->r;
-	double c = dot(dp, dp) - r_sum*r_sum;
+	double c = vec2_dot(dp, dp) - r_sum*r_sum;
 	double disc = b*b - 4*a*c;
 	if (disc < 0) {
 		return NAN;
@@ -74,7 +62,7 @@ double collision_time(struct physics *q1, struct physics *q2)
 	}
 }
 
-int physics_check_collision(struct physics *q1, struct physics *q2, double interval, complex double *rcp)
+int physics_check_collision(struct physics *q1, struct physics *q2, double interval, Vec2 *rcp)
 {
 	double t = collision_time(q1, q2);
 	if (isnan(t)) {
@@ -86,7 +74,7 @@ int physics_check_collision(struct physics *q1, struct physics *q2, double inter
 		// future collision
 		return 0;
 	} else {
-		vec2 cp = q2->p + t*q2->v;
+		Vec2 cp = vec2_add(q2->p, vec2_scale(q2->v, t));
 		if (rcp) *rcp = cp;
 		return 1;
 	}

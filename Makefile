@@ -70,6 +70,6 @@ install: risc risc-dedicated
 	install scenarios/*.lua $(DESTDIR)/usr/share/risc/scenarios
 
 clean:
-	rm -f *.o *.d risc risc-dedicated particlebench risc.c renderer.c
+	rm -f *.o *.d risc risc-dedicated risc.c renderer.c
 
 .PHONY: all clean benchmark luacheck install run run-ui
