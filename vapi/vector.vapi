@@ -1,4 +1,4 @@
-[CCode (cprefix = "Vector", lower_case_cprefix = "vector_")]
+[CCode (cprefix = "Vector", lower_case_cprefix = "")]
 namespace Vector {
 	[CCode (cname = "Vec2", cheader_filename = "vector_vala.h")]
 	[SimpleType]
