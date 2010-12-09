@@ -34,7 +34,7 @@ luacheck:
 -include $(core_sources:.c=.d)
 
 $(ui_vala:.vala=.c): $(ui_vala) vapi/risc.vapi
-	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg gl --vapidir vapi $(ui_vala)
+	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg gl --pkg vector --vapidir vapi $(ui_vala)
 
 $(core_objects) risc-dedicated.o : CFLAGS = $(CORE_CFLAGS)
 $(ui_objects) risc.o renderer.o : CFLAGS = $(UI_CFLAGS)
