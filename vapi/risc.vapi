@@ -4,8 +4,13 @@
 [CCode (cheader_filename = "glutil.h")]
 [CCode (cheader_filename = "util.h")]
 [CCode (cheader_filename = "team.h")]
+[CCode (cheader_filename = "physics.h")]
+[CCode (cheader_filename = "bullet.h")]
 
 namespace RISC {
+	[CCode (cname = "all_bullets")]
+	public GLib.List<Bullet> all_bullets;
+
 	namespace GL13 {
     [CCode (cname = "init_gl13")]
     public void init();
@@ -48,13 +53,37 @@ namespace RISC {
 		public string data_path(string subpath);
 
     [CCode (cname = "struct team", destroy_function = "")]
-		public struct Team {
+		[Compact]
+		public class Team {
 			public uint32 color;
 			public string name;
 			public string filename;
 			public int ships;
 		}
 
+    [CCode (cname = "struct physics", destroy_function = "")]
+		[Compact]
+		public class Physics {
+			public Vector.Vec2 p;
+			public Vector.Vec2 p0;
+			public Vector.Vec2 v;
+			public Vector.Vec2 thrust;
+			public double a;
+			public double av;
+			public double r;
+			public double m;
+		}
+
+    [CCode (cname = "struct bullet", destroy_function = "")]
+		[Compact]
+		public class Bullet {
+			public Physics physics;
+			public Team team;
+			public double ttl;
+			public int dead;
+			public int type;
+		}
+
 		[CCode (cname = "game_check_victory")]
-		public Team *game_check_victory();
+		public unowned Team game_check_victory();
 }

@@ -36,7 +36,7 @@ namespace RISC {
 		private bool paused;
 		private bool single_step;
 		private bool render_all_debug_lines;
-		private Team *winner;
+		private unowned Team winner;
 		private Renderer renderer;
 
 		enum GameState {
