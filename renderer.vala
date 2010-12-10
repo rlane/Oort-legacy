@@ -286,9 +286,9 @@ namespace RISC {
 			GLUtil.printf(x, y-0*dy, "%s %.8x", s.class.name, s.api_id);
 			GLUtil.printf(x, y-1*dy, "hull: %.2f", s.hull);
 			GLUtil.printf(x, y-2*dy, @"position: $(s.physics.p)");
-			GLUtil.printf(x, y-3*dy, @"velocity: $(s.physics.v) $(s.physics.v.abs())");
-			GLUtil.printf(x, y-4*dy, @"thrust: $(s.physics.thrust) $(s.physics.thrust.abs())");
-			GLUtil.printf(x, y-5*dy, "energy: %g", s.get_energy());
+			GLUtil.printf(x, y-3*dy, @"velocity: $(s.physics.v) %0.3g", s.physics.v.abs());
+			GLUtil.printf(x, y-4*dy, @"thrust: $(s.physics.thrust) %0.3g", s.physics.thrust.abs());
+			GLUtil.printf(x, y-5*dy, "energy: %0.3g", s.get_energy());
 		}
 
 		public void reshape(int width, int height) {
