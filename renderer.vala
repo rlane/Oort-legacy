@@ -5,6 +5,11 @@ using Math;
 namespace RISC {
 	class Renderer {
 		public bool render_all_debug_lines;
+		public int screen_width = 640;
+		public int screen_height = 480;
+		public double view_scale;
+		public Vec2 view_pos;
+		public unowned Ship picked;
 
 		Rand prng;
 
@@ -33,7 +38,9 @@ namespace RISC {
 		}
 
 		public void reset() {
-			RISC.GL13.reset();
+			view_pos = vec2(0,0);
+			view_scale = 16.0;
+			picked = null;
 		}
 
 		public void render() {
@@ -52,8 +59,8 @@ namespace RISC {
 
 			render_particles();
 			
-			if (GL13.picked != null) {
-				render_picked_info(GL13.picked);
+			if (picked != null) {
+				render_picked_info(picked);
 			}
 		}
 
@@ -95,7 +102,7 @@ namespace RISC {
 		}
 
 		void render_mothership(Ship s) {
-			int depth = int.min(int.max((int)Math.log2(GL13.view_scale), 2), 8);
+			int depth = int.min(int.max((int)Math.log2(view_scale), 2), 8);
 			GLUtil.color32(s.team.color | 0xEE);
 			glPushMatrix();
 			glScaled(0.5, 0.3, 0.3);
@@ -140,9 +147,9 @@ namespace RISC {
 		}
 
 		void render_ship(Ship s) {
-			var sp = GL13.S(s.physics.p);
+			var sp = S(s.physics.p);
 			double angle = s.gfx.angle;
-			double scale = GL13.view_scale * s.class.radius;
+			double scale = view_scale * s.class.radius;
 
 			glPushMatrix();
 			glTranslated(sp.x, sp.y, 0);
@@ -171,7 +178,7 @@ namespace RISC {
 			for (i = 0; i < Ship.TAIL_SEGMENTS-1; i++) {
 				int j = s.tail_head - i - 1;
 				if (j < 0) j += Ship.TAIL_SEGMENTS;
-				Vec2 sp2 = GL13.S(s.tail[j]);
+				Vec2 sp2 = S(s.tail[j]);
 				if (isnan(sp2.x) != 0)
 					break;
 				uint32 color = s.team.color | (tail_alpha_max-(tail_alpha_max/Ship.TAIL_SEGMENTS)*i);
@@ -181,7 +188,7 @@ namespace RISC {
 			}
 			glEnd();
 
-			if (s == GL13.picked) {
+			if (s == picked) {
 				GLUtil.color32((uint32)0xCCCCCCAA);
 				glPushMatrix();
 				glTranslated(sp.x, sp.y, 0);
@@ -192,7 +199,7 @@ namespace RISC {
 				GLUtil.color32((uint32)0xCCCCCC77);
 				glPushMatrix();
 				glTranslated(sp.x, sp.y, 0);
-				glScaled(GL13.view_scale, GL13.view_scale, GL13.view_scale);
+				glScaled(view_scale, view_scale, view_scale);
 				glBegin(GL_LINES);
 				glVertex3d(0, 0, 0);
 				glVertex3d(s.physics.thrust.x, s.physics.thrust.y, 0);
@@ -206,18 +213,18 @@ namespace RISC {
 				double tick_length = 1/32.0;
 				for (double j = 0; j < 1/tick_length; j++) {
 					q.tick_one(&tick_length);
-					Vec2 sp2 = GL13.S(q.p);
+					Vec2 sp2 = S(q.p);
 					glVertex3d(sp2.x, sp2.y, 0);
 				}
 				glEnd();
 			}
 
-			if (s == GL13.picked || render_all_debug_lines) {
+			if (s == picked || render_all_debug_lines) {
 				GLUtil.color32((uint32)0x49D5CEAA);
 				glBegin(GL_LINES);
 				for (int j = 0; j < s.debug.num_lines; j++) {
-					Vec2 sa = GL13.S(s.debug.lines[j].a);
-					Vec2 sb = GL13.S(s.debug.lines[j].b);
+					Vec2 sa = S(s.debug.lines[j].a);
+					Vec2 sb = S(s.debug.lines[j].b);
 					glVertex3d(sa.x, sa.y, 0);
 					glVertex3d(sb.x, sb.y, 0);
 				}
@@ -225,8 +232,8 @@ namespace RISC {
 			}
 
 			// XXX move
-			if (s == GL13.picked && s.dead) {
-				GL13.picked = null;
+			if (s == picked && s.dead) {
+				picked = null;
 			}
 		}
 
@@ -238,8 +245,8 @@ namespace RISC {
 				var offset = b.physics.v.scale(prng.next_double()/64);
 				var p1 = b.physics.p.add(offset);
 				var p2 = b.physics.p.add(offset).add(dp);
-				var sp1 = RISC.GL13.S(p1);
-				var sp2 = RISC.GL13.S(p2);
+				var sp1 = S(p1);
+				var sp2 = S(p2);
 
 				glBegin(GL_LINE_STRIP);
 				RISC.GLUtil.color32(0x44444455);
@@ -254,15 +261,15 @@ namespace RISC {
 			for (int i = 0; i < Particle.MAX; i++) {
 				unowned Particle c = Particle.get(i);
 				if (c.ticks_left == 0) continue;
-				Vec2 p = GL13.S(c.p);
+				Vec2 p = S(c.p);
 				if (c.type == ParticleType.HIT) {
-					glPointSize((float)(0.3*c.ticks_left*GL13.view_scale/32));
+					glPointSize((float)(0.3*c.ticks_left*view_scale/32));
 					glColor4ub(255, 200, 200, c.ticks_left*8);
 				} else if (c.type == ParticleType.PLASMA) {
-					glPointSize((float)(0.15*c.ticks_left*GL13.view_scale/32));
+					glPointSize((float)(0.15*c.ticks_left*view_scale/32));
 					glColor4ub(255, 0, 0, c.ticks_left*32);
 				} else if (c.type == ParticleType.ENGINE) {
-					glPointSize((float)(0.1*c.ticks_left*GL13.view_scale/32));
+					glPointSize((float)(0.1*c.ticks_left*view_scale/32));
 					glColor4ub(255, 217, 43, 10 + c.ticks_left*5);
 				}
 				glBegin(GL_POINTS);
@@ -285,21 +292,14 @@ namespace RISC {
 		}
 
 		public void reshape(int width, int height) {
-			RISC.GL13.reshape(width, height);
+			screen_width = width;
+			screen_height = height;
 			glViewport (0, 0, (GLsizei)width, (GLsizei)height);
 			glMatrixMode (GL_PROJECTION);
 			glLoadIdentity ();
 			glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
 			glMatrixMode (GL_MODELVIEW);
 			glLoadIdentity ();
-		}
-
-		public void zoom(int x, int y, double force) {
-			RISC.GL13.zoom(x, y, force);
-		}
-
-		public void pick(int x, int y) {
-			RISC.GL13.pick(x, y);
 		}
 
 		public void tick() {
@@ -324,12 +324,49 @@ namespace RISC {
 				s.gfx.angle = normalize_angle(s.gfx.angle + s.gfx.class.rotfactor*da);
 			}
 		}
+
+		public Vec2 center() {
+			return vec2(screen_width/2, screen_height/2);
+		}
+
+		public Vec2 S(Vec2 p) {
+			return p.sub(view_pos).scale(view_scale).add(center());
+		}
+
+		public Vec2 W(Vec2 o) {
+			return o.sub(center()).scale(1/view_scale).add(view_pos);
+		}
+
+		// XXX find ship with minimum distance, allow 5 px error
+		public void pick(int x, int y) {
+			Vec2 p = W(vec2(x, y));
+			foreach (unowned Ship s in RISC.all_ships) {
+				if (s.physics.p.distance(p) < s.physics.r) {
+					picked = s;
+					return;
+				}
+			}
+			picked = null;
+		}
+
+		// XXX const
+		double zoom_force = 0.1;
+		double min_view_scale = 6;
+		double max_view_scale = 150;
+
+		public void zoom(int x, int y, double f) {
+			if (view_scale != min_view_scale && view_scale != max_view_scale) {
+				view_pos = view_pos.scale(1-zoom_force).add(W(vec2(x,y)).scale(zoom_force));
+			}
+			view_scale *= f;
+			view_scale = double.min(double.max(view_scale, min_view_scale), max_view_scale);
+		}
 	}
 
 	namespace GLUtil {
 		public void printf(int x, int y, string fmt, ...) {
 			va_list ap = va_list();
-			RISC.GL13.vprintf(x, y, fmt, ap);
+			C.vprintf(x, y, fmt, ap);
 		}
 
 		public void color32(uint32 c) {

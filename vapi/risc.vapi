@@ -17,27 +17,13 @@ namespace RISC {
 	public GLib.List<BulletHit> bullet_hits;
 
 	namespace GL13 {
-		[CCode (cname = "view_scale")]
-		public double view_scale;
-		[CCode (cname = "picked")]
-		public unowned Ship picked;
-
     [CCode (cname = "init_gl13")]
     public void init();
-    [CCode (cname = "reset_gl13")]
-    public void reset();
-    [CCode (cname = "reshape_gl13")]
-    public void reshape(int x, int y);
+	}
+
+	namespace C {
 		[CCode (cname = "glutil_vprintf")]
 		public void vprintf(int x, int y, string fmt, va_list ap);
-		[CCode (cname = "glColor32")]
-		void glColor32(uint32 c);
-		[CCode (cname = "zoom")]
-		public int zoom(int x, int y, double force);
-		[CCode (cname = "pick")]
-		public void pick(int x, int y);
-    [CCode (cname = "S")]
-		public Vector.Vec2 S(Vector.Vec2 p);
 	}
 
 		[CCode (cname = "game_init")]
