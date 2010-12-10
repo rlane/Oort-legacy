@@ -83,17 +83,6 @@ void render_gl13(int _paused, int _render_all_debug_lines)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-
-	if (picked) {
-		const int x = 15, y = 82, dy = 12;
-		glColor32(0xAAFFFFAA);
-		glPrintf(x, y-0*dy, "%s %.8x", picked->class->name, picked->api_id);
-		glPrintf(x, y-1*dy, "hull: %.2f", picked->hull);
-		glPrintf(x, y-2*dy, "position: " VEC2_FMT, VEC2_ARG(picked->physics->p));
-		glPrintf(x, y-3*dy, "velocity: " VEC2_FMT " %g", VEC2_ARG(picked->physics->v), vec2_abs(picked->physics->v));
-		glPrintf(x, y-4*dy, "thrust: " VEC2_FMT " %g", VEC2_ARG(picked->physics->thrust), vec2_abs(picked->physics->thrust));
-		glPrintf(x, y-5*dy, "energy: %g", ship_get_energy(picked));
-	}
 }
 
 void init_gl13(void)

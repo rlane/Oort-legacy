@@ -228,6 +228,9 @@ namespace RISC {
 			public char line_info[256];
 			public Gfx gfx;
 			public Debug debug;
+
+			[CCode (cname = "ship_get_energy")]
+			public double get_energy();
 		}
 
 		[CCode (cname = "game_check_victory")]
