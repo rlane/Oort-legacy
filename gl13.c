@@ -31,12 +31,9 @@ int screen_height = 480;
 
 Vec2 view_pos;
 double view_scale;
-int paused;
 int single_step;
 int render_all_debug_lines;
 struct ship *picked;
-
-static GRand *gfx_prng;
 
 static struct gfx_class gfx_fighter = {
 	.rotfactor = 0.5,
@@ -77,8 +74,6 @@ Vec2 S(Vec2 p)
 
 void render_gl13(int _paused, int _render_all_debug_lines)
 {
-	g_rand_set_seed(gfx_prng, ticks);
-	paused = _paused;
 	render_all_debug_lines = _render_all_debug_lines;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -87,8 +82,6 @@ void render_gl13(int _paused, int _render_all_debug_lines)
 
 void init_gl13(void)
 {
-	gfx_prng = g_rand_new();
-
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "glewInit failed\n");
 		abort();
@@ -107,7 +100,6 @@ void reset_gl13()
 {
 	view_pos = vec2(0,0);
 	view_scale = 16.0;
-	paused = 0;
 	single_step = 0;
 	render_all_debug_lines = 0;
 	picked = NULL;
