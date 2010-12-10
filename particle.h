@@ -25,4 +25,6 @@ void particle_shower(enum particle_type type,
 										 unsigned short count);
 void particle_tick(void);
 
+static inline struct particle *particle_get(int i) { return particles + i; }
+
 #endif

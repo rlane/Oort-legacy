@@ -75,29 +75,6 @@ Vec2 S(Vec2 p)
 		              vec2(screen_width/2, screen_height/2));
 }
 
-static void render_particles(void)
-{
-	int i;
-	for (i = 0; i < MAX_PARTICLES; i++) {
-		struct particle *c = &particles[i];
-		if (c->ticks_left == 0) continue;
-		Vec2 p = S(c->p);
-		if (c->type == PARTICLE_HIT) {
-			glPointSize(0.3*c->ticks_left*view_scale/32);
-			glColor4ub(255, 200, 200, c->ticks_left*8);
-		} else if (c->type == PARTICLE_PLASMA) {
-			glPointSize(0.15*c->ticks_left*view_scale/32);
-			glColor4ub(255, 0, 0, c->ticks_left*32);
-		} else if (c->type == PARTICLE_ENGINE) {
-			glPointSize(0.1*c->ticks_left*view_scale/32);
-			glColor4ub(255, 217, 43, 10 + c->ticks_left*5);
-		}
-		glBegin(GL_POINTS);
-		glVertex3f(p.x, p.y, 0);
-		glEnd();
-	}
-}
-
 void render_gl13(int _paused, int _render_all_debug_lines)
 {
 	g_rand_set_seed(gfx_prng, ticks);
@@ -106,8 +83,6 @@ void render_gl13(int _paused, int _render_all_debug_lines)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-
-	render_particles();
 
 	if (picked) {
 		const int x = 15, y = 82, dy = 12;

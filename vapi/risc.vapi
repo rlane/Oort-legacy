@@ -140,6 +140,15 @@ namespace RISC {
 			public uint16 ticks_left;
 			public ParticleType type;
 
+			[CCode (cname = "MAX_PARTICLES")]
+			public static int MAX;
+
+			[CCode (cname = "particles")]
+			public static Particle array[];
+
+			[CCode (cname = "particle_get")]
+			public static unowned Particle get(int i);
+
 			[CCode (cname = "particle_shower")]
 			public static void shower(ParticleType type,
 			                          Vector.Vec2 p0, Vector.Vec2 v0, Vector.Vec2 v,

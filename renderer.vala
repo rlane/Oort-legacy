@@ -44,6 +44,8 @@ namespace RISC {
 			foreach (unowned Bullet b in RISC.all_bullets) {
 				render_bullet(b);
 			}
+
+			render_particles();
 		}
 
 		void triangle_fractal(int depth) {
@@ -235,6 +237,27 @@ namespace RISC {
 				glVertex3d(sp1.x, sp1.y, 0);
 				RISC.GLUtil.color32(0x444444FF);
 				glVertex3d(sp2.x, sp2.y, 0);
+				glEnd();
+			}
+		}
+
+		private void render_particles() {
+			for (int i = 0; i < Particle.MAX; i++) {
+				unowned Particle c = Particle.get(i);
+				if (c.ticks_left == 0) continue;
+				Vec2 p = GL13.S(c.p);
+				if (c.type == ParticleType.HIT) {
+					glPointSize((float)(0.3*c.ticks_left*GL13.view_scale/32));
+					glColor4ub(255, 200, 200, c.ticks_left*8);
+				} else if (c.type == ParticleType.PLASMA) {
+					glPointSize((float)(0.15*c.ticks_left*GL13.view_scale/32));
+					glColor4ub(255, 0, 0, c.ticks_left*32);
+				} else if (c.type == ParticleType.ENGINE) {
+					glPointSize((float)(0.1*c.ticks_left*GL13.view_scale/32));
+					glColor4ub(255, 217, 43, 10 + c.ticks_left*5);
+				}
+				glBegin(GL_POINTS);
+				glVertex3d(p.x, p.y, 0);
 				glEnd();
 			}
 		}
