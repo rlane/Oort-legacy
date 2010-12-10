@@ -128,46 +128,72 @@ namespace RISC {
 			public Vector.Vec2 cp;
 			public double e;
 		}
+		
+		[Ccode (cname = "TAIL_SEGMENTS")]
+		const int TAIL_SEGMENTS;
+		[Ccode (cname = "TAIL_TICKS")]
+		const int TAIL_TICKS;
+		[Ccode (cname = "MAX_DEBUG_LINES")]
+		const int MAX_DEBUG_LINES;
 
-		// XXX INCOMPLETE
+		[CCode (cname = "struct ship_class", destroy_function = "")]
+		public class ShipClass {
+			string name;
+			double radius;
+			public double hull;
+			public bool count_for_victory;
+		}
+
+		[CCode (cname = "struct gfx_class", destroy_function = "")]
+		public class ShipGfxClass {
+			public double rotfactor;
+		}
+
     [CCode (cname = "struct ship", destroy_function = "")]
 		[Compact]
 		public class Ship {
+			public struct LuaMemState {
+				public Lua.AllocFunc allocator;
+				public void *allocator_ud;
+				public int cur;
+				public int limit;
+			}
+
+			public struct Gfx {
+				public unowned ShipGfxClass @class;
+				public double angle;
+			}
+
+			public struct DebugLine {
+				public Vector.Vec2 a;
+				public Vector.Vec2 b;
+			}
+
+			public struct Debug {
+				public int num_lines;
+				public DebugLine lines[];
+			}
+
 			public uint32 api_id;
-			//const struct ship_class *class;
+			public unowned ShipClass @class;
 			public unowned Team team;
 			public Physics physics;
 			public double energy;
 			public double hull;
-/*
-			lua_State *lua, *global_lua;
-			struct {
-				lua_Alloc allocator;
-				void *allocator_ud;
-				int cur, limit;
-			} mem;
-*/
+			public Lua.LuaVM lua;
+			public Lua.LuaVM global_lua;
+			public LuaMemState mem;
 			public GLib.Rand prng;
 			public bool dead;
 			public bool ai_dead;
-			//Vector.Vec2 tail[TAIL_SEGMENTS];
+			public Vector.Vec2 tail[];
 			public int tail_head;
 			public int last_shot_tick;
-			//GQueue *mq;
+			public GLib.Queue mq;
 			public uint64 line_start_time;
-			/*
-			char line_info[256];
-			struct {
-				int num_lines;
-				struct {
-					Vec2 a, b;
-				} lines[MAX_DEBUG_LINES];
-			} debug;
-			struct {
-				const struct gfx_class *class;
-				double angle;
-			} gfx;
-			*/
+			public char line_info[256];
+			public Gfx gfx;
+			public Debug debug;
 		}
 
 		[CCode (cname = "game_check_victory")]
