@@ -40,8 +40,6 @@ namespace RISC {
 		public int zoom(int x, int y, double force);
 		[CCode (cname = "pick")]
 		public void pick(int x, int y);
-    [CCode (cname = "emit_particles")]
-    public void emit_particles();
     [CCode (cname = "S")]
 		public Vector.Vec2 S(Vector.Vec2 p);
 	}

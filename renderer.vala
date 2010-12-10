@@ -281,8 +281,6 @@ namespace RISC {
 		}
 
 		public void tick() {
-			RISC.GL13.emit_particles();
-
 			foreach (unowned Bullet b in RISC.all_bullets) {
 				if (b.type == BulletType.PLASMA) {
 					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1/63),
@@ -292,6 +290,16 @@ namespace RISC {
 
 			foreach (unowned BulletHit hit in RISC.bullet_hits) {
 				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(1/32), vec2(0,0), 0.1, 1, 20, (uint16)(hit.e*100));
+			}
+
+			foreach (unowned Ship s in RISC.all_ships) {
+				if (s.physics.thrust.abs() != 0) {
+					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(1/32), s.physics.thrust.scale(-1/32), 0.1, 1, 4, 8);
+				}
+
+				double v_angle = atan2(s.physics.v.y, s.physics.v.x); // XXX reversed?
+				double da = normalize_angle(v_angle - s.gfx.angle);
+				s.gfx.angle = normalize_angle(s.gfx.angle + s.gfx.class.rotfactor*da);
 			}
 		}
 	}
@@ -322,5 +330,12 @@ namespace RISC {
 			}
 			glEnd();
 		}
+	}
+
+	public double normalize_angle(double a)
+	{
+		if (a < -PI) a += 2*PI;
+		if (a > PI) a -= 2*PI;
+		return a;
 	}
 }

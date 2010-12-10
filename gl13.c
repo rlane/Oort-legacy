@@ -96,31 +96,6 @@ void render_gl13(int _paused, int _render_all_debug_lines)
 	}
 }
 
-static double normalize_angle(double a)
-{
-	if (a < -M_PI) a += 2*M_PI;
-	if (a > M_PI) a -= 2*M_PI;
-	return a;
-}
-
-static void emit_ship(struct ship *s, void *unused)
-{
-	if (vec2_abs(s->physics->thrust) != 0) {
-		particle_shower(PARTICLE_ENGINE, s->physics->p, vec2_scale(s->physics->v, 1/32), vec2_scale(s->physics->thrust, -1/32), 0.1, 1, 4, 8);
-	}
-
-	if (s->gfx.class) {
-		double v_angle = atan2(s->physics->v.y, s->physics->v.x); // XXX reversed?
-		double da = normalize_angle(v_angle - s->gfx.angle);
-		s->gfx.angle = normalize_angle(s->gfx.angle + s->gfx.class->rotfactor*da);
-	}
-}
-
-void emit_particles(void)
-{
-	g_list_foreach(all_ships, (GFunc)emit_ship, NULL);
-}
-
 void init_gl13(void)
 {
 	gfx_prng = g_rand_new();
