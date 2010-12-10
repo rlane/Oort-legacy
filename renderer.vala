@@ -4,10 +4,13 @@ using Math;
 
 namespace RISC {
 	class Renderer {
+		public bool render_all_debug_lines;
+
 		Rand prng;
 
 		public void init() {
 			RISC.GL13.init();
+			render_all_debug_lines = false;
 
 			prng = new Rand();
 
@@ -33,9 +36,11 @@ namespace RISC {
 			RISC.GL13.reset();
 		}
 
-		public void render(bool paused, bool render_all_debug_lines) {
-			prng.set_seed(0);
-			RISC.GL13.render(paused, render_all_debug_lines);
+		public void render() {
+			prng.set_seed(0); // XXX tick seed
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glLoadIdentity();
 
 			foreach (unowned Ship s in RISC.all_ships) {
 				render_ship(s);
@@ -207,7 +212,7 @@ namespace RISC {
 				glEnd();
 			}
 
-			if (s == GL13.picked || GL13.render_all_debug_lines) {
+			if (s == GL13.picked || render_all_debug_lines) {
 				GLUtil.color32((uint32)0x49D5CEAA);
 				glBegin(GL_LINES);
 				for (int j = 0; j < s.debug.num_lines; j++) {

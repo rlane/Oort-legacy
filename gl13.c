@@ -72,14 +72,6 @@ Vec2 S(Vec2 p)
 		              vec2(screen_width/2, screen_height/2));
 }
 
-void render_gl13(int _paused, int _render_all_debug_lines)
-{
-	render_all_debug_lines = _render_all_debug_lines;
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-}
-
 void init_gl13(void)
 {
 	if (glewInit() != GLEW_OK) {

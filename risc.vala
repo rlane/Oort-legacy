@@ -35,7 +35,6 @@ namespace RISC {
 		private DrawingArea drawing_area;
 		private bool paused;
 		private bool single_step;
-		private bool render_all_debug_lines;
 		private unowned Team winner;
 		private Renderer renderer;
 
@@ -173,7 +172,7 @@ namespace RISC {
 			if (!gldrawable.gl_begin(glcontext))
 				return false;
 
-			renderer.render(paused, render_all_debug_lines);
+			renderer.render();
 			
 			switch (game_state) {
 			case GameState.DEMO:
@@ -227,7 +226,7 @@ namespace RISC {
 					single_step = true;
 					break;
 				case "y":
-					render_all_debug_lines = !render_all_debug_lines;
+					renderer.render_all_debug_lines = !renderer.render_all_debug_lines;
 					break;
 				case "p":
 					screenshot("screenshot.tga");

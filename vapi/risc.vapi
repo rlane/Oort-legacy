@@ -21,15 +21,11 @@ namespace RISC {
 		public double view_scale;
 		[CCode (cname = "picked")]
 		public unowned Ship picked;
-		[CCode (cname = "render_all_debug_lines")]
-		public bool render_all_debug_lines;
 
     [CCode (cname = "init_gl13")]
     public void init();
     [CCode (cname = "reset_gl13")]
     public void reset();
-    [CCode (cname = "render_gl13")]
-    public void render(bool paused, bool render_all_debug_lines);
     [CCode (cname = "reshape_gl13")]
     public void reshape(int x, int y);
 		[CCode (cname = "glutil_vprintf")]
