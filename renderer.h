@@ -5,6 +5,9 @@
 
 extern int paused;
 extern int single_step;
+extern double view_scale;
+extern struct ship *picked;
+extern int render_all_debug_lines;
 
 struct gfx_class {
 	double rotfactor;

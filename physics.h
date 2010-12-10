@@ -20,4 +20,14 @@ static inline double rad2deg(double a)
 	return a * 57.29578;
 }
 
+static inline struct physics *risc_physics_new()
+{
+	return g_malloc(sizeof(struct physics));
+}
+
+static inline void risc_physics_free(struct physics *q)
+{
+	g_free(q);
+}
+
 #endif

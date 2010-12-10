@@ -1,5 +1,6 @@
 using GL;
 using Vector;
+using Math;
 
 namespace RISC {
 	class Renderer {
@@ -36,8 +37,185 @@ namespace RISC {
 			prng.set_seed(0);
 			RISC.GL13.render(paused, render_all_debug_lines);
 
+			foreach (unowned Ship s in RISC.all_ships) {
+				render_ship(s);
+			}
+
 			foreach (unowned Bullet b in RISC.all_bullets) {
 				render_bullet(b);
+			}
+		}
+
+		void triangle_fractal(int depth) {
+			double alt = 0.8660254;
+
+			if (depth > 1) {
+				glBegin(GL_LINES);
+				glVertex3d(alt, 0, 0);
+				glVertex3d(3*alt/4, -0.125, 0);
+				glVertex3d(alt/4, -0.375, 0);
+				glVertex3d(0, -0.5, 0);
+				glVertex3d(alt, 0, 0);
+				glVertex3d(3*alt/4, 0.125, 0);
+				glVertex3d(alt/4, 0.375, 0);
+				glVertex3d(0, 0.5, 0);
+				glEnd();
+
+				glPushMatrix();
+				glScaled(0.5, 0.5, 0.5);
+				glRotated(60, 0, 0, 1);
+				glTranslated(alt, -0.5, 0);
+				triangle_fractal(depth-1);
+				glPopMatrix();
+
+				glPushMatrix();
+				glScaled(0.5, 0.5, 0.5);
+				glRotated(-60, 0, 0, 1);
+				glTranslated(alt, 0.5, 0);
+				triangle_fractal(depth-1);
+				glPopMatrix();
+			} else {
+				glBegin(GL_LINE_STRIP);
+				glVertex3d(0, -0.5, 0);
+				glVertex3d(alt, 0, 0);
+				glVertex3d(0, 0.5, 0);
+				glEnd();
+			}
+		}
+
+		void render_mothership(Ship s) {
+			int depth = int.min(int.max((int)Math.log2(GL13.view_scale), 2), 8);
+			GLUtil.color32(s.team.color | 0xEE);
+			glPushMatrix();
+			glScaled(0.5, 0.3, 0.3);
+			GLUtil.render_circle(5);
+			glPopMatrix();
+			triangle_fractal(depth);
+			glPushMatrix();
+			glRotated(180, 0, 0, 1);
+			triangle_fractal(depth);
+			glPopMatrix();
+		}
+
+		void render_fighter(Ship s) {
+			GLUtil.color32(s.team.color | 0xAA);
+			glBegin(GL_LINE_LOOP);
+			glVertex3d(-0.70, -0.71, 0);
+			glVertex3d(-0.70, 0.71, 0);
+			glVertex3d(1, 0, 0);
+			glEnd();
+		}
+
+		void render_missile(Ship s) {
+			GLUtil.color32((uint32)0x88888800 | 0x55);
+			GLUtil.render_circle(5);
+		}
+
+		void render_little_missile(Ship s) {
+			GLUtil.color32((uint32)0x88888800 | 0x55);
+			glBegin(GL_LINES);
+			glVertex3d(-0.70, -0.71, 0);
+			glVertex3d(-0.2, 0, 0);
+			glVertex3d(-0.70, 0.71, 0);
+			glVertex3d(-0.2, 0, 0);
+			glVertex3d(-0.2, 0, 0);
+			glVertex3d(1, 0, 0);
+			glEnd();
+		}
+
+		void render_unknown(Ship s) {
+			GLUtil.color32((uint32)0x88888800 | 0x55);
+			GLUtil.render_circle(8);
+		}
+
+		void render_ship(Ship s) {
+			var sp = GL13.S(s.physics.p);
+			double angle = s.gfx.angle;
+			double scale = GL13.view_scale * s.class.radius;
+
+			glPushMatrix();
+			glTranslated(sp.x, sp.y, 0);
+			glScaled(scale, scale, scale);
+			glRotated(rad2deg(angle), 0, 0, 1);
+
+			if (s.class.name == "mothership") {
+				render_mothership(s);
+			} else if (s.class.name == "fighter") {
+				render_fighter(s);
+			} else if (s.class.name == "missile") {
+				render_missile(s);
+			} else if (s.class.name == "little_missile") {
+				render_little_missile(s);
+			} else {
+				render_unknown(s);
+			}
+
+			glPopMatrix();
+
+			int tail_alpha_max = s.class.name.contains("missile") ? 16 : 64;
+			glBegin(GL_LINE_STRIP);
+			GLUtil.color32(s.team.color | tail_alpha_max);
+			glVertex3d(sp.x, sp.y, 0);
+			int i;
+			for (i = 0; i < Ship.TAIL_SEGMENTS-1; i++) {
+				int j = s.tail_head - i - 1;
+				if (j < 0) j += Ship.TAIL_SEGMENTS;
+				Vec2 sp2 = GL13.S(s.tail[j]);
+				if (isnan(sp2.x) != 0)
+					break;
+				uint32 color = s.team.color | (tail_alpha_max-(tail_alpha_max/Ship.TAIL_SEGMENTS)*i);
+
+				GLUtil.color32(color);
+				glVertex3d(sp2.x, sp2.y, 0);
+			}
+			glEnd();
+
+			if (s == GL13.picked) {
+				GLUtil.color32((uint32)0xCCCCCCAA);
+				glPushMatrix();
+				glTranslated(sp.x, sp.y, 0);
+				glScaled(scale, scale, scale);
+				GLUtil.render_circle(64);
+				glPopMatrix();
+
+				GLUtil.color32((uint32)0xCCCCCC77);
+				glPushMatrix();
+				glTranslated(sp.x, sp.y, 0);
+				glScaled(GL13.view_scale, GL13.view_scale, GL13.view_scale);
+				glBegin(GL_LINES);
+				glVertex3d(0, 0, 0);
+				glVertex3d(s.physics.thrust.x, s.physics.thrust.y, 0);
+				glEnd();
+				glPopMatrix();
+
+				GLUtil.color32((uint32)0x49D5CEAA);
+				glBegin(GL_LINE_STRIP);
+				glVertex3d(sp.x, sp.y, 0);
+				Physics q = s.physics.copy();
+				double tick_length = 1/32.0;
+				for (double j = 0; j < 1/tick_length; j++) {
+					q.tick_one(&tick_length);
+					Vec2 sp2 = GL13.S(q.p);
+					glVertex3d(sp2.x, sp2.y, 0);
+				}
+				glEnd();
+			}
+
+			if (s == GL13.picked || GL13.render_all_debug_lines) {
+				GLUtil.color32((uint32)0x49D5CEAA);
+				glBegin(GL_LINES);
+				for (int j = 0; j < s.debug.num_lines; j++) {
+					Vec2 sa = GL13.S(s.debug.lines[j].a);
+					Vec2 sb = GL13.S(s.debug.lines[j].b);
+					glVertex3d(sa.x, sa.y, 0);
+					glVertex3d(sb.x, sb.y, 0);
+				}
+				glEnd();
+			}
+
+			// XXX move
+			if (s == GL13.picked && s.dead) {
+				GL13.picked = null;
 			}
 		}
 
@@ -107,6 +285,19 @@ namespace RISC {
 			GLubyte b = (GLubyte) ((c >> 8) & 0xFF);
 			GLubyte a = (GLubyte) (c & 0xFF);
 			glColor4ub(r, g, b, a);
+		}
+
+		public void render_circle(int n)
+		{
+			double da = 2*Math.PI/n, a = 0;
+			int i;
+
+			glBegin(GL_LINE_LOOP);
+			for (i = 0; i < n; i++) {
+				a += da;
+				glVertex3d(cos(a), sin(a), 0);
+			}
+			glEnd();
 		}
 	}
 }

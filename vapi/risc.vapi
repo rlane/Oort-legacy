@@ -9,12 +9,21 @@
 [CCode (cheader_filename = "ship.h")]
 
 namespace RISC {
+	[CCode (cname = "all_ships")]
+	public GLib.List<Ship> all_ships;
 	[CCode (cname = "all_bullets")]
 	public GLib.List<Bullet> all_bullets;
 	[CCode (cname = "bullet_hits")]
 	public GLib.List<BulletHit> bullet_hits;
 
 	namespace GL13 {
+		[CCode (cname = "view_scale")]
+		public double view_scale;
+		[CCode (cname = "picked")]
+		public unowned Ship picked;
+		[CCode (cname = "render_all_debug_lines")]
+		public bool render_all_debug_lines;
+
     [CCode (cname = "init_gl13")]
     public void init();
     [CCode (cname = "reset_gl13")]
@@ -77,6 +86,24 @@ namespace RISC {
 			public double av;
 			public double r;
 			public double m;
+
+			[CCode (cname = "physics_tick_one")]
+			public void tick_one(double *tick_len);
+
+			public Physics() {}
+
+			public Physics copy() {
+				var q = new Physics();
+				q.p = p;
+				q.p0 = p0;
+				q.v = v;
+				q.thrust = thrust;
+				q.a = a;
+				q.av = av;
+				q.r = r;
+				q.m = m;
+				return q;
+			}
 		}
 
 		public enum BulletType {
@@ -128,18 +155,11 @@ namespace RISC {
 			public Vector.Vec2 cp;
 			public double e;
 		}
-		
-		[Ccode (cname = "TAIL_SEGMENTS")]
-		const int TAIL_SEGMENTS;
-		[Ccode (cname = "TAIL_TICKS")]
-		const int TAIL_TICKS;
-		[Ccode (cname = "MAX_DEBUG_LINES")]
-		const int MAX_DEBUG_LINES;
 
 		[CCode (cname = "struct ship_class", destroy_function = "")]
 		public class ShipClass {
-			string name;
-			double radius;
+			public string name;
+			public double radius;
 			public double hull;
 			public bool count_for_victory;
 		}
@@ -152,6 +172,13 @@ namespace RISC {
     [CCode (cname = "struct ship", destroy_function = "")]
 		[Compact]
 		public class Ship {
+			[CCode (cname = "TAIL_SEGMENTS")]
+			public const int TAIL_SEGMENTS;
+			[CCode (cname = "TAIL_TICKS")]
+			public const int TAIL_TICKS;
+			[CCode (cname = "MAX_DEBUG_LINES")]
+			public const int MAX_DEBUG_LINES;
+
 			public struct LuaMemState {
 				public Lua.AllocFunc allocator;
 				public void *allocator_ud;
@@ -198,4 +225,7 @@ namespace RISC {
 
 		[CCode (cname = "game_check_victory")]
 		public unowned Team game_check_victory();
+
+		[CCode (cname = "rad2deg")]
+		public double rad2deg(double a);
 }
