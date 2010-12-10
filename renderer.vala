@@ -15,6 +15,7 @@ namespace RISC {
 
 		public void init() {
 			RISC.GL13.init();
+			RISC.gfx_ship_create_cb = on_ship_created;
 			render_all_debug_lines = false;
 
 			prng = new Rand();
@@ -360,6 +361,12 @@ namespace RISC {
 			}
 			view_scale *= f;
 			view_scale = double.min(double.max(view_scale, min_view_scale), max_view_scale);
+		}
+
+		static void on_ship_created(Ship s)
+		{
+			s.gfx.class = ShipGfxClass.lookup(s.class.name);
+			s.gfx.angle = atan2(s.physics.v.y, s.physics.v.x);
 		}
 	}
 

@@ -25,7 +25,7 @@ char RKEY_SHIP[1];
 
 GList *all_ships = NULL;
 GHashTable *ship_classes;
-void (*gfx_ship_create_cb)(struct ship *s);
+RISCOnShipCreated gfx_ship_create_cb;
 static GList *new_ships = NULL;
 static GStaticMutex new_ships_lock = G_STATIC_MUTEX_INIT;
 static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;

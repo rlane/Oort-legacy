@@ -38,20 +38,15 @@ static struct gfx_class gfx_little_missile = {
 	.rotfactor = 0.7,
 };
 
-const struct gfx_class *lookup_gfx_class(const char *name)
-{
-	if (!(strcmp(name, "fighter"))) return &gfx_fighter;
-	if (!(strcmp(name, "mothership"))) return &gfx_mothership;
-	if (!(strcmp(name, "missile"))) return &gfx_missile;
-	if (!(strcmp(name, "little_missile"))) return &gfx_little_missile;
-	return NULL;
-}
+static struct gfx_class gfx_unknown = {
+	.rotfactor = 1.0,
+};
 
-static void gfx_ship_created(struct ship *s)
-{
-	s->gfx.class = lookup_gfx_class(s->class->name);
-	s->gfx.angle = atan2(s->physics->v.y, s->physics->v.x); // XXX reversed?
-}
+struct gfx_class *gfx_fighter_p = &gfx_fighter;
+struct gfx_class *gfx_mothership_p = &gfx_mothership;
+struct gfx_class *gfx_missile_p = &gfx_missile;
+struct gfx_class *gfx_little_missile_p = &gfx_little_missile;
+struct gfx_class *gfx_unknown_p = &gfx_unknown;
 
 void init_gl13(void)
 {
@@ -59,6 +54,4 @@ void init_gl13(void)
 		fprintf(stderr, "glewInit failed\n");
 		abort();
 	}
-
-	gfx_ship_create_cb = gfx_ship_created;
 }

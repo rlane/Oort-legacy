@@ -52,7 +52,9 @@ struct ship {
 extern const struct ship_class fighter, mothership;
 extern GList *all_ships;
 extern GHashTable *ship_classes;
-extern void (*gfx_ship_create_cb)(struct ship *s);
+
+typedef void (*RISCOnShipCreated)(struct ship *s);
+extern RISCOnShipCreated gfx_ship_create_cb;
 
 struct ship *ship_create(const char *filename, const char *class_name, struct team *team, Vec2 p, Vec2 v, const char *orders);
 void ship_purge();
