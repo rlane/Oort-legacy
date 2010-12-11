@@ -15,6 +15,8 @@ namespace RISC {
 	public GLib.List<Bullet> all_bullets;
 	[CCode (cname = "bullet_hits")]
 	public GLib.List<BulletHit> bullet_hits;
+	[CCode (cname = "ticks")]
+	public int ticks;
 
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);

@@ -16,3 +16,5 @@ risc-gtk-vala
 callgrind.out*
 risc.c
 renderer.c
+risc-dedicated-vala
+risc-dedicated-vala.c
