@@ -17,13 +17,9 @@ core_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c ut
 core_vala = 
 core_objects = $(core_sources:.c=.o) $(core_vala:.vala=.o)
 
-dedicated_sources = risc-dedicated.c
-dedicated_vala =
+dedicated_sources =
+dedicated_vala = risc-dedicated.vala
 dedicated_objects = $(dedicated_sources:.c=.o) $(dedicated_vala:.vala=.o)
-
-dedicated2_sources =
-dedicated2_vala = risc-dedicated-vala.vala
-dedicated2_objects = $(dedicated2_sources:.c=.o) $(dedicated2_vala:.vala=.o)
 
 ui_sources = particle.c gl13.c glutil.c
 ui_vala = risc.vala renderer.vala
@@ -31,7 +27,7 @@ ui_objects = $(ui_sources:.c=.o) $(ui_vala:.vala=.o)
 
 vapi = vapi/risc.vapi vapi/vector.vapi
 
-all: luacheck risc risc-dedicated risc-dedicated-vala
+all: luacheck risc risc-dedicated
 
 luacheck:
 	@echo using Lua package $(LUAPKG)
@@ -44,18 +40,17 @@ luacheck:
 
 -include $(core_sources:.c=.d)
 
-$(core-vala:.vala=.c): $(core-vala) $(vapi)
+$(core_vala:.vala=.c): $(core_vala) $(vapi)
 	valac -C --pkg gtk+-2.0 --pkg lua --pkg risc --pkg vector --vapidir vapi $(core-vala)
 
 $(ui_vala:.vala=.c): $(ui_vala) $(vapi)
 	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg gl --pkg vector --vapidir vapi $(ui_vala)
 
-$(dedicated2_vala:.vala=.c): $(dedicated2_vala) $(vapi)
-	valac -C --pkg gtk+-2.0 --pkg lua --pkg risc --pkg vector --vapidir vapi $(dedicated2_vala)
+$(dedicated_vala:.vala=.c): $(dedicated_vala) $(vapi)
+	valac -C --pkg gtk+-2.0 --pkg lua --pkg risc --pkg vector --vapidir vapi $(dedicated_vala)
 
 $(core_objects) : CFLAGS = $(CORE_CFLAGS)
 $(dedicated_objects) : CFLAGS = $(CORE_CFLAGS)
-$(dedicated2_objects) : CFLAGS = $(CORE_CFLAGS)
 $(ui_objects) : CFLAGS = $(UI_CFLAGS)
 
 risc: LDFLAGS = $(UI_LDFLAGS)
@@ -64,9 +59,6 @@ risc: $(ui_objects) $(core_objects)
 risc-dedicated: LDFLAGS = $(CORE_LDFLAGS)
 risc-dedicated: $(dedicated_objects) $(core_objects)
 
-risc-dedicated-vala: LDFLAGS = $(CORE_LDFLAGS)
-risc-dedicated-vala: $(dedicated2_objects) $(core_objects)
-
 benchmark: risc-dedicated
 	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./risc-dedicated scenarios/benchmark.lua
 
@@ -74,11 +66,6 @@ challenge: risc-dedicated
 	./risc-dedicated scenarios/challenge01.lua solutions/challenge01.lua
 	./risc-dedicated scenarios/challenge02.lua solutions/challenge02.lua
 	./risc-dedicated scenarios/challenge03.lua solutions/challenge03.lua
-
-challenge-vala: risc-dedicated-vala
-	./risc-dedicated-vala scenarios/challenge01.lua solutions/challenge01.lua
-	./risc-dedicated-vala scenarios/challenge02.lua solutions/challenge02.lua
-	./risc-dedicated-vala scenarios/challenge03.lua solutions/challenge03.lua
 
 run: risc-dedicated
 	./risc-dedicated scenarios/basic.lua examples/switch.lua examples/switch.lua
