@@ -1,6 +1,11 @@
 using RISC;
 using RISC.C;
 
+#if VALGRIND_VALA
+[CCode (cheader_filename = "callgrind.h")]
+bool callgrind_collection_started = 0;
+#endif
+
 double tick_length = 1.0/32;
 
 int main(string[] args) {
@@ -38,8 +43,24 @@ int main(string[] args) {
 			break;
 		}
 
+#if VALGRIND_VALA
+		if (ticks == 10) {
+			callgrind_collection_started = 1;
+		}
+
+		if (callgrind_collection_started) {
+			CALLGRIND_TOGGLE_COLLECT;
+		}
+#endif
+
 		game_tick(tick_length);
 		game_purge();
+
+#if VALGRIND_VALA
+		if (callgrind_collection_started) {
+			CALLGRIND_TOGGLE_COLLECT;
+		}
+#endif
 
 		unowned Team winner = game_check_victory();
 		if (winner != null) {
