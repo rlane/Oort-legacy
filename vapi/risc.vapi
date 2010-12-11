@@ -49,9 +49,6 @@ namespace RISC {
 		public unowned Team check_victory();
 	}
 
-	[CCode (cname = "particle_tick")]
-	public void particle_tick();
-
 	[CCode (cname = "screenshot")]
 	public void screenshot(string filename);
 	
@@ -152,11 +149,15 @@ namespace RISC {
 		[CCode (cname = "particle_get")]
 		public static unowned Particle get(int i);
 
+		[CCode (cname = "particle_create")]
+		public static void create(ParticleType type, Vector.Vec2 p, Vector.Vec2 v, uint16 lifetime);
 		[CCode (cname = "particle_shower")]
 		public static void shower(ParticleType type,
 		                          Vector.Vec2 p0, Vector.Vec2 v0, Vector.Vec2 v,
 		                          double s_max, uint16 life_min, uint16 life_max,
 		                          uint16 count);
+		[CCode (cname = "particle_tick")]
+		public static void tick();
 	}
 
 	[CCode (cname = "struct bullet_hit", destroy_function = "")]

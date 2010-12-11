@@ -126,7 +126,7 @@ namespace RISC {
 			if (!paused) {
 				Game.purge();
 				Game.tick(1.0/32);
-				particle_tick();
+				Particle.tick();
 				renderer.tick();
 
 				if (game_state == GameState.RUNNING) {
