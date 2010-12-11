@@ -36,14 +36,18 @@ namespace RISC {
 		public int envtol(string k, int i);
 	}
 
+	namespace Game {
 		[CCode (cname = "game_init")]
-		public int game_init(int seed, string scenario, string[] ais);
+		public int init(int seed, string scenario, string[] ais);
 		[CCode (cname = "game_purge")]
-		public void game_purge();
+		public void purge();
 		[CCode (cname = "game_tick")]
-		public void game_tick(double tick_length);
+		public void tick(double tick_length);
 		[CCode (cname = "game_shutdown")]
-		public void game_shutdown();
+		public void shutdown();
+		[CCode (cname = "game_check_victory")]
+		public unowned Team check_victory();
+	}
 
 		[CCode (cname = "particle_tick")]
 		public void particle_tick();
@@ -247,9 +251,6 @@ namespace RISC {
 			[CCode (cname = "ship_get_energy")]
 			public double get_energy();
 		}
-
-		[CCode (cname = "game_check_victory")]
-		public unowned Team game_check_victory();
 
 		[CCode (cname = "rad2deg")]
 		public double rad2deg(double a);

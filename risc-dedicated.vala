@@ -21,9 +21,9 @@ int main(string[] args) {
 	}
 
 	if (args.length <= 1) {
-		game_init(42, data_path("scenarios/demo1.lua"), { });
+		Game.init(42, data_path("scenarios/demo1.lua"), { });
 	} else {
-		game_init(seed, args[1], args[2:(args.length)]);
+		Game.init(seed, args[1], args[2:(args.length)]);
 	}
 
 	TimeVal last_sample_time = TimeVal();
@@ -53,8 +53,8 @@ int main(string[] args) {
 		}
 #endif
 
-		game_tick(tick_length);
-		game_purge();
+		Game.tick(tick_length);
+		Game.purge();
 
 #if VALGRIND_VALA
 		if (callgrind_collection_started) {
@@ -62,7 +62,7 @@ int main(string[] args) {
 		}
 #endif
 
-		unowned Team winner = game_check_victory();
+		unowned Team winner = Game.check_victory();
 		if (winner != null) {
 			print("Team '%s' is victorious in %0.2f seconds\n", winner.name, ticks*tick_length);
 			break;
@@ -71,7 +71,7 @@ int main(string[] args) {
 		sample_ticks++;
 	}
 
-	game_shutdown();
+	Game.shutdown();
 
 	return 0;
 }

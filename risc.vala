@@ -124,13 +124,13 @@ namespace RISC {
 
 		private bool tick() {
 			if (!paused) {
-				game_purge();
-				game_tick(1.0/32);
+				Game.purge();
+				Game.tick(1.0/32);
 				particle_tick();
 				renderer.tick();
 
 				if (game_state == GameState.RUNNING) {
-					winner = game_check_victory();
+					winner = Game.check_victory();
 					if (winner != null) {
 						game_state = GameState.FINISHED;
 					}
@@ -268,9 +268,9 @@ namespace RISC {
 		}
 
 		public void start_game(int seed, string scenario, string[] ais) {
-			RISC.game_shutdown();
+			RISC.Game.shutdown();
 			renderer.init();
-			if (RISC.game_init(seed, scenario, ais) != 0) {
+			if (RISC.Game.init(seed, scenario, ais) != 0) {
 				warning("initialization failed\n");
 				start_demo_game();
 			} else {
