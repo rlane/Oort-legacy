@@ -25,6 +25,7 @@ public class RISC.Bullet {
 		var physics = Physics.create();
 		physics.p = p;
 		physics.v = v;
+		physics.r = r;
 		physics.m = m;
 		var b = new Bullet() { team=team, physics=(owned)physics, ttl=ttl, type=type };
 
