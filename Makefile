@@ -92,4 +92,9 @@ clean:
 	rm -f $(core_vala:.vala=.c) $(ui_vala:.vala=.c) $(dedicated_vala:.vala=.c)
 	rm -f *.o *.d risc risc-dedicated
 
+test_check_collision: CFLAGS = $(CORE_CFLAGS)
+test_check_collision: LDFLAGS = $(CORE_LDFLAGS)
+test_check_collision: test_check_collision.o physics.o
+	gcc -o test_check_collision test_check_collision.o physics.o $(LDFLAGS)
+
 .PHONY: all clean benchmark luacheck install run run-ui

@@ -5,20 +5,23 @@
 #include <math.h>
 
 #include "physics.h"
+#include "vector.h"
 
 #if 0
-vec2 C(double x, double y)
+Vec2 C(double x, double y)
 {
 	return x + y*I;
 }
 #endif
 
+#define C(x,y) ((Vec2) { x, y })
+
 typedef struct testcase {
-	vec2 p1, v1;
+	Vec2 p1, v1;
 	double r1;
-	vec2 p2, v2;
+	Vec2 p2, v2;
 	double r2;
-	vec2 cp;
+	Vec2 cp;
 } testcase;
 
 testcase testcases[] = {
@@ -29,17 +32,17 @@ testcase testcases[] = {
 	// no collision
 	{ C(0.0, 0.0), C(0.0, 0.0), 1.0,
 		C(-2.0, -2.0), C(10.0, 0.0), 0.1,
-		NAN },
+		C(NAN,NAN) },
 
 	// future collision
 	{ C(0.0, 0.0), C(0.0, 0.0), 1.0,
 		C(-2.0, 1.0), C(0.1, 0.0), 0.1,
-		NAN },
+		C(NAN,NAN) },
 
 	// past collision
 	{ C(0.0, 0.0), C(0.0, 0.0), 1.0,
 		C(2.0, 1.0), C(0.1, 0.0), 0.1,
-		NAN },
+		C(NAN,NAN) },
 
 	/*
 	{ C(0.0, 0.0), C(0.0, 0.0), C(-1.0, 0.1), C(1.0, 0.1), 0.1, 0.1, C(0.0, 0.1) },
@@ -62,11 +65,12 @@ int main(int argc, char **argv)
 	int i;
 	for (i = 0; i < sizeof(testcases)/sizeof(testcase); i++) {
 		testcase c = testcases[i];
-		vec2 cp;
+		Vec2 cp;
 		struct physics q1 = { .p = c.p1, .v = c.v1, .r = c.r1 };
 		struct physics q2 = { .p = c.p2, .v = c.v2, .r = c.r2 };
 		if (!physics_check_collision(&q1, &q2, 1, &cp)) {
-			cp = NAN;
+			cp.x = NAN;
+			cp.y = NAN;
 			printf("no collision\n");
 		}
 
@@ -79,7 +83,7 @@ int main(int argc, char **argv)
 		printf("got=" VEC2_FMT " expected=" VEC2_FMT " ",
 				   VEC2_ARG(cp), VEC2_ARG(c.cp));
 
-		if (cp == c.cp || (isnan(cp) && isnan(c.cp))) {
+		if ((cp.x == c.cp.x && cp.y == c.cp.y) || (isnan(cp.x) && isnan(c.cp.x))) {
 			printf("pass\n");
 		} else {
 			printf("fail\n");
