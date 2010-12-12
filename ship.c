@@ -30,6 +30,7 @@ static GList *new_ships = NULL;
 static GStaticMutex new_ships_lock = G_STATIC_MUTEX_INIT;
 static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;
 static const int ai_mem_limit = 1<<20;
+FILE *trace_file = NULL;
 
 void ship_destroy(struct ship *s);
 

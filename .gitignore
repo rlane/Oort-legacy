@@ -16,7 +16,7 @@ risc-gtk-vala
 callgrind.out*
 risc.c
 renderer.c
-game-vala.c
+game.c
 risc-dedicated.c
 risc.h
 vapi/risc.vapi
