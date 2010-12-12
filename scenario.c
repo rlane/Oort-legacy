@@ -34,7 +34,7 @@ static int scn_ship(lua_State *L)
 	struct team *team = team_lookup(team_name);
 	if (!team) return luaL_argerror(L, 2, "invalid team");
 
-	struct ship *s = ship_create(team->filename, ship_class_name, team, C(x,y), C(0,0), orders);
+	struct ship *s = ship_create(team->filename, ship_class_name, team, C(x,y), C(0,0), orders, g_rand_int(prng));
 	if (!s) return luaL_error(L, "ship creation failed");
 	return 0;
 }

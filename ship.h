@@ -54,7 +54,7 @@ extern GList *all_ships;
 extern GHashTable *ship_classes;
 extern void (*gfx_ship_create_cb)(struct ship *s);
 
-struct ship *ship_create(const char *filename, const char *class_name, struct team *team, vec2 p, vec2 v, const char *orders);
+struct ship *ship_create(const char *filename, const char *class_name, struct team *team, vec2 p, vec2 v, const char *orders, int seed);
 void ship_purge();
 void ship_shutdown();
 void ship_tick(double t);
