@@ -30,7 +30,7 @@ void particle_shower(enum particle_type type,
 		double fdp = g_random_double();
 		Vec2 dp = vec2_scale(v, fdp);
 		int life = (life_min == life_max) ? life_min : g_random_int_range(life_min,life_max);
-		Vec2 dv = vec2(cosf(a) * s, sinf(a) * s);
+		Vec2 dv = vec2(cos(a)*s, sin(a)*s);
 		particle_create(type, vec2_add(p0,dp), vec2_add(vec2_add(v0,v),dv), life);
 	}
 }
