@@ -7,6 +7,8 @@
 [CCode (cheader_filename = "physics.h")]
 [CCode (cheader_filename = "bullet.h")]
 [CCode (cheader_filename = "ship.h")]
+[CCode (cheader_filename = "scenario.h")]
+[CCode (cheader_filename = "task.h")]
 
 namespace RISC {
 	[CCode (cname = "all_ships")]
@@ -35,8 +37,6 @@ namespace RISC {
 	}
 
 	namespace CGame {
-		[CCode (cname = "game_init")]
-		public int init(int seed, string scenario, string[] ais);
 		[CCode (cname = "game_purge")]
 		public void purge();
 		[CCode (cname = "game_tick")]
@@ -272,6 +272,9 @@ namespace RISC {
 		public Gfx gfx;
 		public Debug debug;
 
+		[CCode (cname = "ship_get_energy")]
+		public double get_energy();
+
 		[CCode (cname = "ship_create")]
 		public static unowned Ship create(string filename, string class_name, RISC.Team team, Vector.Vec2 p, Vector.Vec2 v, string orders);
 		[CCode (cname = "ship_purge")]
@@ -281,9 +284,7 @@ namespace RISC {
 		[CCode (cname = "ship_tick")]
 		public static void tick(double tick_length);
 		[CCode (cname = "load_ship_classes")]
-		public static int load_ship_classes(string filename);
-		[CCode (cname = "ship_get_energy")]
-		public double get_energy();
+		public static bool load_classes(string filename);
 	}
 
 	namespace Task {
@@ -293,6 +294,11 @@ namespace RISC {
 		public static void wait();
 		[CCode (cname = "task_shutdown")]
 		public static void shutdown();
+	}
+
+	namespace Scenario {
+		[CCode (cname = "load_scenario")]
+		public bool load(string scenario, string[] ais);
 	}
 
 	[CCode (cname = "rad2deg")]

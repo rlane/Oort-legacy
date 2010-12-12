@@ -3,9 +3,23 @@ using RISC;
 namespace RISC.Game {
 	[CCode (cname = "ticks")]
 	public int ticks;
+	[CCode (cname = "prng")]
+	public Rand prng;
 
 	public int init(int seed, string scenario, string[] ais) {
-		return CGame.init(seed, scenario, ais);
+		Task.init(C.envtol("RISC_NUM_THREADS", 8));
+		prng = new Rand.with_seed(seed);
+		ticks = 0;
+
+		if (Ship.load_classes(data_path("ships.lua"))) {
+			return 1;
+		}
+
+		if (Scenario.load(scenario, ais)) {
+			return 1;
+		}
+
+		return 0;
 	}
 
 	public void purge() {

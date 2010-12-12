@@ -39,7 +39,7 @@ static int scn_ship(lua_State *L)
 	return 0;
 }
 
-int load_scenario(const char *filename, int num_teams, char **teams)
+int load_scenario(const char *filename, char **teams, int num_teams)
 {
 	lua_State *L = luaL_newstate();
 

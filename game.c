@@ -14,7 +14,6 @@
 #include "util.h"
 
 GList *bullet_hits = NULL;
-GRand *prng = NULL;
 FILE *trace_file = NULL;
 
 static void handle_bullet_hit(struct ship *s, struct bullet *b, Vec2 cp)
@@ -50,38 +49,6 @@ static void check_bullet_hits(double tick_length)
 			}
 		}
 	}
-}
-
-int game_init(int seed, const char *scenario, char **teams, int num_teams)
-{
-	task_init(envtol("RISC_NUM_THREADS", 8));
-
-	prng = g_rand_new_with_seed(seed);
-
-	ticks = 0;
-
-	printf("loading ships...\n");
-
-	if (load_ship_classes(data_path("ships.lua"))) {
-		return 1;
-	}
-
-	printf("loading scenario...\n");
-
-	if (scenario) {
-		if (load_scenario(scenario, num_teams, teams)) {
-			return 1;
-		}
-	} else {
-		const char *default_scenario = data_path("scenarios/basic.lua");
-		char *default_teams[] = { data_path("examples/switch.lua"), data_path("examples/switch.lua") };
-
-		if (load_scenario(default_scenario, sizeof(default_teams)/sizeof(*default_teams), default_teams)) {
-			return 1;
-		}
-	}
-
-	return 0;
 }
 
 void game_tick(double tick_length)
