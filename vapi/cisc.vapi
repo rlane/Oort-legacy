@@ -36,7 +36,7 @@ namespace RISC {
 		public int envtol(string k, int i);
 	}
 
-	namespace Game {
+	namespace CGame {
 		[CCode (cname = "game_init")]
 		public int init(int seed, string scenario, string[] ais);
 		[CCode (cname = "game_purge")]

@@ -14,7 +14,7 @@ UI_CFLAGS:=$(CORE_CFLAGS) `pkg-config --cflags $(UI_PKGS)`
 UI_LDFLAGS:=$(CORE_LDFLAGS) `pkg-config --libs $(UI_PKGS)` -lGL -lGLU
 
 core_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c util.c api_sensors.c api_team.c
-core_vala = 
+core_vala = game-vala.vala
 core_objects = $(core_sources:.c=.o) $(core_vala:.vala=.o)
 
 dedicated_sources =
@@ -25,7 +25,7 @@ ui_sources = particle.c gl13.c glutil.c
 ui_vala = risc.vala renderer.vala
 ui_objects = $(ui_sources:.c=.o) $(ui_vala:.vala=.o)
 
-vapi = vapi/risc.vapi vapi/vector.vapi
+vapi = vapi/vector.vapi
 
 all: luacheck risc risc-dedicated
 
@@ -40,14 +40,18 @@ luacheck:
 
 -include $(core_sources:.c=.d)
 
-$(core_vala:.vala=.c): $(core_vala) $(vapi)
-	valac -C --pkg gtk+-2.0 --pkg lua --pkg risc --pkg vector --vapidir vapi $(core-vala)
+$(core_vala:.vala=.c) risc.h vapi/risc.vapi: $(core_vala) $(vapi) vapi/cisc.vapi
+	valac --library risc --basedir ./ -H risc.h --vapi vapi/risc.vapi -C --pkg lua --pkg cisc --pkg vector --vapidir vapi $(core_vala)
+	mv vapi/risc.vapi vapi/risc.vapi.tmp
+	echo '[CCode (cheader_filename = "risc.h")]' > vapi/risc.vapi
+	cat vapi/risc.vapi.tmp >> vapi/risc.vapi
+	rm vapi/risc.vapi.tmp
 
-$(ui_vala:.vala=.c): $(ui_vala) $(vapi)
-	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg gl --pkg vector --vapidir vapi $(ui_vala)
+$(ui_vala:.vala=.c): $(ui_vala) $(vapi) vapi/cisc.vapi vapi/risc.vapi
+	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg cisc --pkg gl --pkg vector --vapidir vapi $(ui_vala)
 
-$(dedicated_vala:.vala=.c): $(dedicated_vala) $(vapi)
-	valac -C --pkg gtk+-2.0 --pkg lua --pkg risc --pkg vector --vapidir vapi $(dedicated_vala)
+$(dedicated_vala:.vala=.c): $(dedicated_vala) $(vapi) vapi/cisc.vapi vapi/risc.vapi
+	valac -C --pkg lua --pkg risc --pkg vector --pkg cisc --vapidir vapi $(dedicated_vala)
 
 $(core_objects) : CFLAGS = $(CORE_CFLAGS)
 $(dedicated_objects) : CFLAGS = $(CORE_CFLAGS)
@@ -84,6 +88,8 @@ install: risc risc-dedicated
 	install scenarios/*.lua $(DESTDIR)/usr/share/risc/scenarios
 
 clean:
-	rm -f *.o *.d risc risc-dedicated risc-dedicated-vala risc.c renderer.c risc-dedicated-vala.c
+	rm -f risc.h vapi/risc.vapi
+	rm -f $(core_vala:.vala=.c) $(ui_vala:.vala=.c) $(dedicated_vala:.vala=.c)
+	rm -f *.o *.d risc risc-dedicated
 
 .PHONY: all clean benchmark luacheck install run run-ui
