@@ -119,7 +119,7 @@ static int api_class(lua_State *L)
 
 static int api_time(lua_State *L)
 {
-	lua_pushnumber(L, current_time);
+	lua_pushnumber(L, ticks/32.0);
 	return 1;
 }
 

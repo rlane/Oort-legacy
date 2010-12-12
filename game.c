@@ -13,9 +13,7 @@
 #include "task.h"
 #include "util.h"
 
-int ticks;
 GList *bullet_hits = NULL;
-double current_time = 0.0;
 GRand *prng = NULL;
 FILE *trace_file = NULL;
 
@@ -89,11 +87,6 @@ int game_init(int seed, const char *scenario, char **teams, int num_teams)
 void game_tick(double tick_length)
 {
 	check_bullet_hits(tick_length);
-	physics_tick(tick_length);
-	ship_tick(tick_length);
-	bullet_tick(tick_length);
-	current_time += tick_length;
-	ticks += 1;
 }
 
 static void free_bullet_hit(struct bullet_hit *h)
@@ -106,15 +99,4 @@ void game_purge(void)
 	g_list_foreach(bullet_hits, (GFunc)free_bullet_hit, NULL);
 	g_list_free(bullet_hits);
 	bullet_hits = NULL;
-	bullet_purge();
-	ship_purge();
-}
-
-void game_shutdown(void)
-{
-	task_shutdown();
-	ship_shutdown();
-	bullet_shutdown();
-	team_shutdown();
-	if (prng) g_rand_free(prng);
 }

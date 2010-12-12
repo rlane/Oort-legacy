@@ -15,8 +15,6 @@ namespace RISC {
 	public GLib.List<Bullet> all_bullets;
 	[CCode (cname = "bullet_hits")]
 	public GLib.List<BulletHit> bullet_hits;
-	[CCode (cname = "ticks")]
-	public int ticks;
 
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);
@@ -43,8 +41,6 @@ namespace RISC {
 		public void purge();
 		[CCode (cname = "game_tick")]
 		public void tick(double tick_length);
-		[CCode (cname = "game_shutdown")]
-		public void shutdown();
 	}
 
 	[CCode (cname = "screenshot")]
@@ -62,6 +58,17 @@ namespace RISC {
 		public string name;
 		public string filename;
 		public int ships;
+
+		[CCode (cname = "all_teams")]
+		public static GLib.List<Team> all;
+		[CCode (cname = "team_create")]
+		public static unowned Team create(string name, string filename, uint32 color);
+		[CCode (cname = "team_destroy")]
+		public static void destroy(Team team);
+		[CCode (cname = "team_shutdown")]
+		public static void shutdown();
+		[CCode (cname = "team_lookup")]
+		public static unowned Team lookup(string name);
 	}
 
 	[CCode (cname = "struct physics", destroy_function = "")]
@@ -78,6 +85,15 @@ namespace RISC {
 
 		[CCode (cname = "physics_tick_one")]
 		public void tick_one(double *tick_len);
+		[CCode (cname = "physics_destroy")]
+		public void destroy();
+
+		[CCode (cname = "physics_create")]
+		public static unowned Physics physics_create();
+		[CCode (cname = "physics_tick")]
+		public static void tick(double tick_length);
+		[CCode (cname = "physics_check_collision")]
+		public static void check_collision(Physics q1, Physics q2, double interval, Vector.Vec2 *cp);
 
 		public Physics() {}
 
@@ -256,8 +272,27 @@ namespace RISC {
 		public Gfx gfx;
 		public Debug debug;
 
+		[CCode (cname = "ship_create")]
+		public static unowned Ship create(string filename, string class_name, RISC.Team team, Vector.Vec2 p, Vector.Vec2 v, string orders);
+		[CCode (cname = "ship_purge")]
+		public static void purge();
+		[CCode (cname = "ship_shutdown")]
+		public static void shutdown();
+		[CCode (cname = "ship_tick")]
+		public static void tick(double tick_length);
+		[CCode (cname = "load_ship_classes")]
+		public static int load_ship_classes(string filename);
 		[CCode (cname = "ship_get_energy")]
 		public double get_energy();
+	}
+
+	namespace Task {
+		[CCode (cname = "task_init")]
+		public static void init(int thread_pool_size);
+		[CCode (cname = "task_wait")]
+		public static void wait();
+		[CCode (cname = "task_shutdown")]
+		public static void shutdown();
 	}
 
 	[CCode (cname = "rad2deg")]

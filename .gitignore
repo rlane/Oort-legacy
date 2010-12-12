@@ -19,3 +19,4 @@ renderer.c
 game-vala.c
 risc-dedicated.c
 risc.h
+vapi/risc.vapi

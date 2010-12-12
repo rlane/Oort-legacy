@@ -38,13 +38,13 @@ int main(string[] args) {
 			last_sample_time = now;
 		}
 
-		if (max_ticks >= 0 && ticks >= max_ticks) {
-			print("exiting after %d ticks\n", ticks);
+		if (max_ticks >= 0 && Game.ticks >= max_ticks) {
+			print("exiting after %d ticks\n", Game.ticks);
 			break;
 		}
 
 #if VALGRIND_VALA
-		if (ticks == 10) {
+		if (Game.ticks == 10) {
 			callgrind_collection_started = 1;
 		}
 
@@ -64,7 +64,7 @@ int main(string[] args) {
 
 		unowned Team winner = Game.check_victory();
 		if (winner != null) {
-			print("Team '%s' is victorious in %0.2f seconds\n", winner.name, ticks*tick_length);
+			print("Team '%s' is victorious in %0.2f seconds\n", winner.name, Game.ticks*tick_length);
 			break;
 		}
 
