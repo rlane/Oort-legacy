@@ -257,7 +257,7 @@ static void render_bullet(struct bullet *b, void *unused)
 		vec2 offset = g_rand_double(gfx_prng) * b->physics->v/64;
 		p1 = b->physics->p + offset;
     p2 = b->physics->p + offset + dp;
-    sp1 = S(b->physics->p);
+    sp1 = S(p1);
     sp2 = S(p2);
 
     glBegin(GL_LINE_STRIP);
