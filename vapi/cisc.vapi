@@ -5,7 +5,6 @@
 [CCode (cheader_filename = "util.h")]
 [CCode (cheader_filename = "team.h")]
 [CCode (cheader_filename = "physics.h")]
-[CCode (cheader_filename = "bullet.h")]
 [CCode (cheader_filename = "ship.h")]
 [CCode (cheader_filename = "scenario.h")]
 [CCode (cheader_filename = "task.h")]
@@ -13,8 +12,6 @@
 namespace RISC {
 	[CCode (cname = "all_ships")]
 	public GLib.List<Ship> all_ships;
-	[CCode (cname = "all_bullets")]
-	public GLib.List<Bullet> all_bullets;
 
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);
@@ -62,7 +59,7 @@ namespace RISC {
 		public static unowned Team lookup(string name);
 	}
 
-	[CCode (cname = "struct physics", destroy_function = "")]
+	[CCode (cname = "struct physics", destroy_function = "physics_destroy")]
 	[Compact]
 	public class Physics {
 		public Vector.Vec2 p;
@@ -80,7 +77,7 @@ namespace RISC {
 		public void destroy();
 
 		[CCode (cname = "physics_create")]
-		public static unowned Physics physics_create();
+		public static Physics create();
 		[CCode (cname = "physics_tick")]
 		public static void tick(double tick_length);
 		[CCode (cname = "physics_check_collision")]
@@ -100,32 +97,6 @@ namespace RISC {
 			q.m = m;
 			return q;
 		}
-	}
-
-	public enum BulletType {
-		[CCode (cname = "BULLET_SLUG")]
-		SLUG,
-		[CCode (cname = "BULLET_PLASMA")]
-		PLASMA,
-	}
-
-	[CCode (cname = "struct bullet", destroy_function = "")]
-	[Compact]
-	public class Bullet {
-		public Physics physics;
-		public unowned Team team;
-		public double ttl;
-		public bool dead;
-		public BulletType type;
-
-		[CCode (cname = "bullet_create")]
-		public static unowned Bullet create;
-		[CCode (cname = "bullet_purge")]
-		public static void purge();
-		[CCode (cname = "bullet_shutdown")]
-		public static void shutdown();
-		[CCode (cname = "bullet_tick")]
-		public static void tick(double t);
 	}
 
 	public enum ParticleType {

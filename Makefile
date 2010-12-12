@@ -14,7 +14,7 @@ UI_CFLAGS:=$(CORE_CFLAGS) `pkg-config --cflags $(UI_PKGS)`
 UI_LDFLAGS:=$(CORE_LDFLAGS) `pkg-config --libs $(UI_PKGS)` -lGL -lGLU
 
 core_sources = bullet.c  game.c  physics.c  scenario.c  ship.c  task.c team.c util.c api_sensors.c api_team.c
-core_vala = game.vala
+core_vala = game.vala bullet.vala
 core_objects = $(core_sources:.c=.o) $(core_vala:.vala=.o)
 
 dedicated_sources =

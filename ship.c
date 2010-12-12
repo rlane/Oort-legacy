@@ -11,13 +11,15 @@
 
 #include "game.h"
 #include "physics.h"
-#include "bullet.h"
 #include "ship.h"
 #include "team.h"
 #include "task.h"
 #include "api_sensors.h"
 #include "api_team.h"
 #include "util.h"
+
+#include <glib-object.h>
+#include "risc.h"
 
 #define LW_VERBOSE 0
 
@@ -98,15 +100,7 @@ static int api_create_bullet(lua_State *L)
 	double ttl = luaL_checknumber(L, 6);
 	int type = luaL_checkint(L, 7);
 
-	struct bullet *b = bullet_create();
-	if (!b) return luaL_error(L, "bullet creation failed");
-
-	b->team = s->team;
-	b->physics->p = vec2(x,y);
-	b->physics->v = vec2(vx,vy);
-	b->physics->m = m;
-	b->ttl = ttl;
-	b->type = type;
+	risc_bullet_create(s->team, vec2(x,y), vec2(vx,vy), 1.0/32, m, ttl, type);
 
 	return 0;
 }

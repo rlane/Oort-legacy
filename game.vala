@@ -20,9 +20,11 @@ namespace RISC.Game {
 	public List<BulletHit> bullet_hits;
 
 	public int init(int seed, string scenario, string[] ais) {
-		Task.init(C.envtol("RISC_NUM_THREADS", 8));
 		prng = new Rand.with_seed(seed);
 		ticks = 0;
+
+		Task.init(C.envtol("RISC_NUM_THREADS", 8));
+		Bullet.init();
 
 		if (Ship.load_classes(data_path("ships.lua"))) {
 			return 1;
@@ -72,7 +74,7 @@ namespace RISC.Game {
 
 	public void check_bullet_hits(double tick_length) {
 		foreach (unowned Ship s in all_ships) {
-			foreach (unowned Bullet b in all_bullets) {
+			foreach (unowned Bullet b in Bullet.all_bullets) {
 				Vec2 cp;
 				if (Physics.check_collision(s.physics, b.physics, tick_length, out cp)) {
 					handle_bullet_hit(s, b, cp);

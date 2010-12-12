@@ -54,7 +54,7 @@ namespace RISC {
 				render_ship(s);
 			}
 
-			foreach (unowned Bullet b in RISC.all_bullets) {
+			foreach (unowned Bullet b in Bullet.all_bullets) {
 				render_bullet(b);
 			}
 
@@ -239,6 +239,8 @@ namespace RISC {
 		}
 
 		private void render_bullet(Bullet b) {
+			RISC.GLUtil.color32((uint32)0xFFFFFFAA);
+
 			if (b.dead) return;
 
 			if (b.type == RISC.BulletType.SLUG) {
@@ -304,7 +306,7 @@ namespace RISC {
 		}
 
 		public void tick() {
-			foreach (unowned Bullet b in RISC.all_bullets) {
+			foreach (unowned Bullet b in Bullet.all_bullets) {
 				if (b.type == BulletType.PLASMA) {
 					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
 							            double.min(b.physics.m/5,0.1), 3, 4, 6);
