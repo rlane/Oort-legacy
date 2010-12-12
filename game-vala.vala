@@ -1,10 +1,23 @@
 using RISC;
+using Vector;
+
+public GLib.List<BulletHit> bullet_hits;
+
+[Compact]
+public class RISC.BulletHit {
+	public unowned Ship s;
+	public unowned Bullet b;
+	public Vector.Vec2 cp;
+	public double e;
+}
 
 namespace RISC.Game {
 	[CCode (cname = "ticks")]
 	public int ticks;
 	[CCode (cname = "prng")]
 	public Rand prng;
+
+	public List<BulletHit> bullet_hits;
 
 	public int init(int seed, string scenario, string[] ais) {
 		Task.init(C.envtol("RISC_NUM_THREADS", 8));
@@ -23,13 +36,13 @@ namespace RISC.Game {
 	}
 
 	public void purge() {
-		CGame.purge();
+		bullet_hits = null;
 		Bullet.purge();
 		Ship.purge();
 	}
 
 	public void tick(double tick_length) {
-		CGame.tick(tick_length);
+		check_bullet_hits(tick_length);
 		Physics.tick(tick_length);
 		Bullet.tick(tick_length);
 		Ship.tick(tick_length);
@@ -55,5 +68,35 @@ namespace RISC.Game {
 		}
 
 		return winner;
+	}
+
+	public void check_bullet_hits(double tick_length) {
+		foreach (unowned Ship s in all_ships) {
+			foreach (unowned Bullet b in all_bullets) {
+				Vec2 cp;
+				if (Physics.check_collision(s.physics, b.physics, tick_length, out cp)) {
+					handle_bullet_hit(s, b, cp);
+				}
+			}
+		}
+	}
+
+	public void handle_bullet_hit(Ship s, Bullet b, Vec2 cp) {
+		b.dead = true;
+		if (b.team != s.team) {
+			var dv = s.physics.v.sub(b.physics.v);
+			var hit_energy = 0.5 * b.physics.m * dv.abs(); // XXX squared
+			s.hull -= hit_energy;
+			if (s.hull <= 0) {
+				s.dead = true;
+			}
+
+			BulletHit hit = new BulletHit();
+			hit.s = s;
+			hit.b = b;
+			hit.cp = cp;
+			hit.e = hit_energy;
+			bullet_hits.prepend((owned) hit);
+		}
 	}
 }

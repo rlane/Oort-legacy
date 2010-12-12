@@ -15,8 +15,6 @@ namespace RISC {
 	public GLib.List<Ship> all_ships;
 	[CCode (cname = "all_bullets")]
 	public GLib.List<Bullet> all_bullets;
-	[CCode (cname = "bullet_hits")]
-	public GLib.List<BulletHit> bullet_hits;
 
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);
@@ -34,13 +32,6 @@ namespace RISC {
 
 		[CCode (cname = "envtol")]
 		public int envtol(string k, int i);
-	}
-
-	namespace CGame {
-		[CCode (cname = "game_purge")]
-		public void purge();
-		[CCode (cname = "game_tick")]
-		public void tick(double tick_length);
 	}
 
 	[CCode (cname = "screenshot")]
@@ -93,7 +84,7 @@ namespace RISC {
 		[CCode (cname = "physics_tick")]
 		public static void tick(double tick_length);
 		[CCode (cname = "physics_check_collision")]
-		public static void check_collision(Physics q1, Physics q2, double interval, Vector.Vec2 *cp);
+		public static bool check_collision(Physics q1, Physics q2, double interval, out Vector.Vec2 cp);
 
 		public Physics() {}
 
@@ -172,15 +163,6 @@ namespace RISC {
 		                          uint16 count);
 		[CCode (cname = "particle_tick")]
 		public static void tick();
-	}
-
-	[CCode (cname = "struct bullet_hit", destroy_function = "")]
-	[Compact]
-	public class BulletHit {
-		public unowned Ship s;
-		public unowned Bullet b;
-		public Vector.Vec2 cp;
-		public double e;
 	}
 
 	[CCode (cname = "struct ship_class", destroy_function = "")]

@@ -306,12 +306,12 @@ namespace RISC {
 		public void tick() {
 			foreach (unowned Bullet b in RISC.all_bullets) {
 				if (b.type == BulletType.PLASMA) {
-					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1/63),
+					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
 							            double.min(b.physics.m/5,0.1), 3, 4, 6);
 				}
 			}
 
-			foreach (unowned BulletHit hit in RISC.bullet_hits) {
+			foreach (unowned BulletHit hit in Game.bullet_hits) {
 				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(1/32), vec2(0,0), 0.1, 1, 20, (uint16)(hit.e*100));
 			}
 
