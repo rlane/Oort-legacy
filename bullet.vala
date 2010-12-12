@@ -6,6 +6,7 @@ public enum RISC.BulletType {
 	PLASMA = 2,
 }
 
+[Compact]
 public class RISC.Bullet {
 	public Physics physics;
 	public unowned Team team;
@@ -34,17 +35,14 @@ public class RISC.Bullet {
 		new_bullets_lock.unlock();
 	}
 
-	// XXX
 	public static void purge() {
-		var dead_bullets = new List<Bullet>();
-		foreach (unowned Bullet b in all_bullets) {
-			if (b.dead) {
-				dead_bullets.prepend(b);
+		unowned List<Bullet> cur = all_bullets;
+		while (cur != null) {
+			unowned List<Bullet> next = cur.next;
+			if (cur.data.dead) {
+				all_bullets.delete_link(cur);
 			}
-		}
-
-		foreach (unowned Bullet b in dead_bullets) {
-			all_bullets.remove(b);
+			cur = next;
 		}
 	}
 

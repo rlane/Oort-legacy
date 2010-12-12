@@ -59,7 +59,7 @@ namespace RISC {
 		public static unowned Team lookup(string name);
 	}
 
-	[CCode (cname = "struct physics", destroy_function = "physics_destroy")]
+	[CCode (cname = "struct physics", free_function = "physics_destroy")]
 	[Compact]
 	public class Physics {
 		public Vector.Vec2 p;
