@@ -227,7 +227,8 @@ static int api_spawn(lua_State *L)
 	const char *filename = s->team->filename;
 
 	struct ship *child = ship_create(filename, class_name, s->team,
-			                             s->physics->p, s->physics->v, orders);
+			                             s->physics->p, s->physics->v,
+																	 orders, g_rand_int(s->prng));
 	if (!child) return luaL_error(L, "failed to create ship");
 	return 0;
 }
@@ -456,7 +457,7 @@ void ship_tick(double t)
 }
 
 struct ship *ship_create(const char *filename, const char *class_name, struct team *team,
-		                     Vec2 p, Vec2 v, const char *orders)
+		                     Vec2 p, Vec2 v, const char *orders, int seed)
 {
 	struct ship *s = g_slice_new0(struct ship);
 
@@ -486,9 +487,9 @@ struct ship *ship_create(const char *filename, const char *class_name, struct te
 
 	s->tail_head = 0;
 
-	s->prng = g_rand_new_with_seed(g_rand_int(prng));
+	s->prng = g_rand_new_with_seed(seed);
 	s->mq = g_queue_new();
-	s->api_id = g_rand_int(prng);
+	s->api_id = g_rand_int(s->prng);
 
 	g_static_mutex_lock(&new_ships_lock);
 	new_ships = g_list_append(new_ships, s);

@@ -56,7 +56,7 @@ extern GHashTable *ship_classes;
 typedef void (*RISCOnShipCreated)(struct ship *s);
 extern RISCOnShipCreated gfx_ship_create_cb;
 
-struct ship *ship_create(const char *filename, const char *class_name, struct team *team, Vec2 p, Vec2 v, const char *orders);
+struct ship *ship_create(const char *filename, const char *class_name, struct team *team, Vec2 p, Vec2 v, const char *orders, int seed);
 void ship_purge();
 void ship_shutdown();
 void ship_tick(double t);
