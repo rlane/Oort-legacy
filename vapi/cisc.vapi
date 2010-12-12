@@ -45,8 +45,6 @@ namespace RISC {
 		public void tick(double tick_length);
 		[CCode (cname = "game_shutdown")]
 		public void shutdown();
-		[CCode (cname = "game_check_victory")]
-		public unowned Team check_victory();
 	}
 
 	[CCode (cname = "screenshot")]

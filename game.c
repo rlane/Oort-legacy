@@ -118,20 +118,3 @@ void game_shutdown(void)
 	team_shutdown();
 	if (prng) g_rand_free(prng);
 }
-
-struct team *game_check_victory(void)
-{
-	struct team *winner = NULL;
-	GList *e;
-
-	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
-		struct ship *s = e->data;
-		if (!s->class->count_for_victory) continue;
-		if (winner && s->team != winner) {
-			return NULL;
-		}
-		winner = s->team;
-	}
-
-	return winner;
-}
