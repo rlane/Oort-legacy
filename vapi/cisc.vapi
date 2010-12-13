@@ -34,6 +34,8 @@ namespace RISC {
 	[CCode (cname = "screenshot")]
 	public void screenshot(string filename);
 	
+	[CCode (cname = "data_dir")]
+	public string data_dir;
 	[CCode (cname = "find_data_dir")]
 	public bool find_data_dir();
 	[CCode (cname = "data_path")]
@@ -229,7 +231,7 @@ namespace RISC {
 		public double get_energy();
 
 		[CCode (cname = "ship_create")]
-		public static unowned Ship create(string filename, string class_name, RISC.Team team, Vector.Vec2 p, Vector.Vec2 v, string orders);
+		public static unowned Ship create(string filename, string class_name, RISC.Team team, Vector.Vec2 p, Vector.Vec2 v, string orders, uint32 seed);
 		[CCode (cname = "ship_purge")]
 		public static void purge();
 		[CCode (cname = "ship_shutdown")]
@@ -247,11 +249,6 @@ namespace RISC {
 		public static void wait();
 		[CCode (cname = "task_shutdown")]
 		public static void shutdown();
-	}
-
-	namespace Scenario {
-		[CCode (cname = "load_scenario")]
-		public bool load(string scenario, string[] ais);
 	}
 
 	[CCode (cname = "rad2deg")]

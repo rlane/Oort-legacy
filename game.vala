@@ -30,7 +30,7 @@ namespace RISC.Game {
 			return 1;
 		}
 
-		if (Scenario.load(scenario, ais)) {
+		if (!Scenario.load(scenario, ais)) {
 			return 1;
 		}
 
