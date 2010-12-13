@@ -25,6 +25,7 @@ namespace RISC.Game {
 
 		Task.init(C.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();
+		Physics.init();
 
 		if (Ship.load_classes(data_path("ships.lua"))) {
 			return 1;

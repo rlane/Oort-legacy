@@ -10,7 +10,6 @@
 #include <stdint.h>
 
 #include "risc.h"
-#include "physics.h"
 #include "ship.h"
 #include "task.h"
 #include "api_sensors.h"
@@ -464,10 +463,8 @@ struct ship *ship_create(const char *filename, const char *class_name, RISCTeam 
 		return NULL;
 	}
 
-	s->physics = physics_create();
-	s->physics->r = s->class->radius;
-	s->physics->p = p;
-	s->physics->v = v;
+	// XXX mass
+	s->physics = risc_physics_create(p, p, v, vec2(0,0), 0, 0, 1, s->class->radius);
 
 	s->dead = 0;
 	s->ai_dead = 0;
@@ -515,7 +512,7 @@ void ship_destroy(struct ship *s)
 	}
 	g_queue_free(s->mq);
 
-	physics_destroy(s->physics);
+	risc_physics_free(s->physics);
 	lua_close(s->lua);
 	g_rand_free(s->prng);
 	g_slice_free(struct ship, s);

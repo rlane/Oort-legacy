@@ -21,7 +21,7 @@ struct ship {
 	guint32 api_id;
 	const struct ship_class *class;
 	struct _RISCTeam *team;
-	struct physics *physics;
+	struct _RISCPhysics *physics;
 	double energy, hull;
 	lua_State *lua, *global_lua;
 	struct {

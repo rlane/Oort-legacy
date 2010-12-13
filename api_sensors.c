@@ -10,7 +10,6 @@
 #include <stdint.h>
 
 #include "risc.h"
-#include "physics.h"
 #include "ship.h"
 #include "api_team.h"
 

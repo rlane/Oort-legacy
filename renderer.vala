@@ -213,7 +213,7 @@ namespace RISC {
 				Physics q = s.physics.copy();
 				double tick_length = 1/32.0;
 				for (double j = 0; j < 1/tick_length; j++) {
-					q.tick_one(&tick_length);
+					q.tick_one(tick_length);
 					Vec2 sp2 = S(q.p);
 					glVertex3d(sp2.x, sp2.y, 0);
 				}

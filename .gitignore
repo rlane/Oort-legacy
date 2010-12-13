@@ -23,3 +23,4 @@ vapi/risc.vapi
 bullet.c
 scenario.c
 team.c
+physics.c

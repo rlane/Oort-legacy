@@ -2,7 +2,6 @@
 [CCode (cheader_filename = "particle.h")]
 [CCode (cheader_filename = "glutil.h")]
 [CCode (cheader_filename = "util.h")]
-[CCode (cheader_filename = "physics.h")]
 [CCode (cheader_filename = "ship.h")]
 [CCode (cheader_filename = "task.h")]
 
@@ -37,46 +36,6 @@ namespace RISC {
 	public bool find_data_dir();
 	[CCode (cname = "data_path")]
 	public string data_path(string subpath);
-
-	[CCode (cname = "struct physics", free_function = "physics_destroy")]
-	[Compact]
-	public class Physics {
-		public Vector.Vec2 p;
-		public Vector.Vec2 p0;
-		public Vector.Vec2 v;
-		public Vector.Vec2 thrust;
-		public double a;
-		public double av;
-		public double r;
-		public double m;
-
-		[CCode (cname = "physics_tick_one")]
-		public void tick_one(double *tick_len);
-		[CCode (cname = "physics_destroy")]
-		public void destroy();
-
-		[CCode (cname = "physics_create")]
-		public static Physics create();
-		[CCode (cname = "physics_tick")]
-		public static void tick(double tick_length);
-		[CCode (cname = "physics_check_collision")]
-		public static bool check_collision(Physics q1, Physics q2, double interval, out Vector.Vec2 cp);
-
-		public Physics() {}
-
-		public Physics copy() {
-			var q = new Physics();
-			q.p = p;
-			q.p0 = p0;
-			q.v = v;
-			q.thrust = thrust;
-			q.a = a;
-			q.av = av;
-			q.r = r;
-			q.m = m;
-			return q;
-		}
-	}
 
 	public enum ParticleType {
 		[CCode (cname = "PARTICLE_HIT")]
