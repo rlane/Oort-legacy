@@ -9,10 +9,9 @@
 #include <lauxlib.h>
 #include <stdint.h>
 
-#include "game.h"
+#include "risc.h"
 #include "physics.h"
 #include "ship.h"
-#include "team.h"
 #include "task.h"
 #include "api_sensors.h"
 #include "api_team.h"
@@ -451,7 +450,7 @@ void ship_tick(double t)
 	task_wait();
 }
 
-struct ship *ship_create(const char *filename, const char *class_name, struct team *team,
+struct ship *ship_create(const char *filename, const char *class_name, RISCTeam *team,
 		                     Vec2 p, Vec2 v, const char *orders, int seed)
 {
 	struct ship *s = g_slice_new0(struct ship);

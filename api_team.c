@@ -9,11 +9,10 @@
 #include <lauxlib.h>
 #include <stdint.h>
 
-#include "game.h"
+#include "risc.h"
 #include "physics.h"
 #include "bullet.h"
 #include "ship.h"
-#include "team.h"
 #include "task.h"
 #include "api_team.h"
 
@@ -21,10 +20,10 @@ char UKEY_TEAM[1];
 
 struct ud_team {
 	const void *magic;
-	const struct team *team;
+	const RISCTeam *team;
 };
 
-void ud_team_new(lua_State *L, const struct team *team)
+void ud_team_new(lua_State *L, const RISCTeam *team)
 {
 	struct ud_team *u = lua_newuserdata(L, sizeof(*u));
 	u->magic = UKEY_TEAM;

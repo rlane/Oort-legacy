@@ -12,12 +12,9 @@
 
 #include <GL/glew.h>
 
-#include "game.h"
 #include "physics.h"
 #include "ship.h"
 #include "bullet.h"
-#include "scenario.h"
-#include "team.h"
 #include "particle.h"
 #include "glutil.h"
 #include "renderer.h"

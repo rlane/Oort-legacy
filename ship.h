@@ -20,7 +20,7 @@ struct ship_class {
 struct ship {
 	guint32 api_id;
 	const struct ship_class *class;
-	struct team *team;
+	struct _RISCTeam *team;
 	struct physics *physics;
 	double energy, hull;
 	lua_State *lua, *global_lua;
@@ -56,7 +56,7 @@ extern GHashTable *ship_classes;
 typedef void (*RISCOnShipCreated)(struct ship *s);
 extern RISCOnShipCreated gfx_ship_create_cb;
 
-struct ship *ship_create(const char *filename, const char *class_name, struct team *team, Vec2 p, Vec2 v, const char *orders, int seed);
+struct ship *ship_create(const char *filename, const char *class_name, struct _RISCTeam *team, Vec2 p, Vec2 v, const char *orders, int seed);
 void ship_purge();
 void ship_shutdown();
 void ship_tick(double t);

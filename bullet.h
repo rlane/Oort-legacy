@@ -11,7 +11,7 @@ enum bullet_type {
 
 struct bullet {
 	struct physics *physics;
-	struct team *team;
+	struct _RISCTeam *team;
 	double ttl;
 	int dead;
 	int type;

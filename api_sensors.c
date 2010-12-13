@@ -9,11 +9,10 @@
 #include <lauxlib.h>
 #include <stdint.h>
 
-#include "game.h"
+#include "risc.h"
 #include "physics.h"
 #include "bullet.h"
 #include "ship.h"
-#include "team.h"
 #include "task.h"
 #include "api_team.h"
 
@@ -22,13 +21,13 @@ char UKEY_SENSOR_CONTACT[1];
 struct sensor_contact {
 	void *magic;
 	guint32 id;
-	const struct team *team;
+	const RISCTeam *team;
 	const struct ship_class *class;
 	Vec2 p, v;
 };
 
 struct sensor_query {
-	const struct team *my_team;
+	const RISCTeam *my_team;
 	int enemy;
 	const struct ship_class *class;
 	double distance_lt, distance_gt;

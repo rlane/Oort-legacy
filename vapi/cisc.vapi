@@ -1,12 +1,9 @@
 [CCode (cheader_filename = "renderer.h")]
-[CCode (cheader_filename = "game.h")]
 [CCode (cheader_filename = "particle.h")]
 [CCode (cheader_filename = "glutil.h")]
 [CCode (cheader_filename = "util.h")]
-[CCode (cheader_filename = "team.h")]
 [CCode (cheader_filename = "physics.h")]
 [CCode (cheader_filename = "ship.h")]
-[CCode (cheader_filename = "scenario.h")]
 [CCode (cheader_filename = "task.h")]
 
 namespace RISC {
@@ -40,26 +37,6 @@ namespace RISC {
 	public bool find_data_dir();
 	[CCode (cname = "data_path")]
 	public string data_path(string subpath);
-
-	[CCode (cname = "struct team", destroy_function = "")]
-	[Compact]
-	public class Team {
-		public uint32 color;
-		public string name;
-		public string filename;
-		public int ships;
-
-		[CCode (cname = "all_teams")]
-		public static GLib.List<Team> all;
-		[CCode (cname = "team_create")]
-		public static unowned Team create(string name, string filename, uint32 color);
-		[CCode (cname = "team_destroy")]
-		public static void destroy(Team team);
-		[CCode (cname = "team_shutdown")]
-		public static void shutdown();
-		[CCode (cname = "team_lookup")]
-		public static unowned Team lookup(string name);
-	}
 
 	[CCode (cname = "struct physics", free_function = "physics_destroy")]
 	[Compact]
