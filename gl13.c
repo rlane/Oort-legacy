@@ -12,11 +12,6 @@
 
 #include <GL/glew.h>
 
-#include "physics.h"
-#include "ship.h"
-#include "bullet.h"
-#include "particle.h"
-#include "glutil.h"
 #include "renderer.h"
 
 static struct gfx_class gfx_fighter = {

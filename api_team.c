@@ -10,10 +10,7 @@
 #include <stdint.h>
 
 #include "risc.h"
-#include "physics.h"
-#include "bullet.h"
 #include "ship.h"
-#include "task.h"
 #include "api_team.h"
 
 char UKEY_TEAM[1];
