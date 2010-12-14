@@ -11,7 +11,6 @@
 
 #include "risc.h"
 #include "ship.h"
-#include "task.h"
 #include "api_sensors.h"
 #include "api_team.h"
 #include "util.h"
@@ -444,9 +443,9 @@ void ship_tick(double t)
 	new_ships = NULL;
 	GList *e;
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
-		task((task_func)ship_tick_one, e->data, NULL);
+		risc_task_task((RISCTaskTaskFunc)ship_tick_one, e->data, NULL);
 	}
-	task_wait();
+	risc_task_wait();
 }
 
 struct ship *ship_create(const char *filename, const char *class_name, RISCTeam *team,

@@ -3,7 +3,6 @@
 [CCode (cheader_filename = "glutil.h")]
 [CCode (cheader_filename = "util.h")]
 [CCode (cheader_filename = "ship.h")]
-[CCode (cheader_filename = "task.h")]
 
 namespace RISC {
 	[CCode (cname = "all_ships")]
@@ -176,15 +175,6 @@ namespace RISC {
 		public static void tick(double tick_length);
 		[CCode (cname = "load_ship_classes")]
 		public static bool load_classes(string filename);
-	}
-
-	namespace Task {
-		[CCode (cname = "task_init")]
-		public static void init(int thread_pool_size);
-		[CCode (cname = "task_wait")]
-		public static void wait();
-		[CCode (cname = "task_shutdown")]
-		public static void shutdown();
 	}
 
 	[CCode (cname = "rad2deg")]

@@ -62,3 +62,8 @@ char *data_path(const char *subpath)
 	sprintf(path, "%s/%s", data_dir, subpath);
 	return path;
 }
+
+void *leak(void *arg)
+{
+	return arg;
+}
