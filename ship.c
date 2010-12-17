@@ -23,7 +23,6 @@
 char RKEY_SHIP[1];
 
 GList *all_ships = NULL;
-GHashTable *ship_classes;
 RISCOnShipCreated gfx_ship_create_cb;
 static GList *new_ships = NULL;
 static GStaticMutex new_ships_lock = G_STATIC_MUTEX_INIT;
@@ -455,7 +454,7 @@ struct ship *ship_create(const char *filename, const char *class_name, RISCTeam 
 
 	s->team = team;
 
-	s->class = g_hash_table_lookup(ship_classes, class_name);
+	s->class = risc_shipclass_lookup(class_name);
 	if (!s->class) {
 		fprintf(stderr, "class '%s' not found\n", class_name);
 		g_slice_free(struct ship, s);
@@ -529,22 +528,9 @@ void ship_purge(void)
 	}
 }
 
-static int free_ship_class(char *name, struct ship_class *class)
-{
-	free(name);
-	g_slice_free(struct ship_class, class);
-	return TRUE;
-}
-
 void ship_shutdown(void)
 {
 	g_list_foreach(all_ships, (GFunc)ship_destroy, NULL);
-
-	if (ship_classes) {
-		g_hash_table_foreach_remove(ship_classes, (GHRFunc)free_ship_class, NULL);
-		g_hash_table_destroy(ship_classes);
-		ship_classes = NULL;
-	}
 }
 
 static double lua_getfield_double(lua_State *L, int index, const char *key)
@@ -553,45 +539,4 @@ static double lua_getfield_double(lua_State *L, int index, const char *key)
 	double v = lua_tonumber(L, -1);
 	lua_pop(L, 1);
 	return v;
-}
-
-int load_ship_classes(const char *filename)
-{
-	lua_State *L;
-
-	L = luaL_newstate();
-	//luaL_openlibs(L);
-
-	if (luaL_dofile(L, filename)) {
-		fprintf(stderr, "Failed to load ships from %s: %s\n", filename, lua_tostring(L, -1));
-		lua_close(L);
-		return -1;
-	}
-
-	lua_getglobal(L, "ships");
-
-	if (lua_isnil(L, 1)) {
-		fprintf(stderr, "Failed to load ships from %s: 'ships' table not defined\n", filename);
-		lua_close(L);
-		return -1;
-	}
-
-	ship_classes = g_hash_table_new(g_str_hash, g_str_equal);
-
-	lua_pushnil(L);
-	while (lua_next(L, 1) != 0) {
-		char *name = g_strdup(lua_tolstring(L, -2, NULL));
-		struct ship_class *c = g_slice_new(struct ship_class);
-		c->name = name;
-		c->radius = lua_getfield_double(L, -1, "radius");
-		c->hull = lua_getfield_double(L, -1, "hull");
-		lua_getfield(L, -1, "count_for_victory");
-		c->count_for_victory = lua_toboolean(L, -1);
-		lua_pop(L, 1);
-		g_hash_table_insert(ship_classes, name, c);
-		lua_pop(L, 1);
-	}
-
-	lua_close(L);
-	return 0;
 }

@@ -422,5 +422,12 @@ namespace Lua {
 
 		[CCode (cname = "luaL_error")]
 		public int err (string msg);
+
+		public double get_field_number(int index, string key) {
+			get_field(index, key);
+			var x = check_number(-1);
+			pop(1);
+			return x;
+		}
 	}
 }

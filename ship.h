@@ -6,20 +6,13 @@
 #ifndef SHIP_H
 #define SHIP_H
 
-struct ship_class {
-	const char *name;
-	double radius;
-	double hull;
-	int count_for_victory;
-};
-
 #define TAIL_SEGMENTS 16
 #define TAIL_TICKS 4
 #define MAX_DEBUG_LINES 32
 
 struct ship {
 	guint32 api_id;
-	const struct ship_class *class;
+	const struct _RISCShipClass *class;
 	struct _RISCTeam *team;
 	struct _RISCPhysics *physics;
 	double energy, hull;
@@ -49,9 +42,7 @@ struct ship {
 	} gfx;
 };
 
-extern const struct ship_class fighter, mothership;
 extern GList *all_ships;
-extern GHashTable *ship_classes;
 
 typedef void (*RISCOnShipCreated)(struct ship *s);
 extern RISCOnShipCreated gfx_ship_create_cb;
@@ -60,7 +51,6 @@ struct ship *ship_create(const char *filename, const char *class_name, struct _R
 void ship_purge();
 void ship_shutdown();
 void ship_tick(double t);
-int load_ship_classes(const char *filename);
 double ship_get_energy(struct ship *s);
 struct ship *lua_ship(lua_State *L);
 

@@ -24,3 +24,5 @@ bullet.c
 scenario.c
 team.c
 physics.c
+task.c
+ship_class.c

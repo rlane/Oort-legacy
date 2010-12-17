@@ -27,7 +27,7 @@ namespace RISC.Game {
 		Bullet.init();
 		Physics.init();
 
-		if (Ship.load_classes(data_path("ships.lua"))) {
+		if (!ShipClass.load(data_path("ships.lua"))) {
 			return 1;
 		}
 

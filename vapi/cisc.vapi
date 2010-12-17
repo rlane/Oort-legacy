@@ -73,14 +73,6 @@ namespace RISC {
 		public static void tick();
 	}
 
-	[CCode (cname = "struct ship_class", destroy_function = "")]
-	public class ShipClass {
-		public string name;
-		public double radius;
-		public double hull;
-		public bool count_for_victory;
-	}
-
 	[CCode (cname = "struct gfx_class", destroy_function = "")]
 	[Compact]
 	public class ShipGfxClass {
@@ -173,8 +165,6 @@ namespace RISC {
 		public static void shutdown();
 		[CCode (cname = "ship_tick")]
 		public static void tick(double tick_length);
-		[CCode (cname = "load_ship_classes")]
-		public static bool load_classes(string filename);
 	}
 
 	[CCode (cname = "rad2deg")]

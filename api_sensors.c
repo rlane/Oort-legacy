@@ -19,14 +19,14 @@ struct sensor_contact {
 	void *magic;
 	guint32 id;
 	const RISCTeam *team;
-	const struct ship_class *class;
+	const RISCShipClass *class;
 	Vec2 p, v;
 };
 
 struct sensor_query {
 	const RISCTeam *my_team;
 	int enemy;
-	const struct ship_class *class;
+	const RISCShipClass *class;
 	double distance_lt, distance_gt;
 	double hull_lt, hull_gt;
 	unsigned int limit;
@@ -147,7 +147,7 @@ void parse_sensor_query(lua_State *L, struct sensor_query *query, int idx)
 	lua_pushstring(L, "class");
 	lua_rawget(L, idx);
 	if ((str = lua_tostring(L, -1))) {
-		query->class = g_hash_table_lookup(ship_classes, str);
+		query->class = risc_shipclass_lookup(str);
 	} else {
 		query->class = NULL;
 	}
