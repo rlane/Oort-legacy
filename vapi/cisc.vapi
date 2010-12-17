@@ -73,34 +73,6 @@ namespace RISC {
 		public static void tick();
 	}
 
-	[CCode (cname = "struct gfx_class", destroy_function = "")]
-	[Compact]
-	public class ShipGfxClass {
-		public double rotfactor;
-
-		[CCode (cname = "gfx_fighter_p")]
-		static ShipGfxClass fighter;
-		[CCode (cname = "gfx_mothership_p")]
-		static ShipGfxClass mothership;
-		[CCode (cname = "gfx_missile_p")]
-		static ShipGfxClass missile;
-		[CCode (cname = "gfx_little_missile_p")]
-		static ShipGfxClass little_missile;
-		[CCode (cname = "gfx_unknown_p")]
-		static ShipGfxClass unknown;
-
-		public static unowned ShipGfxClass lookup(string name)
-		{
-			switch (name) {
-				case "fighter": return fighter;
-				case "mothership": return mothership;
-				case "missile": return missile;
-				case "little_missile": return little_missile;
-				default: return unknown;
-			}
-		}
-	}
-
 	[CCode (cname = "struct ship", destroy_function = "")]
 	[Compact]
 	public class Ship {
@@ -119,7 +91,7 @@ namespace RISC {
 		}
 
 		public struct Gfx {
-			public unowned ShipGfxClass @class;
+			public void *@class;
 			public double angle;
 		}
 

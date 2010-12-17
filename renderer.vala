@@ -2,6 +2,36 @@ using GL;
 using Vector;
 using Math;
 
+[Compact]
+public class RISC.ShipGfxClass {
+	public double rotfactor;
+
+	public static ShipGfxClass fighter;
+	public static ShipGfxClass mothership;
+	public static ShipGfxClass missile;
+	public static ShipGfxClass little_missile;
+	public static ShipGfxClass unknown;
+	
+	public static void init() {
+		fighter = new ShipGfxClass() { rotfactor=0.5 };
+		mothership = new ShipGfxClass() { rotfactor=0.05 };
+		missile = new ShipGfxClass() { rotfactor=0.6 };
+		little_missile = new ShipGfxClass() { rotfactor=0.7 };
+		unknown = new ShipGfxClass() { rotfactor=1.0 };
+	}
+
+	public static unowned ShipGfxClass lookup(string name)
+	{
+		switch (name) {
+			case "fighter": return fighter;
+			case "mothership": return mothership;
+			case "missile": return missile;
+			case "little_missile": return little_missile;
+			default: return unknown;
+		}
+	}
+}
+
 namespace RISC {
 	class Renderer {
 		public bool render_all_debug_lines;
@@ -15,6 +45,7 @@ namespace RISC {
 
 		public void init() {
 			RISC.GL13.init();
+			ShipGfxClass.init();
 			RISC.gfx_ship_create_cb = on_ship_created;
 			render_all_debug_lines = false;
 
@@ -324,7 +355,8 @@ namespace RISC {
 
 				double v_angle = atan2(s.physics.v.y, s.physics.v.x); // XXX reversed?
 				double da = normalize_angle(v_angle - s.gfx.angle);
-				s.gfx.angle = normalize_angle(s.gfx.angle + s.gfx.class.rotfactor*da);
+				unowned ShipGfxClass gfx_class = (ShipGfxClass)s.gfx.class;
+				s.gfx.angle = normalize_angle(s.gfx.angle + gfx_class.rotfactor*da);
 			}
 		}
 

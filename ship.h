@@ -37,7 +37,7 @@ struct ship {
 		} lines[MAX_DEBUG_LINES];
 	} debug;
 	struct {
-		const struct gfx_class *class;
+		const struct _RISCShipGfxClass *class;
 		double angle;
 	} gfx;
 };

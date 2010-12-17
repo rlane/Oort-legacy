@@ -14,32 +14,6 @@
 
 #include "renderer.h"
 
-static struct gfx_class gfx_fighter = {
-	.rotfactor = 0.5,
-};
-
-static struct gfx_class gfx_mothership = {
-	.rotfactor = 0.05,
-};
-
-static struct gfx_class gfx_missile = {
-	.rotfactor = 0.6,
-};
-
-static struct gfx_class gfx_little_missile = {
-	.rotfactor = 0.7,
-};
-
-static struct gfx_class gfx_unknown = {
-	.rotfactor = 1.0,
-};
-
-struct gfx_class *gfx_fighter_p = &gfx_fighter;
-struct gfx_class *gfx_mothership_p = &gfx_mothership;
-struct gfx_class *gfx_missile_p = &gfx_missile;
-struct gfx_class *gfx_little_missile_p = &gfx_little_missile;
-struct gfx_class *gfx_unknown_p = &gfx_unknown;
-
 void init_gl13(void)
 {
 	if (glewInit() != GLEW_OK) {
