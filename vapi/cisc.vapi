@@ -1,4 +1,3 @@
-[CCode (cheader_filename = "renderer.h")]
 [CCode (cheader_filename = "particle.h")]
 [CCode (cheader_filename = "glutil.h")]
 [CCode (cheader_filename = "util.h")]

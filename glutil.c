@@ -18,7 +18,6 @@
 #include <SDL/SDL_gfxPrimitives_font.h>
 
 #include "tga.h"
-#include "renderer.h"
 
 static GLubyte font[256*8];
 

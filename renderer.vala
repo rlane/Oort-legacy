@@ -2,6 +2,9 @@ using GL;
 using Vector;
 using Math;
 
+[CCode (cname = "glewInit", cheader = "GL/glew.h")]
+extern bool glewInit();
+
 [Compact]
 public class RISC.ShipGfxClass {
 	public double rotfactor;
@@ -44,7 +47,9 @@ namespace RISC {
 		Rand prng;
 
 		public void init() {
-			RISC.GL13.init();
+			if (glewInit()) {
+				error("GLEW initialization failed");
+			}
 			ShipGfxClass.init();
 			RISC.gfx_ship_create_cb = on_ship_created;
 			render_all_debug_lines = false;

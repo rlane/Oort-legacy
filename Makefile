@@ -21,7 +21,7 @@ dedicated_sources =
 dedicated_vala = risc-dedicated.vala
 dedicated_objects = $(dedicated_sources:.c=.o) $(dedicated_vala:.vala=.o)
 
-ui_sources = particle.c gl13.c glutil.c
+ui_sources = particle.c glutil.c
 ui_vala = risc.vala renderer.vala
 ui_objects = $(ui_sources:.c=.o) $(ui_vala:.vala=.o)
 
