@@ -2,9 +2,6 @@ using GL;
 using Vector;
 using Math;
 
-[CCode (cname = "glewInit", cheader = "GL/glew.h")]
-extern bool glewInit();
-
 [Compact]
 public class RISC.ShipGfxClass {
 	public double rotfactor;
@@ -47,7 +44,7 @@ namespace RISC {
 		Rand prng;
 
 		public void init() {
-			if (glewInit()) {
+			if (GLEW.init()) {
 				error("GLEW initialization failed");
 			}
 			ShipGfxClass.init();
@@ -412,7 +409,22 @@ namespace RISC {
 	namespace GLUtil {
 		public void printf(int x, int y, string fmt, ...) {
 			va_list ap = va_list();
-			C.vprintf(x, y, fmt, ap);
+			var str = fmt.vprintf(ap);
+			write(x, y, str);
+		}
+
+		public void write(int x, int y, string str)
+		{
+			assert(C.font != null);
+			if (GLEW.ARB_window_pos) {
+				GLEW.glWindowPos2i(x, y);
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
+				unowned uint8 *data = str.data;
+
+				for (int i = 0; data[i] != 0; i++) {
+					glBitmap(8, 8, 4, 4, 9, 0, (GLubyte*)C.font + 8*data[i]);
+				}
+			}
 		}
 
 		public void color32(uint32 c) {

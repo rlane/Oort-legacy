@@ -20,6 +20,7 @@
  * 	Matias De la Puente <mfpuente.ar@gmail.com>
  */
  
+[CCode (cheader_filename="GL/glew.h")]
 [CCode (lower_case_cprefix ="", cheader_filename="GL/gl.h")]
 namespace GL
 {

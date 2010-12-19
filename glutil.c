@@ -19,46 +19,20 @@
 
 #include "tga.h"
 
-static GLubyte font[256*8];
+GLubyte font_storage[256*8];
+GLubyte *font;
 
 extern void font_init(void) __attribute__ ((constructor));
 
 void font_init(void)
 {
 	int i, j;
+	font = font_storage;
 	for (i = 0; i < 256; i++) {
 		for (j = 0; j < 8; j++) {
 			font[i*8 + j] = gfxPrimitivesFontdata[i*8 + (7-j)];
 		}
 	}
-}
-
-void glWrite(int x, int y, const char *str)
-{
-	if (GLEW_ARB_window_pos) {
-		glWindowPos2i(x, y);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
-
-		char c;
-		while ((c = *str++)) {
-			glBitmap(8, 8, 4, 4, 9, 0, font + 8*c);
-		}
-	}
-}
-
-void glutil_vprintf(int x, int y, const char *fmt, va_list ap)
-{
-	static char buf[1024];
-	vsnprintf(buf, sizeof(buf), fmt, ap);
-	glWrite(x, y, buf);
-}
-
-void glPrintf(int x, int y, const char *fmt, ...)
-{
-	va_list ap;
-	va_start(ap, fmt);
-	glutil_vprintf(x, y, fmt, ap);
-	va_end(ap);
 }
 
 void glColor32(guint32 c)

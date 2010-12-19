@@ -18,11 +18,11 @@ namespace RISC {
 	}
 
 	namespace C {
-		[CCode (cname = "glutil_vprintf")]
-		public void vprintf(int x, int y, string fmt, va_list ap);
-
 		[CCode (cname = "envtol")]
 		public int envtol(string k, int i);
+
+		[CCode (cname = "font")]
+		public uint8 *font;
 	}
 
 	[CCode (cname = "screenshot")]

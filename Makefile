@@ -47,8 +47,8 @@ $(core_vala:.vala=.c) risc.h vapi/risc.vapi: $(core_vala) $(vapi) vapi/cisc.vapi
 	cat vapi/risc.vapi.tmp >> vapi/risc.vapi
 	rm vapi/risc.vapi.tmp
 
-$(ui_vala:.vala=.c): $(ui_vala) $(vapi) vapi/cisc.vapi vapi/risc.vapi
-	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg cisc --pkg gl --pkg vector --vapidir vapi $(ui_vala)
+$(ui_vala:.vala=.c): $(ui_vala) $(vapi) vapi/cisc.vapi vapi/risc.vapi vapi/glew.vapi
+	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg cisc --pkg glew --pkg gl --pkg vector --vapidir vapi $(ui_vala)
 
 $(dedicated_vala:.vala=.c): $(dedicated_vala) $(vapi) vapi/cisc.vapi vapi/risc.vapi
 	valac -C --pkg lua --pkg risc --pkg vector --pkg cisc --vapidir vapi $(dedicated_vala)
