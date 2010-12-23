@@ -82,8 +82,8 @@ namespace RISC {
 		public static void purge();
 		[CCode (cname = "ship_shutdown")]
 		public static void shutdown();
-		[CCode (cname = "ship_tick")]
-		public static void tick(double tick_length);
+		[CCode (cname = "ship_tick_one")]
+		public static void tick_one(double tick_length);
 	}
 
 	[CCode (cname = "rad2deg")]

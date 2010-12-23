@@ -77,7 +77,13 @@ public class RISC.Ship {
 	}
 
 	public static void tick(double t) {
-		CShip.tick(t);
+		all_ships.concat((owned) new_ships);
+		new_ships = null;
+
+		foreach (unowned Ship s in all_ships) {
+			Task.task((Task.TaskFunc)CShip.tick_one, s, null);
+		}
+		Task.wait();
 	}
 
 	public double get_energy() {

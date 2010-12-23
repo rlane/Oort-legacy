@@ -431,17 +431,6 @@ double ship_get_energy(RISCShip *s)
 	return e;
 }
 
-void ship_tick(double t)
-{
-	all_ships = g_list_concat(all_ships, new_ships);
-	new_ships = NULL;
-	GList *e;
-	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
-		risc_task_task((RISCTaskTaskFunc)ship_tick_one, e->data, NULL);
-	}
-	risc_task_wait();
-}
-
 RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *team,
 		                     Vec2 p, Vec2 v, const char *orders, int seed)
 {
