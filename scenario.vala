@@ -47,7 +47,7 @@ namespace RISC.Scenario {
 		string orders = L.opt_string(5, "");
 		unowned Team team = Team.lookup(team_name);
 		if (team == null) return L.arg_error(2, "invalid team");
-		unowned Ship s = Ship.create(team.filename, ship_class_name, team, vec2(x,y), vec2(0,0), orders, Game.prng.next_int());
+		unowned Ship s = CShip.create(team.filename, ship_class_name, team, vec2(x,y), vec2(0,0), orders, Game.prng.next_int());
 		if (s == null) return L.err("ship creation failed");
 		return 0;
 	}

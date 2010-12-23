@@ -9,6 +9,7 @@
 #include <lauxlib.h>
 #include <stdint.h>
 
+#include <glib-object.h>
 #include "risc.h"
 #include "ship.h"
 #include "api_team.h"
@@ -33,7 +34,7 @@ struct sensor_query {
 	Vec2 origin;
 };
 
-static void ud_sensor_contact_new(lua_State *L, struct ship *s, int metatable_index)
+static void ud_sensor_contact_new(lua_State *L, RISCShip *s, int metatable_index)
 {
 	struct sensor_contact *c = lua_newuserdata(L, sizeof(*c));
 	c->magic = UKEY_SENSOR_CONTACT;
@@ -130,7 +131,7 @@ void parse_sensor_query(lua_State *L, struct sensor_query *query, int idx)
 	const char *str;
 	double num;
 	int i;
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 
 	query->my_team = s->team;
 	query->origin = s->physics->p;
@@ -199,7 +200,7 @@ void parse_sensor_query(lua_State *L, struct sensor_query *query, int idx)
 	lua_pop(L, 1);
 }
 
-int match_sensor_query(const struct sensor_query *query, const struct ship *s)
+int match_sensor_query(const struct sensor_query *query, const RISCShip *s)
 {
 	if (query->enemy == 0 && query->my_team != s->team) return 0;
 	if (query->enemy == 1 && query->my_team == s->team) return 0;
@@ -228,7 +229,7 @@ int api_sensor_contacts(lua_State *L)
 	for (e = g_list_first(all_ships), i = 1;
 			 e && i <= query.limit;
 			 e = g_list_next(e)) {
-		struct ship *s = e->data;
+		RISCShip *s = e->data;
 		if (match_sensor_query(&query, s)) {
 			ud_sensor_contact_new(L, s, metatable_index);
 			lua_rawseti(L, -2, i);
@@ -246,7 +247,7 @@ int api_sensor_contact(lua_State *L)
 	guint32 id = (guint32)(uintptr_t)lua_touserdata(L, 1);
 	lua_pop(L, 1);
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
-		struct ship *s = e->data;
+		RISCShip *s = e->data;
 		if (id == s->api_id) {
 			lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
 			lua_rawget(L, LUA_REGISTRYINDEX);

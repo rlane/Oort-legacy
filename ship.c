@@ -9,14 +9,12 @@
 #include <lauxlib.h>
 #include <stdint.h>
 
+#include <glib-object.h>
 #include "risc.h"
 #include "ship.h"
 #include "api_sensors.h"
 #include "api_team.h"
 #include "util.h"
-
-#include <glib-object.h>
-#include "risc.h"
 
 #define LW_VERBOSE 0
 
@@ -30,7 +28,7 @@ static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;
 static const int ai_mem_limit = 1<<20;
 FILE *trace_file = NULL;
 
-void ship_destroy(struct ship *s);
+void ship_destroy(RISCShip *s);
 
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
@@ -48,14 +46,14 @@ static void *lua_registry_get(lua_State *L, void *key)
 	return value;
 }
 
-struct ship *lua_ship(lua_State *L)
+RISCShip *lua_ship(lua_State *L)
 {
 	return lua_registry_get(L, RKEY_SHIP);
 }
 
 static int api_thrust(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	double a = luaL_checknumber(L, 1);
 	double f = luaL_checknumber(L, 2);
 	s->physics->thrust = vec2_scale(vec2(cos(a), sin(a)), f * s->physics->m);
@@ -70,7 +68,7 @@ static int api_yield(lua_State *L)
 
 static int api_position(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	lua_pushnumber(L, s->physics->p.x);
 	lua_pushnumber(L, s->physics->p.y);
 	return 2;
@@ -78,7 +76,7 @@ static int api_position(lua_State *L)
 
 static int api_velocity(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	lua_pushnumber(L, s->physics->v.x);
 	lua_pushnumber(L, s->physics->v.y);
 	return 2;
@@ -86,7 +84,7 @@ static int api_velocity(lua_State *L)
 
 static int api_create_bullet(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 
 	double x = luaL_checknumber(L, 1);
 	double y = luaL_checknumber(L, 2);
@@ -103,7 +101,7 @@ static int api_create_bullet(lua_State *L)
 
 static int api_class(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	lua_pushstring(L, s->class->name);
 	return 1;
 }
@@ -116,7 +114,7 @@ static int api_time(lua_State *L)
 
 static int api_random(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	int n = lua_gettop(L);
 
 	if (n == 0) {
@@ -154,7 +152,7 @@ struct msg {
 
 static int api_send(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	size_t len;
 	const char *ldata = luaL_checklstring(L, 1, &len);
 
@@ -171,7 +169,7 @@ static int api_send(lua_State *L)
 
 	GList *e;
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
-		struct ship *s2 = e->data;
+		RISCShip *s2 = e->data;
 		if (s == s2 || s->team != s2->team) continue;
 		msg->refcount++;
 		g_queue_push_tail(s2->mq, msg);
@@ -189,7 +187,7 @@ static int api_send(lua_State *L)
 
 static int api_recv(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 
 	g_static_mutex_lock(&radio_lock);
 
@@ -212,12 +210,12 @@ static int api_recv(lua_State *L)
 
 static int api_spawn(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	const char *class_name = luaL_checkstring(L, 1);
 	const char *orders = luaL_checkstring(L, 2);
 	const char *filename = s->team->filename;
 
-	struct ship *child = ship_create(filename, class_name, s->team,
+	RISCShip *child = ship_create(filename, class_name, s->team,
 			                             s->physics->p, s->physics->v,
 																	 orders, g_rand_int(s->prng));
 	if (!child) return luaL_error(L, "failed to create ship");
@@ -226,7 +224,7 @@ static int api_spawn(lua_State *L)
 
 static int api_die(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	s->dead = 1;
 	return lua_yield(L, 0);
 }	
@@ -234,8 +232,8 @@ static int api_die(lua_State *L)
 static int api_debug_line(lua_State *L)
 {
 	double x1,y1,x2,y2;
-	struct ship *s = lua_ship(L);
-	if (s->debug.num_lines == MAX_DEBUG_LINES) {
+	RISCShip *s = lua_ship(L);
+	if (s->debug.num_lines == RISC_SHIP_MAX_DEBUG_LINES) {
 		return 0;
 	}
 	int i = s->debug.num_lines++;
@@ -250,7 +248,7 @@ static int api_debug_line(lua_State *L)
 
 static int api_clear_debug_lines(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	s->debug.num_lines = 0;
 	return 0;
 }
@@ -273,7 +271,7 @@ static int api_deserialize_id(lua_State *L)
 	return 1;
 }
 
-static void *ai_allocator(struct ship *s, void *ptr, size_t osize, size_t nsize)
+static void *ai_allocator(RISCShip *s, void *ptr, size_t osize, size_t nsize)
 {
 	s->mem.cur += (nsize - osize);
 	if (nsize > osize && s->mem.cur > s->mem.limit) {
@@ -282,7 +280,7 @@ static void *ai_allocator(struct ship *s, void *ptr, size_t osize, size_t nsize)
 	return s->mem.allocator(s->mem.allocator_ud, ptr, osize, nsize);
 }
 
-static int ai_create(const char *filename, struct ship *s, const char *orders)
+static int ai_create(const char *filename, RISCShip *s, const char *orders)
 {
 	lua_State *G, *L;
 
@@ -368,7 +366,7 @@ static void debug_hook(lua_State *L, lua_Debug *a)
 		lua_call(L, 0, 0);
 		lua_yield(L, 0);
 	} else if (a->event == LUA_HOOKLINE) {
-		struct ship *s = lua_ship(L);
+		RISCShip *s = lua_ship(L);
 		unsigned long elapsed = thread_ns() - s->line_start_time;
 		if (lua_getinfo(L, "nSl", a) == 0) abort();
 		if (s->line_start_time != 0) {
@@ -380,7 +378,7 @@ static void debug_hook(lua_State *L, lua_Debug *a)
 	}
 }
 
-static int ship_ai_run(struct ship *s, int len)
+static int ship_ai_run(RISCShip *s, int len)
 {
 	int result;
 	lua_State *L = s->lua;
@@ -408,11 +406,11 @@ static int ship_ai_run(struct ship *s, int len)
 	}
 }
 
-void ship_tick_one(struct ship *s)
+void ship_tick_one(RISCShip *s)
 {
-	if (ticks % TAIL_TICKS == 0) {
+	if (ticks % RISC_SHIP_TAIL_TICKS == 0) {
 		s->tail[s->tail_head++] = s->physics->p;
-		if (s->tail_head == TAIL_SEGMENTS) s->tail_head = 0;
+		if (s->tail_head == RISC_SHIP_TAIL_SEGMENTS) s->tail_head = 0;
 	}
 
 	if (!s->ai_dead) {
@@ -427,7 +425,7 @@ void ship_tick_one(struct ship *s)
 	}
 }
 
-double ship_get_energy(struct ship *s)
+double ship_get_energy(RISCShip *s)
 {
 	lua_getglobal(s->global_lua, "energy");
 	lua_call(s->global_lua, 0, 1);
@@ -447,17 +445,17 @@ void ship_tick(double t)
 	risc_task_wait();
 }
 
-struct ship *ship_create(const char *filename, const char *class_name, RISCTeam *team,
+RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *team,
 		                     Vec2 p, Vec2 v, const char *orders, int seed)
 {
-	struct ship *s = g_slice_new0(struct ship);
+	RISCShip *s = g_slice_new0(RISCShip);
 
 	s->team = team;
 
 	s->class = risc_shipclass_lookup(class_name);
 	if (!s->class) {
 		fprintf(stderr, "class '%s' not found\n", class_name);
-		g_slice_free(struct ship, s);
+		g_slice_free(RISCShip, s);
 		return NULL;
 	}
 
@@ -470,7 +468,7 @@ struct ship *ship_create(const char *filename, const char *class_name, RISCTeam 
 	s->hull = s->class->hull;
 
 	int i;
-	for (i = 0; i < TAIL_SEGMENTS; i++) {
+	for (i = 0; i < RISC_SHIP_TAIL_SEGMENTS; i++) {
 		s->tail[i] = vec2(NAN,NAN);
 	}
 
@@ -497,7 +495,7 @@ struct ship *ship_create(const char *filename, const char *class_name, RISCTeam 
 	return s;
 }
 
-void ship_destroy(struct ship *s)
+void ship_destroy(RISCShip *s)
 {
 	all_ships = g_list_remove(all_ships, s);
 
@@ -513,14 +511,14 @@ void ship_destroy(struct ship *s)
 	risc_physics_free(s->physics);
 	lua_close(s->lua);
 	g_rand_free(s->prng);
-	g_slice_free(struct ship, s);
+	g_slice_free(RISCShip, s);
 }
 
 void ship_purge(void)
 {
 	GList *e, *e2;
 	for (e = g_list_first(all_ships); e; e = e2) {
-		struct ship *s = e->data;
+		RISCShip *s = e->data;
 		e2 = g_list_next(e);
 		if (s->dead) {
 			ship_destroy(s);

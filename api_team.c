@@ -9,6 +9,7 @@
 #include <lauxlib.h>
 #include <stdint.h>
 
+#include <glib-object.h>
 #include "risc.h"
 #include "ship.h"
 #include "api_team.h"
@@ -74,7 +75,7 @@ void ud_team_register(lua_State *L)
 
 int api_team(lua_State *L)
 {
-	struct ship *s = lua_ship(L);
+	RISCShip *s = lua_ship(L);
 	ud_team_new(L, s->team);
 	return 1;
 }

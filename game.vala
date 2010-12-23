@@ -41,20 +41,20 @@ namespace RISC.Game {
 	public void purge() {
 		bullet_hits = null;
 		Bullet.purge();
-		Ship.purge();
+		CShip.purge();
 	}
 
 	public void tick(double tick_length) {
 		check_bullet_hits(tick_length);
 		Physics.tick(tick_length);
-		Ship.tick(tick_length);
+		CShip.tick(tick_length);
 		Bullet.tick(tick_length);
 		ticks += 1;
 	}
 
 	public void shutdown() {
 		Bullet.shutdown();
-		Ship.shutdown();
+		CShip.shutdown();
 		Team.shutdown();
 		Task.shutdown();
 	}

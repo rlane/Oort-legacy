@@ -26,3 +26,4 @@ team.c
 physics.c
 task.c
 ship_class.c
+ship_vala.c
