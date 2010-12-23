@@ -81,9 +81,27 @@ public class RISC.Ship {
 		new_ships = null;
 
 		foreach (unowned Ship s in all_ships) {
-			Task.task((Task.TaskFunc)CShip.tick_one, s, null);
+			Task.task((Task.TaskFunc)Ship.tick_one, s, null);
 		}
 		Task.wait();
+	}
+
+	public static void tick_one(Ship s) {
+		if (Game.ticks % TAIL_TICKS == 0) {
+			s.tail[s.tail_head++] = s.physics.p;
+			if (s.tail_head == TAIL_SEGMENTS) s.tail_head = 0;
+		}
+
+		if (!s.ai_dead) {
+			var ret = CShip.ai_run(s, 10000);
+			if (!ret) s.ai_dead = true;
+		}
+
+		if (!s.ai_dead) {
+			s.global_lua.set_hook(CShip.debug_hook, 0, 0);
+			s.global_lua.get_global("tick_hook");
+			s.global_lua.call(0, 0);
+		}
 	}
 
 	public double get_energy() {

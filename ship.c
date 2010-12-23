@@ -356,7 +356,7 @@ static guint64 thread_ns(void)
 #endif
 }
 
-static void debug_hook(lua_State *L, lua_Debug *a)
+void debug_hook(lua_State *L, lua_Debug *a)
 {
 	if (a->event == LUA_HOOKCOUNT) {
 		lua_getglobal(L, "debug_count_hook");
@@ -375,7 +375,7 @@ static void debug_hook(lua_State *L, lua_Debug *a)
 	}
 }
 
-static int ship_ai_run(RISCShip *s, int len)
+int ship_ai_run(RISCShip *s, int len)
 {
 	int result;
 	lua_State *L = s->lua;
@@ -400,25 +400,6 @@ static int ship_ai_run(RISCShip *s, int len)
 			fprintf(stderr, "  %d: %s %s %s @ %s:%d\n", i, ar.what, ar.namewhat, ar.name, ar.short_src, ar.currentline);
 		}
 		return 0;
-	}
-}
-
-void ship_tick_one(RISCShip *s)
-{
-	if (ticks % RISC_SHIP_TAIL_TICKS == 0) {
-		s->tail[s->tail_head++] = s->physics->p;
-		if (s->tail_head == RISC_SHIP_TAIL_SEGMENTS) s->tail_head = 0;
-	}
-
-	if (!s->ai_dead) {
-		int ret = ship_ai_run(s, 10000);
-		if (!ret) s->ai_dead = 1;
-	}
-
-	if (!s->ai_dead) {
-		lua_sethook(s->global_lua, NULL, 0, 0);
-		lua_getglobal(s->global_lua, "tick_hook");
-		lua_call(s->global_lua, 0, 0);
 	}
 }
 

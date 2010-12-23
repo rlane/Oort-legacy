@@ -78,12 +78,11 @@ namespace RISC {
 
 		[CCode (cname = "ship_create")]
 		public static unowned Ship create(string filename, string class_name, RISC.Team team, Vector.Vec2 p, Vector.Vec2 v, string orders, uint32 seed);
-		[CCode (cname = "ship_purge")]
-		public static void purge();
-		[CCode (cname = "ship_shutdown")]
-		public static void shutdown();
-		[CCode (cname = "ship_tick_one")]
-		public static void tick_one(double tick_length);
+		[CCode (cname = "ship_ai_run")]
+		public static bool ai_run(Ship s, int len);
+
+		[CCode (cname = "debug_hook")]
+		public static void debug_hook(Lua.LuaVM L, ref Lua.Debug a);
 	}
 
 	[CCode (cname = "rad2deg")]

@@ -18,6 +18,7 @@ struct _RISCShip *ship_create(const char *filename, const char *class_name, stru
 double ship_get_energy(struct _RISCShip *s);
 struct _RISCShip *lua_ship(lua_State *L);
 void ship_destroy(struct _RISCShip *s);
-void ship_tick_one(struct _RISCShip *s);
+int ship_ai_run(struct _RISCShip *s, int len);
+void debug_hook(lua_State *L, lua_Debug *a);
 
 #endif
