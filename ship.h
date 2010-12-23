@@ -15,10 +15,9 @@ typedef void (*RISCOnShipCreated)(struct _RISCShip *s);
 extern RISCOnShipCreated gfx_ship_create_cb;
 
 struct _RISCShip *ship_create(const char *filename, const char *class_name, struct _RISCTeam *team, Vec2 p, Vec2 v, const char *orders, int seed);
-void ship_purge();
-void ship_shutdown();
 void ship_tick(double t);
 double ship_get_energy(struct _RISCShip *s);
 struct _RISCShip *lua_ship(lua_State *L);
+void ship_destroy(struct _RISCShip *s);
 
 #endif

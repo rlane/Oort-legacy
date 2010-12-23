@@ -26,6 +26,7 @@ namespace RISC.Game {
 		Task.init(C.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();
 		Physics.init();
+		Ship.init();
 
 		if (!ShipClass.load(data_path("ships.lua"))) {
 			return 1;
@@ -41,20 +42,20 @@ namespace RISC.Game {
 	public void purge() {
 		bullet_hits = null;
 		Bullet.purge();
-		CShip.purge();
+		Ship.purge();
 	}
 
 	public void tick(double tick_length) {
 		check_bullet_hits(tick_length);
 		Physics.tick(tick_length);
-		CShip.tick(tick_length);
+		Ship.tick(tick_length);
 		Bullet.tick(tick_length);
 		ticks += 1;
 	}
 
 	public void shutdown() {
 		Bullet.shutdown();
-		CShip.shutdown();
+		Ship.shutdown();
 		Team.shutdown();
 		Task.shutdown();
 	}

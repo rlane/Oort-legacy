@@ -20,10 +20,7 @@
 
 char RKEY_SHIP[1];
 
-GList *all_ships = NULL;
 RISCOnShipCreated gfx_ship_create_cb;
-static GList *new_ships = NULL;
-static GStaticMutex new_ships_lock = G_STATIC_MUTEX_INIT;
 static GStaticMutex radio_lock = G_STATIC_MUTEX_INIT;
 static const int ai_mem_limit = 1<<20;
 FILE *trace_file = NULL;
@@ -478,9 +475,9 @@ RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *te
 	s->mq = g_queue_new();
 	s->api_id = g_rand_int(s->prng);
 
-	g_static_mutex_lock(&new_ships_lock);
+	g_mutex_lock(new_ships_lock);
 	new_ships = g_list_append(new_ships, s);
-	g_static_mutex_unlock(&new_ships_lock);
+	g_mutex_unlock(new_ships_lock);
 
 	if (ai_create(filename, s, orders)) {
 		fprintf(stderr, "failed to create AI\n");
@@ -512,23 +509,6 @@ void ship_destroy(RISCShip *s)
 	lua_close(s->lua);
 	g_rand_free(s->prng);
 	g_slice_free(RISCShip, s);
-}
-
-void ship_purge(void)
-{
-	GList *e, *e2;
-	for (e = g_list_first(all_ships); e; e = e2) {
-		RISCShip *s = e->data;
-		e2 = g_list_next(e);
-		if (s->dead) {
-			ship_destroy(s);
-		}
-	}
-}
-
-void ship_shutdown(void)
-{
-	g_list_foreach(all_ships, (GFunc)ship_destroy, NULL);
 }
 
 static double lua_getfield_double(lua_State *L, int index, const char *key)

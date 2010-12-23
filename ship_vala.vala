@@ -1,4 +1,4 @@
-[CCode (destroy_function = "")]
+[CCode (free_function = "ship_destroy")]
 [Compact]
 public class RISC.Ship {
 	public const int TAIL_SEGMENTS = 16;
@@ -47,6 +47,38 @@ public class RISC.Ship {
 	public char line_info[256];
 	public Gfx gfx;
 	public Debug debug;
+
+	[CCode (cname = "all_ships")]
+	public static List<Ship> all_ships;
+	[CCode (cname = "new_ships")]
+	public static List<Ship> new_ships;
+	[CCode (cname = "new_ships_lock")]
+	public static Mutex new_ships_lock;
+
+	public static void init() {
+		new_ships_lock = new Mutex();
+	}
+
+	public static void purge() {
+		unowned List<Ship> cur = all_ships;
+		while (cur != null) {
+			unowned List<Ship> next = cur.next;
+			if (cur.data.dead) {
+				all_ships.delete_link(cur);
+			}
+			cur = next;
+		}
+	}
+
+	public static void shutdown() {
+		new_ships_lock = null;
+		new_ships = null;
+		all_ships = null;
+	}
+
+	public static void tick(double t) {
+		CShip.tick(t);
+	}
 
 	public double get_energy() {
 		return CShip.get_energy(this);
