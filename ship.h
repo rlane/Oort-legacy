@@ -10,6 +10,7 @@ struct _RISCShip;
 struct _RISCTeam;
 
 extern GList *all_ships;
+extern FILE *trace_file;
 
 typedef void (*RISCOnShipCreated)(struct _RISCShip *s);
 extern RISCOnShipCreated gfx_ship_create_cb;

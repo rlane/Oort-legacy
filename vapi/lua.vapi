@@ -163,6 +163,7 @@ namespace Lua {
 		public unowned string name_what;
 		public unowned string what;
 		public unowned string source;
+		public unowned string short_src;
 		[CCode (cname = "currentline")]
 		public int current_line;
 		public int nups;
@@ -368,9 +369,9 @@ namespace Lua {
 		// Debug API
 
 		[CCode (cname = "lua_getstack")]
-		public bool get_stack (int level, ref Debug ar);
+		public bool get_stack (int level, out Debug ar);
 		[CCode (cname = "lua_getinfo")]
-		public bool get_info (string what, ref Debug ar);
+		public bool get_info (string what, out Debug ar);
 		[CCode (cname = "lua_getlocal")]
 		public unowned string? get_local (ref Debug ar, int n);
 		[CCode (cname = "lua_setlocal")]

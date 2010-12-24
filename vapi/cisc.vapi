@@ -6,6 +6,8 @@
 namespace RISC {
 	[CCode (cname = "all_ships")]
 	public GLib.List<Ship> all_ships;
+	[CCode (cname = "trace_file")]
+	public GLib.FileStream trace_file;
 
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);

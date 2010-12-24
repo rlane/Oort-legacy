@@ -1,3 +1,5 @@
+using Lua;
+
 [CCode (free_function = "ship_destroy")]
 [Compact]
 public class RISC.Ship {
@@ -93,7 +95,7 @@ public class RISC.Ship {
 		}
 
 		if (!ai_dead) {
-			var ret = CShip.ai_run(this, 10000);
+			var ret = ai_run(10000);
 			if (!ret) ai_dead = true;
 		}
 
@@ -101,6 +103,29 @@ public class RISC.Ship {
 			global_lua.set_hook(CShip.debug_hook, 0, 0);
 			global_lua.get_global("tick_hook");
 			global_lua.call(0, 0);
+		}
+	}
+
+	public bool ai_run(int len) {
+		var debug_mask = Lua.EventMask.COUNT;
+		if (trace_file != null) debug_mask |= Lua.EventMask.LINE;
+		lua.set_hook(CShip.debug_hook, debug_mask, len);
+
+		var result = lua.resume(0);
+		if (result == ThreadStatus.YIELD) {
+			return true;
+		} else if (result == 0) {
+			message("ship %u terminated", api_id);
+			return false;
+		} else {
+			message("ship %u error %s", api_id, lua.to_string(-1));
+			stderr.printf("backtrace:\n");
+			Lua.Debug ar;
+			for (int i = 0; lua.get_stack(i, out ar); i++) {
+				if (!lua.get_info("nSl", out ar)) continue;
+				stderr.printf("  %d: %s %s %s @ %s:%d\n", i, ar.what, ar.name_what, ar.name, ar.short_src, ar.current_line);
+			}
+			return false;
 		}
 	}
 
