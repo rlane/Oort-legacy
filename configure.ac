@@ -1,30 +1,39 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
+AC_INIT([RISC], [0.1.0], [rlane@club.cc.cmu.edu], [risc], [http://github.com/rlane/risc])
+AC_CONFIG_SRCDIR([Makefile.am])
+AC_CONFIG_HEADERS(config.h)
+AM_INIT_AUTOMAKE([dist-bzip2])
+#m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+AM_MAINTAINER_MODE
 
-AC_PREREQ([2.68])
-AC_INIT([risc], [0.1], [risc-game-dev@sourceforge.net])
-AC_CONFIG_SRCDIR([test/test_check_collision.c])
-AC_CONFIG_HEADERS([config.h])
-
-# Checks for programs.
 AC_PROG_CC
-AC_PROG_INSTALL
+AM_PROG_CC_C_O
+AC_DISABLE_STATIC
+AC_PROG_LIBTOOL
 
-# Checks for libraries.
-#AC_CHECK_LIB([GL], [main])
-#AC_CHECK_LIB([GLU], [main])
+AM_PROG_VALAC([0.9.1])
 
-# Checks for header files.
-AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h string.h sys/time.h unistd.h])
+# Set up prefix-relative directories
+if test "x${prefix}" = "xNONE"; then
+  PREFIX="${ac_default_prefix}"
+else
+  PREFIX="${prefix}"
+fi
+AC_DEFINE_UNQUOTED(PACKAGE_DATADIR, "${PREFIX}/${DATADIRNAME}/${PACKAGE}",[Package data directory])
+AC_DEFINE_UNQUOTED(PACKAGE_BINDIR, "${PREFIX}/bin",[Package executable directory])
 
-# Checks for typedefs, structures, and compiler characteristics.
-AC_C_INLINE
-AC_TYPE_SIZE_T
+AC_SUBST(CFLAGS)
+AC_SUBST(LDFLAGS)
 
-# Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_MMAP
-AC_CHECK_FUNCS([clock_gettime munmap sqrt strtol])
+GLIB_REQUIRED=2.12.0
+GTK_REQUIRED=2.10.0
 
-AC_CONFIG_FILES([Makefile])
+PKG_CHECK_MODULES(RISC, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gtk+-2.0 >= $GTK_REQUIRED)
+AC_SUBST(RISC_CFLAGS)
+AC_SUBST(RISC_LIBS)
+
+AC_CONFIG_FILES([
+	Makefile
+	sim/Makefile
+])
+
 AC_OUTPUT

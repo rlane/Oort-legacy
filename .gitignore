@@ -43,3 +43,15 @@ ltmain.sh
 missing
 depcomp
 autom4te.cache/*
+
+*.lo
+*.la
+autoscan.log
+*.stamp
+.deps
+.libs
+*.in
+sim/sim.vapi
+compile
+config.h
+stamp-h1
