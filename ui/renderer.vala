@@ -415,14 +415,14 @@ namespace RISC {
 
 		public void write(int x, int y, string str)
 		{
-			assert(C.font != null);
+			assert(font != null);
 			if (GLEW.ARB_window_pos) {
 				GLEW.glWindowPos2i(x, y);
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 				unowned uint8 *data = str.data;
 
 				for (int i = 0; data[i] != 0; i++) {
-					glBitmap(8, 8, 4, 4, 9, 0, (GLubyte*)C.font + 8*data[i]);
+					glBitmap(8, 8, 4, 4, 9, 0, (GLubyte*)font + 8*data[i]);
 				}
 			}
 		}

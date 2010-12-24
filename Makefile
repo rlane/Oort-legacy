@@ -7,25 +7,25 @@ VALGRIND_CFLAGS=$(shell pkg-config --exists valgrind && echo -D VALGRIND `pkg-co
 CORE_PKGS:=glib-2.0 gthread-2.0 gobject-2.0 $(LUAPKG)
 UI_PKGS:=gtk+-2.0 gtkglext-1.0 glew # SDL_gfx
 
-CORE_CFLAGS:=`pkg-config --cflags $(CORE_PKGS)` -g -O2 -march=native -Wall -I. $(VALGRIND_CFLAGS)
+CORE_CFLAGS:=`pkg-config --cflags $(CORE_PKGS)` -g -O2 -march=native -Wall -I. -Ivector -Isim $(VALGRIND_CFLAGS)
 CORE_LDFLAGS:=`pkg-config --libs $(CORE_PKGS)`
 
-UI_CFLAGS:=$(CORE_CFLAGS) `pkg-config --cflags $(UI_PKGS)`
+UI_CFLAGS:=$(CORE_CFLAGS) `pkg-config --cflags $(UI_PKGS)` -Iui
 UI_LDFLAGS:=$(CORE_LDFLAGS) `pkg-config --libs $(UI_PKGS)` -lGL -lGLU
 
-core_sources = ship.c util.c api_sensors.c api_team.c
-core_vala = game.vala bullet.vala scenario.vala team.vala physics.vala task.vala ship_class.vala ship_vala.vala
+core_sources = sim/ship.c sim/util.c sim/api_sensors.c sim/api_team.c
+core_vala = sim/game.vala sim/bullet.vala sim/scenario.vala sim/team.vala sim/physics.vala sim/task.vala sim/ship_class.vala sim/ship_vala.vala
 core_objects = $(core_sources:.c=.o) $(core_vala:.vala=.o)
 
 dedicated_sources =
-dedicated_vala = risc-dedicated.vala
+dedicated_vala = dedicated/risc-dedicated.vala
 dedicated_objects = $(dedicated_sources:.c=.o) $(dedicated_vala:.vala=.o)
 
-ui_sources = particle.c glutil.c
-ui_vala = risc.vala renderer.vala
+ui_sources = ui/particle.c ui/glutil.c
+ui_vala = ui/risc.vala ui/renderer.vala
 ui_objects = $(ui_sources:.c=.o) $(ui_vala:.vala=.o)
 
-vapi = vapi/vector.vapi vapi/cisc.vapi
+vapi = vector/vector.vapi sim/csim.vapi
 
 all: luacheck risc risc-dedicated
 
@@ -38,24 +38,24 @@ luacheck:
 				sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 				rm -f $@.$$$$
 
--include $(core_sources:.c=.d)
+#-include $(core_sources:.c=.d)
 
 .stamp.core: $(core_vala) 
-	valac --library risc --basedir ./ -H risc.h --vapi vapi/risc.vapi -C --pkg lua --pkg cisc --pkg vector --vapidir vapi $(core_vala)
-	mv vapi/risc.vapi vapi/risc.vapi.tmp
-	echo '[CCode (cheader_filename = "risc.h")]' > vapi/risc.vapi
-	cat vapi/risc.vapi.tmp >> vapi/risc.vapi
-	rm vapi/risc.vapi.tmp
+	valac --library risc --basedir ./ -H risc.h --vapi sim/sim.vapi -C --pkg lua --pkg csim --pkg vector --vapidir vapi --vapidir vector --vapidir sim $(core_vala)
+	mv sim/sim.vapi sim/sim.vapi.tmp
+	echo '[CCode (cheader_filename = "risc.h")]' > sim/sim.vapi
+	cat sim/sim.vapi.tmp >> sim/sim.vapi
+	rm sim/sim.vapi.tmp
 
-$(core_vala:.vala=.c) risc.h vapi/risc.vapi: .stamp.core
+$(core_vala:.vala=.c) risc.h sim/sim.vapi: .stamp.core
 
-.stamp.ui: $(ui_vala) $(vapi) vapi/risc.vapi
-	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg risc --pkg cisc --pkg glew --pkg gl --pkg vector --vapidir vapi $(ui_vala)
+.stamp.ui: $(ui_vala) $(vapi) sim/sim.vapi
+	valac -C --pkg gtk+-2.0 --pkg gtkglext-1.0 --pkg lua --pkg sim --pkg csim --pkg glew --pkg gl --pkg vector --pkg particle --pkg glutil --vapidir vapi --vapidir vector --vapidir sim --vapidir ui $(ui_vala)
 
 $(ui_vala:.vala=.c): .stamp.ui
 
-.stamp.dedicated: $(dedicated_vala) $(vapi) vapi/risc.vapi
-	valac -C --pkg lua --pkg risc --pkg vector --pkg cisc --vapidir vapi $(dedicated_vala)
+.stamp.dedicated: $(dedicated_vala) $(vapi) sim/sim.vapi
+	valac -C --pkg lua --pkg sim --pkg vector --pkg csim --vapidir vapi --vapidir vector --vapidir sim $(dedicated_vala)
 
 $(dedicated_vala:.vala=.c): .stamp.dedicated
 
@@ -63,11 +63,11 @@ $(core_objects) : CFLAGS = $(CORE_CFLAGS)
 $(dedicated_objects) : CFLAGS = $(CORE_CFLAGS)
 $(ui_objects) : CFLAGS = $(UI_CFLAGS)
 
-risc: LDFLAGS = $(UI_LDFLAGS)
 risc: $(ui_objects) $(core_objects)
+	$(CC) $(UI_LDFLAGS) $^ -o $@
 
-risc-dedicated: LDFLAGS = $(CORE_LDFLAGS)
 risc-dedicated: $(dedicated_objects) $(core_objects)
+	$(CC) $(CORE_LDFLAGS) $^ -o $@
 
 benchmark: risc-dedicated
 	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./risc-dedicated scenarios/benchmark.lua
@@ -94,9 +94,11 @@ install: risc risc-dedicated
 	install scenarios/*.lua $(DESTDIR)/usr/share/risc/scenarios
 
 clean:
-	rm -f risc.h vapi/risc.vapi
+	rm -f risc.h sim/sim.vapi
 	rm -f $(core_vala:.vala=.c) $(ui_vala:.vala=.c) $(dedicated_vala:.vala=.c)
-	rm -f *.o *.d risc risc-dedicated
+	rm -f $(core_objects) $(ui_objects) $(dedicated_objects)
+	rm -f */*.d.*
+	rm -f .stamp.*
 
 test_check_collision: CFLAGS = $(CORE_CFLAGS)
 test_check_collision: LDFLAGS = $(CORE_LDFLAGS)

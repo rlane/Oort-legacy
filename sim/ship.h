@@ -1,7 +1,8 @@
-#include <complex.h>
 #include <lua.h>
 #include <lauxlib.h>
 #include <glib.h>
+
+#include "vector.h"
 
 #ifndef SHIP_H
 #define SHIP_H
