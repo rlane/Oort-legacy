@@ -7,6 +7,7 @@ AM_CFLAGS = \
 	$(NULL)
 
 AM_VALAFLAGS = \
+	--library risc -H risc.h \
 	--vapidir $(top_srcdir)/vapi \
 	--vapidir $(top_srcdir)/vector \
 	--vapidir $(top_srcdir)/sim \
@@ -33,6 +34,8 @@ librisc_1_0_la_SOURCES = \
 	util.c \
 	$(NULL)
 
+librisc_1_0_la_LDFLAGS = `pkg-config --libs glib-2.0 gthread-2.0 gobject-2.0 lua`
+
 EXTRA_DIST = \
 	$(NULL)
 
@@ -51,3 +54,12 @@ DISTCLEANFILES = \
 	team.c \
 	sim.h \
 	$(NULL)
+
+munge_vapi: librisc_1_0_la_vala.stamp
+	mv risc.vapi risc.vapi.tmp
+	echo '[CCode (cheader_filename = "risc.h")]' > risc.vapi
+	cat risc.vapi.tmp >> risc.vapi
+	rm risc.vapi.tmp
+
+all: all-am munge_vapi
+munge_vapi: all-am

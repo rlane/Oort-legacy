@@ -4,6 +4,7 @@ NULL =
 
 SUBDIRS = \
 	sim \
+	dedicated \
 	$(NULL)
 
 riscdocdir = $(docdir)

@@ -34,6 +34,7 @@ AC_SUBST(RISC_LIBS)
 AC_CONFIG_FILES([
 	Makefile
 	sim/Makefile
+	dedicated/Makefile
 ])
 
 AC_OUTPUT

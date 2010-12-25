@@ -3,7 +3,7 @@
 *.d
 *.exe
 risc
-risc-dedicated
+dedicated/dedicated
 particlebench
 test_check_collision
 risc-win32.zip
@@ -19,7 +19,7 @@ renderer.c
 game.c
 risc-dedicated.c
 risc.h
-vapi/risc.vapi
+sim/risc.vapi
 bullet.c
 scenario.c
 team.c
