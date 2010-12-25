@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#ifndef WINDOWS
+#ifndef G_OS_WIN32
 #include <sys/mman.h>
 #endif
 
@@ -42,7 +42,7 @@ void glColor32(guint32 c)
 
 void screenshot(const char *filename)
 {
-#ifndef WINDOWS
+#ifndef G_OS_WIN32
 	struct { GLint x, y, width, height; } viewport;
 	glGetIntegerv(GL_VIEWPORT, (GLint*) &viewport);
 

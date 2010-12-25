@@ -9,6 +9,7 @@
 #include <lauxlib.h>
 #include <stdint.h>
 
+#include <glib.h>
 #include <glib-object.h>
 #include "risc.h"
 #include "ship.h"
@@ -344,7 +345,7 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 
 static guint64 thread_ns(void)
 {
-#ifdef WINDOWS
+#ifdef G_OS_WIN32
 	return 0;
 #else
 	struct timespec ts;
