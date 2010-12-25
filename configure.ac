@@ -35,6 +35,7 @@ AC_CONFIG_FILES([
 	Makefile
 	sim/Makefile
 	dedicated/Makefile
+	ui/Makefile
 ])
 
 AC_OUTPUT
