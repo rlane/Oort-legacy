@@ -2,15 +2,13 @@ NULL =
 
 AM_CFLAGS = \
 	$(RISC_CFLAGS) \
+	$(RISC_UI_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
-	`pkg-config --cflags gtk+-2.0 gtkglext-1.0 glew` \
 	$(NULL)
 
-AM_LDFLAGS = \
-	`pkg-config --libs gtk+-2.0 gtkglext-1.0 glew` \
-	$(NULL)
+LIBS = $(RISC_LIBS) $(RISC_UI_LIBS)
 
 AM_VALAFLAGS = \
 	--pkg risc \
