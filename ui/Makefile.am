@@ -27,6 +27,6 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/ui \
 	$(NULL)
 
-bin_PROGRAMS = ui
-ui_SOURCES = risc.vala renderer.vala glutil.c particle.c
-ui_LDADD = $(top_srcdir)/sim/librisc-1.0.la
+bin_PROGRAMS = risc_ui
+risc_ui_SOURCES = risc.vala renderer.vala glutil.c particle.c
+risc_ui_LDADD = $(top_srcdir)/sim/librisc-1.0.la

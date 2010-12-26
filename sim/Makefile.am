@@ -61,5 +61,4 @@ munge_vapi: librisc_1_0_la_vala.stamp
 	cat risc.vapi.tmp >> risc.vapi
 	rm risc.vapi.tmp
 
-all: all-am munge_vapi
-munge_vapi: all-am
+all-am: munge_vapi

@@ -17,6 +17,6 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/sim \
 	$(NULL)
 
-bin_PROGRAMS = dedicated
-dedicated_SOURCES = risc-dedicated.vala
-dedicated_LDADD = $(top_srcdir)/sim/librisc-1.0.la
+bin_PROGRAMS = risc_dedicated
+risc_dedicated_SOURCES = risc-dedicated.vala
+risc_dedicated_LDADD = $(top_srcdir)/sim/librisc-1.0.la

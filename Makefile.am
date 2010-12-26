@@ -16,7 +16,34 @@ riscdoc_DATA = \
 README:
 	cp -f README.md README
 
+riscluadir = $(datadir)/risc
+nobase_risclua_DATA = \
+	ships.lua \
+	lib.lua \
+	examples/target.lua \
+	examples/challenge01.lua \
+	examples/switch.lua \
+	examples/challenge02.lua \
+	examples/demo1.lua \
+	examples/challenge03.lua \
+	scenarios/challenge01.lua \
+	scenarios/basic.lua \
+	scenarios/lib.lua \
+	scenarios/furball.lua \
+	scenarios/benchmark.lua \
+	scenarios/challenge02.lua \
+	scenarios/demo1.lua \
+	scenarios/challenge03.lua \
+	scenarios/missile_practice.lua \
+	scenario_parser.lua \
+	runtime.lua \
+	solutions/challenge01.lua \
+	solutions/challenge02.lua \
+	solutions/challenge03.lua \
+	$(NULL)
+
 EXTRA_DIST = \
+	$(risclua_DATA) \
 	$(riscdoc_DATA) \
 	$(NULL)
 
