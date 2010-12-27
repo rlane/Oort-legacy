@@ -352,7 +352,7 @@ namespace RISC {
 
 			foreach (unowned Ship s in RISC.all_ships) {
 				if (s.physics.thrust.abs() != 0) {
-					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(1/32), s.physics.thrust.scale(-1/32), 0.1, 1, 4, 8);
+					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(1.0/32), s.physics.thrust.scale(-1.0/32), 0.1, 2, 4, 8);
 				}
 
 				double v_angle = atan2(s.physics.v.y, s.physics.v.x); // XXX reversed?
