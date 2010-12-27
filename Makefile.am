@@ -13,11 +13,8 @@ SUBDIRS = \
 
 riscdocdir = $(docdir)
 riscdoc_DATA = \
-	README \
+	README.md \
 	$(NULL)
-
-README:
-	cp -f README.md README
 
 riscluadir = $(datadir)/risc
 nobase_risclua_DATA = \
@@ -48,13 +45,13 @@ nobase_risclua_DATA = \
 EXTRA_DIST = \
 	$(nobase_risclua_DATA) \
 	$(riscdoc_DATA) \
+	installer.nsi \
 	$(NULL)
 
 CLEANFILES = \
 	$(NULL)
 
 DISTCLEANFILES = \
-	README \
 	$(NULL)
 
 benchmark: all
