@@ -52,3 +52,4 @@ ui/renderer.c
 ui/risc.c
 sim/paths.c
 
+sim/librisc-1.0.a

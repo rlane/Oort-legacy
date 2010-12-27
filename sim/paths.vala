@@ -15,8 +15,15 @@ namespace RISC.Paths {
 			if (exec_file.has_prefix(bin_dir)) {
 				resource_dir = data_dir;
 			} else {
-				resource_dir = exec_file.get_parent().get_parent().get_parent();
+				resource_dir = exec_file.get_parent().get_parent();
+				if (!resource_dir.get_child("runtime.lua").query_exists(null)) {
+					resource_dir = resource_dir.get_parent();
+				}
 			}
+		}
+
+		if (!resource_dir.get_child("runtime.lua").query_exists(null)) {
+			error("Could not find resource directory");
 		}
 	}
 }

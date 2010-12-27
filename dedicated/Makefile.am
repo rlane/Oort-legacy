@@ -19,7 +19,9 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/sim \
 	$(NULL)
 
+LIBS=$(RISC_LIBS) $(RISC_LUA_LIBS)
+
 bin_PROGRAMS = risc_dedicated
 risc_dedicated_SOURCES = risc-dedicated.vala
 risc_dedicated_LDADD = $(top_srcdir)/sim/librisc-1.0.la
-risc_dedicated_LDFLAGS = $(RISC_EXTRA_LDFLAGS)
+risc_dedicated_LDFLAGS = $(RISC_EXTRA_LDFLAGS) -static

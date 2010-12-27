@@ -84,7 +84,7 @@ DLLS=\
 risc-win32: all
 	rm -rf risc-win32
 	mkdir risc-win32
-	cp ui/.libs/risc_ui.exe dedicated/.libs/risc_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) risc-win32/
+	cp ui/risc_ui.exe dedicated/risc_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) risc-win32/
 	cp ships.lua runtime.lua scenario_parser.lua lib.lua risc-win32/
 	dos2unix --u2d < README.md > risc-win32/README.txt
 	dos2unix --u2d < TODO > risc-win32/TODO.txt

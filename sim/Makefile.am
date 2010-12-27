@@ -2,6 +2,7 @@ NULL =
 
 AM_CFLAGS = \
 	$(RISC_CFLAGS) \
+	$(RISC_LUA_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	$(NULL)
@@ -36,7 +37,7 @@ librisc_1_0_la_SOURCES = \
 	paths.vala \
 	$(NULL)
 
-librisc_1_0_la_LDFLAGS = $(RISC_LIBS)
+librisc_1_0_la_LDFLAGS = $(RISC_LIBS) $(RISC_LUA_LIBS)
 
 EXTRA_DIST = \
 	$(NULL)

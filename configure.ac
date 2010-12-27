@@ -31,7 +31,7 @@ GTK_REQUIRED=2.10.0
 GTKGLEXT_REQUIRED=1.2
 GLEW_REQUIRED=1.5.6
 
-PKG_CHECK_MODULES(RISC, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gio-2.0 >= $GLIB_REQUIRED lua)
+PKG_CHECK_MODULES(RISC, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gio-2.0 >= $GLIB_REQUIRED)
 PKG_CHECK_MODULES(RISC_UI, gtk+-2.0 >= $GTK_REQUIRED gtkglext-1.0 >= $GTKGLEXT_REQUIRED glew >= $GLEW_REQUIRED)
 AC_SUBST(RISC_CFLAGS)
 AC_SUBST(RISC_LIBS)
@@ -39,13 +39,21 @@ AC_SUBST(RISC_UI_CFLAGS)
 AC_SUBST(RISC_UI_LIBS)
 
 AC_ARG_ENABLE(standalone, Create standalone executables)
-echo "STANDALONE: '${enable_standalone}'"
 if test "x${enable_standalone}" = "xyes"; then
 	RISC_EXTRA_LDFLAGS="-all-static"
 else
 	RISC_EXTRA_LDFLAGS=
 fi
 AC_SUBST(RISC_EXTRA_LDFLAGS)
+
+AC_ARG_WITH(luajit, Use luajit)
+if test "x${with_luajit}" = "xyes"; then
+	PKG_CHECK_MODULES(RISC_LUA, luajit)
+else
+	PKG_CHECK_MODULES(RISC_LUA, lua)
+fi
+AC_SUBST(RISC_LUA_CFLAGS)
+AC_SUBST(RISC_LUA_LIBS)
 
 AC_CONFIG_FILES([
 	Makefile
