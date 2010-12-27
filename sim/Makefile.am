@@ -14,6 +14,7 @@ AM_VALAFLAGS = \
 	--pkg lua \
 	--pkg csim \
 	--pkg vector \
+	--pkg gio-2.0 \
 	--thread \
 	$(NULL)
 
@@ -32,9 +33,10 @@ librisc_1_0_la_SOURCES = \
 	api_team.c \
 	api_sensors.c \
 	util.c \
+	paths.vala \
 	$(NULL)
 
-librisc_1_0_la_LDFLAGS = `pkg-config --libs glib-2.0 gthread-2.0 gobject-2.0 lua`
+librisc_1_0_la_LDFLAGS = `pkg-config --libs glib-2.0 gthread-2.0 gobject-2.0 gio-2.0 lua`
 
 EXTRA_DIST = \
 	$(NULL)
@@ -54,11 +56,3 @@ DISTCLEANFILES = \
 	team.c \
 	sim.h \
 	$(NULL)
-
-munge_vapi: librisc_1_0_la_vala.stamp
-	mv risc.vapi risc.vapi.tmp
-	echo '[CCode (cheader_filename = "risc.h")]' > risc.vapi
-	cat risc.vapi.tmp >> risc.vapi
-	rm risc.vapi.tmp
-
-all-am: munge_vapi

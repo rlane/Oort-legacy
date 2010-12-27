@@ -10,7 +10,7 @@ namespace RISC.Scenario {
 		L.register("team", api_team);
 		L.register("ship", api_ship);
 
-		L.push_string(data_dir);
+		L.push_string(Paths.resource_dir.get_path());
 		L.set_global("data_dir");
 
 		L.push_number(ais.length);

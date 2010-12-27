@@ -33,9 +33,10 @@ compile
 config.h
 stamp-h1
 
-dedicated/dedicated
-ui/ui
+dedicated/risc_dedicated
+ui/risc_ui
 sim/risc.vapi
+README
 
 dedicated/risc-dedicated.c
 sim/bullet.c
@@ -49,3 +50,5 @@ sim/task.c
 sim/team.c
 ui/renderer.c
 ui/risc.c
+sim/paths.c
+

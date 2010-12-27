@@ -5,6 +5,7 @@ AM_CFLAGS = \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
+	-include risc.h \
 	$(NULL)
 
 AM_VALAFLAGS = \
@@ -12,6 +13,7 @@ AM_VALAFLAGS = \
 	--pkg lua \
 	--pkg vector \
 	--pkg csim \
+	--pkg gio-2.0 \
 	--vapidir $(top_srcdir)/vapi \
 	--vapidir $(top_srcdir)/vector \
 	--vapidir $(top_srcdir)/sim \

@@ -16,13 +16,6 @@ namespace RISC {
 		[CCode (cname = "envtol")]
 		public int envtol(string k, int i);
 	}
-	
-	[CCode (cname = "data_dir")]
-	public string data_dir;
-	[CCode (cname = "find_data_dir")]
-	public bool find_data_dir();
-	[CCode (cname = "data_path")]
-	public string data_path(string subpath);
 
 	namespace CShip {
 		[CCode (cname = "ship_get_energy")]

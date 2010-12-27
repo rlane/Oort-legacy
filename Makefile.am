@@ -1,5 +1,7 @@
 NULL = 
 
+AUTOMAKE_OPTIONS = foreign
+
 #Build in these directories:
 
 SUBDIRS = \

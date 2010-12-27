@@ -4,6 +4,7 @@ AM_CFLAGS = \
 	$(RISC_CFLAGS) \
 	$(RISC_UI_CFLAGS) \
 	-include $(CONFIG_HEADER) \
+	-include risc.h \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
 	$(NULL)
@@ -21,6 +22,7 @@ AM_VALAFLAGS = \
 	--pkg gl \
 	--pkg particle \
 	--pkg glutil \
+	--pkg gio-2.0 \
 	--vapidir $(top_srcdir)/vapi \
 	--vapidir $(top_srcdir)/vector \
 	--vapidir $(top_srcdir)/sim \

@@ -1,6 +1,7 @@
 using Gtk;
 using Gdk;
 using Lua;
+using RISC;
 
 namespace RISC {
 	struct ScenarioMetadata {
@@ -427,11 +428,10 @@ int main(string[] args) {
 		error ("Cannot run without thread support.");
 	}
 
-	if (!RISC.find_data_dir()) {
-		error("could not find data dir (set RISC_DATA)");
-	}
+	Paths.init(args[0]);
+	print("using data from %s\n", Paths.resource_dir.get_path());
 
-	var mainwin = new RISC.MainWindow();
+	var mainwin = new MainWindow();
 
 	if (args.length <= 1) {
 		mainwin.start_demo_game();
