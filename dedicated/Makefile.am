@@ -22,3 +22,4 @@ AM_VALAFLAGS = \
 bin_PROGRAMS = risc_dedicated
 risc_dedicated_SOURCES = risc-dedicated.vala
 risc_dedicated_LDADD = $(top_srcdir)/sim/librisc-1.0.la
+risc_dedicated_LDFLAGS = $(RISC_EXTRA_LDFLAGS)
