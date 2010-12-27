@@ -60,6 +60,7 @@ AC_CONFIG_FILES([
 	sim/Makefile
 	dedicated/Makefile
 	ui/Makefile
+	vector/Makefile
 ])
 
 AC_OUTPUT

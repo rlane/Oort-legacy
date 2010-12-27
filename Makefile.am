@@ -8,6 +8,7 @@ SUBDIRS = \
 	sim \
 	dedicated \
 	ui \
+	vector \
 	$(NULL)
 
 riscdocdir = $(docdir)
@@ -45,7 +46,7 @@ nobase_risclua_DATA = \
 	$(NULL)
 
 EXTRA_DIST = \
-	$(risclua_DATA) \
+	$(nobase_risclua_DATA) \
 	$(riscdoc_DATA) \
 	$(NULL)
 
