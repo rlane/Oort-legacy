@@ -15,6 +15,8 @@ namespace RISC {
 	namespace C {
 		[CCode (cname = "envtol")]
 		public int envtol(string k, int i);
+		[CCode (cname = "is_win32")]
+		public bool is_win32();
 	}
 
 	namespace CShip {
