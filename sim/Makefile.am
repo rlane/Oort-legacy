@@ -36,7 +36,7 @@ librisc_1_0_la_SOURCES = \
 	paths.vala \
 	$(NULL)
 
-librisc_1_0_la_LDFLAGS = `pkg-config --libs glib-2.0 gthread-2.0 gobject-2.0 gio-2.0 lua`
+librisc_1_0_la_LDFLAGS = $(RISC_LIBS)
 
 EXTRA_DIST = \
 	$(NULL)
