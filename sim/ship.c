@@ -49,37 +49,6 @@ RISCShip *lua_ship(lua_State *L)
 	return lua_registry_get(L, RKEY_SHIP);
 }
 
-static int api_thrust(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-	double a = luaL_checknumber(L, 1);
-	double f = luaL_checknumber(L, 2);
-	s->physics->thrust = vec2_scale(vec2(cos(a), sin(a)), f * s->physics->m);
-	return 0;
-}
-
-static int api_yield(lua_State *L)
-{
-	if (LW_VERBOSE) fprintf(stderr, "api_yield\n");
-	return lua_yield(L, 0);
-}
-
-static int api_position(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-	lua_pushnumber(L, s->physics->p.x);
-	lua_pushnumber(L, s->physics->p.y);
-	return 2;
-}
-
-static int api_velocity(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-	lua_pushnumber(L, s->physics->v.x);
-	lua_pushnumber(L, s->physics->v.y);
-	return 2;
-}
-
 static int api_create_bullet(lua_State *L)
 {
 	RISCShip *s = lua_ship(L);
@@ -288,10 +257,10 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	s->mem.allocator = lua_getallocf(G, &s->mem.allocator_ud);
 	lua_setallocf(G, (lua_Alloc)ai_allocator, s);
 	luaL_openlibs(G);
-	lua_register(G, "sys_thrust", api_thrust);
-	lua_register(G, "sys_yield", api_yield);
-	lua_register(G, "sys_position", api_position);
-	lua_register(G, "sys_velocity", api_velocity);
+	lua_register(G, "sys_thrust", risc_ship_api_thrust);
+	lua_register(G, "sys_yield", risc_ship_api_yield);
+	lua_register(G, "sys_position", risc_ship_api_position);
+	lua_register(G, "sys_velocity", risc_ship_api_velocity);
 	lua_register(G, "sys_create_bullet", api_create_bullet);
 	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
 	lua_register(G, "sys_sensor_contact", api_sensor_contact);

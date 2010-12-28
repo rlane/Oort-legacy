@@ -1,4 +1,6 @@
 using Lua;
+using Vector;
+using Math;
 
 [CCode (free_function = "ship_destroy")]
 [Compact]
@@ -127,6 +129,35 @@ public class RISC.Ship {
 			}
 			return false;
 		}
+	}
+
+	[CCode (cname="lua_ship")]
+	extern static unowned Ship lua_ship(LuaVM L);
+
+	public static int api_thrust(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		double a = L.check_number(1);
+		double f = L.check_number(2);
+		s.physics.thrust = vec2(cos(a), sin(a)).scale(f * s.physics.m);
+		return 0;
+	}
+
+	public static int api_yield(LuaVM L) {
+		return L.yield(0);
+	}
+
+	public static int api_position(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		L.push_number(s.physics.p.x);
+		L.push_number(s.physics.p.y);
+		return 2;
+	}
+
+	public static int api_velocity(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		L.push_number(s.physics.v.x);
+		L.push_number(s.physics.v.y);
+		return 2;
 	}
 
 	public double get_energy() {
