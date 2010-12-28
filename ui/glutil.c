@@ -15,25 +15,7 @@
 
 #include <GL/glew.h>
 
-#include <SDL/SDL_gfxPrimitives_font.h>
-
 #include "tga.h"
-
-GLubyte font_storage[256*8];
-GLubyte *font;
-
-extern void font_init(void) __attribute__ ((constructor));
-
-void font_init(void)
-{
-	int i, j;
-	font = font_storage;
-	for (i = 0; i < 256; i++) {
-		for (j = 0; j < 8; j++) {
-			font[i*8 + j] = gfxPrimitivesFontdata[i*8 + (7-j)];
-		}
-	}
-}
 
 void glColor32(guint32 c)
 {

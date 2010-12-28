@@ -8,7 +8,7 @@ arch=('i686' 'x86_64')
 url="https://github.com/rlane/risc"
 license=("GPL")
 depends=()
-makedepends=('pkgconfig' 'vala' 'mingw32-gcc' 'mingw32-sdl' 'mingw32-glib2' 'mingw32-gtk2' 'mingw32-lua' 'mingw32-sdl_gfx' 'mingw32-gtkglext' 'mingw32-glew' 'zip')
+makedepends=('pkgconfig' 'vala' 'mingw32-gcc' 'mingw32-glib2' 'mingw32-gtk2' 'mingw32-lua' 'mingw32-gtkglext' 'mingw32-glew' 'zip')
 
 _gitroot="git://github.com/rlane/risc"
 _gitname="risc"

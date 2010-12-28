@@ -5,6 +5,4 @@
 
 void screenshot(const char *filename);
 
-extern unsigned char *font;
-
 #endif
