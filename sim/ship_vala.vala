@@ -160,6 +160,22 @@ public class RISC.Ship {
 		return 2;
 	}
 
+	public static int api_create_bullet(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+
+		double x = L.check_number(1);
+		double y = L.check_number(2);
+		double vx = L.check_number(3);
+		double vy = L.check_number(4);
+		double m = L.check_number(5);
+		double ttl = L.check_number(6);
+		int type = L.check_int(7);
+
+		Bullet.create(s.team, vec2(x,y), vec2(vx,vy), 1.0/32, m, ttl, (BulletType)type);
+
+		return 0;
+	}
+
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}

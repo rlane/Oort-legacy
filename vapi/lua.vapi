@@ -417,6 +417,8 @@ namespace Lua {
 		public double check_number(int narg);
 		[CCode (cname = "luaL_checklong")]
 		public uint32 check_long(int narg);
+		[CCode (cname = "luaL_checkint")]
+		public int check_int(int narg);
 
 		[CCode (cname = "luaL_optstring")]
 		public unowned string opt_string(int narg, string def);

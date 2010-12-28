@@ -49,23 +49,6 @@ RISCShip *lua_ship(lua_State *L)
 	return lua_registry_get(L, RKEY_SHIP);
 }
 
-static int api_create_bullet(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-
-	double x = luaL_checknumber(L, 1);
-	double y = luaL_checknumber(L, 2);
-	double vx = luaL_checknumber(L, 3);
-	double vy = luaL_checknumber(L, 4);
-	double m = luaL_checknumber(L, 5);
-	double ttl = luaL_checknumber(L, 6);
-	int type = luaL_checkint(L, 7);
-
-	risc_bullet_create(s->team, vec2(x,y), vec2(vx,vy), 1.0/32, m, ttl, type);
-
-	return 0;
-}
-
 static int api_class(lua_State *L)
 {
 	RISCShip *s = lua_ship(L);
@@ -261,7 +244,7 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_yield", risc_ship_api_yield);
 	lua_register(G, "sys_position", risc_ship_api_position);
 	lua_register(G, "sys_velocity", risc_ship_api_velocity);
-	lua_register(G, "sys_create_bullet", api_create_bullet);
+	lua_register(G, "sys_create_bullet", risc_ship_api_create_bullet);
 	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
 	lua_register(G, "sys_sensor_contact", api_sensor_contact);
 	lua_register(G, "sys_team", api_team);
