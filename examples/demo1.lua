@@ -1,9 +1,9 @@
 local my_class = class
-local my_team = team()
+local my_team = team
 local my_ship = ships[my_class]
-local fighter_selector = function(k,c) return c:team() ~= team() and c:class() == "fighter" end
+local fighter_selector = function(k,c) return c:team() ~= my_team and c:class() == "fighter" end
 local missile_selector = function(k,c)
-	if c:team() ~= team() and c:class() == "little_missile" then
+	if c:team() ~= my_team and c:class() == "little_missile" then
 		local x, y = position()
 		local tx, ty = c:position()
 		return distance(x,y,tx,ty) < 3

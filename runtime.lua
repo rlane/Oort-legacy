@@ -126,7 +126,6 @@ sandbox_api = {
 	energy = energy,
 	fire = fire,
 	yield = sys_yield,
-	team = sys_team,
 	sensor_contacts = sensor_contacts,
 	sensor_contact = sensor_contact,
 	send = send,
@@ -189,6 +188,7 @@ function sandbox(f)
 
 		orders = orders,
 		class = my_class,
+		team = team,
 		ships = copy_table(ships, {})
 	}
 

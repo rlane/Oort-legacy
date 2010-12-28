@@ -1,5 +1,5 @@
 function target_selector(k,c)
-	return c:team() ~= team()
+	return c:team() ~= team
 end
 
 my_ship = ships[class]
