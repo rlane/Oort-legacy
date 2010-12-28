@@ -48,38 +48,6 @@ RISCShip *lua_ship(lua_State *L)
 	return lua_registry_get(L, RKEY_SHIP);
 }
 
-static int api_random(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-	int n = lua_gettop(L);
-
-	if (n == 0) {
-		lua_settop(L, 0);
-		lua_pushnumber(L, g_rand_double(s->prng));
-	} else if (n == 1 || n == 2) {
-		guint32 begin, end;
-		if (n == 1) {
-			begin = 1;
-			end = luaL_checklong(L, 1);
-		} else {
-			begin = luaL_checklong(L, 1);
-			end = luaL_checklong(L, 2);
-		}
-		lua_settop(L, 0);
-		if (begin < end) {
-			lua_pushnumber(L, g_rand_int_range(s->prng, begin, end));
-		} else if (begin == end) {
-			lua_pushnumber(L, begin);
-		} else {
-			return luaL_error(L, "end must be >= begin");
-		}
-	} else {
-		return luaL_error(L, "too many arguments");
-	}
-	
-	return 1;
-}
-
 struct msg {
 	int refcount;
 	int len;
@@ -233,7 +201,7 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_create_bullet", risc_ship_api_create_bullet);
 	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
 	lua_register(G, "sys_sensor_contact", api_sensor_contact);
-	lua_register(G, "sys_random", api_random);
+	lua_register(G, "sys_random", risc_ship_api_random);
 	lua_register(G, "sys_send", api_send);
 	lua_register(G, "sys_recv", api_recv);
 	lua_register(G, "sys_spawn", api_spawn);

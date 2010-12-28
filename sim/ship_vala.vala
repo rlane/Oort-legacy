@@ -176,6 +176,37 @@ public class RISC.Ship {
 		return 0;
 	}
 
+	public static int api_random(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		int n = L.get_top();
+
+		if (n == 0) {
+			L.set_top(0);
+			L.push_number(s.prng.next_double());
+		} else if (n == 1 || n == 2) {
+			int32 begin, end;
+			if (n == 1) {
+				begin = 1;
+				end = L.check_long(1);
+			} else {
+				begin = L.check_long(1);
+				end = L.check_long(2);
+			}
+			L.set_top(0);
+			if (begin < end) {
+				L.push_number(s.prng.int_range(begin, end));
+			} else if (begin == end) {
+				L.push_number(begin);
+			} else {
+				return L.err("end must be >= begin");
+			}
+		} else {
+			return L.err("too many arguments");
+		}
+		
+		return 1;
+	}
+
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}
