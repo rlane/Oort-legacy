@@ -226,6 +226,27 @@ public class RISC.Ship {
 		return L.yield(0);
 	}	
 
+	public static int api_debug_line(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		if (s.debug.num_lines == s.debug.lines.length) {
+			return 0;
+		}
+		int i = s.debug.num_lines++;
+		double x1 = L.check_number(1);
+		double y1 = L.check_number(2);
+		double x2 = L.check_number(3);
+		double y2 = L.check_number(4);
+		s.debug.lines[i].a = vec2(x1,y1);
+		s.debug.lines[i].b = vec2(x2,y2);
+		return 0;
+	}
+
+	public static int api_clear_debug_lines(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		s.debug.num_lines = 0;
+		return 0;
+	}
+
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}

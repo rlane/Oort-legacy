@@ -112,30 +112,6 @@ static int api_recv(lua_State *L)
 	return 1;
 }
 
-static int api_debug_line(lua_State *L)
-{
-	double x1,y1,x2,y2;
-	RISCShip *s = lua_ship(L);
-	if (s->debug.num_lines == RISC_SHIP_MAX_DEBUG_LINES) {
-		return 0;
-	}
-	int i = s->debug.num_lines++;
-	x1 = luaL_checknumber(L, 1);
-	y1 = luaL_checknumber(L, 2);
-	x2 = luaL_checknumber(L, 3);
-	y2 = luaL_checknumber(L, 4);
-	s->debug.lines[i].a = vec2(x1,y1);
-	s->debug.lines[i].b = vec2(x2,y2);
-	return 0;
-}
-
-static int api_clear_debug_lines(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-	s->debug.num_lines = 0;
-	return 0;
-}
-
 static int api_serialize_id(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
@@ -185,8 +161,8 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_recv", api_recv);
 	lua_register(G, "sys_spawn", risc_ship_api_spawn);
 	lua_register(G, "sys_die", risc_ship_api_die);
-	lua_register(G, "sys_debug_line", api_debug_line);
-	lua_register(G, "sys_clear_debug_lines", api_clear_debug_lines);
+	lua_register(G, "sys_debug_line", risc_ship_api_debug_line);
+	lua_register(G, "sys_clear_debug_lines", risc_ship_api_clear_debug_lines);
 	lua_register(G, "sys_serialize_id", api_serialize_id);
 	lua_register(G, "sys_deserialize_id", api_deserialize_id);
 
