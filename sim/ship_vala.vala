@@ -182,12 +182,6 @@ public class RISC.Ship {
 		return 1;
 	}
 
-	public static int api_class(LuaVM L) {
-		unowned Ship s = lua_ship(L);
-		L.push_string(s.class.name);
-		return 1;
-	}
-
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}

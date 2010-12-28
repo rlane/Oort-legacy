@@ -2,7 +2,7 @@ function target_selector(k,c)
 	return c:team() ~= team()
 end
 
-my_ship = ships[class()]
+my_ship = ships[class]
 
 while true do
 	local contacts = sensor_contacts({})

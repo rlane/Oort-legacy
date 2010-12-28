@@ -1,4 +1,4 @@
-local my_class = class()
+local my_class = class
 local my_ship = ships[my_class]
 
 if my_class == "fighter" then

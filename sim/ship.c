@@ -234,7 +234,6 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
 	lua_register(G, "sys_sensor_contact", api_sensor_contact);
 	lua_register(G, "sys_team", risc_ship_api_team);
-	lua_register(G, "sys_class", risc_ship_api_class);
 	lua_register(G, "sys_random", api_random);
 	lua_register(G, "sys_send", api_send);
 	lua_register(G, "sys_recv", api_recv);
@@ -248,6 +247,9 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_registry_set(G, RKEY_SHIP, s);
 
 	ud_sensor_contact_register(G);
+
+	lua_pushstring(G, s->class->name);
+	lua_setglobal(G, "class");
 
 	lua_pushstring(G, orders);
 	lua_setglobal(G, "orders");

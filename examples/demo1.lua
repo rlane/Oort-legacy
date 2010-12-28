@@ -1,4 +1,4 @@
-local my_class = class()
+local my_class = class
 local my_team = team()
 local my_ship = ships[my_class]
 local fighter_selector = function(k,c) return c:team() ~= team() and c:class() == "fighter" end
