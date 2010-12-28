@@ -48,12 +48,6 @@ RISCShip *lua_ship(lua_State *L)
 	return lua_registry_get(L, RKEY_SHIP);
 }
 
-static int api_time(lua_State *L)
-{
-	lua_pushnumber(L, ticks/32.0);
-	return 1;
-}
-
 static int api_random(lua_State *L)
 {
 	RISCShip *s = lua_ship(L);
@@ -241,7 +235,7 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_sensor_contact", api_sensor_contact);
 	lua_register(G, "sys_team", risc_ship_api_team);
 	lua_register(G, "sys_class", risc_ship_api_class);
-	lua_register(G, "sys_time", api_time);
+	lua_register(G, "sys_time", risc_ship_api_time);
 	lua_register(G, "sys_random", api_random);
 	lua_register(G, "sys_send", api_send);
 	lua_register(G, "sys_recv", api_recv);
