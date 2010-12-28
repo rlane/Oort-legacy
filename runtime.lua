@@ -1,10 +1,11 @@
 dofile(data_dir .. "/ships.lua")
 
 local my_class = ships[sys_class()]
-local last_fire_times = {}
+local last_fire_ticks = {}
 local _energy = my_class.energy.initial
 local energy_tick_rate = my_class.energy.rate / 32.0
 local debug_preemption = false
+local ticks = 0
 
 function energy()
 	return _energy
@@ -30,7 +31,7 @@ function fire(name, a)
 		error(string.format("gun %s does not exist", name))
 	end
 
-	local last_fire_time = last_fire_times[name]
+	local last_fire_tick = last_fire_ticks[name]
 
 	if _energy < gun.cost then
 		return
@@ -38,10 +39,10 @@ function fire(name, a)
 		_energy = _energy - gun.cost
 	end
 
-	if last_fire_time and last_fire_time + gun.reload_time > sys_time() then
+	if last_fire_tick and last_fire_tick + gun.reload_time*32 > ticks then
 		return
 	else
-		last_fire_times[name] = sys_time()
+		last_fire_ticks[name] = ticks
 	end
 
 	x, y = sys_position()
@@ -165,6 +166,7 @@ function tick_hook()
 	if _energy > my_class.energy.limit then
 		_energy = my_class.energy.limit
 	end
+	ticks = ticks + 1
 end
 
 function sandbox(f)

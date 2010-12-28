@@ -188,11 +188,6 @@ public class RISC.Ship {
 		return 1;
 	}
 
-	public static int api_time(LuaVM L) {
-		L.push_number(Game.ticks/32.0);
-		return 1;
-	}
-
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}
