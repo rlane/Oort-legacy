@@ -37,7 +37,7 @@ librisc_1_0_la_SOURCES = \
 	paths.vala \
 	$(NULL)
 
-noinst_HEADERS = api_team.h api_sensors.h ship.h util.h risc.h
+noinst_HEADERS = api_team.h api_sensors.h ship.h util.h risc.h risc.vapi csim.vapi
 
 librisc_1_0_la_LDFLAGS = $(RISC_LIBS) $(RISC_LUA_LIBS)
 

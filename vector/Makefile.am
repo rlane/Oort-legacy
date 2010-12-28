@@ -1,1 +1,1 @@
-noinst_HEADERS = vector.h
+noinst_HEADERS = vector.h vector.vapi
