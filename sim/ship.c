@@ -112,20 +112,6 @@ static int api_recv(lua_State *L)
 	return 1;
 }
 
-static int api_spawn(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-	const char *class_name = luaL_checkstring(L, 1);
-	const char *orders = luaL_checkstring(L, 2);
-	const char *filename = s->team->filename;
-
-	RISCShip *child = ship_create(filename, class_name, s->team,
-			                             s->physics->p, s->physics->v,
-																	 orders, g_rand_int(s->prng));
-	if (!child) return luaL_error(L, "failed to create ship");
-	return 0;
-}
-
 static int api_die(lua_State *L)
 {
 	RISCShip *s = lua_ship(L);
@@ -204,7 +190,7 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_random", risc_ship_api_random);
 	lua_register(G, "sys_send", api_send);
 	lua_register(G, "sys_recv", api_recv);
-	lua_register(G, "sys_spawn", api_spawn);
+	lua_register(G, "sys_spawn", risc_ship_api_spawn);
 	lua_register(G, "sys_die", api_die);
 	lua_register(G, "sys_debug_line", api_debug_line);
 	lua_register(G, "sys_clear_debug_lines", api_clear_debug_lines);

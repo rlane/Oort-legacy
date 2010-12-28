@@ -207,6 +207,19 @@ public class RISC.Ship {
 		return 1;
 	}
 
+	public static int api_spawn(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		unowned string class_name = L.check_string(1);
+		unowned string orders = L.check_string(2);
+		unowned string filename = s.team.filename;
+
+		unowned Ship? child = CShip.create(filename, class_name, s.team,
+		                                   s.physics.p, s.physics.v,
+		                                   orders, s.prng.next_int());
+		if (child == null) return L.err("failed to create ship");
+		return 0;
+	}
+
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}
