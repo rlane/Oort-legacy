@@ -59,7 +59,7 @@ static struct sensor_contact *ud_sensor_contact_cast(lua_State *L, int index)
 static int ud_sensor_contact_id(lua_State *L)
 {
 	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	lua_pushlightuserdata(L, (void*)(uintptr_t)c->id);
+	lua_pushlstring(L, (char*)&c->id, sizeof(c->id));
 	return 1;
 }
 
@@ -242,12 +242,15 @@ int api_sensor_contacts(lua_State *L)
 int api_sensor_contact(lua_State *L)
 {
 	GList *e;
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	guint32 id = (guint32)(uintptr_t)lua_touserdata(L, 1);
+	size_t n;
+	const char *id = lua_tolstring(L, 1, &n);
+	if (!id || n != sizeof(guint32)) {
+		return luaL_error(L, "invalid contact id");
+	}
 	lua_pop(L, 1);
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		RISCShip *s = e->data;
-		if (id == s->api_id) {
+		if (!memcmp(id, &s->api_id, sizeof(s->api_id))) {
 			lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
 			lua_rawget(L, LUA_REGISTRYINDEX);
 			ud_sensor_contact_new(L, s, lua_gettop(L));

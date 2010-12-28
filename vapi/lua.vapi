@@ -411,6 +411,8 @@ namespace Lua {
 
 		[CCode (cname = "luaL_argerror")]
 		public int arg_error(int narg, string msg);
+		[CCode (cname = "luaL_checktype")]
+		public unowned void check_type(int narg, Type t);
 		[CCode (cname = "luaL_checkstring")]
 		public unowned string check_string(int narg);
 		[CCode (cname = "luaL_checknumber")]

@@ -112,24 +112,6 @@ static int api_recv(lua_State *L)
 	return 1;
 }
 
-static int api_serialize_id(lua_State *L)
-{
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	guint32 id = (guint32)(uintptr_t)lua_touserdata(L, 1);
-	char *buf = (char*)&id;
-	lua_pushlstring(L, buf, sizeof(id));
-	return 1;
-}
-
-static int api_deserialize_id(lua_State *L)
-{
-	const char *buf = luaL_checkstring(L, 1);
-	const guint32 *ibuf = (void*)buf;
-	guint32 id = *ibuf;
-	lua_pushlightuserdata(L, (void*)(uintptr_t)id);
-	return 1;
-}
-
 static void *ai_allocator(RISCShip *s, void *ptr, size_t osize, size_t nsize)
 {
 	s->mem.cur += (nsize - osize);
@@ -163,8 +145,6 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_die", risc_ship_api_die);
 	lua_register(G, "sys_debug_line", risc_ship_api_debug_line);
 	lua_register(G, "sys_clear_debug_lines", risc_ship_api_clear_debug_lines);
-	lua_register(G, "sys_serialize_id", api_serialize_id);
-	lua_register(G, "sys_deserialize_id", api_deserialize_id);
 
 	lua_registry_set(G, RKEY_SHIP, s);
 

@@ -118,7 +118,7 @@ if my_class == "fighter" then
 		end
 
 		if follow_target and energy() > ships.little_missile.cost and math.random(50) == 7 then
-			spawn("little_missile", serialize_id(follow_target:id()))
+			spawn("little_missile", follow_target:id())
 		end
 
 		yield()
@@ -198,7 +198,7 @@ elseif my_class == "mothership" then
 			local target_selector = function(k,c) return true end
 			local _, t = pick(sensor_contacts{ class = "mothership", enemy = true }, target_selector)
 			if t then
-				spawn("missile", serialize_id(t:id()))
+				spawn("missile", t:id())
 			end
 		end
 
@@ -206,7 +206,7 @@ elseif my_class == "mothership" then
 			local target_selector = function(k,c) return c:class() ~= "little_missile" end
 			local _, t = pick(sensor_contacts{ enemy = true }, target_selector)
 			if t then
-				spawn("little_missile", serialize_id(t:id()))
+				spawn("little_missile", t:id())
 			end
 		end
 
@@ -217,7 +217,7 @@ elseif my_class == "mothership" then
 		yield()
 	end
 elseif my_class == "missile" or my_class == "little_missile" then
-	local target_id = deserialize_id(orders)
+	local target_id = orders
 
 	thrust(math.random()*2*math.pi, my_ship.max_acc)
 	sleep(16)

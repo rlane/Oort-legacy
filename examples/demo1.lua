@@ -59,7 +59,7 @@ elseif my_class == "mothership" then
 			for i = 1,4 do
 				local _, t = pick(sensor_contacts{}, fighter_selector)
 				if t then
-					spawn("little_missile", serialize_id(t:id()))
+					spawn("little_missile", t:id())
 				end
 			end
 		end
@@ -67,7 +67,7 @@ elseif my_class == "mothership" then
 		yield()
 	end
 elseif my_class == "little_missile" then
-	local target_id = deserialize_id(orders)
+	local target_id = orders
 	thrust(math.random()*2*math.pi, my_ship.max_acc)
 	sleep(16)
 
