@@ -12,7 +12,6 @@
 #include <glib-object.h>
 #include "risc.h"
 #include "ship.h"
-#include "api_team.h"
 
 char UKEY_SENSOR_CONTACT[1];
 
@@ -67,7 +66,7 @@ static int ud_sensor_contact_id(lua_State *L)
 static int ud_sensor_contact_team(lua_State *L)
 {
 	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	ud_team_new(L, c->team);
+	lua_pushstring(L, c->team->name);
 	return 1;
 }
 

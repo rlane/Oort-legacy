@@ -14,7 +14,6 @@
 #include "risc.h"
 #include "ship.h"
 #include "api_sensors.h"
-#include "api_team.h"
 #include "util.h"
 
 #define LW_VERBOSE 0
@@ -247,7 +246,7 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_create_bullet", risc_ship_api_create_bullet);
 	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
 	lua_register(G, "sys_sensor_contact", api_sensor_contact);
-	lua_register(G, "sys_team", api_team);
+	lua_register(G, "sys_team", risc_ship_api_team);
 	lua_register(G, "sys_class", api_class);
 	lua_register(G, "sys_time", api_time);
 	lua_register(G, "sys_random", api_random);
@@ -263,7 +262,6 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_registry_set(G, RKEY_SHIP, s);
 
 	ud_sensor_contact_register(G);
-	ud_team_register(G);
 
 	lua_pushstring(G, orders);
 	lua_setglobal(G, "orders");
