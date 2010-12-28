@@ -112,13 +112,6 @@ static int api_recv(lua_State *L)
 	return 1;
 }
 
-static int api_die(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-	s->dead = 1;
-	return lua_yield(L, 0);
-}	
-
 static int api_debug_line(lua_State *L)
 {
 	double x1,y1,x2,y2;
@@ -191,7 +184,7 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_send", api_send);
 	lua_register(G, "sys_recv", api_recv);
 	lua_register(G, "sys_spawn", risc_ship_api_spawn);
-	lua_register(G, "sys_die", api_die);
+	lua_register(G, "sys_die", risc_ship_api_die);
 	lua_register(G, "sys_debug_line", api_debug_line);
 	lua_register(G, "sys_clear_debug_lines", api_clear_debug_lines);
 	lua_register(G, "sys_serialize_id", api_serialize_id);

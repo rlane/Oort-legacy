@@ -220,6 +220,12 @@ public class RISC.Ship {
 		return 0;
 	}
 
+	public static int api_die(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		s.dead = true;
+		return L.yield(0);
+	}	
+
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}
