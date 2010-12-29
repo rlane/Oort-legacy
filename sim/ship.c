@@ -190,15 +190,15 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 
 static guint64 thread_ns(void)
 {
-#ifdef G_OS_WIN32
-	return 0;
-#else
+#ifdef CLOCK_THREAD_CPUTIME_ID
 	struct timespec ts;
 	if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts)) {
 		perror("glock_gettime");
 		abort();
 	}
 	return ts.tv_nsec + ts.tv_sec*(1000*1000*1000);
+#else
+	return 0;
 #endif
 }
 
