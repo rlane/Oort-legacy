@@ -251,7 +251,7 @@ namespace Lua {
 		[CCode (cname = "lua_pushinteger")]
 		public void push_integer (int n);
 		[CCode (cname = "lua_pushlstring")]
-		public void push_lstring (string s, size_t size);
+		public void push_lstring (uint8 *s, size_t size);
 		[CCode (cname = "lua_pushstring")]
 		public void push_string (string s);
 		[CCode (cname = "lua_pushfstring")]
@@ -415,6 +415,8 @@ namespace Lua {
 		public unowned void check_type(int narg, Type t);
 		[CCode (cname = "luaL_checkstring")]
 		public unowned string check_string(int narg);
+		[CCode (cname = "luaL_checklstring")]
+		public uint8 *check_lstring(int narg, out size_t len);
 		[CCode (cname = "luaL_checknumber")]
 		public double check_number(int narg);
 		[CCode (cname = "luaL_checklong")]

@@ -441,5 +441,7 @@ int main(string[] args) {
 
 	Gtk.main();
 
+	Game.shutdown();
+
 	return 0;
 }

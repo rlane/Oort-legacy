@@ -31,6 +31,16 @@ public class RISC.Ship {
 		public DebugLine lines[32];
 	}
 
+	public class Msg {
+		public size_t len;
+		public uint8 *data;
+
+		~Msg() {
+			print("free %p\n", this);
+			free(data);
+		}
+	}
+
 	public uint32 api_id;
 	public unowned ShipClass @class;
 	public unowned Team team;
@@ -46,7 +56,7 @@ public class RISC.Ship {
 	public Vector.Vec2 tail[16];
 	public int tail_head;
 	public int last_shot_tick;
-	public GLib.Queue mq;
+	public Queue<Msg> mq;
 	public uint64 line_start_time;
 	public char line_info[256];
 	public Gfx gfx;
@@ -58,9 +68,11 @@ public class RISC.Ship {
 	public static List<Ship> new_ships;
 	[CCode (cname = "new_ships_lock")]
 	public static Mutex new_ships_lock;
+	public static Mutex radio_lock;
 
 	public static void init() {
 		new_ships_lock = new Mutex();
+		radio_lock = new Mutex();
 	}
 
 	public static void purge() {
@@ -245,6 +257,44 @@ public class RISC.Ship {
 		unowned Ship s = lua_ship(L);
 		s.debug.num_lines = 0;
 		return 0;
+	}
+
+	public static int api_send(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		size_t len;
+		uint8 *ldata = L.check_lstring(1, out len);
+
+		uint8 *data = malloc(len);
+		C.memcpy(data, ldata, len);
+
+		var msg = new Msg() { len=len, data=data };
+		print("publish %p\n", msg);
+
+		radio_lock.lock();
+
+		foreach (unowned Ship s2 in all_ships) {
+			if (s == s2 || s.team != s2.team) continue;
+			s2.mq.push_tail(msg);
+		}
+
+		radio_lock.unlock();
+			
+		return 0;	
+	}
+
+	public static int api_recv(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+
+		radio_lock.lock();
+
+		Msg msg = s.mq.pop_head();
+		if (msg != null) {
+			L.push_lstring(msg.data, msg.len);
+		}
+
+		radio_lock.unlock();
+
+		return (msg != null) ? 1 : 0;
 	}
 
 	public double get_energy() {

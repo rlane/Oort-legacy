@@ -27,7 +27,7 @@ if my_class == "fighter" then
 	while true do
 		local msg = recv()
 		if msg then
-			print("msg: " .. msg)
+			--print("fighter msg: " .. msg)
 		end
 
 		clear_debug_lines()
@@ -136,7 +136,7 @@ elseif my_class == "mothership" then
 	while true do
 		local msg = recv()
 		if msg then
-			print("msg: " .. msg)
+			--print("mothership msg: " .. msg)
 		end
 
 		if not main_target and main_target_retry == 16 then
@@ -191,7 +191,7 @@ elseif my_class == "mothership" then
 		end
 
 		if math.random(1,1000) == 5 then
-			--send("hello")
+			send("hello")
 		end
 
 		if math.random(1,100) == 7 then
@@ -223,6 +223,11 @@ elseif my_class == "missile" or my_class == "little_missile" then
 	sleep(16)
 
 	while true do
+		local msg = recv()
+		if msg then
+			--print("missile msg: " .. msg)
+		end
+
 		local t = sensor_contact(target_id)
 
 		if not t then

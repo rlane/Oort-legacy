@@ -17,6 +17,8 @@ namespace RISC {
 		public int envtol(string k, int i);
 		[CCode (cname = "is_win32")]
 		public bool is_win32();
+		[CCode (cname = "memcpy")]
+		public void *memcpy(void *dest, void *src, size_t n);
 	}
 
 	namespace CShip {

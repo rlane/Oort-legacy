@@ -48,70 +48,6 @@ RISCShip *lua_ship(lua_State *L)
 	return lua_registry_get(L, RKEY_SHIP);
 }
 
-struct msg {
-	int refcount;
-	int len;
-	char *data;
-};
-
-static int api_send(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-	size_t len;
-	const char *ldata = luaL_checklstring(L, 1, &len);
-
-	char *data = malloc(len);
-	if (!data) abort();
-	memcpy(data, ldata, len);
-
-	struct msg *msg = g_slice_new(struct msg);
-	msg->refcount = 1;
-	msg->len = len;
-	msg->data = data;
-
-	g_static_mutex_lock(&radio_lock);
-
-	GList *e;
-	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
-		RISCShip *s2 = e->data;
-		if (s == s2 || s->team != s2->team) continue;
-		msg->refcount++;
-		g_queue_push_tail(s2->mq, msg);
-	}
-	
-	if (--msg->refcount == 0) {
-		free(msg->data);
-		g_slice_free(struct msg, msg);
-	}
-
-	g_static_mutex_unlock(&radio_lock);
-		
-	return 0;	
-}
-
-static int api_recv(lua_State *L)
-{
-	RISCShip *s = lua_ship(L);
-
-	g_static_mutex_lock(&radio_lock);
-
-	struct msg *msg = g_queue_pop_head(s->mq);
-	if (!msg) {
-		g_static_mutex_unlock(&radio_lock);
-		return 0;
-	}
-	lua_pushlstring(L, msg->data, msg->len);
-
-	if (--msg->refcount == 0) {
-		free(msg->data);
-		g_slice_free(struct msg, msg);
-	}
-
-	g_static_mutex_unlock(&radio_lock);
-
-	return 1;
-}
-
 static void *ai_allocator(RISCShip *s, void *ptr, size_t osize, size_t nsize)
 {
 	s->mem.cur += (nsize - osize);
@@ -139,8 +75,8 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
 	lua_register(G, "sys_sensor_contact", api_sensor_contact);
 	lua_register(G, "sys_random", risc_ship_api_random);
-	lua_register(G, "sys_send", api_send);
-	lua_register(G, "sys_recv", api_recv);
+	lua_register(G, "sys_send", risc_ship_api_send);
+	lua_register(G, "sys_recv", risc_ship_api_recv);
 	lua_register(G, "sys_spawn", risc_ship_api_spawn);
 	lua_register(G, "sys_die", risc_ship_api_die);
 	lua_register(G, "sys_debug_line", risc_ship_api_debug_line);
@@ -312,12 +248,9 @@ void ship_destroy(RISCShip *s)
 {
 	all_ships = g_list_remove(all_ships, s);
 
-	struct msg *msg;
+	RISCShipMsg *msg;
 	while ((msg = g_queue_pop_head(s->mq))) {
-		if (--msg->refcount == 0) {
-			free(msg->data);
-			g_slice_free(struct msg, msg);
-		}
+		risc_ship_msg_unref(msg);
 	}
 	g_queue_free(s->mq);
 
@@ -325,6 +258,8 @@ void ship_destroy(RISCShip *s)
 	lua_close(s->lua);
 	g_rand_free(s->prng);
 	g_slice_free(RISCShip, s);
+
+	printf("destroy ship %p\n", s);
 }
 
 static double lua_getfield_double(lua_State *L, int index, const char *key)
