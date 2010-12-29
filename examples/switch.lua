@@ -218,6 +218,9 @@ elseif my_class == "mothership" then
 	end
 elseif my_class == "missile" or my_class == "little_missile" then
 	local target_id = orders
+	if (#orders ~= 4) then
+		error("bad orders: n=" .. #orders)
+	end
 
 	thrust(math.random()*2*math.pi, my_ship.max_acc)
 	sleep(16)

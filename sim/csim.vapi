@@ -26,7 +26,7 @@ namespace RISC {
 		public double get_energy(Ship s);
 
 		[CCode (cname = "ship_create")]
-		public static unowned Ship create(string filename, string class_name, RISC.Team team, Vector.Vec2 p, Vector.Vec2 v, string orders, uint32 seed);
+		public static unowned Ship create(string filename, string class_name, RISC.Team team, Vector.Vec2 p, Vector.Vec2 v, uint8 *orders, size_t orders_len, uint32 seed);
 		[CCode (cname = "ship_ai_run")]
 		public static bool ai_run(Ship s, int len);
 

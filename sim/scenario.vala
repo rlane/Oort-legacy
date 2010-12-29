@@ -40,14 +40,15 @@ namespace RISC.Scenario {
 	}
 
 	private int api_ship(LuaVM L) {
-		string ship_class_name = L.check_string(1);
-		string team_name = L.check_string(2);
+		unowned string ship_class_name = L.check_string(1);
+		unowned string team_name = L.check_string(2);
 		double x = L.check_number(3);
 		double y = L.check_number(4);
-		string orders = L.opt_string(5, "");
+		size_t orders_len = 0;
+		uint8 *orders = L.opt_lstring(5, "", out orders_len);
 		unowned Team team = Team.lookup(team_name);
 		if (team == null) return L.arg_error(2, "invalid team");
-		unowned Ship s = CShip.create(team.filename, ship_class_name, team, vec2(x,y), vec2(0,0), orders, Game.prng.next_int());
+		unowned Ship s = CShip.create(team.filename, ship_class_name, team, vec2(x,y), vec2(0,0), orders, orders_len, Game.prng.next_int());
 		if (s == null) return L.err("ship creation failed");
 		return 0;
 	}

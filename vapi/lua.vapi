@@ -426,6 +426,8 @@ namespace Lua {
 
 		[CCode (cname = "luaL_optstring")]
 		public unowned string opt_string(int narg, string def);
+		[CCode (cname = "luaL_optlstring")]
+		public unowned uint8 *opt_lstring(int narg, string def, out size_t len);
 
 		[CCode (cname = "luaL_error")]
 		public int err (string msg);

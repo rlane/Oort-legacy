@@ -57,7 +57,7 @@ static void *ai_allocator(RISCShip *s, void *ptr, size_t osize, size_t nsize)
 	return s->mem.allocator(s->mem.allocator_ud, ptr, osize, nsize);
 }
 
-static int ai_create(const char *filename, RISCShip *s, const char *orders)
+static int ai_create(const char *filename, RISCShip *s, const guint8 *orders, size_t orders_len)
 {
 	lua_State *G, *L;
 
@@ -92,7 +92,7 @@ static int ai_create(const char *filename, RISCShip *s, const char *orders)
 	lua_pushstring(G, s->team->name);
 	lua_setglobal(G, "team");
 
-	lua_pushstring(G, orders);
+	lua_pushlstring(G, orders, orders_len);
 	lua_setglobal(G, "orders");
 
 	char *data_dir = g_file_get_path(risc_paths_resource_dir);
@@ -195,7 +195,7 @@ double ship_get_energy(RISCShip *s)
 }
 
 RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *team,
-		                     Vec2 p, Vec2 v, const char *orders, int seed)
+                      Vec2 p, Vec2 v, const guint8 *orders, size_t orders_len, int seed)
 {
 	RISCShip *s = g_slice_new0(RISCShip);
 
@@ -231,7 +231,7 @@ RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *te
 	new_ships = g_list_append(new_ships, s);
 	g_mutex_unlock(new_ships_lock);
 
-	if (ai_create(filename, s, orders)) {
+	if (ai_create(filename, s, orders, orders_len)) {
 		fprintf(stderr, "failed to create AI\n");
 		ship_destroy(s);
 		return NULL;
