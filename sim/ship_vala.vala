@@ -36,7 +36,7 @@ public class RISC.Ship {
 		public uint8 *data;
 
 		~Msg() {
-			print("free %p\n", this);
+			//print("destroy msg %p\n", this);
 			free(data);
 		}
 	}
@@ -75,11 +75,15 @@ public class RISC.Ship {
 		radio_lock = new Mutex();
 	}
 
+	[CCode (cname = "leak")]
+	static extern Ship unleak_ship(Ship s);
+
 	public static void purge() {
 		unowned List<Ship> cur = all_ships;
 		while (cur != null) {
 			unowned List<Ship> next = cur.next;
 			if (cur.data.dead) {
+				unleak_ship(cur.data);
 				all_ships.delete_link(cur);
 			}
 			cur = next;
@@ -268,7 +272,7 @@ public class RISC.Ship {
 		C.memcpy(data, ldata, len);
 
 		var msg = new Msg() { len=len, data=data };
-		print("publish %p\n", msg);
+		//print("publish %p\n", msg);
 
 		radio_lock.lock();
 

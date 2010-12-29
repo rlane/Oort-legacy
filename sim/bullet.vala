@@ -18,6 +18,10 @@ public class RISC.Bullet {
 	static List<Bullet> new_bullets;
 	static Mutex new_bullets_lock;
 
+	~Bullet() {
+		//print("destroy bullet %p\n", this);
+	}
+
 	public static void init() {
 		new_bullets_lock = new Mutex();
 	}
@@ -31,11 +35,15 @@ public class RISC.Bullet {
 		new_bullets_lock.unlock();
 	}
 
+	[CCode (cname = "leak")]
+	static extern Bullet unleak_bullet(Bullet b);
+
 	public static void purge() {
 		unowned List<Bullet> cur = all_bullets;
 		while (cur != null) {
 			unowned List<Bullet> next = cur.next;
 			if (cur.data.dead) {
+				unleak_bullet(cur.data);
 				all_bullets.delete_link(cur);
 			}
 			cur = next;

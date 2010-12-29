@@ -246,8 +246,6 @@ RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *te
 
 void ship_destroy(RISCShip *s)
 {
-	all_ships = g_list_remove(all_ships, s);
-
 	RISCShipMsg *msg;
 	while ((msg = g_queue_pop_head(s->mq))) {
 		risc_ship_msg_unref(msg);
@@ -259,7 +257,7 @@ void ship_destroy(RISCShip *s)
 	g_rand_free(s->prng);
 	g_slice_free(RISCShip, s);
 
-	printf("destroy ship %p\n", s);
+	//printf("destroy ship %p\n", s);
 }
 
 static double lua_getfield_double(lua_State *L, int index, const char *key)

@@ -78,6 +78,7 @@ public class RISC.Physics {
 	}
 
 	~Physics() {
+		//print("destroy physics %p\n", this);
 		all_physics.remove(this);
 	}
 
