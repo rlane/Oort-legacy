@@ -144,12 +144,3 @@ void debug_hook(lua_State *L, lua_Debug *a)
 		s->line_start_time = thread_ns();
 	}
 }
-
-double ship_get_energy(RISCShip *s)
-{
-	lua_getglobal(s->global_lua, "energy");
-	lua_call(s->global_lua, 0, 1);
-	double e = lua_tonumber(s->global_lua, -1);
-	lua_pop(s->global_lua, 1);
-	return e;
-}

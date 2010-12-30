@@ -589,7 +589,11 @@ public class RISC.Ship {
 	}
 
 	public double get_energy() {
-		return CShip.get_energy(this);
+		global_lua.get_global("energy");
+		global_lua.call(0, 1);
+		double e = global_lua.to_number(-1);
+		global_lua.pop(1);
+		return e;
 	}
 
 	~Ship() {
