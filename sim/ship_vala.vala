@@ -105,6 +105,26 @@ public class RISC.Ship {
 		Task.wait();
 	}
 
+	public extern int create_ai(uint8 *orders, size_t orders_len);
+
+	public Ship(ShipClass klass, Team team, Vec2 p, Vec2 v, uint32 seed) {
+		this.team = team;
+		@class = klass;
+		physics = Physics.create(p, p, v, vec2(0,0), 0, 0, 1, klass.radius);
+		prng = new Rand.with_seed(seed);
+		mq = new Queue<Msg>();
+		api_id = prng.next_int();
+		dead = false;
+		ai_dead = false;
+		hull = klass.hull;
+		tail_head = 0;
+		for (int i = 0; i < 16 /*XXX*/; i++) { tail[i] = vec2(double.NAN, double.NAN); }
+
+		if (gfx_ship_create_cb != null) {
+			gfx_ship_create_cb(this);
+		}
+	}
+
 	public void tick_one() {
 		if (Game.ticks % TAIL_TICKS == 0) {
 			tail[tail_head++] = physics.p;
@@ -225,15 +245,26 @@ public class RISC.Ship {
 	public static int api_spawn(LuaVM L) {
 		unowned Ship s = lua_ship(L);
 		unowned string class_name = L.check_string(1);
+		unowned ShipClass klass = ShipClass.lookup(class_name);
+		if (klass == null) return L.arg_error(1, "invalid ship class");
 		size_t orders_len;
 		uint8 *orders = L.check_lstring(2, out orders_len);
-		unowned string filename = s.team.filename;
 
-		unowned Ship? child = CShip.create(filename, class_name, s.team,
-		                                   s.physics.p, s.physics.v,
-		                                   orders, orders_len, s.prng.next_int());
-		if (child == null) return L.err("failed to create ship");
+		Ship child = new Ship(klass, s.team, s.physics.p, s.physics.v, s.prng.next_int());
+
+		if (child.create_ai(orders, orders_len) != 0) {
+			return L.err("Failed to create AI");
+		}
+
+		Ship.register((owned)child);
+
 		return 0;
+	}
+
+	public static void register(owned Ship s) {
+		new_ships_lock.lock();
+		new_ships.append((owned)s);
+		new_ships_lock.unlock();
 	}
 
 	public static int api_die(LuaVM L) {

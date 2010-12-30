@@ -54,7 +54,7 @@ static void *ai_allocator(RISCShip *s, void *ptr, size_t osize, size_t nsize)
 	return s->mem.allocator(s->mem.allocator_ud, ptr, osize, nsize);
 }
 
-static int ai_create(const char *filename, RISCShip *s, const guint8 *orders, size_t orders_len)
+int risc_ship_create_ai(RISCShip *s, guint8 *orders, size_t orders_len)
 {
 	lua_State *G, *L;
 
@@ -97,7 +97,7 @@ static int ai_create(const char *filename, RISCShip *s, const guint8 *orders, si
 	lua_setglobal(G, "data_dir");
 	g_free(data_dir);
 
-	const char *runtime_filename = risc_data_path("runtime.lua");
+	char *runtime_filename = risc_data_path("runtime.lua");
 	if (luaL_dofile(G, runtime_filename)) {
 		g_warning("Failed to load runtime: %s", lua_tostring(G, -1));
 		lua_close(G);
@@ -110,8 +110,8 @@ static int ai_create(const char *filename, RISCShip *s, const guint8 *orders, si
 
 	lua_getglobal(L, "sandbox");
 
-	if (luaL_loadfile(L, filename)) {
-		g_warning("Couldn't load file %s: %s", filename, lua_tostring(L, -1));
+	if (luaL_loadfile(L, s->team->filename)) {
+		g_warning("Couldn't load file %s: %s", s->team->filename, lua_tostring(L, -1));
 		lua_close(L);
 		return 1;
 	}
@@ -192,56 +192,6 @@ double ship_get_energy(RISCShip *s)
 	double e = lua_tonumber(s->global_lua, -1);
 	lua_pop(s->global_lua, 1);
 	return e;
-}
-
-RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *team,
-                      Vec2 p, Vec2 v, const guint8 *orders, size_t orders_len, int seed)
-{
-	RISCShip *s = g_slice_new0(RISCShip);
-
-	s->team = team;
-
-	s->class = risc_shipclass_lookup(class_name);
-	if (!s->class) {
-		g_warning("Class '%s' not found", class_name);
-		g_slice_free(RISCShip, s);
-		return NULL;
-	}
-
-	// XXX mass
-	s->physics = risc_physics_create(p, p, v, vec2(0,0), 0, 0, 1, s->class->radius);
-
-	s->dead = 0;
-	s->ai_dead = 0;
-
-	s->hull = s->class->hull;
-
-	int i;
-	for (i = 0; i < RISC_SHIP_TAIL_SEGMENTS; i++) {
-		s->tail[i] = vec2(NAN,NAN);
-	}
-
-	s->tail_head = 0;
-
-	s->prng = g_rand_new_with_seed(seed);
-	s->mq = g_queue_new();
-	s->api_id = g_rand_int(s->prng);
-
-	if (ai_create(filename, s, orders, orders_len)) {
-		g_warning("Failed to create AI");
-		risc_ship_free(s);
-		return NULL;
-	}
-
-	g_mutex_lock(new_ships_lock);
-	new_ships = g_list_append(new_ships, s);
-	g_mutex_unlock(new_ships_lock);
-
-	if (gfx_ship_create_cb) {
-		gfx_ship_create_cb(s);
-	}
-
-	return s;
 }
 
 static double lua_getfield_double(lua_State *L, int index, const char *key)

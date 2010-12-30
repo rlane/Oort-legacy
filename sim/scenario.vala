@@ -47,10 +47,21 @@ namespace RISC.Scenario {
 		double y = L.check_number(4);
 		size_t orders_len = 0;
 		uint8 *orders = L.opt_lstring(5, "", out orders_len);
+
+		unowned ShipClass klass = ShipClass.lookup(ship_class_name);
+		if (klass == null) return L.arg_error(1, "invalid ship class");
+
 		unowned Team team = Team.lookup(team_name);
 		if (team == null) return L.arg_error(2, "invalid team");
-		unowned Ship s = CShip.create(team.filename, ship_class_name, team, vec2(x,y), vec2(0,0), orders, orders_len, Game.prng.next_int());
-		if (s == null) return L.err("ship creation failed");
+
+		Ship s = new Ship(klass, team, vec2(x,y), vec2(0,0), Game.prng.next_int());
+
+		if (s.create_ai(orders, orders_len) != 0) {
+			return L.err("Failed to create AI");
+		}
+
+		Ship.register((owned)s);
+
 		return 0;
 	}
 }
