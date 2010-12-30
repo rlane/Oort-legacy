@@ -321,11 +321,9 @@ namespace Lua {
 		public int next (int index);
 		public void concat (int n);
 		[CCode (cname = "lua_getallocf")]
-		// NOTE: user data (instance) implicitly returned as out parameter
-		public AllocFunc get_alloc_func ();
+		public AllocFunc get_alloc_func (out void *ud);
 		[CCode (cname = "lua_setallocf")]
-		// NOTE: user data (instance) gets passed implicitly
-		public void set_alloc_func (AllocFunc f);
+		public void set_alloc_func (AllocFunc f, void *ud);
 
 		// some useful macros
 

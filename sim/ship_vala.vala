@@ -109,8 +109,6 @@ public class RISC.Ship {
 		Task.wait();
 	}
 
-	public extern int create_ai(uint8 *orders, size_t orders_len);
-
 	public Ship(ShipClass klass, Team team, Vec2 p, Vec2 v, uint32 seed) {
 		this.team = team;
 		@class = klass;
@@ -127,6 +125,67 @@ public class RISC.Ship {
 		if (gfx_create_cb != null) {
 			gfx_create_cb(this);
 		}
+	}
+
+	public bool create_ai(uint8 *orders, size_t orders_len) {
+		global_lua = new LuaVM();
+		mem.cur = 0;
+		mem.limit = 1<<20;
+		mem.allocator = global_lua.get_alloc_func(out mem.allocator_ud);
+		global_lua.set_alloc_func((Lua.AllocFunc)ai_allocator, this);
+		global_lua.open_libs();
+		global_lua.register("sys_thrust", api_thrust);
+		global_lua.register("sys_yield", api_yield);
+		global_lua.register("sys_position", api_position);
+		global_lua.register("sys_velocity", api_velocity);
+		global_lua.register("sys_create_bullet", api_create_bullet);
+		global_lua.register("sys_sensor_contacts", api_sensor_contacts);
+		global_lua.register("sys_sensor_contact", api_sensor_contact);
+		global_lua.register("sys_random", api_random);
+		global_lua.register("sys_send", api_send);
+		global_lua.register("sys_recv", api_recv);
+		global_lua.register("sys_spawn", api_spawn);
+		global_lua.register("sys_die", api_die);
+		global_lua.register("sys_debug_line", api_debug_line);
+		global_lua.register("sys_clear_debug_lines", api_clear_debug_lines);
+
+		global_lua.push_lightuserdata(RKEY);
+		global_lua.push_lightuserdata(this);
+		global_lua.set_table(Lua.PseudoIndex.REGISTRY);
+
+		SensorContact.register(global_lua);
+
+		global_lua.push_string(@class.name);
+		global_lua.set_global("class");
+
+		global_lua.push_string(team.name);
+		global_lua.set_global("team");
+
+		global_lua.push_lstring(orders, orders_len);
+		global_lua.set_global("orders");
+
+		string data_dir = Paths.resource_dir.get_path();
+		global_lua.push_string(data_dir);
+		global_lua.set_global("data_dir");
+
+		string runtime_filename = data_path("runtime.lua");
+		if (global_lua.do_file(runtime_filename)) {
+			warning("Failed to load runtime: %s", global_lua.to_string(-1));
+			return false;
+		}
+
+		lua = global_lua.new_thread();
+
+		lua.get_global("sandbox");
+
+		if (lua.load_file(team.filename) != 0) {
+			warning("Couldn't load file %s: %s", team.filename, lua.to_string(-1));
+			return false;
+		}
+
+		lua.call(1, 1);
+
+		return true;
 	}
 
 	public void tick_one() {
@@ -269,7 +328,7 @@ public class RISC.Ship {
 
 		Ship child = new Ship(klass, s.team, s.physics.p, s.physics.v, s.prng.next_int());
 
-		if (child.create_ai(orders, orders_len) != 0) {
+		if (!child.create_ai(orders, orders_len)) {
 			return L.err("Failed to create AI");
 		}
 

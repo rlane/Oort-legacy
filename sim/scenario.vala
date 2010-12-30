@@ -56,7 +56,7 @@ namespace RISC.Scenario {
 
 		Ship s = new Ship(klass, team, vec2(x,y), vec2(0,0), Game.prng.next_int());
 
-		if (s.create_ai(orders, orders_len) != 0) {
+		if (!s.create_ai(orders, orders_len)) {
 			return L.err("Failed to create AI");
 		}
 
