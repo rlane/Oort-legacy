@@ -2,7 +2,6 @@ using Lua;
 using Vector;
 using Math;
 
-[CCode (free_function = "ship_destroy")]
 [Compact]
 public class RISC.Ship {
 	public const int TAIL_SEGMENTS = 16;
@@ -47,7 +46,7 @@ public class RISC.Ship {
 	public Physics physics;
 	public double energy;
 	public double hull;
-	public Lua.LuaVM lua;
+	public weak Lua.LuaVM lua;
 	public Lua.LuaVM global_lua;
 	public LuaMemState mem;
 	public GLib.Rand prng;
@@ -304,5 +303,10 @@ public class RISC.Ship {
 
 	public double get_energy() {
 		return CShip.get_energy(this);
+	}
+
+	~Ship() {
+		while (mq.pop_head() != null);
+		//print("destroy ship %p\n", this);
 	}
 }

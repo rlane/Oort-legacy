@@ -24,8 +24,6 @@ RISCOnShipCreated gfx_ship_create_cb;
 static const int ai_mem_limit = 1<<20;
 FILE *trace_file = NULL;
 
-void ship_destroy(RISCShip *s);
-
 static void lua_registry_set(lua_State *L, void *key, void *value)
 {
 	lua_pushlightuserdata(L, key);
@@ -228,7 +226,7 @@ RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *te
 
 	if (ai_create(filename, s, orders, orders_len)) {
 		g_warning("Failed to create AI");
-		ship_destroy(s);
+		risc_ship_free(s);
 		return NULL;
 	}
 
@@ -241,33 +239,6 @@ RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *te
 	}
 
 	return s;
-}
-
-void ship_destroy(RISCShip *s)
-{
-	if (s->mq) {
-		RISCShipMsg *msg;
-		while ((msg = g_queue_pop_head(s->mq))) {
-			risc_ship_msg_unref(msg);
-		}
-		g_queue_free(s->mq);
-	}
-
-	if (s->physics) {
-		risc_physics_free(s->physics);
-	}
-
-	if (s->lua) {
-		lua_close(s->lua);
-	}
-
-	if (s->prng) {
-		g_rand_free(s->prng);
-	}
-
-	g_slice_free(RISCShip, s);
-
-	//printf("destroy ship %p\n", s);
 }
 
 static double lua_getfield_double(lua_State *L, int index, const char *key)
