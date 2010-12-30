@@ -430,8 +430,16 @@ public class RISC.Ship {
 		}
 	}
 
+	[Flags]
+	public enum QueryOption {
+		TEAM, ENEMY, CLASS,
+		DISTANCE_GT, DISTANCE_LT,
+		HULL_GT, HULL_LT,
+		LIMIT,
+	}
+
 	[Compact]
-	public class SensorQuery {
+	public struct SensorQuery {
 		public unowned Team my_team;
 		public bool enemy;
 		public unowned ShipClass class;
@@ -441,6 +449,101 @@ public class RISC.Ship {
 		public double hull_lt;
 		public uint32 limit;
 		public Vec2 origin;
+		public QueryOption options;
+
+		public double option_double(LuaVM L, int idx, string key, QueryOption option) {
+			double ret = double.NAN;
+			L.push_string(key);
+			L.raw_get(idx);
+			if (L.is_number(-1)) {
+				options |= option;
+				ret = L.to_number(-1);
+			}
+			L.pop(1);
+			return ret;
+		}
+
+		public unowned string? option_string(LuaVM L, int idx, string key, QueryOption option) {
+			unowned string? ret = null;
+			L.push_string(key);
+			L.raw_get(idx);
+			if (L.is_string(-1)) {
+				options |= option;
+				ret = L.to_string(-1);
+			}
+			L.pop(1);
+			return ret;
+		}
+
+		public int option_int(LuaVM L, int idx, string key, QueryOption option) {
+			int ret = -1;
+			L.push_string(key);
+			L.raw_get(idx);
+			if (L.is_number(-1)) {
+				options |= option;
+				ret = L.to_integer(-1);
+			}
+			L.pop(1);
+			return ret;
+		}
+
+		public bool option_boolean(LuaVM L, int idx, string key, QueryOption option) {
+			bool ret = false;
+			L.push_string(key);
+			L.raw_get(idx);
+			if (L.is_boolean(-1)) {
+				options |= option;
+				ret = L.to_boolean(-1);
+			}
+			L.pop(1);
+			return ret;
+		}
+
+		public void parse(LuaVM L, int idx) {
+			unowned Ship s = lua_ship(L);
+
+			my_team = s.team;
+			origin = s.physics.p;
+			options = 0;
+
+			enemy = option_boolean(L, idx, "enemy", QueryOption.ENEMY);
+			var class_name = option_string(L, idx, "class", QueryOption.CLASS);
+			distance_lt = option_double(L, idx, "distance_lt", QueryOption.DISTANCE_LT);
+			distance_gt = option_double(L, idx, "distance_gt", QueryOption.DISTANCE_GT);
+			hull_lt = option_double(L, idx, "hull_lt", QueryOption.HULL_LT);
+			hull_gt = option_double(L, idx, "hull_gt", QueryOption.HULL_GT);
+			limit = option_int(L, idx, "limit", QueryOption.LIMIT);
+
+			if ((options & QueryOption.CLASS) != 0) {
+				this.class = ShipClass.lookup(class_name);
+				if (this.class == null) {
+					L.err("invalid ship class in query");
+				}
+			}
+		}
+
+		public bool enabled(QueryOption o) {
+			return (options & o) == o;
+		}
+
+		public bool match(Ship s) {
+			if (enabled(QueryOption.ENEMY)) {
+				if (enemy && my_team == s.team) return false;
+				if (!enemy && my_team != s.team) return false;
+			}
+
+			if (enabled(QueryOption.CLASS) && @class != s.class) return false;
+			if (enabled(QueryOption.HULL_LT) && hull_lt <= s.hull) return false;
+			if (enabled(QueryOption.HULL_GT) && hull_gt >= s.hull) return false;
+
+			if (enabled(QueryOption.DISTANCE_LT) || enabled(QueryOption.DISTANCE_GT)) {
+				double distance = origin.distance(s.physics.p);
+				if (enabled(QueryOption.DISTANCE_LT) && distance_lt <= distance) return false;
+				if (enabled(QueryOption.DISTANCE_GT) && distance_gt >= distance) return false;
+			}
+
+			return true;
+		}
 	}
 
 	public double get_energy() {
