@@ -3,7 +3,6 @@
 #include <math.h>
 #include <complex.h>
 #include <string.h>
-#include <sys/time.h>
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
@@ -16,20 +15,6 @@
 #include "util.h"
 
 FILE *trace_file = NULL;
-
-static guint64 thread_ns(void)
-{
-#ifdef CLOCK_THREAD_CPUTIME_ID
-	struct timespec ts;
-	if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts)) {
-		perror("glock_gettime");
-		abort();
-	}
-	return ts.tv_nsec + ts.tv_sec*(1000*1000*1000);
-#else
-	return 0;
-#endif
-}
 
 void debug_hook(lua_State *L, lua_Debug *a)
 {

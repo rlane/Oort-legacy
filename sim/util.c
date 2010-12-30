@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <glib.h>
 #include <string.h>
+#include <sys/time.h>
 
 long envtol(const char *key, long def)
 {
@@ -25,4 +26,18 @@ long envtol(const char *key, long def)
 void *leak(void *arg)
 {
 	return arg;
+}
+
+guint64 thread_ns(void)
+{
+#ifdef CLOCK_THREAD_CPUTIME_ID
+	struct timespec ts;
+	if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts)) {
+		perror("glock_gettime");
+		abort();
+	}
+	return ts.tv_nsec + ts.tv_sec*(1000*1000*1000);
+#else
+	return 0;
+#endif
 }

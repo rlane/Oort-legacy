@@ -4,6 +4,7 @@
 #define _UTIL_H
 
 long envtol(const char *key, long def);
+guint64 thread_ns(void);
 
 static inline double rad2deg(double a)
 {
