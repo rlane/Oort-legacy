@@ -56,7 +56,7 @@ int risc_ship_create_ai(RISCShip *s, guint8 *orders, size_t orders_len)
 	lua_register(G, "sys_position", risc_ship_api_position);
 	lua_register(G, "sys_velocity", risc_ship_api_velocity);
 	lua_register(G, "sys_create_bullet", risc_ship_api_create_bullet);
-	lua_register(G, "sys_sensor_contacts", api_sensor_contacts);
+	lua_register(G, "sys_sensor_contacts", risc_ship_api_sensor_contacts);
 	lua_register(G, "sys_sensor_contact", api_sensor_contact);
 	lua_register(G, "sys_random", risc_ship_api_random);
 	lua_register(G, "sys_send", risc_ship_api_send);

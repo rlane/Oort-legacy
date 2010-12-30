@@ -546,6 +546,29 @@ public class RISC.Ship {
 		}
 	}
 
+	public static int api_sensor_contacts(LuaVM L) {
+		SensorQuery query = SensorQuery();
+		L.check_type(1, Lua.Type.TABLE);
+		query.parse(L, 1);
+
+		L.push_lightuserdata((void*)SensorContact.MAGIC);
+		L.raw_get(Lua.PseudoIndex.REGISTRY);
+		int metatable_index = L.get_top();
+
+		L.create_table((int)all_ships.length(), 0);
+		int i = 0;
+		foreach (unowned Ship s in all_ships) {
+			if (query.enabled(QueryOption.LIMIT) && i >= query.limit) break;
+			if (query.match(s)) {
+				i++;
+				SensorContact.create(L, s, metatable_index);
+				L.raw_seti(-2, i);
+			}
+		}
+
+		return 1;
+	}
+
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}
