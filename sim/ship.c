@@ -24,25 +24,13 @@ RISCOnShipCreated gfx_ship_create_cb;
 static const int ai_mem_limit = 1<<20;
 FILE *trace_file = NULL;
 
-static void lua_registry_set(lua_State *L, void *key, void *value)
+RISCShip *lua_ship(lua_State *L)
 {
-	lua_pushlightuserdata(L, key);
-	lua_pushlightuserdata(L, value);
-	lua_settable(L, LUA_REGISTRYINDEX);
-}
-
-static void *lua_registry_get(lua_State *L, void *key)
-{
-	lua_pushlightuserdata(L, key);
+	lua_pushlightuserdata(L, RKEY_SHIP);
 	lua_gettable(L, LUA_REGISTRYINDEX);
 	void *value = lua_touserdata(L, -1);
 	lua_pop(L, 1);
 	return value;
-}
-
-RISCShip *lua_ship(lua_State *L)
-{
-	return lua_registry_get(L, RKEY_SHIP);
 }
 
 static void *ai_allocator(RISCShip *s, void *ptr, size_t osize, size_t nsize)
@@ -79,7 +67,9 @@ int risc_ship_create_ai(RISCShip *s, guint8 *orders, size_t orders_len)
 	lua_register(G, "sys_debug_line", risc_ship_api_debug_line);
 	lua_register(G, "sys_clear_debug_lines", risc_ship_api_clear_debug_lines);
 
-	lua_registry_set(G, RKEY_SHIP, s);
+	lua_pushlightuserdata(G, RKEY_SHIP);
+	lua_pushlightuserdata(G, s);
+	lua_settable(G, LUA_REGISTRYINDEX);
 
 	ud_sensor_contact_register(G);
 
