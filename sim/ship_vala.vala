@@ -69,6 +69,10 @@ public class RISC.Ship {
 	public static Mutex new_ships_lock;
 	public static Mutex radio_lock;
 
+	[CCode (has_target = false)]
+	public delegate void OnShipCreated(Ship s);
+	public static OnShipCreated gfx_create_cb;
+
 	public static void init() {
 		new_ships_lock = new Mutex();
 		radio_lock = new Mutex();
@@ -120,8 +124,8 @@ public class RISC.Ship {
 		tail_head = 0;
 		for (int i = 0; i < 16 /*XXX*/; i++) { tail[i] = vec2(double.NAN, double.NAN); }
 
-		if (gfx_ship_create_cb != null) {
-			gfx_ship_create_cb(this);
+		if (gfx_create_cb != null) {
+			gfx_create_cb(this);
 		}
 	}
 

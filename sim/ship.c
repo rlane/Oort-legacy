@@ -20,7 +20,6 @@
 
 char RKEY_SHIP[1];
 
-RISCOnShipCreated gfx_ship_create_cb;
 static const int ai_mem_limit = 1<<20;
 FILE *trace_file = NULL;
 

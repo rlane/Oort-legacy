@@ -7,11 +7,6 @@ namespace RISC {
 	[CCode (cname = "trace_file")]
 	public GLib.FileStream trace_file;
 
-	[CCode (has_target = false)]
-	public delegate void OnShipCreated(Ship s);
-	[CCode (cname = "gfx_ship_create_cb")]
-	public OnShipCreated gfx_ship_create_cb;
-
 	namespace C {
 		[CCode (cname = "envtol")]
 		public int envtol(string k, int i);

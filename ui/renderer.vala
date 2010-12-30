@@ -48,7 +48,7 @@ namespace RISC {
 				error("GLEW initialization failed");
 			}
 			ShipGfxClass.init();
-			RISC.gfx_ship_create_cb = on_ship_created;
+			RISC.Ship.gfx_create_cb = on_ship_created;
 			render_all_debug_lines = false;
 
 			prng = new Rand();
