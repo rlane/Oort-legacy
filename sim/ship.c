@@ -100,7 +100,7 @@ static int ai_create(const char *filename, RISCShip *s, const guint8 *orders, si
 	g_free(data_dir);
 
 	if (luaL_dofile(G, risc_data_path("runtime.lua"))) {
-		fprintf(stderr, "Failed to load runtime: %s\n", lua_tostring(G, -1));
+		g_warning("Failed to load runtime: %s", lua_tostring(G, -1));
 		lua_close(G);
 		return 1;
 	}
@@ -110,7 +110,7 @@ static int ai_create(const char *filename, RISCShip *s, const guint8 *orders, si
 	lua_getglobal(L, "sandbox");
 
 	if (luaL_loadfile(L, filename)) {
-		fprintf(stderr, "Couldn't load file %s: %s\n", filename, lua_tostring(L, -1));
+		g_warning("Couldn't load file %s: %s", filename, lua_tostring(L, -1));
 		lua_close(L);
 		return 1;
 	}
@@ -202,7 +202,7 @@ RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *te
 
 	s->class = risc_shipclass_lookup(class_name);
 	if (!s->class) {
-		fprintf(stderr, "class '%s' not found\n", class_name);
+		g_warning("Class '%s' not found", class_name);
 		g_slice_free(RISCShip, s);
 		return NULL;
 	}
@@ -226,15 +226,15 @@ RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *te
 	s->mq = g_queue_new();
 	s->api_id = g_rand_int(s->prng);
 
-	g_mutex_lock(new_ships_lock);
-	new_ships = g_list_append(new_ships, s);
-	g_mutex_unlock(new_ships_lock);
-
 	if (ai_create(filename, s, orders, orders_len)) {
-		fprintf(stderr, "failed to create AI\n");
+		g_warning("Failed to create AI");
 		ship_destroy(s);
 		return NULL;
 	}
+
+	g_mutex_lock(new_ships_lock);
+	new_ships = g_list_append(new_ships, s);
+	g_mutex_unlock(new_ships_lock);
 
 	if (gfx_ship_create_cb) {
 		gfx_ship_create_cb(s);
@@ -245,15 +245,26 @@ RISCShip *ship_create(const char *filename, const char *class_name, RISCTeam *te
 
 void ship_destroy(RISCShip *s)
 {
-	RISCShipMsg *msg;
-	while ((msg = g_queue_pop_head(s->mq))) {
-		risc_ship_msg_unref(msg);
+	if (s->mq) {
+		RISCShipMsg *msg;
+		while ((msg = g_queue_pop_head(s->mq))) {
+			risc_ship_msg_unref(msg);
+		}
+		g_queue_free(s->mq);
 	}
-	g_queue_free(s->mq);
 
-	risc_physics_free(s->physics);
-	lua_close(s->lua);
-	g_rand_free(s->prng);
+	if (s->physics) {
+		risc_physics_free(s->physics);
+	}
+
+	if (s->lua) {
+		lua_close(s->lua);
+	}
+
+	if (s->prng) {
+		g_rand_free(s->prng);
+	}
+
 	g_slice_free(RISCShip, s);
 
 	//printf("destroy ship %p\n", s);

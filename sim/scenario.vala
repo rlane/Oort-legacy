@@ -25,7 +25,8 @@ namespace RISC.Scenario {
 		L.set_global("AI");
 
 		if (L.do_file(scenario)) {
-			error("Failed to load scenario %s: %s\n", scenario, L.to_string(-1));
+			warning("Failed to load scenario %s: %s", scenario, L.to_string(-1));
+			return false;
 		}
 
 		return true;

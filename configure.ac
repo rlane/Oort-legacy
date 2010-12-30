@@ -62,6 +62,7 @@ AC_CONFIG_FILES([
 	ui/Makefile
 	vector/Makefile
 	vapi/Makefile
+	test/Makefile
 ])
 
 AC_OUTPUT

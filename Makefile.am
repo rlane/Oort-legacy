@@ -10,6 +10,7 @@ SUBDIRS = \
 	ui \
 	vector \
 	vapi \
+	test \
 	$(NULL)
 
 riscdocdir = $(docdir)

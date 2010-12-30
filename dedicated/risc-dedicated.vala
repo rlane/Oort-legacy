@@ -19,10 +19,16 @@ int main(string[] args) {
 	Paths.init(args[0]);
 	print("using data from %s\n", RISC.Paths.resource_dir.get_path());
 
+	int ret;
 	if (args.length <= 1) {
-		Game.init(42, data_path("scenarios/demo1.lua"), { });
+		ret = Game.init(42, data_path("scenarios/demo1.lua"), { });
 	} else {
-		Game.init(seed, args[1], args[2:(args.length)]);
+		ret = Game.init(seed, args[1], args[2:(args.length)]);
+	}
+
+	if (ret != 0) {
+		warning("Game initialization failed");
+		return 1;
 	}
 
 	TimeVal last_sample_time = TimeVal();
