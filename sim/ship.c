@@ -17,19 +17,10 @@
 
 #define LW_VERBOSE 0
 
-char RKEY_SHIP[1];
+void *RKEY_SHIP = (void*)0xAABBCC02;
 
 static const int ai_mem_limit = 1<<20;
 FILE *trace_file = NULL;
-
-RISCShip *lua_ship(lua_State *L)
-{
-	lua_pushlightuserdata(L, RKEY_SHIP);
-	lua_gettable(L, LUA_REGISTRYINDEX);
-	void *value = lua_touserdata(L, -1);
-	lua_pop(L, 1);
-	return value;
-}
 
 static void *ai_allocator(RISCShip *s, void *ptr, size_t osize, size_t nsize)
 {
@@ -133,7 +124,7 @@ void debug_hook(lua_State *L, lua_Debug *a)
 		lua_call(L, 0, 0);
 		lua_yield(L, 0);
 	} else if (a->event == LUA_HOOKLINE) {
-		RISCShip *s = lua_ship(L);
+		RISCShip *s = risc_ship_lua_ship(L);
 		unsigned long elapsed = thread_ns() - s->line_start_time;
 		if (lua_getinfo(L, "nSl", a) == 0) abort();
 		if (s->line_start_time != 0) {

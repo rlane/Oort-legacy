@@ -170,8 +170,15 @@ public class RISC.Ship {
 		}
 	}
 
-	[CCode (cname="lua_ship")]
-	extern static unowned Ship lua_ship(LuaVM L);
+	public static void *RKEY = (void*)0xAABBCC02;
+
+	public static unowned Ship lua_ship(LuaVM L) {
+		L.push_lightuserdata(RKEY);
+		L.get_table(Lua.PseudoIndex.REGISTRY);
+		void *v = L.to_userdata(-1);
+		L.pop(1);
+		return (Ship)v;
+	}
 
 	public static int api_thrust(LuaVM L) {
 		unowned Ship s = lua_ship(L);
