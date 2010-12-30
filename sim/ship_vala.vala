@@ -569,6 +569,25 @@ public class RISC.Ship {
 		return 1;
 	}
 
+	public static int api_sensor_contact(LuaVM L) {
+		size_t n;
+		uint8 *id = L.check_lstring(1, out n);
+		if (n != 4) L.err("invalid contact id");
+		L.pop(1);
+
+		uint32 _id = *((uint32*)id);
+		foreach (unowned Ship s in all_ships) {
+			if (s.api_id == _id) {
+				L.push_lightuserdata((void*)SensorContact.MAGIC);
+				L.raw_get(Lua.PseudoIndex.REGISTRY);
+				SensorContact.create(L, s, L.get_top());
+				return 1;
+			}
+		}
+
+		return 0;
+	}
+
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}
