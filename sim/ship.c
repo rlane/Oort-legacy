@@ -22,15 +22,6 @@ void *RKEY_SHIP = (void*)0xAABBCC02;
 static const int ai_mem_limit = 1<<20;
 FILE *trace_file = NULL;
 
-static void *ai_allocator(RISCShip *s, void *ptr, size_t osize, size_t nsize)
-{
-	s->mem.cur += (nsize - osize);
-	if (nsize > osize && s->mem.cur > s->mem.limit) {
-		return NULL;
-	}
-	return s->mem.allocator(s->mem.allocator_ud, ptr, osize, nsize);
-}
-
 int risc_ship_create_ai(RISCShip *s, guint8 *orders, size_t orders_len)
 {
 	lua_State *G, *L;
@@ -39,7 +30,7 @@ int risc_ship_create_ai(RISCShip *s, guint8 *orders, size_t orders_len)
 	s->mem.cur = 0;
 	s->mem.limit = ai_mem_limit;
 	s->mem.allocator = lua_getallocf(G, &s->mem.allocator_ud);
-	lua_setallocf(G, (lua_Alloc)ai_allocator, s);
+	lua_setallocf(G, (lua_Alloc)risc_ship_ai_allocator, s);
 	luaL_openlibs(G);
 	lua_register(G, "sys_thrust", risc_ship_api_thrust);
 	lua_register(G, "sys_yield", risc_ship_api_yield);

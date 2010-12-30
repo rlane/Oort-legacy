@@ -146,9 +146,8 @@ namespace Lua {
 	public delegate int WriterFunc (LuaVM vm, char[] p);
 
 	// prototype for memory-allocation functions
-	// NOTE - implicitly passed: user data (instance) as 1st parameter
-	[CCode (cname = "lua_Alloc", instance_pos = 0.9)]
-	public delegate void* AllocFunc (void* ptr, size_t osize, size_t nsize);
+	[CCode (cname = "lua_Alloc", has_target = false)]
+	public delegate void* AllocFunc (void *ud, void* ptr, size_t osize, size_t nsize);
 
 	// Function to be called by the debuger in specific events
 	[CCode (cname = "lua_Hook", has_target = false)]

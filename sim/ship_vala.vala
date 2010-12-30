@@ -147,6 +147,12 @@ public class RISC.Ship {
 		}
 	}
 
+	public void *ai_allocator(void *ptr, size_t osize, size_t nsize) {
+		mem.cur += (int)(nsize - osize);
+		if (nsize > osize && mem.cur > mem.limit) return null;
+		return mem.allocator(mem.allocator_ud, ptr, osize, nsize);
+	}
+
 	public bool ai_run(int len) {
 		var debug_mask = Lua.EventMask.COUNT;
 		if (trace_file != null) debug_mask |= Lua.EventMask.LINE;
