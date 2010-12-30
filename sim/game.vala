@@ -12,9 +12,7 @@ public class RISC.BulletHit {
 }
 
 namespace RISC.Game {
-	[CCode (cname = "ticks")]
 	public int ticks;
-	[CCode (cname = "prng")]
 	public Rand prng;
 
 	public List<BulletHit> bullet_hits;
