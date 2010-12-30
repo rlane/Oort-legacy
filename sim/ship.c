@@ -157,34 +157,6 @@ void debug_hook(lua_State *L, lua_Debug *a)
 	}
 }
 
-int ship_ai_run(RISCShip *s, int len)
-{
-	int result;
-	lua_State *L = s->lua;
-	int debug_mask = LUA_MASKCOUNT;
-	if (trace_file) debug_mask |= LUA_MASKLINE;
-
-	lua_sethook(L, debug_hook, debug_mask, len);
-
-	s->line_start_time = 0;
-	result = lua_resume(L, 0);
-	if (result == LUA_YIELD) {
-		return 1;
-	} else if (result == 0) {
-		fprintf(stderr, "ship %u terminated\n", s->api_id);
-		return 0;
-	} else {
-		fprintf(stderr, "ship %u error: %s\nbacktrace:\n", s->api_id, lua_tostring(L, -1));
-		lua_Debug ar;
-		int i;
-		for (i = 0; lua_getstack(L, i, &ar); i++) {
-			if (!lua_getinfo(L, "nSl", &ar)) abort();
-			fprintf(stderr, "  %d: %s %s %s @ %s:%d\n", i, ar.what, ar.namewhat, ar.name, ar.short_src, ar.currentline);
-		}
-		return 0;
-	}
-}
-
 double ship_get_energy(RISCShip *s)
 {
 	lua_getglobal(s->global_lua, "energy");
@@ -192,12 +164,4 @@ double ship_get_energy(RISCShip *s)
 	double e = lua_tonumber(s->global_lua, -1);
 	lua_pop(s->global_lua, 1);
 	return e;
-}
-
-static double lua_getfield_double(lua_State *L, int index, const char *key)
-{
-	lua_getfield(L, -1, key);
-	double v = lua_tonumber(L, -1);
-	lua_pop(L, 1);
-	return v;
 }
