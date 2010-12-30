@@ -70,7 +70,7 @@ int risc_ship_create_ai(RISCShip *s, guint8 *orders, size_t orders_len)
 	lua_pushlightuserdata(G, s);
 	lua_settable(G, LUA_REGISTRYINDEX);
 
-	ud_sensor_contact_register(G);
+	risc_ship_sensor_contact_register(G);
 
 	lua_pushstring(G, s->class->name);
 	lua_setglobal(G, "class");

@@ -13,16 +13,6 @@
 #include "risc.h"
 #include "ship.h"
 
-char UKEY_SENSOR_CONTACT[1];
-
-struct sensor_contact {
-	void *magic;
-	guint32 id;
-	const RISCTeam *team;
-	const RISCShipClass *class;
-	Vec2 p, v;
-};
-
 struct sensor_query {
 	const RISCTeam *my_team;
 	int enemy;
@@ -32,98 +22,6 @@ struct sensor_query {
 	unsigned int limit;
 	Vec2 origin;
 };
-
-static void ud_sensor_contact_new(lua_State *L, RISCShip *s, int metatable_index)
-{
-	struct sensor_contact *c = lua_newuserdata(L, sizeof(*c));
-	c->magic = UKEY_SENSOR_CONTACT;
-	c->id = s->api_id;
-	c->team = s->team;
-	c->class = s->class;
-	c->p = s->physics->p;
-	c->v = s->physics->v;
-	lua_pushvalue(L, metatable_index);
-	lua_setmetatable(L, -2);
-}
-
-static struct sensor_contact *ud_sensor_contact_cast(lua_State *L, int index)
-{
-	struct sensor_contact *c = lua_touserdata(L, index);
-	if (c->magic != UKEY_SENSOR_CONTACT) {
-		c = NULL;
-	}
-	luaL_argcheck(L, c != NULL, 1, "sensor contact expected");
-	return c;
-}
-
-static int ud_sensor_contact_id(lua_State *L)
-{
-	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	lua_pushlstring(L, (char*)&c->id, sizeof(c->id));
-	return 1;
-}
-
-static int ud_sensor_contact_team(lua_State *L)
-{
-	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	lua_pushstring(L, c->team->name);
-	return 1;
-}
-
-static int ud_sensor_contact_class(lua_State *L)
-{
-	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	lua_pushstring(L, c->class->name);
-	return 1;
-}
-
-static int ud_sensor_contact_position(lua_State *L)
-{
-	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	lua_pushnumber(L, c->p.x);
-	lua_pushnumber(L, c->p.y);
-	return 2;
-}
-
-static int ud_sensor_contact_velocity(lua_State *L)
-{
-	struct sensor_contact *c = ud_sensor_contact_cast(L, 1);
-	lua_pushnumber(L, c->v.x);
-	lua_pushnumber(L, c->v.y);
-	return 2;
-}
-
-void ud_sensor_contact_register(lua_State *L)
-{
-	lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
-	lua_createtable(L, 0, 1);
-
-	lua_pushstring(L, "__index");
-	lua_createtable(L, 0, 5);
-
-	lua_pushstring(L, "id");
-	lua_pushcfunction(L, ud_sensor_contact_id);
-	lua_settable(L, -3);
-
-	lua_pushstring(L, "team");
-	lua_pushcfunction(L, ud_sensor_contact_team);
-	lua_settable(L, -3);
-
-	lua_pushstring(L, "class");
-	lua_pushcfunction(L, ud_sensor_contact_class);
-	lua_settable(L, -3);
-
-	lua_pushstring(L, "position");
-	lua_pushcfunction(L, ud_sensor_contact_position);
-	lua_settable(L, -3);
-
-	lua_pushstring(L, "velocity");
-	lua_pushcfunction(L, ud_sensor_contact_velocity);
-	lua_settable(L, -3);
-
-	lua_settable(L, -3);
-	lua_settable(L, LUA_REGISTRYINDEX);
-}
 
 void parse_sensor_query(lua_State *L, struct sensor_query *query, int idx)
 {
@@ -218,7 +116,7 @@ int api_sensor_contacts(lua_State *L)
 	luaL_checktype(L, 1, LUA_TTABLE);
 	parse_sensor_query(L, &query, 1);
 
-	lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
+	lua_pushlightuserdata(L, (void*)RISC_SHIP_SENSOR_CONTACT_MAGIC);
 	lua_rawget(L, LUA_REGISTRYINDEX);
 	int metatable_index = lua_gettop(L);
 
@@ -230,7 +128,7 @@ int api_sensor_contacts(lua_State *L)
 			 e = g_list_next(e)) {
 		RISCShip *s = e->data;
 		if (match_sensor_query(&query, s)) {
-			ud_sensor_contact_new(L, s, metatable_index);
+			risc_ship_sensor_contact_create(L, s, metatable_index);
 			lua_rawseti(L, -2, i);
 			i++;
 		}
@@ -251,9 +149,9 @@ int api_sensor_contact(lua_State *L)
 	for (e = g_list_first(all_ships); e; e = g_list_next(e)) {
 		RISCShip *s = e->data;
 		if (!memcmp(id, &s->api_id, sizeof(s->api_id))) {
-			lua_pushlightuserdata(L, UKEY_SENSOR_CONTACT);
+			lua_pushlightuserdata(L, (void*)RISC_SHIP_SENSOR_CONTACT_MAGIC);
 			lua_rawget(L, LUA_REGISTRYINDEX);
-			ud_sensor_contact_new(L, s, lua_gettop(L));
+			risc_ship_sensor_contact_create(L, s, lua_gettop(L));
 			return 1;
 		}
 	}

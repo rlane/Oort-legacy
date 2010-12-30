@@ -336,6 +336,113 @@ public class RISC.Ship {
 		return (msg != null) ? 1 : 0;
 	}
 
+	[Compact]
+	public struct SensorContact {
+		public uint32 magic;
+		public uint32 id;
+		public unowned Team team;
+		public unowned ShipClass @class;
+		public Vec2 p;
+		public Vec2 v;
+
+		public static const uint32 MAGIC = 0xAABBCC01u;
+
+		public static void create(LuaVM L, Ship s, int metatable_index) {
+			SensorContact *c = L.new_userdata(sizeof(SensorContact));
+			c->magic = MAGIC;
+			c->id = s.api_id;
+			c->team = s.team;
+			c->class = s.class;
+			c->p = s.physics.p;
+			c->v = s.physics.v;
+			L.push_value(metatable_index);
+			L.set_metatable(-2);
+		}
+
+		public static SensorContact *cast(LuaVM L, int index) {
+			SensorContact *c = L.to_userdata(index);
+			if (c != null && c->magic != MAGIC) c = null;
+			if (c == null) L.arg_error(1, "sensor contact expected");
+			return c;
+		}
+
+		public static int api_id(LuaVM L) {
+			var c = cast(L, 1);
+			L.push_lstring((uint8*)(&c->id), 4);
+			return 1;
+		}
+
+		public static int api_team(LuaVM L) {
+			var c = cast(L, 1);
+			L.push_string(c->team.name);
+			return 1;
+		}
+
+		public static int api_class(LuaVM L) {
+			var c = cast(L, 1);
+			L.push_string(c->class.name);
+			return 1;
+		}
+
+		public static int api_position(LuaVM L) {
+			var c = cast(L, 1);
+			L.push_number(c->p.x);
+			L.push_number(c->p.y);
+			return 2;
+		}
+
+		public static int api_velocity(LuaVM L) {
+			var c = cast(L, 1);
+			L.push_number(c->v.x);
+			L.push_number(c->v.y);
+			return 2;
+		}
+
+		public static void register(LuaVM L) {
+			L.push_lightuserdata((void*)MAGIC);
+			L.create_table(0, 1);
+
+			L.push_string("__index");
+			L.create_table(0, 5);
+
+			L.push_string("id");
+			L.push_cfunction(api_id);
+			L.set_table(-3);
+
+			L.push_string("team");
+			L.push_cfunction(api_team);
+			L.set_table(-3);
+
+			L.push_string("class");
+			L.push_cfunction(api_class);
+			L.set_table(-3);
+
+			L.push_string("position");
+			L.push_cfunction(api_position);
+			L.set_table(-3);
+
+			L.push_string("velocity");
+			L.push_cfunction(api_velocity);
+			L.set_table(-3);
+
+			L.set_table(-3);
+			L.set_table(Lua.PseudoIndex.REGISTRY);
+		}
+	}
+
+	[Compact]
+	public class SensorQuery {
+		public unowned Team my_team;
+		public bool enemy;
+		public unowned ShipClass class;
+		public double distance_gt;
+		public double distance_lt;
+		public double hull_gt;
+		public double hull_lt;
+		public uint32 limit;
+		public Vec2 origin;
+	}
+
 	public double get_energy() {
 		return CShip.get_energy(this);
 	}
