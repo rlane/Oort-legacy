@@ -97,11 +97,14 @@ static int ai_create(const char *filename, RISCShip *s, const guint8 *orders, si
 	lua_setglobal(G, "data_dir");
 	g_free(data_dir);
 
-	if (luaL_dofile(G, risc_data_path("runtime.lua"))) {
+	const char *runtime_filename = risc_data_path("runtime.lua");
+	if (luaL_dofile(G, runtime_filename)) {
 		g_warning("Failed to load runtime: %s", lua_tostring(G, -1));
 		lua_close(G);
+		g_free(runtime_filename);
 		return 1;
 	}
+	g_free(runtime_filename);
 
 	L = lua_newthread(G);
 

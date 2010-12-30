@@ -95,3 +95,6 @@ risc-win32: all
 
 risc-installer-win32.exe: risc-win32 installer.nsi
 	makensis installer.nsi
+
+memcheck: all
+	G_DEBUG=gc-friendly G_SLICE=always-malloc RISC_MAX_TICKS=1 valgrind --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 ./dedicated/risc_dedicated scenarios/basic.lua examples/switch.lua examples/switch.lua
