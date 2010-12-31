@@ -14,17 +14,8 @@ namespace RISC {
 		public bool is_win32();
 		[CCode (cname = "memcpy")]
 		public void *memcpy(void *dest, void *src, size_t n);
-	}
-
-	namespace CShip {
-		[CCode (cname = "ship_get_energy")]
-		public double get_energy(Ship s);
-
-		[CCode (cname = "ship_ai_run")]
-		public static bool ai_run(Ship s, int len);
-
-		[CCode (cname = "debug_hook")]
-		public static void debug_hook(Lua.LuaVM L, ref Lua.Debug a);
+		[CCode (cname = "thread_ns")]
+		public uint64 thread_ns();
 	}
 
 	[CCode (cname = "rad2deg")]

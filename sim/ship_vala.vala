@@ -57,7 +57,7 @@ public class RISC.Ship {
 	public int last_shot_tick;
 	public Queue<Msg> mq;
 	public uint64 line_start_time;
-	public char line_info[256];
+	public string line_info;
 	public Gfx gfx;
 	public Debug debug;
 
@@ -200,9 +200,26 @@ public class RISC.Ship {
 		}
 
 		if (!ai_dead) {
-			global_lua.set_hook(CShip.debug_hook, 0, 0);
+			global_lua.set_hook(debug_hook, 0, 0);
 			global_lua.get_global("tick_hook");
 			global_lua.call(0, 0);
+		}
+	}
+
+	public static void debug_hook(Lua.LuaVM L, ref Lua.Debug a) {
+		if (a.event == Lua.EventHook.COUNT) {
+			L.get_global("debug_count_hook");
+			L.call(0, 0);
+			L.yield(0);
+		} else if (a.event == Lua.EventHook.LINE) {
+			unowned Ship s = lua_ship(L);
+			uint64 elapsed = C.thread_ns() - s.line_start_time;
+			if (!L.get_info("nSl", out a)) error("debug hook aborted");
+			if (s.line_info != null) {
+				trace_file.printf("%ld\t%u\t%s\n", (long)elapsed, s.api_id, s.line_info);
+			}
+			s.line_info = "%s\t%s:%d".printf(a.name, a.short_src, a.current_line);
+			s.line_start_time = C.thread_ns();
 		}
 	}
 
@@ -215,7 +232,7 @@ public class RISC.Ship {
 	public bool ai_run(int len) {
 		var debug_mask = Lua.EventMask.COUNT;
 		if (trace_file != null) debug_mask |= Lua.EventMask.LINE;
-		lua.set_hook(CShip.debug_hook, debug_mask, len);
+		lua.set_hook(debug_hook, debug_mask, len);
 
 		var result = lua.resume(0);
 		if (result == ThreadStatus.YIELD) {
