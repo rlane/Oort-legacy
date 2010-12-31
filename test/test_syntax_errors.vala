@@ -1,5 +1,4 @@
 using RISC;
-using RISC.C;
 
 int main(string[] args) {
 	Test.init(ref args);

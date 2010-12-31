@@ -5,7 +5,7 @@ namespace RISC.Paths {
 	public File resource_dir;
 
 	public static void init(string arg0) {
-		if (C.is_win32()) {
+		if (Util.is_win32()) {
 			string path = GLib.Win32.get_package_installation_directory_of_module(null);
 			resource_dir = File.new_for_path(path);
 		} else {

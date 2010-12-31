@@ -15,7 +15,7 @@ AM_VALAFLAGS = \
 	--pkg risc \
 	--pkg lua \
 	--pkg vector \
-	--pkg csim \
+	--pkg util \
 	--pkg gtk+-2.0 \
 	--pkg gtkglext-1.0 \
 	--pkg glew \

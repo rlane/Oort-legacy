@@ -1,5 +1,4 @@
 using RISC;
-using RISC.C;
 
 #if VALGRIND_VALA
 [CCode (cheader_filename = "callgrind.h")]
@@ -9,8 +8,8 @@ bool callgrind_collection_started = 0;
 double tick_length = 1.0/32;
 
 int main(string[] args) {
-	int seed = envtol("RISC_SEED", 42);
-	int max_ticks = envtol("RISC_MAX_TICKS", -1);
+	int seed = Util.envtol("RISC_SEED", 42);
+	int max_ticks = Util.envtol("RISC_MAX_TICKS", -1);
 
 	if (!Thread.supported ()) {
 		error ("Cannot run without thread support.");

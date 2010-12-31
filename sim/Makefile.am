@@ -13,7 +13,7 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/vector \
 	--vapidir $(top_srcdir)/sim \
 	--pkg lua \
-	--pkg csim \
+	--pkg util \
 	--pkg vector \
 	--pkg gio-2.0 \
 	--thread \
@@ -34,7 +34,7 @@ librisc_1_0_la_SOURCES = \
 	paths.vala \
 	$(NULL)
 
-noinst_HEADERS = util.h risc.h risc.vapi csim.vapi
+noinst_HEADERS = util.h risc.h risc.vapi util.vapi
 
 librisc_1_0_la_LDFLAGS = $(RISC_LIBS) $(RISC_LUA_LIBS)
 

@@ -12,7 +12,7 @@ AM_VALAFLAGS = \
 	--pkg risc \
 	--pkg lua \
 	--pkg vector \
-	--pkg csim \
+	--pkg util \
 	--pkg gio-2.0 \
 	--vapidir $(top_srcdir)/vapi \
 	--vapidir $(top_srcdir)/vector \

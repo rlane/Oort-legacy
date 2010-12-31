@@ -211,13 +211,13 @@ public class RISC.Ship {
 			L.yield(0);
 		} else if (a.event == Lua.EventHook.LINE) {
 			unowned Ship s = lua_ship(L);
-			uint64 elapsed = C.thread_ns() - s.line_start_time;
+			uint64 elapsed = Util.thread_ns() - s.line_start_time;
 			if (!L.get_info("nSl", out a)) error("debug hook aborted");
 			if (s.line_info != null) {
 				trace_file.printf("%ld\t%u\t%s\n", (long)elapsed, s.api_id, s.line_info);
 			}
 			s.line_info = "%s\t%s:%d".printf(a.name, a.short_src, a.current_line);
-			s.line_start_time = C.thread_ns();
+			s.line_start_time = Util.thread_ns();
 		}
 	}
 
@@ -391,7 +391,7 @@ public class RISC.Ship {
 		uint8 *ldata = L.check_lstring(1, out len);
 
 		uint8 *data = malloc(len);
-		C.memcpy(data, ldata, len);
+		Util.memcpy(data, ldata, len);
 
 		var msg = new Msg() { len=len, data=data };
 		//print("publish %p\n", msg);

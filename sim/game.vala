@@ -21,7 +21,7 @@ namespace RISC.Game {
 		prng = new Rand.with_seed(seed);
 		ticks = 0;
 
-		Task.init(C.envtol("RISC_NUM_THREADS", 8));
+		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();
 		Physics.init();
 		Ship.init();

@@ -188,7 +188,7 @@ namespace RISC {
 			glPushMatrix();
 			glTranslated(sp.x, sp.y, 0);
 			glScaled(scale, scale, scale);
-			glRotated(rad2deg(angle), 0, 0, 1);
+			glRotated(Util.rad2deg(angle), 0, 0, 1);
 
 			if (s.class.name == "mothership") {
 				render_mothership(s);
