@@ -117,13 +117,17 @@ function explode()
 	sys_die()
 end
 
+function yield()
+	coroutine.yield()
+end
+
 sandbox_api = {
 	thrust = thrust,
 	position = sys_position,
 	velocity = sys_velocity,
 	energy = energy,
 	fire = fire,
-	yield = sys_yield,
+	yield = yield,
 	sensor_contacts = sensor_contacts,
 	sensor_contact = sensor_contact,
 	send = send,

@@ -131,7 +131,6 @@ public class RISC.Ship {
 		global_lua.set_alloc_func((Lua.AllocFunc)ai_allocator, this);
 		global_lua.open_libs();
 		global_lua.register("sys_thrust", api_thrust);
-		global_lua.register("sys_yield", api_yield);
 		global_lua.register("sys_position", api_position);
 		global_lua.register("sys_velocity", api_velocity);
 		global_lua.register("sys_create_bullet", api_create_bullet);
@@ -273,10 +272,6 @@ public class RISC.Ship {
 		double f = L.check_number(2);
 		s.physics.thrust = vec2(cos(a), sin(a)).scale(f * s.physics.m);
 		return 0;
-	}
-
-	public static int api_yield(LuaVM L) {
-		return L.yield(0);
 	}
 
 	public static int api_position(LuaVM L) {
