@@ -71,6 +71,7 @@ AC_CONFIG_FILES([
 	vector/Makefile
 	vapi/Makefile
 	test/Makefile
+	cjson/Makefile
 ])
 
 AC_OUTPUT

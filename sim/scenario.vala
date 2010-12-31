@@ -4,6 +4,9 @@ using Vector;
 
 namespace RISC.Scenario {
 	public bool load(string scenario, string[] ais) {
+		var v = cJSON.parse("false");
+		assert(v.type == cJSON.Type.False);
+
 		var L = new LuaVM();
 		L.open_libs();
 

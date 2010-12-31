@@ -33,5 +33,5 @@ AM_VALAFLAGS = \
 bin_PROGRAMS = risc_ui
 risc_ui_SOURCES = risc.vala renderer.vala glutil.c particle.c font.c
 noinst_HEADERS = glutil.h particle.h tga.h font.h font.vapi particle.vapi glutil.vapi
-risc_ui_LDADD = $(top_srcdir)/sim/librisc-1.0.la
+risc_ui_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a
 risc_ui_LDFLAGS = $(RISC_EXTRA_LDFLAGS) -static

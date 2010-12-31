@@ -6,23 +6,26 @@ AM_CFLAGS = \
 	$(VALGRIND_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
+	-I $(top_srcdir)/cjson \
 	$(NULL)
 
 AM_VALAFLAGS = \
 	--library risc -H risc.h \
 	--vapidir $(top_srcdir)/vapi \
 	--vapidir $(top_srcdir)/vector \
+	--vapidir $(top_srcdir)/cjson \
 	--vapidir $(top_srcdir)/sim \
 	--pkg lua \
 	--pkg util \
 	--pkg vector \
 	--pkg gio-2.0 \
+	--pkg cjson \
 	--thread \
 	$(NULL)
 
-lib_LTLIBRARIES = librisc-1.0.la
+lib_LIBRARIES = libsim.a
 
-librisc_1_0_la_SOURCES = \
+libsim_a_SOURCES = \
 	bullet.vala \
 	game.vala \
 	physics.vala \
@@ -37,9 +40,10 @@ librisc_1_0_la_SOURCES = \
 
 noinst_HEADERS = util.h risc.h risc.vapi util.vapi
 
-librisc_1_0_la_LDFLAGS = $(RISC_LIBS) $(RISC_LUA_LIBS)
+libsim_a_LDFLAGS = $(RISC_LIBS) $(RISC_LUA_LIBS)
+libsim_a_LIBADD = $(top_srcdir)/cjson/libcjson.a
 
-risc.h: librisc_1_0_la_vala.stamp
+risc.h: libsim_a_vala.stamp
 
 EXTRA_DIST = \
 	$(NULL)

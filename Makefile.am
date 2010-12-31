@@ -5,10 +5,11 @@ AUTOMAKE_OPTIONS = foreign
 #Build in these directories:
 
 SUBDIRS = \
+	cjson \
+	vector \
 	sim \
 	dedicated \
 	ui \
-	vector \
 	vapi \
 	test \
 	$(NULL)

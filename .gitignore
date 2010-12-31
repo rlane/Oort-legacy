@@ -24,6 +24,7 @@ autom4te.cache/*
 
 *.lo
 *.la
+*.a
 autoscan.log
 *.stamp
 .deps
