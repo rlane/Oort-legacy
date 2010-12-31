@@ -25,7 +25,7 @@ namespace RISC.Scenario {
 		L.set_global("AI");
 
 		if (L.do_file(scenario)) {
-			warning("Failed to load scenario %s: %s", scenario, L.to_string(-1));
+			warning("Failed to load scenario: %s", L.to_string(-1));
 			return false;
 		}
 
@@ -36,7 +36,13 @@ namespace RISC.Scenario {
 		string name = L.check_string(1);
 		string filename = L.check_string(2);
 		uint32 color = L.check_long(3);
-		Team.create(name, filename, color);
+		uint8[] code;
+		try {
+			FileUtils.get_data(filename, out code);
+		} catch (FileError e) {
+			L.err(@"Failed to load AI: $(e.message)");
+		}
+		Team.create(name, filename, code, color);
 		return 0;	
 	}
 

@@ -176,8 +176,8 @@ public class RISC.Ship {
 
 		lua.get_global("sandbox");
 
-		if (lua.load_file(team.filename) != 0) {
-			warning("Couldn't load file %s: %s", team.filename, lua.to_string(-1));
+		if (lua.load_buffer(team.code, team.filename) != 0) {
+			warning("Couldn't load AI: %s", lua.to_string(-1));
 			return false;
 		}
 

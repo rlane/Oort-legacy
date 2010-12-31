@@ -392,7 +392,7 @@ namespace Lua {
 		[CCode (cname = "luaL_openlibs")]
 		public void open_libs ();
 		[CCode (cname = "luaL_loadbuffer")]
-		public int load_buffer (char[] buffer, string? name = null);
+		public int load_buffer (uint8[] buffer, string? name = null);
 		[CCode (cname = "luaL_loadstring")]
 		public int load_string (string s);
 		[CCode (cname = "luaL_loadfile")]

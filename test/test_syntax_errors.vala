@@ -14,14 +14,18 @@ int main(string[] args) {
 
 	Test.add_func ("/scenario/syntax_error", () => {
 		var ret = Game.init(0, data_path("test/scenarios/syntax_error.lua"), { });
-		print("%d", ret);
 		assert(ret == 1);
 		Game.shutdown();
 	});
 
 	Test.add_func ("/ai/syntax_error", () => {
 		var ret = Game.init(0, data_path("test/scenarios/single.lua"), { data_path("test/ai/syntax_error.lua") });
-		print("%d", ret);
+		assert(ret == 1);
+		Game.shutdown();
+	});
+
+	Test.add_func ("/ai/missing", () => {
+		var ret = Game.init(0, data_path("test/scenarios/single.lua"), { data_path("test/ai/missing.lua") });
 		assert(ret == 1);
 		Game.shutdown();
 	});
