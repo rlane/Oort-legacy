@@ -83,7 +83,7 @@ namespace RISC {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
 
-			foreach (unowned Ship s in RISC.all_ships) {
+			foreach (unowned Ship s in Ship.all_ships) {
 				render_ship(s);
 			}
 
@@ -350,7 +350,7 @@ namespace RISC {
 				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(1/32), vec2(0,0), 0.1, 1, 20, (uint16)(hit.e*100));
 			}
 
-			foreach (unowned Ship s in RISC.all_ships) {
+			foreach (unowned Ship s in Ship.all_ships) {
 				if (s.physics.thrust.abs() != 0) {
 					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(1.0/32), s.physics.thrust.scale(-1.0/32), 0.1, 2, 4, 8);
 				}
@@ -377,7 +377,7 @@ namespace RISC {
 		// XXX find ship with minimum distance, allow 5 px error
 		public void pick(int x, int y) {
 			Vec2 p = W(vec2(x, y));
-			foreach (unowned Ship s in RISC.all_ships) {
+			foreach (unowned Ship s in Ship.all_ships) {
 				if (s.physics.p.distance(p) < s.physics.r) {
 					picked = s;
 					return;

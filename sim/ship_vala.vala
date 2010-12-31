@@ -61,13 +61,11 @@ public class RISC.Ship {
 	public Gfx gfx;
 	public Debug debug;
 
-	[CCode (cname = "all_ships")]
 	public static List<Ship> all_ships;
-	[CCode (cname = "new_ships")]
 	public static List<Ship> new_ships;
-	[CCode (cname = "new_ships_lock")]
 	public static Mutex new_ships_lock;
 	public static Mutex radio_lock;
+	public static GLib.FileStream trace_file;
 
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);

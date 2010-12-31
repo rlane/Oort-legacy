@@ -1,12 +1,6 @@
 [CCode (cheader_filename = "util.h")]
-[CCode (cheader_filename = "ship.h")]
 
 namespace RISC {
-	[CCode (cname = "all_ships")]
-	public GLib.List<Ship> all_ships;
-	[CCode (cname = "trace_file")]
-	public GLib.FileStream trace_file;
-
 	namespace C {
 		[CCode (cname = "envtol")]
 		public int envtol(string k, int i);

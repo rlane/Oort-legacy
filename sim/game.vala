@@ -61,7 +61,7 @@ namespace RISC.Game {
 	public unowned Team? check_victory() {
 		unowned Team winner = null;
 
-		foreach (unowned Ship s in RISC.all_ships) {
+		foreach (unowned Ship s in Ship.all_ships) {
 			if (!s.class.count_for_victory) continue;
 			if (winner != null && s.team != winner) {
 				return null;
@@ -73,7 +73,7 @@ namespace RISC.Game {
 	}
 
 	public void check_bullet_hits(double tick_length) {
-		foreach (unowned Ship s in all_ships) {
+		foreach (unowned Ship s in Ship.all_ships) {
 			foreach (unowned Bullet b in Bullet.all_bullets) {
 				Vec2 cp;
 				if (Physics.check_collision(s.physics, b.physics, tick_length, out cp)) {
