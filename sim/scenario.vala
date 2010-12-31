@@ -40,6 +40,7 @@ namespace RISC.Scenario {
 
 		unowned cJSON team_obj = teams.child;
 		int i = 0;
+		int ai_index = 0;
 		while (team_obj != null) {
 			if (team_obj.type != cJSON.Type.Object) {
 				warning("team definition teams.%s must be an object", team_obj.name);
@@ -74,7 +75,7 @@ namespace RISC.Scenario {
 
 			unowned cJSON color_blue = color_obj.objectItem("b");
 			if (color_blue == null || color_blue.type != cJSON.Type.Number) {
-				warning("teams.%s.color.b field is not a number", team_obj.name);
+				warning("teams.%s.color.b is not a number", team_obj.name);
 				return false;
 			}
 			if (color_blue.int < 0 || color_blue.int > 255) {
@@ -84,15 +85,32 @@ namespace RISC.Scenario {
 
 			uint32 color = color_red.int << 24 | color_green.int << 16 | color_blue.int << 8;
 
+			unowned cJSON filename_obj = team_obj.objectItem("filename");
+			if (filename_obj != null && filename_obj.type != cJSON.Type.String) {
+				warning("teams.%s.color.filename must be a string", filename_obj.name);
+				return false;
+			}
+
+			string filename;
+			if (filename_obj != null) {
+				filename = data_path(filename_obj.string);
+			}	else {
+				if (ai_index >= ais.length) {
+					warning("too few AIs supplied");
+					return false;
+				}
+				filename = ais[ai_index++];
+			}
+
 			uint8[] code;
 			try {
-				FileUtils.get_data(ais[i], out code);
+				FileUtils.get_data(filename, out code);
 			} catch (FileError e) {
 				warning("Failed to read AI script: %s", e.message);
 				return false;
 			}
 
-			Team.create(team_obj.name, ais[i], code, color);
+			Team.create(team_obj.name, filename, code, color);
 			unowned Team team = Team.lookup(team_obj.name);
 			assert(team != null);
 
@@ -152,6 +170,11 @@ namespace RISC.Scenario {
 
 		if (i < 2) {
 			warning("must define at least 2 teams");
+			return false;
+		}
+
+		if (ai_index != ais.length) {
+			warning("too many AIs supplied");
 			return false;
 		}
 
