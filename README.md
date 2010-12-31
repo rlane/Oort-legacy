@@ -12,24 +12,24 @@ simplification that ships can thrust and shoot in any direction.
 Compilation
 -----------
 
-Linux users will need development headers for glib, sdl, sdl\_gfx, opengl, and
-lua5.1. Use of luajit is recommended - set the LUA make variable to the name of
-your luajit library (luajit-5.1 on Arch).
+RISC uses the standard autotools build system. It is known to compile on Linux
+and OS X, and cross-compile to Windows using mingw32. Required packages for
+various package managers are listed below:
 
-There are makefiles for OS X and Windows. OS X users will need equivalent
-libraries development headers as Linux. The Windows makefile uses mingw to
-crosscompile and requires manually downloading appropriate luajit, glib, sdl,
-and sdl\_gfx headers. A future task is to document/streamline this process.
+Arch Linux: glib2 luajit2 gtk2 gtkglext glew pkgconfig vala
+Ubuntu 10.10: build-essential valac pkg-config libglib2.0-dev libluajit-5.1-dev libglew1.5-dev libgtk2.0-dev libgtkglext1-dev
+Arch Linux/mingw32: mingw32-gcc mingw32-glib2 mingw32-gtk2 mingw32-lua mingw32-gtkglext mingw32-glew zip vala
+OS X MacPorts: gcc45 glew gtk2 gtkglext lua glib2-devel
 
 Gameplay
 --------
 
-To start the game, run risc /path/to/scenario /path/to/ai[s]. Omit
+To start the game, run risc\_ui /path/to/scenario /path/to/ai[s]. Omit
 the scenario argument to watch a demo scenario. Example command lines:
 
-    risc
-    risc scenarios/basic.lua examples/switch.lua examples/switch.lua
-    risc scenarios/missile_practice.lua examples/rock.lua
+    risc\_ui
+    risc\_ui scenarios/basic.lua examples/switch.lua examples/switch.lua
+    risc\_ui scenarios/missile_practice.lua examples/rock.lua
 
 ### Scenarios
 
@@ -165,7 +165,7 @@ information for the given ship, which is significantly more efficient.
 Graphical simulator
 -------------------
 
-The "risc" binary renders the battle with OpenGL. The simulation speed is
+The "risc\_ui" binary renders the battle with OpenGL. The simulation speed is
 limited to real time (32 hz).
 
 ### Controls
@@ -187,11 +187,10 @@ Save screenshot to "screenshot.tga": 'p'
 Non-graphical simulator
 -----------------------
 
-The "risc-dedicated" binary runs the simulation and outputs which team won. It
-isn't framerate-limited and so can run much more quickly. It currently links
-against OpenGL anyway, this is a bug. A future task is to have risc-dedicated
-output a recording of the battle that can be replayed in a graphical viewer
-later.
+The "risc\_dedicated" binary runs the simulation and outputs which team won. It
+isn't framerate-limited and so can run much more quickly. A future task is to
+have risc\_dedicated output a recording of the battle that can be replayed in a
+graphical viewer later.
 
 Contributing
 ------------

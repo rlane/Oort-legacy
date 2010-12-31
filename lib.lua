@@ -1,5 +1,5 @@
 target_debug = false
-local my_team = team()
+local my_team = team
 local two_pi = math.pi * 2
 
 function printf(...)

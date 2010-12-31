@@ -8,7 +8,7 @@ arch=('i686' 'x86_64')
 url="https://github.com/rlane/risc"
 license=("GPL")
 depends=()
-makedepends=('pkgconfig' 'vala' 'mingw32-gcc' 'mingw32-sdl' 'mingw32-glib2' 'mingw32-gtk2' 'mingw32-lua' 'mingw32-sdl_gfx' 'mingw32-gtkglext' 'mingw32-glew' 'zip')
+makedepends=('pkgconfig' 'vala' 'mingw32-gcc' 'mingw32-glib2' 'mingw32-gtk2' 'mingw32-lua' 'mingw32-gtkglext' 'mingw32-glew' 'zip')
 
 _gitroot="git://github.com/rlane/risc"
 _gitname="risc"
@@ -32,11 +32,12 @@ build() {
   git clone "$srcdir/$_gitname" "$srcdir/$_gitname-build"
   cd "$srcdir/$_gitname-build"
 
+  ./autogen.sh && ./configure PKG_CONFIG_PATH="/usr/i486-mingw32/lib/pkgconfig/" --host=i486-mingw32 && make
   make -f Makefile.win32 all
 }
 
 package() {
   cd "$srcdir/$_gitname-build"
-  make -f Makefile.win32 DESTDIR="$pkgdir" install
+  make DESTDIR="$pkgdir" install
   echo "Installer will be left at /opt/risc-win32/risc-installer-win32.exe"
 }

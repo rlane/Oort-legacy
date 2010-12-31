@@ -45,12 +45,12 @@ SectionIn RO
 SectionEnd
 
 Section "Desktop icon" SecDesktop
-  CreateShortcut "$DESKTOP\RISC.lnk" "$INSTDIR\risc.exe"
+  CreateShortcut "$DESKTOP\RISC.lnk" "$INSTDIR\risc_ui.exe"
 SectionEnd
 
 Section -AdditionalIcons
   CreateDirectory "$SMPROGRAMS\RISC"
-  CreateShortcut "$SMPROGRAMS\RISC\RISC.lnk" "$INSTDIR\risc.exe"
+  CreateShortcut "$SMPROGRAMS\RISC\RISC.lnk" "$INSTDIR\risc_ui.exe"
   CreateShortCut "$SMPROGRAMS\RISC\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 SectionEnd
 

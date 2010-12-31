@@ -1,10 +1,12 @@
 dofile(data_dir .. "/ships.lua")
 
-local my_class = ships[sys_class()]
-local last_fire_times = {}
-local _energy = my_class.energy.initial
-local energy_tick_rate = my_class.energy.rate / 32.0
+local my_class = class;
+local my_ship = ships[my_class]
+local last_fire_ticks = {}
+local _energy = my_ship.energy.initial
+local energy_tick_rate = my_ship.energy.rate / 32.0
 local debug_preemption = false
+local ticks = 0
 
 function energy()
 	return _energy
@@ -15,8 +17,8 @@ function thrust(a,acc)
 		return
 	end
 
-	if acc > my_class.max_acc then
-		acc = my_class.max_acc
+	if acc > my_ship.max_acc then
+		acc = my_ship.max_acc
 	end
 
 	sys_thrust(a,acc)
@@ -24,13 +26,13 @@ end
 
 function fire(name, a)
 	local x,y,v,vx,vy,m,ttl
-	local gun = my_class.guns[name]
+	local gun = my_ship.guns[name]
 	
 	if not gun then
 		error(string.format("gun %s does not exist", name))
 	end
 
-	local last_fire_time = last_fire_times[name]
+	local last_fire_tick = last_fire_ticks[name]
 
 	if _energy < gun.cost then
 		return
@@ -38,10 +40,10 @@ function fire(name, a)
 		_energy = _energy - gun.cost
 	end
 
-	if last_fire_time and last_fire_time + gun.reload_time > sys_time() then
+	if last_fire_tick and last_fire_tick + gun.reload_time*32 > ticks then
 		return
 	else
-		last_fire_times[name] = sys_time()
+		last_fire_ticks[name] = ticks
 	end
 
 	x, y = sys_position()
@@ -79,21 +81,21 @@ function recv()
 	return sys_recv()
 end
 
-function spawn(class_name, orders)
-	class = ships[class_name]
+function spawn(class, orders)
+	local ship = ships[class]
 
-	if not class then
-		error(string.format("class %s does not exist", class_name))
+	if not ship then
+		error(string.format("class %s does not exist", class))
 		return
 	end
 
-	if _energy < class.cost then
+	if _energy < ship.cost then
 		return
 	else
-		_energy = _energy - class.cost
+		_energy = _energy - ship.cost
 	end
 
-	sys_spawn(class_name, orders)
+	sys_spawn(class, orders)
 end
 
 function explode()
@@ -101,7 +103,7 @@ function explode()
 	local vx, vy = sys_velocity()
 	local i
 	local n = 128
-	local exp = my_class.explosion
+	local exp = my_ship.explosion
 
 	for i = 1,exp.count do
 		local a, v, m, ttl, vx2, vy2
@@ -122,10 +124,8 @@ sandbox_api = {
 	position = sys_position,
 	velocity = sys_velocity,
 	energy = energy,
-	class = sys_class,
 	fire = fire,
 	yield = sys_yield,
-	team = sys_team,
 	sensor_contacts = sensor_contacts,
 	sensor_contact = sensor_contact,
 	send = send,
@@ -134,8 +134,6 @@ sandbox_api = {
 	explode = explode,
 	debug_line = sys_debug_line,
 	clear_debug_lines = sys_clear_debug_lines,
-	serialize_id = sys_serialize_id,
-	deserialize_id = sys_deserialize_id,
 }
 
 function copy_table(t, t2)
@@ -155,16 +153,17 @@ end
 
 function debug_count_hook()
 	if debug_preemption then
-		print("preempted", sys_class(), ship_id)
+		print("preempted", my_ship_name, ship_id)
 		print(debug.traceback())
 	end
 end
 
 function tick_hook()
 	_energy = _energy + energy_tick_rate
-	if _energy > my_class.energy.limit then
-		_energy = my_class.energy.limit
+	if _energy > my_ship.energy.limit then
+		_energy = my_ship.energy.limit
 	end
+	ticks = ticks + 1
 end
 
 function sandbox(f)
@@ -186,6 +185,8 @@ function sandbox(f)
 		io = { write = io.write },
 
 		orders = orders,
+		class = my_class,
+		team = team,
 		ships = copy_table(ships, {})
 	}
 

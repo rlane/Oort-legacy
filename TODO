@@ -21,6 +21,7 @@ Limit view boundary
 Force seed in scenario metadata
 Timeout in scenario metadata
 Inline AI in scenario
+Replay files
 
 Maybe:
 Implement angular motion
