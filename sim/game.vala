@@ -14,12 +14,16 @@ public class RISC.BulletHit {
 namespace RISC.Game {
 	public int ticks;
 	public Rand prng;
+	public uint8[] runtime_code;
 
 	public List<BulletHit> bullet_hits;
 
-	public int init(int seed, string scenario, string[] ais) {
+	public int init(int seed, string scenario, string[] ais) throws FileError {
 		prng = new Rand.with_seed(seed);
 		ticks = 0;
+		uint8[] _runtime_code;
+		FileUtils.get_data(data_path("runtime.lua"), out _runtime_code);
+		runtime_code = _runtime_code;
 
 		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();

@@ -19,10 +19,14 @@ int main(string[] args) {
 	print("using data from %s\n", RISC.Paths.resource_dir.get_path());
 
 	int ret;
-	if (args.length <= 1) {
-		ret = Game.init(42, data_path("scenarios/demo1.lua"), { });
-	} else {
-		ret = Game.init(seed, args[1], args[2:(args.length)]);
+	try {
+		if (args.length <= 1) {
+			ret = Game.init(42, data_path("scenarios/demo1.lua"), { });
+		} else {
+			ret = Game.init(seed, args[1], args[2:(args.length)]);
+		}
+	} catch (FileError e) {
+		error("Game initialization failed: %s", e.message);
 	}
 
 	if (ret != 0) {

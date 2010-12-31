@@ -271,17 +271,25 @@ namespace RISC {
 		public void start_game(int seed, string scenario, string[] ais) {
 			RISC.Game.shutdown();
 			renderer.init();
-			if (RISC.Game.init(seed, scenario, ais) != 0) {
-				warning("initialization failed\n");
-				start_demo_game();
-			} else {
-				game_state = GameState.RUNNING;
+			try {
+				if (RISC.Game.init(seed, scenario, ais) != 0) {
+					warning("initialization failed\n");
+					start_demo_game();
+				} else {
+					game_state = GameState.RUNNING;
+				}
+			} catch (FileError e) {
+				warning("Game initialization failed: %s", e.message);
 			}
 		}
 
 		public void start_demo_game() {
-			start_game(42, data_path("scenarios/demo1.lua"), { });
-			game_state = GameState.DEMO;
+			try {
+				start_game(42, data_path("scenarios/demo1.lua"), { });
+				game_state = GameState.DEMO;
+			} catch (FileError e) {
+				error("Demo initialization failed: %s", e.message);
+			}
 		}
 
 		delegate string? GetStr(string k);

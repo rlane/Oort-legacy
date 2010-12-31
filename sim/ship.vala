@@ -166,11 +166,12 @@ public class RISC.Ship {
 		global_lua.push_string(data_dir);
 		global_lua.set_global("data_dir");
 
-		string runtime_filename = data_path("runtime.lua");
-		if (global_lua.do_file(runtime_filename)) {
+		if (global_lua.load_buffer(Game.runtime_code) != 0) {
 			warning("Failed to load runtime: %s", global_lua.to_string(-1));
 			return false;
 		}
+
+		global_lua.call(0,0);
 
 		lua = global_lua.new_thread();
 
