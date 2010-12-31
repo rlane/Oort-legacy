@@ -45,7 +45,7 @@ sim/physics.c
 sim/risc.h
 sim/scenario.c
 sim/ship_class.c
-sim/ship_vala.c
+sim/ship.c
 sim/task.c
 sim/team.c
 ui/renderer.c

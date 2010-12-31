@@ -27,7 +27,7 @@ librisc_1_0_la_SOURCES = \
 	physics.vala \
 	scenario.vala \
 	ship_class.vala \
-	ship_vala.vala \
+	ship.vala \
 	task.vala \
 	team.vala \
 	util.c \
@@ -53,7 +53,7 @@ DISTCLEANFILES = \
 	physics.c \
 	scenario.c \
 	ship_class.c \
-	ship_vala.c \
+	ship.c \
 	task.c \
 	team.c \
 	sim.h \
