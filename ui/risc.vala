@@ -102,6 +102,7 @@ namespace RISC {
 			var scenario_chooser = new FileChooserDialog("Select scenario", this, Gtk.FileChooserAction.OPEN,
 			                                             Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT,
 																									 Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
+			scenario_chooser.set_current_folder(data_path("scenarios"));
 			try {
 				scenario_chooser.add_shortcut_folder(data_path("scenarios"));
 			} catch (GLib.Error e) {}
@@ -370,6 +371,7 @@ namespace RISC {
 			for (i = 0; i < this.scn.max_teams; i++) {
 				var chooser = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
 				chooser.file_set.connect(on_ai_change);
+				chooser.set_current_folder(data_path("examples"));
 				try {
 					chooser.add_shortcut_folder(data_path("examples"));
 				} catch (GLib.Error e) {}
