@@ -1,5 +1,3 @@
-dofile(data_dir .. "/ships.lua")
-
 local my_class = class;
 local my_ship = ships[my_class]
 local last_fire_ticks = {}

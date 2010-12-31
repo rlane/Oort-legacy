@@ -15,15 +15,21 @@ namespace RISC.Game {
 	public int ticks;
 	public Rand prng;
 	public uint8[] runtime_code;
+	public uint8[] ships_code;
 
 	public List<BulletHit> bullet_hits;
 
+	static uint8[] load_resource(string name) throws FileError {
+		uint8[] data;
+		FileUtils.get_data(data_path(name), out data);
+		return (owned)data;
+	}
+
 	public int init(int seed, string scenario, string[] ais) throws FileError {
 		prng = new Rand.with_seed(seed);
+		runtime_code = load_resource("runtime.lua");
+		ships_code = load_resource("ships.lua");
 		ticks = 0;
-		uint8[] _runtime_code;
-		FileUtils.get_data(data_path("runtime.lua"), out _runtime_code);
-		runtime_code = (owned)_runtime_code;
 
 		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();
@@ -62,6 +68,7 @@ namespace RISC.Game {
 		Task.shutdown();
 		prng = null;
 		runtime_code = null;
+		ships_code = null;
 	}
 
 	public unowned Team? check_victory() {
