@@ -31,12 +31,10 @@ public class RISC.Ship {
 	}
 
 	public class Msg {
-		public size_t len;
-		public uint8 *data;
+		public uint8[] data;
 
 		~Msg() {
 			//print("destroy msg %p\n", this);
-			free(data);
 		}
 	}
 
@@ -387,13 +385,9 @@ public class RISC.Ship {
 
 	public static int api_send(LuaVM L) {
 		unowned Ship s = lua_ship(L);
-		size_t len;
-		uint8 *ldata = L.check_lstring(1, out len);
+		uint8[] data = L.check_data(1);
 
-		uint8 *data = malloc(len);
-		Util.memcpy(data, ldata, len);
-
-		var msg = new Msg() { len=len, data=data };
+		var msg = new Msg() { data=(owned)data };
 		//print("publish %p\n", msg);
 
 		radio_lock.lock();
@@ -415,7 +409,7 @@ public class RISC.Ship {
 
 		Msg msg = s.mq.pop_head();
 		if (msg != null) {
-			L.push_lstring(msg.data, msg.len);
+			L.push_data(msg.data);
 		}
 
 		radio_lock.unlock();
