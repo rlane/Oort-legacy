@@ -197,8 +197,6 @@ function sandbox(f)
 
 	copy_table(sandbox_api, env)
 
-	local lib,e = loadfile(data_dir .. "/lib.lua")
-	if not lib then error(e, 1) end
 	setfenv(lib, env)
 	lib()
 

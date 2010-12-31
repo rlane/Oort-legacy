@@ -16,6 +16,7 @@ namespace RISC.Game {
 	public Rand prng;
 	public uint8[] runtime_code;
 	public uint8[] ships_code;
+	public uint8[] lib_code;
 
 	public List<BulletHit> bullet_hits;
 
@@ -29,6 +30,7 @@ namespace RISC.Game {
 		prng = new Rand.with_seed(seed);
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
+		lib_code = load_resource("lib.lua");
 		ticks = 0;
 
 		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
@@ -69,6 +71,7 @@ namespace RISC.Game {
 		prng = null;
 		runtime_code = null;
 		ships_code = null;
+		lib_code = null;
 	}
 
 	public unowned Team? check_victory() {
