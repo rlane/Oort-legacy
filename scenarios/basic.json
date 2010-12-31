@@ -1,0 +1,46 @@
+{
+	"name": "basic",
+	"author": "Rich Lane",
+	"description": "Motherships and fighters",
+	"teams": {
+
+		"green": {
+			"color": { "r": 0, "g": 255, "b": 0 },
+			"ships": [
+				{ "class": "mothership", "x": -40, "y": 0 },
+				{ "class": "mothership", "x": -40, "y": 10 },
+				{ "class": "mothership", "x": -40, "y": -10 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 },
+				{ "class": "fighter", "x": -30, "y": 20 }
+			]
+		},
+
+		"blue": {
+			"color": { "r": 0, "g": 0, "b": 255 },
+			"ships": [
+				{ "class": "mothership", "x": 40, "y": 0 },
+				{ "class": "mothership", "x": 40, "y": 10 },
+				{ "class": "mothership", "x": 40, "y": -10 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 },
+				{ "class": "fighter", "x": 30, "y": -20 }
+			]
+		}
+
+	}
+}

@@ -36,4 +36,11 @@ class cJSON {
 
 	[CCode (cname="cJSON_Parse")]
 	public static cJSON parse(string value);
+
+	[CCode (cname="cJSON_GetArraySize")]
+	public int arraySize();
+	[CCode (cname="cJSON_GetArrayItem")]
+	public unowned cJSON arrayItem(int i);
+	[CCode (cname="cJSON_GetObjectItem")]
+	public unowned cJSON objectItem(string key);
 }

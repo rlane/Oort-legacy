@@ -3,10 +3,162 @@ using Lua;
 using Vector;
 
 namespace RISC.Scenario {
-	public bool load(string scenario, string[] ais) {
-		var v = cJSON.parse("false");
-		assert(v.type == cJSON.Type.False);
+	bool load(string scenario, string[] ais) {
+		if (scenario.has_suffix(".json")) {
+			return load_json(scenario, ais);
+		} else if (scenario.has_suffix(".lua")) {
+			return load_lua(scenario, ais);
+		} else {
+			warning("Unexpected scenario filename extension");
+			return false;
+		}
+	}
 
+	bool load_json(string scenario, string[] ais) {
+		string data;
+		try {
+			FileUtils.get_contents(scenario, out data);
+		} catch (FileError e) {
+			warning("Failed to read scenario: %s", e.message);
+			return false;
+		}
+
+		var root = cJSON.parse(data);
+		if (root == null) {
+			warning("Failed to parse scenario");
+			return false;
+		} else if (root.type != cJSON.Type.Object) {
+			warning("root is not an object");
+			return false;
+		}
+
+		unowned cJSON teams = root.objectItem("teams");
+		if (teams == null || teams.type != cJSON.Type.Object) {
+			warning("teams field is not an object");
+			return false;
+		}
+
+		unowned cJSON team_obj = teams.child;
+		int i = 0;
+		while (team_obj != null) {
+			if (team_obj.type != cJSON.Type.Object) {
+				warning("team definition teams.%s must be an object", team_obj.name);
+				return false;
+			}
+
+			unowned cJSON color_obj = team_obj.objectItem("color");
+			if (color_obj == null || color_obj.type != cJSON.Type.Object) {
+				warning("teams.%s.color field is not an object", team_obj.name);
+				return false;
+			}
+
+			unowned cJSON color_red = color_obj.objectItem("r");
+			if (color_red == null || color_red.type != cJSON.Type.Number) {
+				warning("teams.%s.color.r field is not a number", team_obj.name);
+				return false;
+			}
+			if (color_red.int < 0 || color_red.int > 255) {
+				warning("teams.%s.color.r must be in the range [0,255]", team_obj.name);
+				return false;
+			}
+
+			unowned cJSON color_green = color_obj.objectItem("g");
+			if (color_green == null || color_green.type != cJSON.Type.Number) {
+				warning("teams.%s.color.g field is not a number", team_obj.name);
+				return false;
+			}
+			if (color_green.int < 0 || color_green.int > 255) {
+				warning("teams.%s.color.g must be in the range [0,255]", team_obj.name);
+				return false;
+			}
+
+			unowned cJSON color_blue = color_obj.objectItem("b");
+			if (color_blue == null || color_blue.type != cJSON.Type.Number) {
+				warning("teams.%s.color.b field is not a number", team_obj.name);
+				return false;
+			}
+			if (color_blue.int < 0 || color_blue.int > 255) {
+				warning("teams.%s.color.b must be in the range [0,255]", team_obj.name);
+				return false;
+			}
+
+			uint32 color = color_red.int << 24 | color_green.int << 16 | color_blue.int << 8;
+
+			uint8[] code;
+			try {
+				FileUtils.get_data(ais[i], out code);
+			} catch (FileError e) {
+				warning("Failed to read AI script: %s", e.message);
+				return false;
+			}
+
+			Team.create(team_obj.name, ais[i], code, color);
+			unowned Team team = Team.lookup(team_obj.name);
+			assert(team != null);
+
+			unowned cJSON ships = team_obj.objectItem("ships");
+			if (ships == null || ships.type != cJSON.Type.Array) {
+				warning("teams.%s.ships field is not an array", team_obj.name);
+				return false;
+			}
+
+			unowned cJSON ship_obj = ships.child;
+			int j = 0;
+			while (ship_obj != null) {
+				if (ship_obj.type != cJSON.Type.Object) {
+					warning("ship definition teams.%s.ships[%d] must be an object", team_obj.name, j);
+					return false;
+				}
+
+				unowned cJSON klass_name = ship_obj.objectItem("class");
+				if (klass_name.type != cJSON.Type.String) {
+					warning("field teams.%s.ships[%d].class must be a string", team_obj.name, j);
+					return false;
+				}
+
+				unowned ShipClass klass = ShipClass.lookup(klass_name.string);
+				if (klass == null) {
+					warning("field teams.%s.ships[%d].class must be a valid ship class", team_obj.name, j);
+					return false;
+				}
+
+				unowned cJSON x_obj = ship_obj.objectItem("x");
+				if (x_obj.type != cJSON.Type.Number) {
+					warning("field teams.%s.ships[%d].x must be a number", team_obj.name, j);
+					return false;
+				}
+
+				unowned cJSON y_obj = ship_obj.objectItem("y");
+				if (y_obj.type != cJSON.Type.Number) {
+					warning("field teams.%s.ships[%d].y must be a number", team_obj.name, j);
+					return false;
+				}
+
+				Ship s = new Ship(klass, team, vec2(x_obj.double, y_obj.double), vec2(0,0), Game.prng.next_int());
+
+				if (!s.create_ai(null)) {
+					warning("Failed to create AI");
+					return false;
+				}
+
+				Ship.register((owned)s);
+				j++;
+				ship_obj = ship_obj.next;
+			}
+
+			i++;
+			team_obj = team_obj.next;
+		}
+
+		if (i < 2) {
+			warning("must define at least 2 teams");
+			return false;
+		}
+
+		return true;
+	}
+
+	bool load_lua(string scenario, string[] ais) {
 		var L = new LuaVM();
 		L.open_libs();
 

@@ -128,7 +128,7 @@ public class RISC.Ship {
 		}
 	}
 
-	public bool create_ai(uint8[] orders) {
+	public bool create_ai(uint8[]? orders) {
 		global_lua = new LuaVM();
 		mem.cur = 0;
 		mem.limit = 1<<20;
@@ -161,8 +161,10 @@ public class RISC.Ship {
 		global_lua.push_string(team.name);
 		global_lua.set_global("team");
 
-		global_lua.push_data(orders);
-		global_lua.set_global("orders");
+		if (orders != null) {
+			global_lua.push_data(orders);
+			global_lua.set_global("orders");
+		}
 
 		string data_dir = Paths.resource_dir.get_path();
 		global_lua.push_string(data_dir);
