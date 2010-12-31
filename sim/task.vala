@@ -64,8 +64,9 @@ namespace RISC.Task {
 	private void worker(owned TaskData t) {
 		t.f(t.arg1, t.arg2);
 		mtx.lock();
-		in_flight--;
-		cvar.signal(); // XXX signal when 0
+		if (--in_flight == 0) {
+			cvar.signal();
+		}
 		mtx.unlock();
 	}
 
