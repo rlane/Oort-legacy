@@ -51,8 +51,7 @@ namespace RISC.Scenario {
 		unowned string team_name = L.check_string(2);
 		double x = L.check_number(3);
 		double y = L.check_number(4);
-		size_t orders_len = 0;
-		uint8 *orders = L.opt_lstring(5, "", out orders_len);
+		uint8[] orders = L.opt_data(5, "");
 
 		unowned ShipClass klass = ShipClass.lookup(ship_class_name);
 		if (klass == null) return L.arg_error(1, "invalid ship class");
@@ -62,7 +61,7 @@ namespace RISC.Scenario {
 
 		Ship s = new Ship(klass, team, vec2(x,y), vec2(0,0), Game.prng.next_int());
 
-		if (!s.create_ai(orders, orders_len)) {
+		if (!s.create_ai(orders)) {
 			return L.err("Failed to create AI");
 		}
 

@@ -125,7 +125,7 @@ public class RISC.Ship {
 		}
 	}
 
-	public bool create_ai(uint8 *orders, size_t orders_len) {
+	public bool create_ai(uint8[] orders) {
 		global_lua = new LuaVM();
 		mem.cur = 0;
 		mem.limit = 1<<20;
@@ -159,7 +159,7 @@ public class RISC.Ship {
 		global_lua.push_string(team.name);
 		global_lua.set_global("team");
 
-		global_lua.push_lstring(orders, orders_len);
+		global_lua.push_data(orders);
 		global_lua.set_global("orders");
 
 		string data_dir = Paths.resource_dir.get_path();
@@ -339,12 +339,11 @@ public class RISC.Ship {
 		unowned string class_name = L.check_string(1);
 		unowned ShipClass klass = ShipClass.lookup(class_name);
 		if (klass == null) return L.arg_error(1, "invalid ship class");
-		size_t orders_len;
-		uint8 *orders = L.check_lstring(2, out orders_len);
+		unowned uint8[] orders = L.check_data(2);
 
 		Ship child = new Ship(klass, s.team, s.physics.p, s.physics.v, s.prng.next_int());
 
-		if (!child.create_ai(orders, orders_len)) {
+		if (!child.create_ai(orders)) {
 			return L.err("Failed to create AI");
 		}
 

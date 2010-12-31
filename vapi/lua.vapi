@@ -233,6 +233,8 @@ namespace Lua {
 		public bool to_boolean (int index);
 		[CCode (cname = "lua_tolstring")]
 		public unowned string to_lstring (int index, out size_t size);
+		[CCode (cname = "lua_tolstring")]
+		public unowned uint8[] to_data(int index);
 		[CCode (cname = "lua_tocfunction")]
 		public CallbackFunc to_cfunction (int index);
 		[CCode (cname = "lua_touserdata")]
@@ -251,6 +253,8 @@ namespace Lua {
 		public void push_integer (int n);
 		[CCode (cname = "lua_pushlstring")]
 		public void push_lstring (uint8 *s, size_t size);
+		[CCode (cname = "lua_pushlstring")]
+		public void push_data (uint8[] data);
 		[CCode (cname = "lua_pushstring")]
 		public void push_string (string s);
 		[CCode (cname = "lua_pushfstring")]
@@ -414,6 +418,8 @@ namespace Lua {
 		public unowned string check_string(int narg);
 		[CCode (cname = "luaL_checklstring")]
 		public uint8 *check_lstring(int narg, out size_t len);
+		[CCode (cname = "luaL_checklstring")]
+		public unowned uint8[] check_data(int narg);
 		[CCode (cname = "luaL_checknumber")]
 		public double check_number(int narg);
 		[CCode (cname = "luaL_checklong")]
@@ -425,6 +431,8 @@ namespace Lua {
 		public unowned string opt_string(int narg, string def);
 		[CCode (cname = "luaL_optlstring")]
 		public unowned uint8 *opt_lstring(int narg, string def, out size_t len);
+		[CCode (cname = "luaL_optlstring")]
+		public unowned uint8[] opt_data(int narg, string def);
 
 		[CCode (cname = "luaL_error")]
 		public int err (string msg);
