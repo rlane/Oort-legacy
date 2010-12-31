@@ -55,6 +55,14 @@ fi
 AC_SUBST(RISC_LUA_CFLAGS)
 AC_SUBST(RISC_LUA_LIBS)
 
+AC_ARG_WITH(valgrind, Use valgrind)
+if test "x${with_valgrind}" = "xyes"; then
+	PKG_CHECK_MODULES(VALGRIND, valgrind)
+	VALGRIND_CFLAGS="$VALGRIND_CFLAGS -DWITH_VALGRIND"
+fi
+AC_SUBST(VALGRIND_CFLAGS)
+AC_SUBST(VALGRIND_LIBS)
+
 AC_CONFIG_FILES([
 	Makefile
 	sim/Makefile

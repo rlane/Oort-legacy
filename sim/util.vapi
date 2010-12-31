@@ -10,4 +10,5 @@ namespace RISC.Util {
 	public uint64 thread_ns();
 	[CCode (cname = "rad2deg")]
 	public double rad2deg(double a);
+	public void toggle_callgrind_collection();
 }

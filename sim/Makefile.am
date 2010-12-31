@@ -3,6 +3,7 @@ NULL =
 AM_CFLAGS = \
 	$(RISC_CFLAGS) \
 	$(RISC_LUA_CFLAGS) \
+	$(VALGRIND_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	$(NULL)

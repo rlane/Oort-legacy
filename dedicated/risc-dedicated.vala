@@ -1,15 +1,11 @@
 using RISC;
 
-#if VALGRIND_VALA
-[CCode (cheader_filename = "callgrind.h")]
-bool callgrind_collection_started = 0;
-#endif
-
 double tick_length = 1.0/32;
 
 int main(string[] args) {
 	int seed = Util.envtol("RISC_SEED", 42);
 	int max_ticks = Util.envtol("RISC_MAX_TICKS", -1);
+	bool callgrind_collection_started = false;
 
 	if (!Thread.supported ()) {
 		error ("Cannot run without thread support.");
@@ -51,24 +47,20 @@ int main(string[] args) {
 			break;
 		}
 
-#if VALGRIND_VALA
 		if (Game.ticks == 10) {
-			callgrind_collection_started = 1;
+			callgrind_collection_started = true;
 		}
 
 		if (callgrind_collection_started) {
-			CALLGRIND_TOGGLE_COLLECT;
+			Util.toggle_callgrind_collection();
 		}
-#endif
 
 		Game.tick(tick_length);
 		Game.purge();
 
-#if VALGRIND_VALA
 		if (callgrind_collection_started) {
-			CALLGRIND_TOGGLE_COLLECT;
+			Util.toggle_callgrind_collection();
 		}
-#endif
 
 		unowned Team winner = Game.check_victory();
 		if (winner != null) {

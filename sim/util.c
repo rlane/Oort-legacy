@@ -4,6 +4,10 @@
 #include <string.h>
 #include <sys/time.h>
 
+#ifdef WITH_VALGRIND
+#include <callgrind.h>
+#endif
+
 long envtol(const char *key, long def)
 {
 	const char *value = getenv(key);
@@ -39,5 +43,11 @@ guint64 thread_ns(void)
 	return ts.tv_nsec + ts.tv_sec*(1000*1000*1000);
 #else
 	return 0;
+#endif
+}
+
+void risc_util_toggle_callgrind_collection() {
+#ifdef WITH_VALGRIND
+	CALLGRIND_TOGGLE_COLLECT;
 #endif
 }
