@@ -97,4 +97,5 @@ risc-installer-win32.exe: risc-win32 installer.nsi
 	makensis installer.nsi
 
 memcheck: all
-	G_DEBUG=gc-friendly G_SLICE=always-malloc RISC_MAX_TICKS=1 valgrind --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 ./dedicated/risc_dedicated scenarios/basic.lua examples/switch.lua examples/switch.lua
+	G_DEBUG=gc-friendly G_SLICE=always-malloc RISC_MAX_TICKS=10 valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/risc_dedicated scenarios/basic.lua examples/switch.lua examples/switch.lua
+	@echo "Memcheck output saved to memcheck.out"

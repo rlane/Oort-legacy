@@ -23,7 +23,7 @@ namespace RISC.Game {
 		ticks = 0;
 		uint8[] _runtime_code;
 		FileUtils.get_data(data_path("runtime.lua"), out _runtime_code);
-		runtime_code = _runtime_code;
+		runtime_code = (owned)_runtime_code;
 
 		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();
@@ -60,6 +60,8 @@ namespace RISC.Game {
 		Ship.shutdown();
 		Team.shutdown();
 		Task.shutdown();
+		prng = null;
+		runtime_code = null;
 	}
 
 	public unowned Team? check_victory() {
