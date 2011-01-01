@@ -29,6 +29,6 @@ test_syntax_errors_LDFLAGS = $(RISC_EXTRA_LDFLAGS) -static
 
 EXTRA_DIST = \
 	ai/syntax_error.lua \
-	scenarios/syntax_error.lua \
-	scenarios/single.lua \
+	scenarios/syntax_error.json \
+	scenarios/simple.json \
 	$(NULL)

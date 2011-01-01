@@ -17,9 +17,9 @@ int main(string[] args) {
 	int ret;
 	try {
 		if (args.length <= 1) {
-			ret = Game.init(42, data_path("scenarios/demo1.lua"), { });
+			ret = Game.init(42, Scenario.parse(data_path("scenarios/demo1.json")), { });
 		} else {
-			ret = Game.init(seed, args[1], args[2:(args.length)]);
+			ret = Game.init(seed, Scenario.parse(args[1]), args[2:(args.length)]);
 		}
 	} catch (FileError e) {
 		error("Game initialization failed: %s", e.message);

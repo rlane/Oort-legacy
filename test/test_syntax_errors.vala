@@ -13,18 +13,14 @@ int main(string[] args) {
 	print("using data from %s\n", RISC.Paths.resource_dir.get_path());
 
 	Test.add_func ("/scenario/syntax_error", () => {
-		try {
-			var ret = Game.init(0, data_path("test/scenarios/syntax_error.lua"), { });
-			assert(ret == 1);
-		} catch (FileError e) {
-			error("init failed: %s", e.message);
-		}
-		Game.shutdown();
+		var scn = Scenario.parse(data_path("test/scenarios/syntax_error.json"));
+		assert(scn == null);
 	});
 
 	Test.add_func ("/ai/syntax_error", () => {
 		try {
-			var ret = Game.init(0, data_path("test/scenarios/single.lua"), { data_path("test/ai/syntax_error.lua") });
+			var scn_single = Scenario.parse(data_path("test/scenarios/simple.json"));
+			var ret = Game.init(0, scn_single, { data_path("test/ai/syntax_error.lua"), data_path("test/ai/syntax_error.lua") });
 			assert(ret == 1);
 		} catch (FileError e) {
 			error("init failed: %s", e.message);
@@ -34,7 +30,8 @@ int main(string[] args) {
 
 	Test.add_func ("/ai/missing", () => {
 		try {
-			var ret = Game.init(0, data_path("test/scenarios/single.lua"), { data_path("test/ai/missing.lua") });
+			var scn_single = Scenario.parse(data_path("test/scenarios/simple.json"));
+			var ret = Game.init(0, scn_single, { data_path("test/ai/missing.lua"), data_path("test/ai/missing.lua") });
 			assert(ret == 1);
 		} catch (FileError e) {
 			error("init failed: %s", e.message);

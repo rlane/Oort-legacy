@@ -2,7 +2,7 @@ using RISC;
 using Lua;
 using Vector;
 
-namespace RISC.Scenario {
+namespace RISC {
 	public class ParsedScenario {
 		public string name;
 		public string description;
@@ -18,18 +18,13 @@ namespace RISC.Scenario {
 	}
 
 	public class ParsedShip {
-		public unowned ShipClass @class;
+		public string class_name;
 		public Vec2 p;
 	}
+}
 
-	bool load(string filename, string[] ais) {
-		if (filename.has_suffix(".lua")) {
-			return load_lua(filename, ais);
-		}
-
-		var scn = parse(filename);
-		if (scn == null) return false;
-
+namespace RISC.Scenario {
+	public bool load(ParsedScenario scn, string[] ais) {
 		if (scn.num_user_ai != ais.length) {
 			warning("Expected %d user AIs, got %d", scn.num_user_ai, ais.length);
 			return false;
@@ -53,12 +48,18 @@ namespace RISC.Scenario {
 				return false;
 			}
 
-			Team.create(pteam.name, filename, code, pteam.color);
+			Team.create(pteam.name, ai_filename, code, pteam.color);
 			unowned Team team = Team.lookup(pteam.name);
 			assert(team != null);
 
 			foreach (ParsedShip pship in pteam.ships) {
-				Ship s = new Ship(pship.class, team, pship.p, vec2(0,0), Game.prng.next_int());
+				unowned ShipClass klass = ShipClass.lookup(pship.class_name);
+				if (klass == null) {
+					warning("Invalid ship class '%s'", pship.class_name);
+					return false;
+				}
+
+				Ship s = new Ship(klass, team, pship.p, vec2(0,0), Game.prng.next_int());
 
 				if (!s.create_ai(null)) {
 					warning("Failed to create AI");
@@ -72,19 +73,7 @@ namespace RISC.Scenario {
 		return true;
 	}
 
-	ParsedScenario? parse(string filename) {
-		if (filename.has_suffix(".json")) {
-			return parse_json(filename);
-		} else if (filename.has_suffix(".lua")) {
-			//return parse_lua(filename);
-			return null;
-		} else {
-			warning("Unexpected scenario filename extension");
-			return null;
-		}
-	}
-
-	ParsedScenario? parse_json(string filename) {
+	public ParsedScenario? parse(string filename) {
 		var scn = new ParsedScenario();
 		scn.teams = null;
 		scn.num_user_ai = 0;
@@ -197,15 +186,9 @@ namespace RISC.Scenario {
 					return null;
 				}
 
-				unowned cJSON klass_name = ship_obj.objectItem("class");
-				if (klass_name.type != cJSON.Type.String) {
+				unowned cJSON class_name = ship_obj.objectItem("class");
+				if (class_name.type != cJSON.Type.String) {
 					warning("field teams.%s.ships[%d].class must be a string", team_obj.name, j);
-					return null;
-				}
-
-				unowned ShipClass klass = ShipClass.lookup(klass_name.string);
-				if (klass == null) {
-					warning("field teams.%s.ships[%d].class must be a valid ship class", team_obj.name, j);
 					return null;
 				}
 
@@ -222,7 +205,7 @@ namespace RISC.Scenario {
 				}
 
 				var pship = new ParsedShip();
-				pship.class = klass;
+				pship.class_name = class_name.string;
 				pship.p = vec2(x_obj.double, y_obj.double);
 				pteam.ships.append((owned)pship);
 
@@ -230,7 +213,7 @@ namespace RISC.Scenario {
 				ship_obj = ship_obj.next;
 			}
 
-			if (pteam.filename != null) {
+			if (pteam.filename == null) {
 				scn.num_user_ai++;
 			}
 
@@ -245,72 +228,4 @@ namespace RISC.Scenario {
 
 		return scn;
 	}
-
-	bool load_lua(string scenario, string[] ais) {
-		var L = new LuaVM();
-		L.open_libs();
-
-		L.register("team", api_team);
-		L.register("ship", api_ship);
-
-		L.push_string(Paths.resource_dir.get_path());
-		L.set_global("data_dir");
-
-		L.push_number(ais.length);
-		L.set_global("N");
-
-		L.new_table();
-		for (int i = 0; i < ais.length; i++) {
-			L.push_number(i);
-			L.push_string(ais[i]);
-			L.set_table(-3);
-		}
-		L.set_global("AI");
-
-		if (L.do_file(scenario)) {
-			warning("Failed to load scenario: %s", L.to_string(-1));
-			return false;
-		}
-
-		return true;
-	}
-
-	private int api_team(LuaVM L) {
-		string name = L.check_string(1);
-		string filename = L.check_string(2);
-		uint32 color = L.check_long(3);
-		uint8[] code;
-		try {
-			FileUtils.get_data(filename, out code);
-		} catch (FileError e) {
-			L.err(@"Failed to load AI: $(e.message)");
-		}
-		Team.create(name, filename, code, color);
-		return 0;	
-	}
-
-	private int api_ship(LuaVM L) {
-		unowned string ship_class_name = L.check_string(1);
-		unowned string team_name = L.check_string(2);
-		double x = L.check_number(3);
-		double y = L.check_number(4);
-		uint8[] orders = L.opt_data(5, "");
-
-		unowned ShipClass klass = ShipClass.lookup(ship_class_name);
-		if (klass == null) return L.arg_error(1, "invalid ship class");
-
-		unowned Team team = Team.lookup(team_name);
-		if (team == null) return L.arg_error(2, "invalid team");
-
-		Ship s = new Ship(klass, team, vec2(x,y), vec2(0,0), Game.prng.next_int());
-
-		if (!s.create_ai(orders)) {
-			return L.err("Failed to create AI");
-		}
-
-		Ship.register((owned)s);
-
-		return 0;
-	}
 }
-

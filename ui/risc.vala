@@ -4,16 +4,6 @@ using Lua;
 using RISC;
 
 namespace RISC {
-	struct ScenarioMetadata {
-		public string filename;
-		public string name;
-		public string author;
-		public string version;
-		public string description;
-		public int min_teams;
-		public int max_teams;
-	}
-
 	class MenuBuilder : GLib.Object {
 		public delegate void MenuAction();
 		public void leaf(MenuShell parent, string label, MenuAction action) {
@@ -269,11 +259,11 @@ namespace RISC {
 			return true;
 		}
 
-		public void start_game(int seed, string scenario, string[] ais) {
+		public void start_game(int seed, ParsedScenario scn, string[] ais) {
 			RISC.Game.shutdown();
 			renderer.init();
 			try {
-				if (RISC.Game.init(seed, scenario, ais) != 0) {
+				if (RISC.Game.init(seed, scn, ais) != 0) {
 					warning("initialization failed\n");
 					start_demo_game();
 				} else {
@@ -286,73 +276,37 @@ namespace RISC {
 
 		public void start_demo_game() {
 			try {
-				start_game(42, data_path("scenarios/demo1.lua"), { });
+				var scn = Scenario.parse(data_path("scenarios/demo1.json"));
+				start_game(42, scn, { });
 				game_state = GameState.DEMO;
 			} catch (FileError e) {
 				error("Demo initialization failed: %s", e.message);
 			}
 		}
 
-		delegate string? GetStr(string k);
-
 		public void configure_scenario(string scenario_filename) {
-			var L = new Lua.LuaVM();
-			L.open_libs();
-			L.push_string(scenario_filename);
-			L.set_global("filename");
-			if (L.do_file(data_path("scenario_parser.lua"))) {
-				stderr.printf("Failed to parse scenario: %s\n", L.to_string(-1));
-				return;
+			var scn = Scenario.parse(scenario_filename);
+			if (scn == null) {
+				var w = new MessageDialog(this, DialogFlags.MODAL, MessageType.ERROR, ButtonsType.OK,
+				                          "Failed to parse scenario");
+				w.show();
+			} else {
+				var w = new NewGameWindow(scn);
+				w.transient_for = this;
+				w.start_game.connect(start_game);
+				w.show();
 			}
-
-			var errors = 0;
-
-			GetStr getstr = (k) => {
-				L.get_field(-1, k);
-				if (L.is_string(-1)) {
-					var v = L.to_string(-1);
-					L.pop(1);
-					return v;
-				} else {
-					L.pop(1);
-					stderr.printf("missing field %s\n", k);
-					errors++;
-					return null;
-				}
-			};
-
-			var scn = ScenarioMetadata();
-			scn.filename = scenario_filename;
-			scn.name = getstr("name");
-			scn.author = getstr("author");
-			scn.version = getstr("version");
-			scn.description = getstr("description");
-			string min_teams_str = getstr("min_teams");
-			string max_teams_str = getstr("max_teams");
-
-			if (errors > 0) {
-				stderr.printf("missing required fields\n");
-				return;
-			}
-
-			scn.min_teams = min_teams_str.to_int();
-			scn.max_teams = max_teams_str.to_int();
-
-			var w = new NewGameWindow(scn);
-			w.transient_for = this;
-			w.start_game.connect(start_game);
-			w.show();
 		}
 	}
 
 	class NewGameWindow : Gtk.Dialog {
-		private ScenarioMetadata scn;
+		private ParsedScenario scn;
 
 		private Widget ok_button;
 		private Entry seed_entry;
 		private FileChooserButton[] ai_choosers;
 
-		public NewGameWindow(ScenarioMetadata scn) {
+		public NewGameWindow(ParsedScenario scn) {
 			this.scn = scn;
 			this.title = "New Game";
 			this.has_separator = false;
@@ -361,14 +315,14 @@ namespace RISC {
 
 			this.vbox.spacing = 10;
 
-			var metadata_str = "Name: %s\nDescription: %s\nTeams: %d to %d\n".printf(scn.name, scn.description, scn.min_teams, scn.max_teams);
+			var metadata_str = "Name: %s\nDescription: %s\nTeams: %d\n".printf(scn.name, scn.description, scn.num_user_ai);
 			var metadata_label = new Label(metadata_str);
 			this.vbox.pack_start(metadata_label, false, false, 0);
 
 			this.vbox.pack_start(new Label("AIs:"), false, false, 0);
 			this.ai_choosers = new FileChooserButton[4];
 			var i = 0;
-			for (i = 0; i < this.scn.max_teams; i++) {
+			for (i = 0; i < this.scn.num_user_ai; i++) {
 				var chooser = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
 				chooser.file_set.connect(on_ai_change);
 				chooser.set_current_folder(data_path("examples"));
@@ -388,7 +342,7 @@ namespace RISC {
 
 			add_button(STOCK_CLOSE, ResponseType.CLOSE);
 			this.ok_button = add_button(STOCK_OK, ResponseType.APPLY);
-			this.ok_button.sensitive = false;
+			this.ok_button.sensitive = 0 == this.scn.num_user_ai;
 
 			this.response.connect(on_response);
 
@@ -398,26 +352,26 @@ namespace RISC {
 		private void on_ai_change() {
 			var cnt = 0;
 			var j = 0;
-			for (j = 0; j < this.scn.max_teams; j++) {
+			for (j = 0; j < this.scn.num_user_ai; j++) {
 				if (ai_choosers[j].get_filename() != null) {
 					cnt++;
 				}
 			}
-			this.ok_button.sensitive = cnt >= this.scn.min_teams;
+			this.ok_button.sensitive = cnt == this.scn.num_user_ai;
 		}
 
 		private void on_response (Dialog source, int response_id) {
 			switch (response_id) {
 			case ResponseType.APPLY:
 				var n = 0;
-				for (var i = 0; i < this.scn.max_teams; i++) {
+				for (var i = 0; i < this.scn.num_user_ai; i++) {
 					if (ai_choosers[i].get_filename() != null) n++;
 				}
 				var ais = new string[n];
 				for (var i = 0; i < n; i++) {
 					ais[i] = ai_choosers[i].get_filename(); // XXX
 				}
-				start_game(seed_entry.text.to_int(), scn.filename, ais);
+				start_game(seed_entry.text.to_int(), scn, ais);
 				destroy();
 				break;
 			case ResponseType.CLOSE:
@@ -426,7 +380,7 @@ namespace RISC {
 			}
 		}
 
-		public signal void start_game(int seed, string scenario, string[] ais);
+		public signal void start_game(int seed, ParsedScenario scn, string[] ais);
 	}
 }
 
@@ -446,7 +400,7 @@ int main(string[] args) {
 	if (args.length <= 1) {
 		mainwin.start_demo_game();
 	} else {
-		mainwin.start_game(0, args[1], args[2:(args.length)]);
+		mainwin.start_game(0, Scenario.parse(args[1]), args[2:(args.length)]);
 	}
 
 	Gtk.main();

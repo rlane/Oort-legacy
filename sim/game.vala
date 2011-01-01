@@ -26,7 +26,7 @@ namespace RISC.Game {
 		return (owned)data;
 	}
 
-	public int init(int seed, string scenario, string[] ais) throws FileError {
+	public int init(int seed, ParsedScenario scn, string[] ais) throws FileError {
 		prng = new Rand.with_seed(seed);
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
@@ -42,7 +42,7 @@ namespace RISC.Game {
 			return 1;
 		}
 
-		if (!Scenario.load(scenario, ais)) {
+		if (!Scenario.load(scn, ais)) {
 			return 1;
 		}
 

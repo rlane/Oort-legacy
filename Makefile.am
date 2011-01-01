@@ -29,16 +29,15 @@ nobase_risclua_DATA = \
 	examples/challenge02.lua \
 	examples/demo1.lua \
 	examples/challenge03.lua \
-	scenarios/challenge01.lua \
-	scenarios/basic.lua \
-	scenarios/lib.lua \
-	scenarios/furball.lua \
-	scenarios/benchmark.lua \
-	scenarios/challenge02.lua \
-	scenarios/demo1.lua \
-	scenarios/challenge03.lua \
-	scenarios/missile_practice.lua \
-	scenario_parser.lua \
+	scenarios/challenge01.json \
+	scenarios/basic.json \
+	scenarios/furball2.json \
+	scenarios/furball3.json \
+	scenarios/furball4.json \
+	scenarios/benchmark.json \
+	scenarios/challenge02.json \
+	scenarios/demo1.json \
+	scenarios/challenge03.json \
 	runtime.lua \
 	solutions/challenge01.lua \
 	solutions/challenge02.lua \
@@ -58,21 +57,21 @@ DISTCLEANFILES = \
 	$(NULL)
 
 benchmark: all
-	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/risc_dedicated scenarios/benchmark.lua
+	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/risc_dedicated scenarios/benchmark.json
 
 benchmark-threaded: all
-	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/risc_dedicated scenarios/benchmark.lua
+	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/risc_dedicated scenarios/benchmark.json
 
 challenge: all
-	./dedicated/risc_dedicated scenarios/challenge01.lua solutions/challenge01.lua
-	./dedicated/risc_dedicated scenarios/challenge02.lua solutions/challenge02.lua
-	./dedicated/risc_dedicated scenarios/challenge03.lua solutions/challenge03.lua
+	./dedicated/risc_dedicated scenarios/challenge01.json solutions/challenge01.lua
+	./dedicated/risc_dedicated scenarios/challenge02.json solutions/challenge02.lua
+	./dedicated/risc_dedicated scenarios/challenge03.json solutions/challenge03.lua
 
 run: all
-	./dedicated/risc_dedicated scenarios/basic.lua examples/switch.lua examples/switch.lua
+	./dedicated/risc_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
 
 run-ui: all
-	./ui/risc_ui scenarios/basic.lua examples/switch.lua examples/switch.lua
+	./ui/risc_ui scenarios/basic.json examples/switch.lua examples/switch.lua
 
 DLL_DIR=/usr/i486-mingw32/bin
 
@@ -89,11 +88,11 @@ risc-win32: all
 	rm -rf risc-win32
 	mkdir risc-win32
 	cp ui/risc_ui.exe dedicated/risc_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) risc-win32/
-	cp ships.lua runtime.lua scenario_parser.lua lib.lua risc-win32/
+	cp ships.lua runtime.lua lib.lua risc-win32/
 	dos2unix --u2d < README.md > risc-win32/README.txt
 	dos2unix --u2d < TODO > risc-win32/TODO.txt
 	mkdir risc-win32/scenarios
-	cp scenarios/*.lua risc-win32/scenarios
+	cp scenarios/*.json risc-win32/scenarios
 	mkdir risc-win32/examples
 	cp examples/*.lua risc-win32/examples
 
@@ -101,5 +100,5 @@ risc-installer-win32.exe: risc-win32 installer.nsi
 	makensis installer.nsi
 
 memcheck: all
-	G_DEBUG=gc-friendly G_SLICE=always-malloc RISC_MAX_TICKS=10 valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/risc_dedicated scenarios/basic.lua examples/switch.lua examples/switch.lua
+	G_DEBUG=gc-friendly G_SLICE=always-malloc RISC_MAX_TICKS=10 valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/risc_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
 	@echo "Memcheck output saved to memcheck.out"
