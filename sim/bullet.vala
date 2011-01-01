@@ -27,7 +27,7 @@ public class RISC.Bullet {
 	}
 
 	public static void create(Team team, Vec2 p, Vec2 v, double r, double m, double ttl, BulletType type) {
-		var physics = Physics.create(p, p, v, vec2(0,0), 0, 0, m, r);
+		var physics = new Physics() { p=p, p0=p, v=v, thrust=vec2(0,0), m=m, r=r };
 		var b = new Bullet() { team=team, physics=(owned)physics, ttl=ttl, type=type };
 
 		new_bullets_lock.lock();

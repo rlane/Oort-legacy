@@ -35,7 +35,6 @@ namespace RISC.Game {
 
 		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();
-		Physics.init();
 		Ship.init();
 
 		if (!ShipClass.load(data_path("ships.lua"))) {
@@ -57,7 +56,7 @@ namespace RISC.Game {
 
 	public void tick(double tick_length) {
 		check_bullet_hits(tick_length);
-		Physics.tick(tick_length);
+		tick_physics(tick_length);
 		Ship.tick(tick_length);
 		Bullet.tick(tick_length);
 		ticks += 1;
@@ -115,6 +114,16 @@ namespace RISC.Game {
 			hit.cp = cp;
 			hit.e = hit_energy;
 			bullet_hits.prepend((owned) hit);
+		}
+	}
+
+	public void tick_physics(double t) {
+		foreach (unowned Ship s in Ship.all_ships) {
+			s.physics.tick_one(t);
+		}
+
+		foreach (unowned Bullet b in Bullet.all_bullets) {
+			b.physics.tick_one(t);
 		}
 	}
 }

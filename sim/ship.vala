@@ -113,7 +113,7 @@ public class RISC.Ship {
 	public Ship(ShipClass klass, Team team, Vec2 p, Vec2 v, uint32 seed) {
 		this.team = team;
 		@class = klass;
-		physics = Physics.create(p, p, v, vec2(0,0), 0, 0, 1, klass.radius);
+		physics = new Physics() { p=p, p0=p, v=v, thrust=vec2(0,0), m=1, r=klass.radius };
 		prng = new Rand.with_seed(seed);
 		mq = new Queue<Msg>();
 		api_id = prng.next_int();
