@@ -315,22 +315,29 @@ namespace RISC {
 
 			this.vbox.spacing = 10;
 
-			var metadata_str = "Name: %s\nDescription: %s\nTeams: %d\n".printf(scn.name, scn.description, scn.num_user_ai);
+			var metadata_str = "Name: %s\nDescription: %s\n".printf(scn.name, scn.description);
 			var metadata_label = new Label(metadata_str);
 			this.vbox.pack_start(metadata_label, false, false, 0);
 
 			this.vbox.pack_start(new Label("AIs:"), false, false, 0);
 			this.ai_choosers = new FileChooserButton[4];
 			var i = 0;
-			for (i = 0; i < this.scn.num_user_ai; i++) {
+			foreach (ParsedTeam pteam in this.scn.user_teams) {
+				var chooser_hbox = new Gtk.HBox(false, 5);
+				var color = Gdk.Color() { red=pteam.color_red<<8, green=pteam.color_green<<8, blue=pteam.color_blue<<8 };
+				var color_button = new Gtk.ColorButton.with_color(color);
+				color_button.sensitive = false;
+				chooser_hbox.pack_start(color_button, false, false, 0);
+				chooser_hbox.pack_start(new Label(pteam.name + ":"), false, false, 0);
 				var chooser = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
 				chooser.file_set.connect(on_ai_change);
 				chooser.set_current_folder(data_path("examples"));
 				try {
 					chooser.add_shortcut_folder(data_path("examples"));
 				} catch (GLib.Error e) {}
-				this.ai_choosers[i] = chooser;
-				this.vbox.pack_start(chooser, false, false, 0);
+				this.ai_choosers[i++] = chooser;
+				chooser_hbox.pack_start(chooser, true, true, 3);
+				this.vbox.pack_start(chooser_hbox, false, false, 0);
 			}
 
 			var seed_hbox = new Gtk.HBox(false, 5);
@@ -342,7 +349,7 @@ namespace RISC {
 
 			add_button(STOCK_CLOSE, ResponseType.CLOSE);
 			this.ok_button = add_button(STOCK_OK, ResponseType.APPLY);
-			this.ok_button.sensitive = 0 == this.scn.num_user_ai;
+			this.ok_button.sensitive = 0 == this.scn.user_teams.length();
 
 			this.response.connect(on_response);
 
@@ -352,24 +359,21 @@ namespace RISC {
 		private void on_ai_change() {
 			var cnt = 0;
 			var j = 0;
-			for (j = 0; j < this.scn.num_user_ai; j++) {
+			for (j = 0; j < this.scn.user_teams.length(); j++) {
 				if (ai_choosers[j].get_filename() != null) {
 					cnt++;
 				}
 			}
-			this.ok_button.sensitive = cnt == this.scn.num_user_ai;
+			this.ok_button.sensitive = cnt == this.scn.user_teams.length();
 		}
 
 		private void on_response (Dialog source, int response_id) {
 			switch (response_id) {
 			case ResponseType.APPLY:
-				var n = 0;
-				for (var i = 0; i < this.scn.num_user_ai; i++) {
-					if (ai_choosers[i].get_filename() != null) n++;
-				}
+				var n = this.scn.user_teams.length();
 				var ais = new string[n];
 				for (var i = 0; i < n; i++) {
-					ais[i] = ai_choosers[i].get_filename(); // XXX
+					ais[i] = ai_choosers[i].get_filename();
 				}
 				start_game(seed_entry.text.to_int(), scn, ais);
 				destroy();

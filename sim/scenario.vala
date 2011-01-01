@@ -6,14 +6,16 @@ namespace RISC {
 	public class ParsedScenario {
 		public string name;
 		public string description;
-		public int num_user_ai;
 		public List<ParsedTeam> teams;
+		public List<ParsedTeam> user_teams;
 	}
 
 	public class ParsedTeam {
 		public string name;
 		public string filename;
-		public uint32 color;
+		public uint8 color_red;
+		public uint8 color_green;
+		public uint8 color_blue;
 		public List<ParsedShip> ships;
 	}
 
@@ -25,8 +27,8 @@ namespace RISC {
 
 namespace RISC.Scenario {
 	public bool load(ParsedScenario scn, string[] ais) {
-		if (scn.num_user_ai != ais.length) {
-			warning("Expected %d user AIs, got %d", scn.num_user_ai, ais.length);
+		if (scn.user_teams.length() != ais.length) {
+			warning("Expected %u user AIs, got %d", scn.user_teams.length(), ais.length);
 			return false;
 		}
 
@@ -48,7 +50,8 @@ namespace RISC.Scenario {
 				return false;
 			}
 
-			Team.create(pteam.name, ai_filename, code, pteam.color);
+			uint32 color = pteam.color_red << 24 | pteam.color_green << 16 | pteam.color_blue << 8;
+			Team.create(pteam.name, ai_filename, code, color);
 			unowned Team team = Team.lookup(pteam.name);
 			assert(team != null);
 
@@ -76,7 +79,7 @@ namespace RISC.Scenario {
 	public ParsedScenario? parse(string filename) {
 		var scn = new ParsedScenario();
 		scn.teams = null;
-		scn.num_user_ai = 0;
+		scn.user_teams = null;
 
 		string data;
 		try {
@@ -165,8 +168,6 @@ namespace RISC.Scenario {
 				return null;
 			}
 
-			uint32 color = color_red.int << 24 | color_green.int << 16 | color_blue.int << 8;
-
 			unowned cJSON filename_obj = team_obj.objectItem("filename");
 			if (filename_obj != null && filename_obj.type != cJSON.Type.String) {
 				warning("teams.%s.color.filename must be a string", filename_obj.name);
@@ -175,7 +176,9 @@ namespace RISC.Scenario {
 
 			var pteam = new ParsedTeam();
 			pteam.name = team_name.string;
-			pteam.color = color;
+			pteam.color_red = (uint8)color_red.int;
+			pteam.color_green = (uint8)color_green.int;
+			pteam.color_blue = (uint8)color_blue.int;
 			pteam.filename = (filename_obj != null) ? data_path(filename_obj.string) : null;
 			pteam.ships = null;
 
@@ -221,7 +224,7 @@ namespace RISC.Scenario {
 			}
 
 			if (pteam.filename == null) {
-				scn.num_user_ai++;
+				scn.user_teams.append(pteam);
 			}
 
 			scn.teams.append((owned)pteam);
