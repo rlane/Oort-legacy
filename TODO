@@ -4,6 +4,11 @@ Limit classes ships can spawn
 Machine-readable risc-dedicated output
 Universe boundary
 Screenshot save dialog
+Inline AI in scenario
+risc-dedicated timeout option
+Command line options to risc-dedicated replacing environment variables
+Rename executables
+Rename project
 
 Future:
 Limit sensor range
@@ -11,14 +16,11 @@ Multicast radio
 Add bomber and "bomb" missile class that can't thrust
 Radio jamming
 Sensor jamming - reduce range at which you can detect and be detected
-Parse scenario in risc-dedicated
 Lock camera to ship
 Implement shields
 Default view origin and scale in scenario metadata
 Limit view boundary
-Force seed in scenario metadata
 Timeout in scenario metadata
-Inline AI in scenario
 Replay files
 
 Maybe:
