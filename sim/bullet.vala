@@ -56,12 +56,12 @@ public class RISC.Bullet {
 		all_bullets = null;
 	}
 
-	public static void tick(double t) {
+	public static void tick() {
 		all_bullets.concat((owned) new_bullets);
 		new_bullets = null;
 
 		foreach (unowned Bullet b in all_bullets) {
-			b.ttl -= t;
+			b.ttl -= Game.TICK_LENGTH;
 			if (b.ttl <= 0) {
 				b.dead = true;
 			}

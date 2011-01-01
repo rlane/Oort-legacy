@@ -117,7 +117,7 @@ namespace RISC {
 		private bool tick() {
 			if (!paused) {
 				Game.purge();
-				Game.tick(1.0/32);
+				Game.tick();
 				Particle.tick();
 				renderer.tick();
 

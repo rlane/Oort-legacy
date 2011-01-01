@@ -1,7 +1,5 @@
 using RISC;
 
-double tick_length = 1.0/32;
-
 int main(string[] args) {
 	int seed = Util.envtol("RISC_SEED", 42);
 	int max_ticks = Util.envtol("RISC_MAX_TICKS", -1);
@@ -55,7 +53,7 @@ int main(string[] args) {
 			Util.toggle_callgrind_collection();
 		}
 
-		Game.tick(tick_length);
+		Game.tick();
 		Game.purge();
 
 		if (callgrind_collection_started) {
@@ -64,7 +62,7 @@ int main(string[] args) {
 
 		unowned Team winner = Game.check_victory();
 		if (winner != null) {
-			print("Team '%s' is victorious in %0.2f seconds\n", winner.name, Game.ticks*tick_length);
+			print("Team '%s' is victorious in %0.2f seconds\n", winner.name, Game.ticks*Game.TICK_LENGTH);
 			break;
 		}
 

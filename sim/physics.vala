@@ -10,10 +10,10 @@ public class RISC.Physics {
 	public double r;
 	public double m;
 
-	public void tick_one(double t) {
-		var acc = thrust.scale(t/m);
+	public void tick_one() {
+		var acc = thrust.scale(Game.TICK_LENGTH/m);
 		p0 = p;
-		p = p.add(v.add(acc.scale(0.5)).scale(t));
+		p = p.add(v.add(acc.scale(0.5)).scale(Game.TICK_LENGTH));
 		v = v.add(acc);
 	}
 

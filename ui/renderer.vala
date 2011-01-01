@@ -244,9 +244,8 @@ namespace RISC {
 				glBegin(GL_LINE_STRIP);
 				glVertex3d(sp.x, sp.y, 0);
 				Physics q = s.physics.copy();
-				double tick_length = 1/32.0;
-				for (double j = 0; j < 1/tick_length; j++) {
-					q.tick_one(tick_length);
+				for (double j = 0; j < 1/Game.TICK_LENGTH; j++) {
+					q.tick_one();
 					Vec2 sp2 = S(q.p);
 					glVertex3d(sp2.x, sp2.y, 0);
 				}
@@ -347,12 +346,12 @@ namespace RISC {
 			}
 
 			foreach (unowned BulletHit hit in Game.bullet_hits) {
-				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(1/32), vec2(0,0), 0.1, 1, 20, (uint16)(hit.e*100));
+				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 0.1, 1, 20, (uint16)(hit.e*100));
 			}
 
 			foreach (unowned Ship s in Ship.all_ships) {
 				if (s.physics.thrust.abs() != 0) {
-					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(1.0/32), s.physics.thrust.scale(-1.0/32), 0.1, 2, 4, 8);
+					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), s.physics.thrust.scale(-Game.TICK_LENGTH), 0.1, 2, 4, 8);
 				}
 
 				double v_angle = atan2(s.physics.v.y, s.physics.v.x); // XXX reversed?

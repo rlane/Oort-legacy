@@ -99,7 +99,7 @@ public class RISC.Ship {
 		return (int)(a.api_id - b.api_id);
 	}
 
-	public static void tick(double t) {
+	public static void tick() {
 		new_ships.sort((CompareFunc)sort_ships);
 		all_ships.concat((owned) new_ships);
 		new_ships = null;

@@ -20,6 +20,8 @@ namespace RISC.Game {
 
 	public List<BulletHit> bullet_hits;
 
+	public const double TICK_LENGTH = 1.0/32;
+
 	static uint8[] load_resource(string name) throws FileError {
 		uint8[] data;
 		FileUtils.get_data(data_path(name), out data);
@@ -54,11 +56,11 @@ namespace RISC.Game {
 		Ship.purge();
 	}
 
-	public void tick(double tick_length) {
-		check_bullet_hits(tick_length);
-		tick_physics(tick_length);
-		Ship.tick(tick_length);
-		Bullet.tick(tick_length);
+	public void tick() {
+		check_bullet_hits();
+		tick_physics();
+		Ship.tick();
+		Bullet.tick();
 		ticks += 1;
 	}
 
@@ -87,11 +89,11 @@ namespace RISC.Game {
 		return winner;
 	}
 
-	public void check_bullet_hits(double tick_length) {
+	public void check_bullet_hits() {
 		foreach (unowned Ship s in Ship.all_ships) {
 			foreach (unowned Bullet b in Bullet.all_bullets) {
 				Vec2 cp;
-				if (Physics.check_collision(s.physics, b.physics, tick_length, out cp)) {
+				if (Physics.check_collision(s.physics, b.physics, TICK_LENGTH, out cp)) {
 					handle_bullet_hit(s, b, cp);
 				}
 			}
@@ -117,13 +119,13 @@ namespace RISC.Game {
 		}
 	}
 
-	public void tick_physics(double t) {
+	public void tick_physics() {
 		foreach (unowned Ship s in Ship.all_ships) {
-			s.physics.tick_one(t);
+			s.physics.tick_one();
 		}
 
 		foreach (unowned Bullet b in Bullet.all_bullets) {
-			b.physics.tick_one(t);
+			b.physics.tick_one();
 		}
 	}
 }
