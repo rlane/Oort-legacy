@@ -3,8 +3,9 @@
 	"name": "Demo 1", 
 	"description": "",
 
-	"teams": {
-		"sushi": {
+	"teams": [
+		{
+			"name": "sushi",
 			"color": { "b": 49, "g": 165, "r": 146 }, 
 			"filename": "examples/demo1.lua",
 			"ships": [
@@ -22,7 +23,8 @@
 				{ "y": -2.5980762113533, "class": "mothership", "x": -1.5 }
 			]
 		}, 
-		"denim": {
+		{
+			"name": "denim",
 			"color": { "b": 206, "g": 83, "r": 22 }, 
 			"filename": "examples/demo1.lua",
 			"ships": [
@@ -39,7 +41,8 @@
 				{ "y": -7.3478807948841e-16, "class": "mothership", "x": 3 }
 			]
 		}, 
-		"ruby": {
+		{
+			"name": "ruby",
 			"color": { "b": 102, "g": 23, "r": 214 }, 
 			"filename": "examples/demo1.lua",
 			"ships": [
@@ -57,5 +60,5 @@
 				{ "y": 2.5980762113533, "class": "mothership", "x": -1.5 }
 			]
 		}
-	}
+	]
 }

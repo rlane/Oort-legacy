@@ -1,6 +1,7 @@
 {
-	"teams": {
-		"blue": {
+	"teams": [
+		{
+			"name": "blue",
 			"color": {
 				"b": 255, 
 				"g": 0, 
@@ -184,7 +185,8 @@
 				}
 			]
 		}, 
-		"green": {
+		{
+			"name": "green",
 			"color": {
 				"b": 0, 
 				"g": 255, 
@@ -368,7 +370,7 @@
 				}
 			]
 		}
-	}, 
+	], 
 	"author": "Rich Lane", 
 	"name": "basic", 
 	"description": "Motherships and fighters"

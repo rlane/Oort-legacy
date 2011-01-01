@@ -1,1 +1,1 @@
-{"name":"single","description":"","teams":{"green":{"color":{"b":0,"g":255,"r":0},"ships":[{"y":0,"class":"fighter","x":0}]},"blue":{"color":{"b":255,"g":0,"r":0},"ships":[{"y":0,"class":"fighter","x":0}]}}}
+{"name":"single","description":"","teams":[{"name":"green","color":{"b":0,"g":255,"r":0},"ships":[{"y":0,"class":"fighter","x":0}]},{"name":"blue","color":{"b":255,"g":0,"r":0},"ships":[{"y":0,"class":"fighter","x":0}]}]}

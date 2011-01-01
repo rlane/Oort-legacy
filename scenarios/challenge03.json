@@ -3,15 +3,17 @@
 	"name": "Challenge 3", 
 	"description": "",
 
-	"teams": {
-		"green": {
+	"teams": [
+		{
+			"name": "green",
 			"color": { "b": 0, "g": 255, "r": 0 }, 
 			"ships": [
 				{ "class": "fighter", "x": 0, "y": 0 }
 			]
 		},
 
-		"turquoise": {
+		{
+			"name": "turquoise",
 			"color": { "b": 189, "g": 229, "r": 68 }, 
 			"filename": "examples/challenge03.lua",
 			"ships": [
@@ -20,5 +22,5 @@
 				{ "class": "fighter", "x": 0, "y": 2 }
 			]
 		} 
-	}
+	]
 }

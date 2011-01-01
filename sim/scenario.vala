@@ -110,51 +110,58 @@ namespace RISC.Scenario {
 		scn.description = description.string;
 
 		unowned cJSON teams = root.objectItem("teams");
-		if (teams == null || teams.type != cJSON.Type.Object) {
-			warning("teams field is not an object");
+		if (teams == null || teams.type != cJSON.Type.Array) {
+			warning("teams field is not an array");
 			return null;
 		}
 
+		int i = 0;
 		unowned cJSON team_obj = teams.child;
 		while (team_obj != null) {
 			if (team_obj.type != cJSON.Type.Object) {
-				warning("team definition teams.%s must be an object", team_obj.name);
+				warning("team definition teams[%d] must be an object", i);
+				return null;
+			}
+
+			unowned cJSON team_name = team_obj.objectItem("name");
+			if (team_name == null || team_name.type != cJSON.Type.String) {
+				warning("teams[%d].name field is not a string", i);
 				return null;
 			}
 
 			unowned cJSON color_obj = team_obj.objectItem("color");
 			if (color_obj == null || color_obj.type != cJSON.Type.Object) {
-				warning("teams.%s.color field is not an object", team_obj.name);
+				warning("teams.%s.color field is not an object", team_name.string);
 				return null;
 			}
 
 			unowned cJSON color_red = color_obj.objectItem("r");
 			if (color_red == null || color_red.type != cJSON.Type.Number) {
-				warning("teams.%s.color.r field is not a number", team_obj.name);
+				warning("teams.%s.color.r field is not a number", team_name.string);
 				return null;
 			}
 			if (color_red.int < 0 || color_red.int > 255) {
-				warning("teams.%s.color.r must be in the range [0,255]", team_obj.name);
+				warning("teams.%s.color.r must be in the range [0,255]", team_name.string);
 				return null;
 			}
 
 			unowned cJSON color_green = color_obj.objectItem("g");
 			if (color_green == null || color_green.type != cJSON.Type.Number) {
-				warning("teams.%s.color.g field is not a number", team_obj.name);
+				warning("teams.%s.color.g field is not a number", team_name.string);
 				return null;
 			}
 			if (color_green.int < 0 || color_green.int > 255) {
-				warning("teams.%s.color.g must be in the range [0,255]", team_obj.name);
+				warning("teams.%s.color.g must be in the range [0,255]", team_name.string);
 				return null;
 			}
 
 			unowned cJSON color_blue = color_obj.objectItem("b");
 			if (color_blue == null || color_blue.type != cJSON.Type.Number) {
-				warning("teams.%s.color.b is not a number", team_obj.name);
+				warning("teams.%s.color.b is not a number", team_name.string);
 				return null;
 			}
 			if (color_blue.int < 0 || color_blue.int > 255) {
-				warning("teams.%s.color.b must be in the range [0,255]", team_obj.name);
+				warning("teams.%s.color.b must be in the range [0,255]", team_name.string);
 				return null;
 			}
 
@@ -167,14 +174,14 @@ namespace RISC.Scenario {
 			}
 
 			var pteam = new ParsedTeam();
-			pteam.name = team_obj.name;
+			pteam.name = team_name.string;
 			pteam.color = color;
 			pteam.filename = (filename_obj != null) ? data_path(filename_obj.string) : null;
 			pteam.ships = null;
 
 			unowned cJSON ships = team_obj.objectItem("ships");
 			if (ships == null || ships.type != cJSON.Type.Array) {
-				warning("teams.%s.ships field is not an array", team_obj.name);
+				warning("teams.%s.ships field is not an array", team_name.string);
 				return null;
 			}
 
@@ -182,25 +189,25 @@ namespace RISC.Scenario {
 			int j = 0;
 			while (ship_obj != null) {
 				if (ship_obj.type != cJSON.Type.Object) {
-					warning("ship definition teams.%s.ships[%d] must be an object", team_obj.name, j);
+					warning("ship definition teams.%s.ships[%d] must be an object", team_name.string, j);
 					return null;
 				}
 
 				unowned cJSON class_name = ship_obj.objectItem("class");
 				if (class_name.type != cJSON.Type.String) {
-					warning("field teams.%s.ships[%d].class must be a string", team_obj.name, j);
+					warning("field teams.%s.ships[%d].class must be a string", team_name.string, j);
 					return null;
 				}
 
 				unowned cJSON x_obj = ship_obj.objectItem("x");
 				if (x_obj.type != cJSON.Type.Number) {
-					warning("field teams.%s.ships[%d].x must be a number", team_obj.name, j);
+					warning("field teams.%s.ships[%d].x must be a number", team_name.string, j);
 					return null;
 				}
 
 				unowned cJSON y_obj = ship_obj.objectItem("y");
 				if (y_obj.type != cJSON.Type.Number) {
-					warning("field teams.%s.ships[%d].y must be a number", team_obj.name, j);
+					warning("field teams.%s.ships[%d].y must be a number", team_name.string, j);
 					return null;
 				}
 
