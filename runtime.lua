@@ -1,4 +1,4 @@
-local my_class = class;
+local my_class = class
 local my_ship = ships[my_class]
 local last_fire_ticks = {}
 local _energy = my_ship.energy.initial
@@ -79,12 +79,22 @@ function recv()
 	return sys_recv()
 end
 
+function check_spawnable(class)
+	for i,v in ipairs(my_ship.spawnable) do
+		if v == class then return true end
+	end
+	return false
+end
+
 function spawn(class, orders)
 	local ship = ships[class]
 
 	if not ship then
 		error(string.format("class %s does not exist", class))
-		return
+	end
+
+	if not check_spawnable(class) then
+		error(string.format("class %s is not spawnable by %s", class, my_class))
 	end
 
 	if _energy < ship.cost then
