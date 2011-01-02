@@ -18,6 +18,11 @@ public class RISC.Game {
 	public ParsedScenario scn;
 	public string[] ais;
 	public List<BulletHit> bullet_hits = null;
+	public List<Ship> all_ships = null;
+	public List<Ship> new_ships = null;
+	public Mutex new_ships_lock;
+	public Mutex radio_lock;
+	public GLib.FileStream trace_file = null;
 
 	public const double TICK_LENGTH = 1.0/32;
 
@@ -29,15 +34,16 @@ public class RISC.Game {
 
 	public Game(uint32 seed, ParsedScenario scn, string[] ais) throws FileError {
 		prng = new Rand.with_seed(seed);
+		this.scn = scn;
+		this.ais = ais;
+		new_ships_lock = new Mutex();
+		radio_lock = new Mutex();
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
 		lib_code = load_resource("lib.lua");
-		this.scn = scn;
-		this.ais = ais;
 
 		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();
-		Ship.init();
 	}
 
 	public bool init() {
@@ -48,16 +54,19 @@ public class RISC.Game {
 		return true;
 	}
 
+	[CCode (cname = "leak")]
+	static extern Ship unleak_ship(Ship s);
+
 	public void purge() {
 		bullet_hits = null;
 		Bullet.purge();
-		Ship.purge();
+		purge_ships();
 	}
 
 	public void tick() {
 		check_bullet_hits();
 		tick_physics();
-		Ship.tick();
+		tick_ships();
 		Bullet.tick();
 		ticks += 1;
 	}
@@ -65,14 +74,13 @@ public class RISC.Game {
 	~Game() {
 		Task.shutdown();
 		Bullet.shutdown();
-		Ship.shutdown();
 		Team.shutdown();
 	}
 
 	public unowned Team? check_victory() {
 		unowned Team winner = null;
 
-		foreach (unowned Ship s in Ship.all_ships) {
+		foreach (unowned Ship s in all_ships) {
 			if (!s.class.count_for_victory) continue;
 			if (winner != null && s.team != winner) {
 				return null;
@@ -84,7 +92,7 @@ public class RISC.Game {
 	}
 
 	public void check_bullet_hits() {
-		foreach (unowned Ship s in Ship.all_ships) {
+		foreach (unowned Ship s in all_ships) {
 			foreach (unowned Bullet b in Bullet.all_bullets) {
 				Vec2 cp;
 				if (Physics.check_collision(s.physics, b.physics, TICK_LENGTH, out cp)) {
@@ -114,12 +122,35 @@ public class RISC.Game {
 	}
 
 	public void tick_physics() {
-		foreach (unowned Ship s in Ship.all_ships) {
+		foreach (unowned Ship s in all_ships) {
 			s.physics.tick_one();
 		}
 
 		foreach (unowned Bullet b in Bullet.all_bullets) {
 			b.physics.tick_one();
+		}
+	}
+
+	void tick_ships() {
+		new_ships.sort((CompareFunc)Ship.compare);
+		all_ships.concat((owned) new_ships);
+		new_ships = null;
+
+		foreach (unowned Ship s in all_ships) {
+			Task.task((Task.TaskFunc)s.tick, s, null);
+		}
+		Task.wait();
+	}
+
+	void purge_ships() {
+		unowned List<Ship> cur = all_ships;
+		while (cur != null) {
+			unowned List<Ship> next = cur.next;
+			if (cur.data.dead) {
+				unleak_ship(cur.data);
+				all_ships.delete_link(cur);
+			}
+			cur = next;
 		}
 	}
 }

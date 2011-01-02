@@ -69,7 +69,9 @@ namespace RISC.Scenario {
 					return false;
 				}
 
-				Ship.register((owned)s);
+				game.new_ships_lock.lock();
+				game.new_ships.append((owned)s);
+				game.new_ships_lock.unlock();
 			}
 		}
 

@@ -60,55 +60,12 @@ public class RISC.Ship {
 	public Debug debug;
 	public weak Game game;
 
-	public static List<Ship> all_ships;
-	public static List<Ship> new_ships;
-	public static Mutex new_ships_lock;
-	public static Mutex radio_lock;
-	public static GLib.FileStream trace_file;
-
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);
 	public static OnShipCreated gfx_create_cb;
 
-	public static void init() {
-		new_ships_lock = new Mutex();
-		radio_lock = new Mutex();
-	}
-
-	[CCode (cname = "leak")]
-	static extern Ship unleak_ship(Ship s);
-
-	public static void purge() {
-		unowned List<Ship> cur = all_ships;
-		while (cur != null) {
-			unowned List<Ship> next = cur.next;
-			if (cur.data.dead) {
-				unleak_ship(cur.data);
-				all_ships.delete_link(cur);
-			}
-			cur = next;
-		}
-	}
-
-	public static void shutdown() {
-		new_ships_lock = null;
-		new_ships = null;
-		all_ships = null;
-	}
-
-	static int sort_ships(Ship a, Ship b) {
+	public static int compare(Ship a, Ship b) {
 		return (int)(a.api_id - b.api_id);
-	}
-
-	public static void tick() {
-		new_ships.sort((CompareFunc)sort_ships);
-		all_ships.concat((owned) new_ships);
-		new_ships = null;
-
-		foreach (unowned Ship s in all_ships) {
-			Task.task((Task.TaskFunc)s.tick_one, s, null);
-		}
-		Task.wait();
 	}
 
 	public Ship(Game game, ShipClass klass, Team team, Vec2 p, Vec2 v, uint32 seed) {
@@ -201,7 +158,7 @@ public class RISC.Ship {
 		return true;
 	}
 
-	public void tick_one() {
+	public void tick() {
 		if (game.ticks % TAIL_TICKS == 0) {
 			tail[tail_head++] = physics.p;
 			if (tail_head == TAIL_SEGMENTS) tail_head = 0;
@@ -229,7 +186,7 @@ public class RISC.Ship {
 			uint64 elapsed = Util.thread_ns() - s.line_start_time;
 			if (!L.get_info("nSl", out a)) error("debug hook aborted");
 			if (s.line_info != null) {
-				trace_file.printf("%ld\t%u\t%s\n", (long)elapsed, s.api_id, s.line_info);
+				s.game.trace_file.printf("%ld\t%u\t%s\n", (long)elapsed, s.api_id, s.line_info);
 			}
 			s.line_info = "%s\t%s:%d".printf(a.name, a.short_src, a.current_line);
 			s.line_start_time = Util.thread_ns();
@@ -244,7 +201,7 @@ public class RISC.Ship {
 
 	public bool ai_run(int len) {
 		var debug_mask = Lua.EventMask.COUNT;
-		if (trace_file != null) debug_mask |= Lua.EventMask.LINE;
+		if (game.trace_file != null) debug_mask |= Lua.EventMask.LINE;
 		lua.set_hook(debug_hook, debug_mask, len);
 
 		var result = lua.resume(0);
@@ -357,15 +314,14 @@ public class RISC.Ship {
 			return L.err("Failed to create AI");
 		}
 
-		Ship.register((owned)child);
+		s.game.new_ships_lock.lock();
+		s.game.new_ships.append((owned)child);
+		s.game.new_ships_lock.unlock();
 
 		return 0;
 	}
 
 	public static void register(owned Ship s) {
-		new_ships_lock.lock();
-		new_ships.append((owned)s);
-		new_ships_lock.unlock();
 	}
 
 	public static int api_die(LuaVM L) {
@@ -402,14 +358,14 @@ public class RISC.Ship {
 		var msg = new Msg() { data=(owned)data };
 		//print("publish %p\n", msg);
 
-		radio_lock.lock();
+		s.game.radio_lock.lock();
 
-		foreach (unowned Ship s2 in all_ships) {
+		foreach (unowned Ship s2 in s.game.all_ships) {
 			if (s == s2 || s.team != s2.team) continue;
 			s2.mq.push_tail(msg);
 		}
 
-		radio_lock.unlock();
+		s.game.radio_lock.unlock();
 			
 		return 0;	
 	}
@@ -417,14 +373,14 @@ public class RISC.Ship {
 	public static int api_recv(LuaVM L) {
 		unowned Ship s = lua_ship(L);
 
-		radio_lock.lock();
+		s.game.radio_lock.lock();
 
 		Msg msg = s.mq.pop_head();
 		if (msg != null) {
 			L.push_data(msg.data);
 		}
 
-		radio_lock.unlock();
+		s.game.radio_lock.unlock();
 
 		return (msg != null) ? 1 : 0;
 	}
@@ -640,6 +596,7 @@ public class RISC.Ship {
 	}
 
 	public static int api_sensor_contacts(LuaVM L) {
+		unowned Ship s = lua_ship(L);
 		SensorQuery query = SensorQuery();
 		L.check_type(1, Lua.Type.TABLE);
 		query.parse(L, 1);
@@ -648,9 +605,9 @@ public class RISC.Ship {
 		L.raw_get(Lua.PseudoIndex.REGISTRY);
 		int metatable_index = L.get_top();
 
-		L.create_table((int)all_ships.length(), 0);
+		L.create_table((int)s.game.all_ships.length(), 0);
 		int i = 0;
-		foreach (unowned Ship s in all_ships) {
+		foreach (unowned Ship s in s.game.all_ships) {
 			if (query.enabled(QueryOption.LIMIT) && i >= query.limit) break;
 			if (query.match(s)) {
 				i++;
@@ -663,13 +620,14 @@ public class RISC.Ship {
 	}
 
 	public static int api_sensor_contact(LuaVM L) {
+		unowned Ship s = lua_ship(L);
 		size_t n;
 		uint8 *id = L.check_lstring(1, out n);
 		if (n != 4) L.err("invalid contact id");
 		L.pop(1);
 
 		uint32 _id = *((uint32*)id);
-		foreach (unowned Ship s in all_ships) {
+		foreach (unowned Ship s in s.game.all_ships) {
 			if (s.api_id == _id) {
 				L.push_lightuserdata((void*)SensorContact.MAGIC);
 				L.raw_get(Lua.PseudoIndex.REGISTRY);
