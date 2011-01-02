@@ -136,11 +136,7 @@ namespace RISC {
 				tick_lock.unlock();
 				TimeVal now = TimeVal();
 				long usecs = (now.tv_sec-last.tv_sec)*million + (now.tv_usec - last.tv_usec);
-				if (usecs < usecs_target) {
-					Thread.usleep(usecs_target - usecs);
-				} else {
-					Thread.usleep(10);
-				}
+				Thread.usleep(long.max(usecs_target - usecs, 1000));
 				last = now;
 			}
 			return null;
