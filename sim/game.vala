@@ -23,6 +23,9 @@ public class RISC.Game {
 	public Mutex new_ships_lock;
 	public Mutex radio_lock;
 	public GLib.FileStream trace_file = null;
+	public List<Bullet> all_bullets;
+	public List<Bullet> new_bullets;
+	public Mutex new_bullets_lock;
 
 	public const double TICK_LENGTH = 1.0/32;
 
@@ -37,13 +40,13 @@ public class RISC.Game {
 		this.scn = scn;
 		this.ais = ais;
 		new_ships_lock = new Mutex();
+		new_bullets_lock = new Mutex();
 		radio_lock = new Mutex();
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
 		lib_code = load_resource("lib.lua");
 
 		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
-		Bullet.init();
 	}
 
 	public bool init() {
@@ -54,12 +57,9 @@ public class RISC.Game {
 		return true;
 	}
 
-	[CCode (cname = "leak")]
-	static extern Ship unleak_ship(Ship s);
-
 	public void purge() {
 		bullet_hits = null;
-		Bullet.purge();
+		purge_bullets();
 		purge_ships();
 	}
 
@@ -67,13 +67,12 @@ public class RISC.Game {
 		check_bullet_hits();
 		tick_physics();
 		tick_ships();
-		Bullet.tick();
+		tick_bullets();
 		ticks += 1;
 	}
 
 	~Game() {
 		Task.shutdown();
-		Bullet.shutdown();
 		Team.shutdown();
 	}
 
@@ -93,7 +92,7 @@ public class RISC.Game {
 
 	public void check_bullet_hits() {
 		foreach (unowned Ship s in all_ships) {
-			foreach (unowned Bullet b in Bullet.all_bullets) {
+			foreach (unowned Bullet b in all_bullets) {
 				Vec2 cp;
 				if (Physics.check_collision(s.physics, b.physics, TICK_LENGTH, out cp)) {
 					handle_bullet_hit(s, b, cp);
@@ -121,12 +120,12 @@ public class RISC.Game {
 		}
 	}
 
-	public void tick_physics() {
+	void tick_physics() {
 		foreach (unowned Ship s in all_ships) {
 			s.physics.tick_one();
 		}
 
-		foreach (unowned Bullet b in Bullet.all_bullets) {
+		foreach (unowned Bullet b in all_bullets) {
 			b.physics.tick_one();
 		}
 	}
@@ -142,6 +141,18 @@ public class RISC.Game {
 		Task.wait();
 	}
 
+	void tick_bullets() {
+		all_bullets.concat((owned) new_bullets);
+		new_bullets = null;
+
+		foreach (unowned Bullet b in all_bullets) {
+			b.tick();
+		}
+	}
+
+	[CCode (cname = "leak")]
+	static extern Ship unleak_ship(Ship s);
+
 	void purge_ships() {
 		unowned List<Ship> cur = all_ships;
 		while (cur != null) {
@@ -149,6 +160,21 @@ public class RISC.Game {
 			if (cur.data.dead) {
 				unleak_ship(cur.data);
 				all_ships.delete_link(cur);
+			}
+			cur = next;
+		}
+	}
+
+	[CCode (cname = "leak")]
+	static extern Bullet unleak_bullet(Bullet b);
+
+	void purge_bullets() {
+		unowned List<Bullet> cur = all_bullets;
+		while (cur != null) {
+			unowned List<Bullet> next = cur.next;
+			if (cur.data.dead) {
+				unleak_bullet(cur.data);
+				all_bullets.delete_link(cur);
 			}
 			cur = next;
 		}

@@ -265,7 +265,17 @@ public class RISC.Ship {
 		double ttl = L.check_number(6);
 		int type = L.check_int(7);
 
-		Bullet.create(s.team, vec2(x,y), vec2(vx,vy), 1.0/32, m, ttl, (BulletType)type);
+		var p = vec2(x,y);
+		var v = vec2(vx,vy);
+		var r = 1.0/32; // XXX
+		var thrust = vec2(0,0);
+
+		var physics = new Physics() { p=p, p0=p, v=v, thrust=thrust, m=m, r=r };
+		var b = new Bullet() { team=s.team, physics=(owned)physics, ttl=ttl, type=(BulletType)type };
+
+		s.game.new_bullets_lock.lock();
+		s.game.new_bullets.append((owned) b);
+		s.game.new_bullets_lock.unlock();
 
 		return 0;
 	}
