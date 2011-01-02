@@ -15,8 +15,13 @@ int main(string[] args) {
 	assert(ShipClass.load(data_path("ships.lua")));
 
 	Test.add_func ("/scenario/syntax_error", () => {
-		var scn = Scenario.parse(data_path("test/scenarios/syntax_error.json"));
-		assert(scn == null);
+		try {
+			Scenario.parse(data_path("test/scenarios/syntax_error.json"));
+			assert(false);
+		} catch (ScenarioParseError e) {
+		} catch (Error e) {
+			error("parse failed: %s", e.message);
+		}
 	});
 
 	Test.add_func ("/ai/syntax_error", () => {

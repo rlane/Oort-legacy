@@ -359,15 +359,16 @@ namespace RISC {
 		}
 
 		public void configure_scenario(string scenario_filename) {
-			var scn = Scenario.parse(scenario_filename);
-			if (scn == null) {
-				var w = new MessageDialog(this, DialogFlags.MODAL, MessageType.ERROR, ButtonsType.OK,
-				                          "Failed to parse scenario");
-				w.show();
-			} else {
+			try {
+				var scn = Scenario.parse(scenario_filename);
 				var w = new NewGameWindow(scn);
 				w.transient_for = this;
 				w.start_game.connect(start_game);
+				w.show();
+			} catch (Error e) {
+				var w = new MessageDialog(this, DialogFlags.MODAL, MessageType.ERROR, ButtonsType.OK,
+				                          "Failed to parse scenario: %s", e.message);
+				w.response.connect((src,id) => { src.destroy(); });
 				w.show();
 			}
 		}
@@ -501,13 +502,20 @@ int main(string[] args) {
 		var scenario_filename = args[1];
 		var ai_filenames = args[2:(args.length)];
 
-		var scn = Scenario.parse(scenario_filename);
-		if (scn == null) {
-			print("Failed to parse scenario\n");
+		ParsedScenario scn;
+		try {
+			scn = Scenario.parse(scenario_filename);
+		} catch (Error e) {
+			print("Failed to parse scenario: %s\n", e.message);
 			return 1;
 		}
 
-		mainwin.start_game(opt_seed, scn, ai_filenames);
+		try {
+			mainwin.start_game_int(opt_seed, scn, ai_filenames);
+		} catch (Error e) {
+			print("Failed to start game: %s\n", e.message);
+			return 1;
+		}
 	}
 
 	Gtk.main();

@@ -2,10 +2,12 @@ using RISC;
 using Lua;
 using Vector;
 
-/*
 public errordomain RISC.ScenarioParseError {
+	JSON_SYNTAX,
+	WRONG_TYPE,
+	BAD_VALUE,
+	NUM_TEAMS,
 }
-*/
 
 public errordomain RISC.ScenarioLoadError {
 	NUM_USER_AI,
@@ -74,102 +76,82 @@ namespace RISC.Scenario {
 		}
 	}
 
-	public ParsedScenario? parse(string filename) {
+	public ParsedScenario? parse(string filename) throws FileError, ScenarioParseError {
 		var scn = new ParsedScenario();
 		scn.teams = null;
 		scn.user_teams = null;
 
 		string data;
-		try {
-			FileUtils.get_contents(filename, out data);
-		} catch (FileError e) {
-			warning("Failed to read scenario: %s", e.message);
-			return null;
-		}
+		FileUtils.get_contents(filename, out data);
 
 		var root = cJSON.parse(data);
 		if (root == null) {
-			warning("Failed to parse scenario");
-			return null;
+			throw new ScenarioParseError.JSON_SYNTAX("JSON syntax incorrect");
 		} else if (root.type != cJSON.Type.Object) {
-			warning("root is not an object");
-			return null;
+			throw new ScenarioParseError.WRONG_TYPE("root must be an object");
 		}
 
 		unowned cJSON name = root.objectItem("name");
 		if (name == null || name.type != cJSON.Type.String) {
-			warning("name field is not a string");
-			return null;
+			throw new ScenarioParseError.WRONG_TYPE("name field must be a string");
 		}
 		scn.name = name.string;
 
 		unowned cJSON description = root.objectItem("description");
 		if (description == null || description.type != cJSON.Type.String) {
-			warning("description field is not a string");
-			return null;
+			throw new ScenarioParseError.WRONG_TYPE("description field must be a string");
 		}
 		scn.description = description.string;
 
 		unowned cJSON teams = root.objectItem("teams");
 		if (teams == null || teams.type != cJSON.Type.Array) {
-			warning("teams field is not an array");
-			return null;
+			throw new ScenarioParseError.WRONG_TYPE("teams field must be an array");
 		}
 
 		int i = 0;
 		unowned cJSON team_obj = teams.child;
 		while (team_obj != null) {
 			if (team_obj.type != cJSON.Type.Object) {
-				warning("team definition teams[%d] must be an object", i);
-				return null;
+				throw new ScenarioParseError.WRONG_TYPE("team definition teams[%d] must be an object", i);
 			}
 
 			unowned cJSON team_name = team_obj.objectItem("name");
 			if (team_name == null || team_name.type != cJSON.Type.String) {
-				warning("teams[%d].name field is not a string", i);
-				return null;
+				throw new ScenarioParseError.WRONG_TYPE("teams[%d].name field is not a string", i);
 			}
 
 			unowned cJSON color_obj = team_obj.objectItem("color");
 			if (color_obj == null || color_obj.type != cJSON.Type.Object) {
-				warning("teams.%s.color field is not an object", team_name.string);
-				return null;
+				throw new ScenarioParseError.WRONG_TYPE("teams.%s.color field is not an object", team_name.string);
 			}
 
 			unowned cJSON color_red = color_obj.objectItem("r");
 			if (color_red == null || color_red.type != cJSON.Type.Number) {
-				warning("teams.%s.color.r field is not a number", team_name.string);
-				return null;
+				throw new ScenarioParseError.WRONG_TYPE("teams.%s.color.r field is not a number", team_name.string);
 			}
 			if (color_red.int < 0 || color_red.int > 255) {
-				warning("teams.%s.color.r must be in the range [0,255]", team_name.string);
-				return null;
+				throw new ScenarioParseError.BAD_VALUE("teams.%s.color.r must be in the range [0,255]", team_name.string);
 			}
 
 			unowned cJSON color_green = color_obj.objectItem("g");
 			if (color_green == null || color_green.type != cJSON.Type.Number) {
-				warning("teams.%s.color.g field is not a number", team_name.string);
-				return null;
+				throw new ScenarioParseError.WRONG_TYPE("teams.%s.color.g field is not a number", team_name.string);
 			}
 			if (color_green.int < 0 || color_green.int > 255) {
-				warning("teams.%s.color.g must be in the range [0,255]", team_name.string);
-				return null;
+				throw new ScenarioParseError.BAD_VALUE("teams.%s.color.g must be in the range [0,255]", team_name.string);
 			}
 
 			unowned cJSON color_blue = color_obj.objectItem("b");
 			if (color_blue == null || color_blue.type != cJSON.Type.Number) {
-				warning("teams.%s.color.b is not a number", team_name.string);
-				return null;
+				throw new ScenarioParseError.WRONG_TYPE("teams.%s.color.b is not a number", team_name.string);
 			}
 			if (color_blue.int < 0 || color_blue.int > 255) {
-				warning("teams.%s.color.b must be in the range [0,255]", team_name.string);
-				return null;
+				throw new ScenarioParseError.BAD_VALUE("teams.%s.color.b must be in the range [0,255]", team_name.string);
 			}
 
 			unowned cJSON filename_obj = team_obj.objectItem("filename");
 			if (filename_obj != null && filename_obj.type != cJSON.Type.String) {
-				warning("teams.%s.color.filename must be a string", filename_obj.name);
-				return null;
+				throw new ScenarioParseError.WRONG_TYPE("teams.%s.color.filename must be a string", filename_obj.name);
 			}
 
 			var pteam = new ParsedTeam();
@@ -182,34 +164,29 @@ namespace RISC.Scenario {
 
 			unowned cJSON ships = team_obj.objectItem("ships");
 			if (ships == null || ships.type != cJSON.Type.Array) {
-				warning("teams.%s.ships field is not an array", team_name.string);
-				return null;
+				throw new ScenarioParseError.WRONG_TYPE("teams.%s.ships field is not an array", team_name.string);
 			}
 
 			unowned cJSON ship_obj = ships.child;
 			int j = 0;
 			while (ship_obj != null) {
 				if (ship_obj.type != cJSON.Type.Object) {
-					warning("ship definition teams.%s.ships[%d] must be an object", team_name.string, j);
-					return null;
+					throw new ScenarioParseError.WRONG_TYPE("ship definition teams.%s.ships[%d] must be an object", team_name.string, j);
 				}
 
 				unowned cJSON class_name = ship_obj.objectItem("class");
 				if (class_name.type != cJSON.Type.String) {
-					warning("field teams.%s.ships[%d].class must be a string", team_name.string, j);
-					return null;
+					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].class must be a string", team_name.string, j);
 				}
 
 				unowned cJSON x_obj = ship_obj.objectItem("x");
 				if (x_obj.type != cJSON.Type.Number) {
-					warning("field teams.%s.ships[%d].x must be a number", team_name.string, j);
-					return null;
+					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].x must be a number", team_name.string, j);
 				}
 
 				unowned cJSON y_obj = ship_obj.objectItem("y");
 				if (y_obj.type != cJSON.Type.Number) {
-					warning("field teams.%s.ships[%d].y must be a number", team_name.string, j);
-					return null;
+					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].y must be a number", team_name.string, j);
 				}
 
 				var pship = new ParsedShip();
@@ -230,8 +207,7 @@ namespace RISC.Scenario {
 		}
 
 		if (scn.teams.length() < 2) {
-			warning("must define at least 2 teams");
-			return null;
+			throw new ScenarioParseError.NUM_TEAMS("must define at least 2 teams");
 		}
 
 		return scn;

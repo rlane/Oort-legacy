@@ -40,9 +40,11 @@ int main(string[] args) {
 	var scenario_filename = args[1];
 	var ai_filenames = args[2:(args.length)];
 
-	var scn = Scenario.parse(scenario_filename);
-	if (scn == null) {
-		error("Failed to parse scenario");
+	ParsedScenario scn;
+	try {
+		scn = Scenario.parse(scenario_filename);
+	} catch (Error e) {
+		error("Failed to parse scenario: %s", e.message);
 	}
 
 	Game game;
