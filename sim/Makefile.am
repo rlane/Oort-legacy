@@ -20,6 +20,7 @@ AM_VALAFLAGS = \
 	--pkg vector \
 	--pkg gio-2.0 \
 	--pkg cjson \
+	--pkg config \
 	--thread \
 	$(NULL)
 

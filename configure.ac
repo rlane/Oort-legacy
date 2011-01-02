@@ -1,16 +1,15 @@
 AC_INIT([RISC], [0.1.0], [rlane@club.cc.cmu.edu], [risc], [http://github.com/rlane/risc])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS(config.h)
-AM_INIT_AUTOMAKE([dist-bzip2])
+AM_INIT_AUTOMAKE([no-dist-gzip dist-bzip2])
 #m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
 AM_PROG_CC_C_O
-#AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
+AC_PROG_RANLIB
 
-AM_PROG_VALAC([0.9.1])
+AM_PROG_VALAC([0.10.2])
 
 # Set up prefix-relative directories
 if test "x${prefix}" = "xNONE"; then

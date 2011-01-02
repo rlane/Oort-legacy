@@ -120,7 +120,7 @@ namespace RISC {
 			var w = new AboutDialog();
 			w.transient_for = this;
 			w.authors = { "Rich Lane", null };
-			w.version = "alpha";
+			w.version = Config.VERSION;
 			w.response.connect( (response_id) => { w.destroy(); });
 			w.show();
 		}
@@ -432,6 +432,8 @@ namespace RISC {
 }
 
 int main(string[] args) {
+	GLib.Environment.set_application_name(Config.PACKAGE_NAME);
+
 	Paths.init(args[0]);
 	print("using data from %s\n", Paths.resource_dir.get_path());
 

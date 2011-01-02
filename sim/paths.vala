@@ -1,6 +1,3 @@
-extern const string PACKAGE_BINDIR;
-extern const string PACKAGE_DATADIR;
-
 namespace RISC.Paths {
 	public File resource_dir;
 
@@ -10,8 +7,8 @@ namespace RISC.Paths {
 			resource_dir = File.new_for_path(path);
 		} else {
 			File exec_file = File.new_for_path(Environment.find_program_in_path(arg0));
-			File bin_dir = File.new_for_path(PACKAGE_BINDIR);
-			File data_dir = File.new_for_path(PACKAGE_DATADIR);
+			File bin_dir = File.new_for_path(Config.PACKAGE_BINDIR);
+			File data_dir = File.new_for_path(Config.PACKAGE_DATADIR);
 			if (exec_file.has_prefix(bin_dir)) {
 				resource_dir = data_dir;
 			} else {

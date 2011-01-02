@@ -10,6 +10,8 @@ const OptionEntry[] options = {
 };
 
 int main(string[] args) {
+	GLib.Environment.set_application_name(Config.PACKAGE_NAME);
+
 	Paths.init(args[0]);
 	print("using data from %s\n", RISC.Paths.resource_dir.get_path());
 
