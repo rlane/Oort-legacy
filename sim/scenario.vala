@@ -2,34 +2,42 @@ using RISC;
 using Lua;
 using Vector;
 
-namespace RISC {
-	public class ParsedScenario {
-		public string name;
-		public string description;
-		public List<ParsedTeam> teams;
-		public List<ParsedTeam> user_teams;
-	}
+/*
+public errordomain RISC.ScenarioParseError {
+}
+*/
 
-	public class ParsedTeam {
-		public string name;
-		public string filename;
-		public uint8 color_red;
-		public uint8 color_green;
-		public uint8 color_blue;
-		public List<ParsedShip> ships;
-	}
+public errordomain RISC.ScenarioLoadError {
+	NUM_USER_AI,
+	INVALID_SHIP_CLASS,
+	FAILED_AI_CREATION,
+}
 
-	public class ParsedShip {
-		public string class_name;
-		public Vec2 p;
-	}
+public class RISC.ParsedScenario {
+	public string name;
+	public string description;
+	public List<ParsedTeam> teams;
+	public List<ParsedTeam> user_teams;
+}
+
+public class RISC.ParsedTeam {
+	public string name;
+	public string filename;
+	public uint8 color_red;
+	public uint8 color_green;
+	public uint8 color_blue;
+	public List<ParsedShip> ships;
+}
+
+public class RISC.ParsedShip {
+	public string class_name;
+	public Vec2 p;
 }
 
 namespace RISC.Scenario {
-	public bool load(Game game, ParsedScenario scn, string[] ais) {
+	public void load(Game game, ParsedScenario scn, string[] ais) throws ScenarioLoadError, FileError {
 		if (scn.user_teams.length() != ais.length) {
-			warning("Expected %u user AIs, got %d", scn.user_teams.length(), ais.length);
-			return false;
+			throw new ScenarioLoadError.NUM_USER_AI("Expected %u user AIs, got %d", scn.user_teams.length(), ais.length);
 		}
 
 		int ai_index = 0;
@@ -43,28 +51,20 @@ namespace RISC.Scenario {
 			}
 
 			uint8[] code;
-			try {
-				FileUtils.get_data(ai_filename, out code);
-			} catch (FileError e) {
-				warning("Failed to read AI script: %s", e.message);
-				return false;
-			}
-
+			FileUtils.get_data(ai_filename, out code);
 			uint32 color = pteam.color_red << 24 | pteam.color_green << 16 | pteam.color_blue << 8;
 			var team = new Team() { name=pteam.name, color=color, filename=ai_filename, code=(owned)code };
 
 			foreach (ParsedShip pship in pteam.ships) {
 				unowned ShipClass klass = ShipClass.lookup(pship.class_name);
 				if (klass == null) {
-					warning("Invalid ship class '%s'", pship.class_name);
-					return false;
+					throw new ScenarioLoadError.INVALID_SHIP_CLASS("Invalid ship class '%s'", pship.class_name);
 				}
 
 				Ship s = new Ship(game, klass, team, pship.p, vec2(0,0), game.prng.next_int());
 
 				if (!s.create_ai(null)) {
-					warning("Failed to create AI");
-					return false;
+					throw new ScenarioLoadError.FAILED_AI_CREATION("Failed to create AI");
 				}
 
 				game.new_ships.append((owned)s);
@@ -72,8 +72,6 @@ namespace RISC.Scenario {
 
 			game.teams.append((owned)team);
 		}
-
-		return true;
 	}
 
 	public ParsedScenario? parse(string filename) {

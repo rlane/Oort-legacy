@@ -309,21 +309,20 @@ namespace RISC {
 		}
 
 		public void start_game(uint32 seed, ParsedScenario scn, string[] ais) {
-			if (game != null) stop_game();
 			try {
-				game = new Game(seed, scn, ais);
-				if (!game.init()) {
-					game = null;
-					warning("initialization failed\n");
-					start_demo_game();
-				} else {
-					start_renderer(game);
-					game_state = GameState.RUNNING;
-					ticker = Thread.create(this.run, true);
-				}
+				start_game_int(seed, scn, ais);
 			} catch (Error e) {
 				warning("Game initialization failed: %s", e.message);
+				start_demo_game();
 			}
+		}
+
+		public void start_game_int(uint32 seed, ParsedScenario scn, string[] ais) throws FileError, ScenarioLoadError, ThreadError {
+			if (game != null) stop_game();
+			game = new Game(seed, scn, ais);
+			start_renderer(game);
+			game_state = GameState.RUNNING;
+			ticker = Thread.create(this.run, true);
 		}
 
 		public void stop_game() {
@@ -352,9 +351,9 @@ namespace RISC {
 		public void start_demo_game() {
 			try {
 				var scn = Scenario.parse(data_path("scenarios/demo1.json"));
-				start_game(42, scn, { });
+				start_game_int(42, scn, { });
 				game_state = GameState.DEMO;
-			} catch (FileError e) {
+			} catch (Error e) {
 				error("Demo initialization failed: %s", e.message);
 			}
 		}

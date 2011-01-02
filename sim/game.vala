@@ -37,7 +37,7 @@ public class RISC.Game {
 		return (owned)data;
 	}
 
-	public Game(uint32 seed, ParsedScenario scn, string[] ais) throws FileError, ThreadError {
+	public Game(uint32 seed, ParsedScenario scn, string[] ais) throws FileError, ThreadError, ScenarioLoadError {
 		prng = new Rand.with_seed(seed);
 		this.scn = scn;
 		this.ais = ais;
@@ -48,14 +48,7 @@ public class RISC.Game {
 		ships_code = load_resource("ships.lua");
 		lib_code = load_resource("lib.lua");
 		tasks = new TaskPool(Util.envtol("RISC_NUM_THREADS", 8));
-	}
-
-	public bool init() {
-		if (!Scenario.load(this, scn, ais)) {
-			return false;
-		}
-
-		return true;
+		Scenario.load(this, scn, ais);
 	}
 
 	public void purge() {

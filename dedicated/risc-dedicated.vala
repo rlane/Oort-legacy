@@ -48,10 +48,6 @@ int main(string[] args) {
 	Game game;
 	try {
 		game = new Game(opt_seed, scn, ai_filenames);
-		if (!game.init()) {
-			warning("Game initialization failed");
-			return 1;
-		}
 	} catch (Error e) {
 		error("Game initialization failed: %s", e.message);
 	}
