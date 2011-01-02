@@ -35,6 +35,9 @@ namespace RISC {
 		private bool single_step;
 		private unowned Team winner;
 		private Renderer renderer;
+		private Mutex tick_lock;
+		private unowned Thread ticker;
+		private bool shutting_down = false;
 
 		enum GameState {
 			DEMO,
@@ -44,12 +47,13 @@ namespace RISC {
 
 		private GameState game_state;
 
-		public MainWindow() {
+		public MainWindow() throws ThreadError {
 			this.title = "RISC";
-			this.destroy.connect(Gtk.main_quit);
+			this.destroy.connect(shutdown);
 			set_reallocate_redraws(true);
 
 			this.renderer = new Renderer();
+			this.tick_lock = new Mutex();
 
 			var vbox = new VBox(false, 0);
 			vbox.pack_start(make_menubar(), false, false, 0);
@@ -57,7 +61,7 @@ namespace RISC {
 			add(vbox);
 			show_all();
 
-			GLib.Timeout.add(31, tick);
+			ticker = Thread.create(this.run, true);
 		}
 
 		private MenuBar make_menubar() {
@@ -67,7 +71,7 @@ namespace RISC {
 			b.menu(menubar, "Game", parent => {
 				b.leaf(parent, "New", () => { new_game(); });
 				b.leaf(parent, "Stop", () => { start_demo_game(); });
-				b.leaf(parent, "Quit", () => { Gtk.main_quit(); });
+				b.leaf(parent, "Quit", () => { shutdown(); });
 			});
 
 			b.menu(menubar, "Help", parent => {
@@ -121,6 +125,27 @@ namespace RISC {
 			w.show();
 		}
 
+		const int million = 1000*1000;
+		private void *run() {
+			long usecs_target = (long) (million*Game.TICK_LENGTH);
+			TimeVal last = TimeVal();
+			while (true) {
+				if (shutting_down) break;
+				tick_lock.lock();
+				tick();
+				tick_lock.unlock();
+				TimeVal now = TimeVal();
+				long usecs = (now.tv_sec-last.tv_sec)*million + (now.tv_usec - last.tv_usec);
+				if (usecs < usecs_target) {
+					Thread.usleep(usecs_target - usecs);
+				} else {
+					Thread.usleep(10);
+				}
+				last = now;
+			}
+			return null;
+		}
+
 		private bool tick() {
 			if (!paused) {
 				Game.purge();
@@ -141,10 +166,15 @@ namespace RISC {
 				single_step = false;
 			}
 
-			var window = drawing_area.window;
-			window.invalidate_rect((Rectangle)drawing_area.allocation, false);
+			Timeout.add(0, trigger_redraw);
 
 			return true;
+		}
+
+		private bool trigger_redraw() {
+			var window = drawing_area.window;
+			window.invalidate_rect((Rectangle)drawing_area.allocation, false);
+			return false;
 		}
 
 		/* Widget is resized */
@@ -171,6 +201,8 @@ namespace RISC {
 			if (!gldrawable.gl_begin(glcontext))
 				return false;
 
+			if (!tick_lock.trylock()) return true;
+
 			renderer.render();
 			
 			switch (game_state) {
@@ -189,6 +221,8 @@ namespace RISC {
 			gldrawable.swap_buffers();
 
 			gldrawable.gl_end();
+
+			tick_lock.unlock();
 			return true;
 		}
 
@@ -231,11 +265,17 @@ namespace RISC {
 					screenshot("screenshot.tga");
 					break;
 				case "Escape":
-					Gtk.main_quit();
+					shutdown();
 					break;
 			}
 
 			return true;
+		}
+
+		private void shutdown() {
+			shutting_down = true;
+			ticker.join();
+			Gtk.main_quit();
 		}
 
 		private bool on_button_press_event(Widget widget, EventButton event) {
@@ -413,7 +453,13 @@ int main(string[] args) {
 		return 1;
 	}
 
-	var mainwin = new MainWindow();
+	MainWindow mainwin;
+	try {
+		mainwin = new MainWindow();
+	} catch (ThreadError e) {
+		print("%s\n", e.message);
+		return 1;
+	}
 
 	if (args.length <= 1) {
 		mainwin.start_demo_game();

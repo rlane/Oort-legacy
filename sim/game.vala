@@ -65,10 +65,10 @@ namespace RISC.Game {
 	}
 
 	public void shutdown() {
+		Task.shutdown();
 		Bullet.shutdown();
 		Ship.shutdown();
 		Team.shutdown();
-		Task.shutdown();
 		prng = null;
 		runtime_code = null;
 		ships_code = null;
