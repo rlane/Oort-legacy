@@ -1,24 +1,46 @@
 using RISC;
 
+uint32 opt_seed;
+int opt_max_ticks;
+
+const OptionEntry[] options = {
+	{ "seed", 's', 0, OptionArg.INT, &opt_seed, "Random number generator seed", null },
+	{ "max-ticks", 0, 0, OptionArg.INT, &opt_max_ticks, "Exit after given number of ticks", null },
+	{ null }
+};
+
 int main(string[] args) {
-	int seed = Util.envtol("RISC_SEED", 42);
-	int max_ticks = Util.envtol("RISC_MAX_TICKS", -1);
-	bool callgrind_collection_started = false;
-
-	if (!Thread.supported ()) {
-		error ("Cannot run without thread support.");
-	}
-
 	Paths.init(args[0]);
 	print("using data from %s\n", RISC.Paths.resource_dir.get_path());
 
+	opt_seed = 0;
+	opt_max_ticks = -1;
+
+	var optctx = new OptionContext("");
+	optctx.add_main_entries(options, null);
+	try {
+		optctx.parse(ref args);
+	} catch (OptionError e) {
+		print("%s\n", e.message);
+		return 1;
+	}
+
+	if (!Thread.supported()) {
+		print("Cannot run without thread support.\n");
+		return 1;
+	}
+
+	var scenario_filename = args[1];
+	var ai_filenames = args[2:(args.length)];
+
+	var scn = Scenario.parse(scenario_filename);
+	if (scn == null) {
+		error("Failed to parse scenario");
+	}
+
 	int ret;
 	try {
-		if (args.length <= 1) {
-			ret = Game.init(42, Scenario.parse(data_path("scenarios/demo1.json")), { });
-		} else {
-			ret = Game.init(seed, Scenario.parse(args[1]), args[2:(args.length)]);
-		}
+		ret = Game.init(opt_seed, scn, ai_filenames);
 	} catch (FileError e) {
 		error("Game initialization failed: %s", e.message);
 	}
@@ -30,6 +52,7 @@ int main(string[] args) {
 
 	TimeVal last_sample_time = TimeVal();
 	int sample_ticks = 0;
+	bool callgrind_collection_started = false;
 
 	while (true) {
 		TimeVal now = TimeVal();
@@ -40,7 +63,7 @@ int main(string[] args) {
 			last_sample_time = now;
 		}
 
-		if (max_ticks >= 0 && Game.ticks >= max_ticks) {
+		if (opt_max_ticks >= 0 && Game.ticks >= opt_max_ticks) {
 			print("exiting after %d ticks\n", Game.ticks);
 			break;
 		}
@@ -62,7 +85,7 @@ int main(string[] args) {
 
 		unowned Team winner = Game.check_victory();
 		if (winner != null) {
-			print("Team '%s' is victorious in %0.2f seconds\n", winner.name, Game.ticks*Game.TICK_LENGTH);
+			print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.filename, Game.ticks*Game.TICK_LENGTH);
 			break;
 		}
 

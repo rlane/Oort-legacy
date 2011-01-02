@@ -3,6 +3,13 @@ using Gdk;
 using Lua;
 using RISC;
 
+uint32 opt_seed;
+
+const OptionEntry[] options = {
+	{ "seed", 's', 0, OptionArg.INT, &opt_seed, "Random number generator seed", null },
+	{ null }
+};
+
 namespace RISC {
 	class MenuBuilder : GLib.Object {
 		public delegate void MenuAction();
@@ -259,7 +266,7 @@ namespace RISC {
 			return true;
 		}
 
-		public void start_game(int seed, ParsedScenario scn, string[] ais) {
+		public void start_game(uint32 seed, ParsedScenario scn, string[] ais) {
 			RISC.Game.shutdown();
 			renderer.init();
 			try {
@@ -384,27 +391,43 @@ namespace RISC {
 			}
 		}
 
-		public signal void start_game(int seed, ParsedScenario scn, string[] ais);
+		public signal void start_game(uint32 seed, ParsedScenario scn, string[] ais);
 	}
 }
 
 int main(string[] args) {
-	Gtk.init(ref args);
+	Paths.init(args[0]);
+	print("using data from %s\n", Paths.resource_dir.get_path());
+
+	try {
+		Gtk.init_with_args(ref args, "[scenario [ai...]]", options, null);
+	} catch (Error e) {
+		print("%s\n", e.message);
+		return 1;
+	}
+
 	Gtk.gl_init(ref args);
 
 	if (!Thread.supported ()) {
-		error ("Cannot run without thread support.");
+		print("Cannot run without thread support.\n");
+		return 1;
 	}
-
-	Paths.init(args[0]);
-	print("using data from %s\n", Paths.resource_dir.get_path());
 
 	var mainwin = new MainWindow();
 
 	if (args.length <= 1) {
 		mainwin.start_demo_game();
 	} else {
-		mainwin.start_game(0, Scenario.parse(args[1]), args[2:(args.length)]);
+		var scenario_filename = args[1];
+		var ai_filenames = args[2:(args.length)];
+
+		var scn = Scenario.parse(scenario_filename);
+		if (scn == null) {
+			print("Failed to parse scenario\n");
+			return 1;
+		}
+
+		mainwin.start_game(opt_seed, scn, ai_filenames);
 	}
 
 	Gtk.main();
