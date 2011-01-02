@@ -51,9 +51,7 @@ namespace RISC.Scenario {
 			}
 
 			uint32 color = pteam.color_red << 24 | pteam.color_green << 16 | pteam.color_blue << 8;
-			Team.create(pteam.name, ai_filename, code, color);
-			unowned Team team = Team.lookup(pteam.name);
-			assert(team != null);
+			var team = new Team() { name=pteam.name, color=color, filename=ai_filename, code=(owned)code };
 
 			foreach (ParsedShip pship in pteam.ships) {
 				unowned ShipClass klass = ShipClass.lookup(pship.class_name);
@@ -69,10 +67,10 @@ namespace RISC.Scenario {
 					return false;
 				}
 
-				game.new_ships_lock.lock();
 				game.new_ships.append((owned)s);
-				game.new_ships_lock.unlock();
 			}
+
+			game.teams.append((owned)team);
 		}
 
 		return true;

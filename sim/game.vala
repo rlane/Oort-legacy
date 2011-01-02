@@ -26,6 +26,7 @@ public class RISC.Game {
 	public List<Bullet> all_bullets;
 	public List<Bullet> new_bullets;
 	public Mutex new_bullets_lock;
+	public List<Team> teams;
 
 	public const double TICK_LENGTH = 1.0/32;
 
@@ -73,7 +74,6 @@ public class RISC.Game {
 
 	~Game() {
 		Task.shutdown();
-		Team.shutdown();
 	}
 
 	public unowned Team? check_victory() {
@@ -88,6 +88,13 @@ public class RISC.Game {
 		}
 
 		return winner;
+	}
+
+	public Team? lookup_team(string name) {
+		foreach (Team team in teams) {
+			if (team.name == name) return team;
+		}
+		return null;
 	}
 
 	public void check_bullet_hits() {
