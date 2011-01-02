@@ -321,7 +321,7 @@ namespace RISC {
 					game_state = GameState.RUNNING;
 					ticker = Thread.create(this.run, true);
 				}
-			} catch (FileError e) {
+			} catch (Error e) {
 				warning("Game initialization failed: %s", e.message);
 			}
 		}

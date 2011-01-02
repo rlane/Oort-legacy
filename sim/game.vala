@@ -27,6 +27,7 @@ public class RISC.Game {
 	public List<Bullet> new_bullets;
 	public Mutex new_bullets_lock;
 	public List<Team> teams;
+	public TaskPool tasks;
 
 	public const double TICK_LENGTH = 1.0/32;
 
@@ -36,7 +37,7 @@ public class RISC.Game {
 		return (owned)data;
 	}
 
-	public Game(uint32 seed, ParsedScenario scn, string[] ais) throws FileError {
+	public Game(uint32 seed, ParsedScenario scn, string[] ais) throws FileError, ThreadError {
 		prng = new Rand.with_seed(seed);
 		this.scn = scn;
 		this.ais = ais;
@@ -46,8 +47,7 @@ public class RISC.Game {
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
 		lib_code = load_resource("lib.lua");
-
-		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
+		tasks = new TaskPool(Util.envtol("RISC_NUM_THREADS", 8));
 	}
 
 	public bool init() {
@@ -73,7 +73,7 @@ public class RISC.Game {
 	}
 
 	~Game() {
-		Task.shutdown();
+		assert(tasks.in_flight == 0);
 	}
 
 	public unowned Team? check_victory() {
@@ -143,9 +143,9 @@ public class RISC.Game {
 		new_ships = null;
 
 		foreach (unowned Ship s in all_ships) {
-			Task.task((Task.TaskFunc)s.tick, s, null);
+			tasks.run((TaskPool.TaskFunc)s.tick, s, null);
 		}
-		Task.wait();
+		tasks.wait();
 	}
 
 	void tick_bullets() {

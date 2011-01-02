@@ -1,39 +1,39 @@
-namespace RISC.Task {
+public class RISC.TaskPool {
 	[CCode (has_target=false)]
 	public delegate void TaskFunc(void *arg1, void *arg2);
 
 	private ThreadPool thread_pool;
 	private Cond cvar;
 	private Mutex mtx;
-	private int in_flight;
+	public int in_flight; // XXX atomic
 
 	[Compact]
 	public class TaskData {
+		public TaskPool pool;
 		public TaskFunc f;
 		public void *arg1;
 		public void *arg2;
 	}
 
-	public void init(int thread_pool_size) {
+	public TaskPool(int thread_pool_size) throws ThreadError {
 		if (thread_pool_size > 0) {
-			try {
-				thread_pool = new ThreadPool((Func)worker, thread_pool_size, true);
-			} catch (ThreadError e) {
-				error(e.message);
-			}
+			thread_pool = new ThreadPool((Func)static_worker, thread_pool_size, true);
 			cvar = new Cond();
 			mtx = new Mutex();
 			in_flight = 0;
 		}
 	}
 
-	public void task(TaskFunc f, void *arg1, void *arg2) {
+	[CCode (cname = "leak")]
+	extern static void *leak(owned TaskData t);
+
+	public void run(TaskFunc f, void *arg1, void *arg2) {
 		if (thread_pool != null) {
-			var t = new TaskData() { f=f, arg1=arg1, arg2=arg2 };
+			var t = new TaskData() { pool=this, f=f, arg1=arg1, arg2=arg2 };
 			mtx.lock();
 			in_flight++;
 			mtx.unlock();
-			void *p = leak((owned)t); // HACK
+			void *p = leak((owned)t); // XXX
 			try {
 				thread_pool.push(p);
 			} catch (ThreadError e) {
@@ -53,12 +53,13 @@ namespace RISC.Task {
 		}
 	}
 
-	public void shutdown()
-	{
+	~Task() {
 		assert(in_flight == 0);
-		thread_pool = null;
-		cvar = null;
-		mtx = null;
+	}
+
+	private static void static_worker(owned TaskData t) {
+		var pool = t.pool;
+		pool.worker((owned)t);
 	}
 
 	private void worker(owned TaskData t) {
@@ -69,7 +70,4 @@ namespace RISC.Task {
 		}
 		mtx.unlock();
 	}
-
-	[CCode (cname = "leak")]
-	extern void *leak(owned TaskData t);
 }

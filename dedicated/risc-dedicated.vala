@@ -52,7 +52,7 @@ int main(string[] args) {
 			warning("Game initialization failed");
 			return 1;
 		}
-	} catch (FileError e) {
+	} catch (Error e) {
 		error("Game initialization failed: %s", e.message);
 	}
 

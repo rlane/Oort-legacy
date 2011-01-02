@@ -24,7 +24,7 @@ int main(string[] args) {
 			var scn_single = Scenario.parse(data_path("test/scenarios/simple.json"));
 			var game = new Game(0, scn_single, { data_path("test/ai/syntax_error.lua"), data_path("test/ai/syntax_error.lua") });
 			assert(!game.init());
-		} catch (FileError e) {
+		} catch (Error e) {
 			error("init failed: %s", e.message);
 		}
 	});
@@ -34,7 +34,7 @@ int main(string[] args) {
 			var scn_single = Scenario.parse(data_path("test/scenarios/simple.json"));
 			var game = new Game(0, scn_single, { data_path("test/ai/missing.lua"), data_path("test/ai/missing.lua") });
 			assert(!game.init());
-		} catch (FileError e) {
+		} catch (Error e) {
 			error("init failed: %s", e.message);
 		}
 	});
