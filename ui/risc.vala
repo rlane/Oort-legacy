@@ -30,8 +30,9 @@ namespace RISC {
 	}
 
 	class MainWindow : Gtk.Window {
+		public bool paused;
+
 		private DrawingArea drawing_area;
-		private bool paused;
 		private bool single_step;
 		private unowned Team winner;
 		private Renderer renderer;
@@ -112,6 +113,22 @@ namespace RISC {
 				scenario_chooser.destroy();
 			});
 			scenario_chooser.show();
+		}
+
+		public void show_screenshot_dialog() {
+			paused = true;
+			var chooser = new FileChooserDialog("Save screenshot", this, Gtk.FileChooserAction.SAVE,
+			                                    Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT,
+																					Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
+			chooser.set_current_name("screenshot.tga");
+			chooser.response.connect( (response_id) => {
+				if (response_id == Gtk.ResponseType.ACCEPT) {
+					screenshot(chooser.get_filename());
+				}
+				chooser.destroy();
+				paused = false;
+			});
+			chooser.show();
 		}
 
 		public void show_about() {
@@ -265,7 +282,7 @@ namespace RISC {
 					renderer.render_all_debug_lines = !renderer.render_all_debug_lines;
 					break;
 				case "p":
-					screenshot("screenshot.tga");
+					show_screenshot_dialog();
 					break;
 				case "Escape":
 					shutdown();
