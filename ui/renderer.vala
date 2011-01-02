@@ -40,27 +40,16 @@ namespace RISC {
 		public double view_scale;
 		public Vec2 view_pos;
 		public unowned Ship picked;
+		public Game game;
 
 		Rand prng;
 
-		public void init() {
+		public static void static_init() {
 			if (GLEW.init()) {
 				error("GLEW initialization failed");
 			}
 			ShipGfxClass.init();
 			RISC.Ship.gfx_create_cb = on_ship_created;
-			render_all_debug_lines = false;
-
-			prng = new Rand();
-
-			glEnable(GL_TEXTURE_2D);
-			glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
-			glShadeModel(GL_SMOOTH);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glEnable(GL_BLEND);
-			glEnable(GL_LINE_SMOOTH);
-			glEnable(GL_POINT_SMOOTH);
-			glLineWidth(1.2f);
 
 			/*
 			print("Vendor: %s\n", glGetString(GL_VENDOR));
@@ -69,6 +58,24 @@ namespace RISC {
 			//print("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 			print("Extensions:\n%s\n", glGetString(GL_EXTENSIONS));
 			*/
+		}
+
+		public Renderer(Game game) {
+			render_all_debug_lines = false;
+			prng = new Rand();
+			this.game = game;
+			reset();
+		}
+
+		public void init() {
+			glEnable(GL_TEXTURE_2D);
+			glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
+			glShadeModel(GL_SMOOTH);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
+			glEnable(GL_LINE_SMOOTH);
+			glEnable(GL_POINT_SMOOTH);
+			glLineWidth(1.2f);
 		}
 
 		public void reset() {
@@ -345,7 +352,7 @@ namespace RISC {
 				}
 			}
 
-			foreach (unowned BulletHit hit in Game.bullet_hits) {
+			foreach (unowned BulletHit hit in game.bullet_hits) {
 				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 0.1, 1, 20, (uint16)(hit.e*100));
 			}
 

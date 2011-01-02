@@ -26,7 +26,7 @@ namespace RISC {
 }
 
 namespace RISC.Scenario {
-	public bool load(ParsedScenario scn, string[] ais) {
+	public bool load(Game game, ParsedScenario scn, string[] ais) {
 		if (scn.user_teams.length() != ais.length) {
 			warning("Expected %u user AIs, got %d", scn.user_teams.length(), ais.length);
 			return false;
@@ -62,7 +62,7 @@ namespace RISC.Scenario {
 					return false;
 				}
 
-				Ship s = new Ship(klass, team, pship.p, vec2(0,0), Game.prng.next_int());
+				Ship s = new Ship(game, klass, team, pship.p, vec2(0,0), game.prng.next_int());
 
 				if (!s.create_ai(null)) {
 					warning("Failed to create AI");

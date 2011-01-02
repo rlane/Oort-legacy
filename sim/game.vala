@@ -1,8 +1,6 @@
 using RISC;
 using Vector;
 
-public GLib.List<BulletHit> bullet_hits;
-
 [Compact]
 public class RISC.BulletHit {
 	public unowned Ship s;
@@ -11,14 +9,15 @@ public class RISC.BulletHit {
 	public double e;
 }
 
-namespace RISC.Game {
-	public int ticks;
+public class RISC.Game {
+	public int ticks = 0;
 	public Rand prng;
 	public uint8[] runtime_code;
 	public uint8[] ships_code;
 	public uint8[] lib_code;
-
-	public List<BulletHit> bullet_hits;
+	public ParsedScenario scn;
+	public string[] ais;
+	public List<BulletHit> bullet_hits = null;
 
 	public const double TICK_LENGTH = 1.0/32;
 
@@ -28,26 +27,25 @@ namespace RISC.Game {
 		return (owned)data;
 	}
 
-	public int init(uint32 seed, ParsedScenario scn, string[] ais) throws FileError {
+	public Game(uint32 seed, ParsedScenario scn, string[] ais) throws FileError {
 		prng = new Rand.with_seed(seed);
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
 		lib_code = load_resource("lib.lua");
-		ticks = 0;
+		this.scn = scn;
+		this.ais = ais;
 
 		Task.init(Util.envtol("RISC_NUM_THREADS", 8));
 		Bullet.init();
 		Ship.init();
+	}
 
-		if (!ShipClass.load(data_path("ships.lua"))) {
-			return 1;
+	public bool init() {
+		if (!Scenario.load(this, scn, ais)) {
+			return false;
 		}
 
-		if (!Scenario.load(scn, ais)) {
-			return 1;
-		}
-
-		return 0;
+		return true;
 	}
 
 	public void purge() {
@@ -64,15 +62,11 @@ namespace RISC.Game {
 		ticks += 1;
 	}
 
-	public void shutdown() {
+	~Game() {
 		Task.shutdown();
 		Bullet.shutdown();
 		Ship.shutdown();
 		Team.shutdown();
-		prng = null;
-		runtime_code = null;
-		ships_code = null;
-		lib_code = null;
 	}
 
 	public unowned Team? check_victory() {

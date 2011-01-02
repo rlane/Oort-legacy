@@ -32,6 +32,11 @@ int main(string[] args) {
 		return 1;
 	}
 
+	if (!ShipClass.load(data_path("ships.lua"))) {
+		print("Failed to load ship classes.\n");
+		return 1;
+	}
+
 	var scenario_filename = args[1];
 	var ai_filenames = args[2:(args.length)];
 
@@ -40,16 +45,15 @@ int main(string[] args) {
 		error("Failed to parse scenario");
 	}
 
-	int ret;
+	Game game;
 	try {
-		ret = Game.init(opt_seed, scn, ai_filenames);
+		game = new Game(opt_seed, scn, ai_filenames);
+		if (!game.init()) {
+			warning("Game initialization failed");
+			return 1;
+		}
 	} catch (FileError e) {
 		error("Game initialization failed: %s", e.message);
-	}
-
-	if (ret != 0) {
-		warning("Game initialization failed");
-		return 1;
 	}
 
 	TimeVal last_sample_time = TimeVal();
@@ -65,12 +69,12 @@ int main(string[] args) {
 			last_sample_time = now;
 		}
 
-		if (opt_max_ticks >= 0 && Game.ticks >= opt_max_ticks) {
-			print("exiting after %d ticks\n", Game.ticks);
+		if (opt_max_ticks >= 0 && game.ticks >= opt_max_ticks) {
+			print("exiting after %d ticks\n", game.ticks);
 			break;
 		}
 
-		if (Game.ticks == 10) {
+		if (game.ticks == 10) {
 			callgrind_collection_started = true;
 		}
 
@@ -78,23 +82,21 @@ int main(string[] args) {
 			Util.toggle_callgrind_collection();
 		}
 
-		Game.tick();
-		Game.purge();
+		game.tick();
+		game.purge();
 
 		if (callgrind_collection_started) {
 			Util.toggle_callgrind_collection();
 		}
 
-		unowned Team winner = Game.check_victory();
+		unowned Team winner = game.check_victory();
 		if (winner != null) {
-			print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.filename, Game.ticks*Game.TICK_LENGTH);
+			print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.filename, game.ticks*Game.TICK_LENGTH);
 			break;
 		}
 
 		sample_ticks++;
 	}
-
-	Game.shutdown();
 
 	return 0;
 }

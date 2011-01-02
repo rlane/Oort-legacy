@@ -58,6 +58,7 @@ public class RISC.Ship {
 	public string line_info;
 	public Gfx gfx;
 	public Debug debug;
+	public weak Game game;
 
 	public static List<Ship> all_ships;
 	public static List<Ship> new_ships;
@@ -110,9 +111,10 @@ public class RISC.Ship {
 		Task.wait();
 	}
 
-	public Ship(ShipClass klass, Team team, Vec2 p, Vec2 v, uint32 seed) {
+	public Ship(Game game, ShipClass klass, Team team, Vec2 p, Vec2 v, uint32 seed) {
+		this.game = game;
+		this.class = klass;
 		this.team = team;
-		@class = klass;
 		physics = new Physics() { p=p, p0=p, v=v, thrust=vec2(0,0), m=1, r=klass.radius };
 		prng = new Rand.with_seed(seed);
 		mq = new Queue<Msg>();
@@ -170,17 +172,17 @@ public class RISC.Ship {
 		global_lua.push_string(data_dir);
 		global_lua.set_global("data_dir");
 
-		if (global_lua.load_buffer(Game.ships_code) != 0) {
+		if (global_lua.load_buffer(game.ships_code) != 0) {
 			error("Failed to load ships.lua: %s", global_lua.to_string(-1));
 		}
 		global_lua.call(0,0);
 
-		if (global_lua.load_buffer(Game.lib_code) != 0) {
+		if (global_lua.load_buffer(game.lib_code) != 0) {
 			error("Failed to load lib.lua: %s", global_lua.to_string(-1));
 		}
 		global_lua.set_global("lib");
 
-		if (global_lua.load_buffer(Game.runtime_code) != 0) {
+		if (global_lua.load_buffer(game.runtime_code) != 0) {
 			error("Failed to load runtime.lua: %s", global_lua.to_string(-1));
 		}
 		global_lua.call(0,0);
@@ -200,7 +202,7 @@ public class RISC.Ship {
 	}
 
 	public void tick_one() {
-		if (Game.ticks % TAIL_TICKS == 0) {
+		if (game.ticks % TAIL_TICKS == 0) {
 			tail[tail_head++] = physics.p;
 			if (tail_head == TAIL_SEGMENTS) tail_head = 0;
 		}
@@ -349,7 +351,7 @@ public class RISC.Ship {
 		if (klass == null) return L.arg_error(1, "invalid ship class");
 		unowned uint8[] orders = L.check_data(2);
 
-		Ship child = new Ship(klass, s.team, s.physics.p, s.physics.v, s.prng.next_int());
+		Ship child = new Ship(s.game, klass, s.team, s.physics.p, s.physics.v, s.prng.next_int());
 
 		if (!child.create_ai(orders)) {
 			return L.err("Failed to create AI");

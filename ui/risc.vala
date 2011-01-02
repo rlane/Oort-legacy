@@ -38,6 +38,7 @@ namespace RISC {
 		private Mutex tick_lock;
 		private unowned Thread ticker;
 		private bool shutting_down = false;
+		private Game game;
 
 		enum GameState {
 			DEMO,
@@ -52,7 +53,6 @@ namespace RISC {
 			this.destroy.connect(shutdown);
 			set_reallocate_redraws(true);
 
-			this.renderer = new Renderer();
 			this.tick_lock = new Mutex();
 
 			var vbox = new VBox(false, 0);
@@ -60,8 +60,6 @@ namespace RISC {
 			vbox.pack_start(make_drawing_area(), true, true, 0);
 			add(vbox);
 			show_all();
-
-			ticker = Thread.create(this.run, true);
 		}
 
 		private MenuBar make_menubar() {
@@ -143,14 +141,17 @@ namespace RISC {
 		}
 
 		private bool tick() {
-			if (!paused) {
-				Game.purge();
-				Game.tick();
+			if (game != null && !paused) {
+				game.purge();
+				game.tick();
 				Particle.tick();
-				renderer.tick();
+
+				if (renderer != null) {
+					renderer.tick();
+				}
 
 				if (game_state == GameState.RUNNING) {
-					winner = Game.check_victory();
+					winner = game.check_victory();
 					if (winner != null) {
 						game_state = GameState.FINISHED;
 					}
@@ -181,7 +182,9 @@ namespace RISC {
 			if (!gldrawable.gl_begin(glcontext))
 				return false;
 
-			renderer.reshape(widget.allocation.width, widget.allocation.height);
+			if (renderer != null) {
+				renderer.reshape(widget.allocation.width, widget.allocation.height);
+			}
 
 			gldrawable.gl_end();
 			return true;
@@ -193,6 +196,8 @@ namespace RISC {
 			GLDrawable gldrawable = WidgetGL.get_gl_drawable(widget);
 
 			var rect = drawing_area.allocation;
+
+			if (renderer == null) return true;
 
 			if (!gldrawable.gl_begin(glcontext))
 				return false;
@@ -229,8 +234,10 @@ namespace RISC {
 			if (!gldrawable.gl_begin(glcontext))
 				return;
 
-			renderer.init();
-			renderer.reset();
+			Renderer.static_init();
+			if (renderer != null) {
+				renderer.reset();
+			}
 
 			gldrawable.gl_end();
 		}
@@ -269,8 +276,7 @@ namespace RISC {
 		}
 
 		private void shutdown() {
-			shutting_down = true;
-			ticker.join();
+			stop_game();
 			Gtk.main_quit();
 		}
 
@@ -303,18 +309,44 @@ namespace RISC {
 		}
 
 		public void start_game(uint32 seed, ParsedScenario scn, string[] ais) {
-			RISC.Game.shutdown();
-			renderer.init();
+			if (game != null) stop_game();
 			try {
-				if (RISC.Game.init(seed, scn, ais) != 0) {
+				game = new Game(seed, scn, ais);
+				if (!game.init()) {
+					game = null;
 					warning("initialization failed\n");
 					start_demo_game();
 				} else {
+					start_renderer(game);
 					game_state = GameState.RUNNING;
+					ticker = Thread.create(this.run, true);
 				}
 			} catch (FileError e) {
 				warning("Game initialization failed: %s", e.message);
 			}
+		}
+
+		public void stop_game() {
+			shutting_down = true;
+			ticker.join();
+			ticker = null;
+			shutting_down = false;
+			game = null;
+			renderer = null;
+		}
+
+		public void start_renderer(Game game) {
+			renderer = new Renderer(game);
+			GLContext glcontext = WidgetGL.get_gl_context(drawing_area);
+			GLDrawable gldrawable = WidgetGL.get_gl_drawable(drawing_area);
+
+			if (!gldrawable.gl_begin(glcontext))
+				error("failed to get GL context");
+
+			renderer.init();
+			renderer.reshape(drawing_area.allocation.width, drawing_area.allocation.height);
+
+			gldrawable.gl_end();
 		}
 
 		public void start_demo_game() {
@@ -451,6 +483,11 @@ int main(string[] args) {
 		return 1;
 	}
 
+	if (!ShipClass.load(data_path("ships.lua"))) {
+		print("Failed to load ship classes.\n");
+		return 1;
+	}
+
 	MainWindow mainwin;
 	try {
 		mainwin = new MainWindow();
@@ -475,8 +512,6 @@ int main(string[] args) {
 	}
 
 	Gtk.main();
-
-	Game.shutdown();
 
 	return 0;
 }
