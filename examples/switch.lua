@@ -210,8 +210,8 @@ elseif my_class == "mothership" then
 			end
 		end
 
-		if math.random(200) == 7 then
-			spawn("fighter", "foo")
+		if energy() > 100 and math.random(50) == 7 then
+			spawn("fighter", "")
 		end
 
 		yield()
