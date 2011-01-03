@@ -7,7 +7,7 @@ ships = {}
 
 ships.fighter = {
 	radius = 4/32,
-	hull = 10,
+	hull = 100,
 	max_acc = 10,
 	cost = 200,
 	guns = {
@@ -48,7 +48,7 @@ local flak = {
 
 ships.mothership = {
 	radius = 1,
-	hull = 1000,
+	hull = 10000,
 	max_acc = 2,
 	cost = 2000,
 	guns = {
@@ -82,7 +82,7 @@ ships.mothership = {
 
 ships.missile = {
 	radius = 1/32,
-	hull = 0.1,
+	hull = 1.0,
 	max_acc = 10,
 	cost = 60,
 	guns = {},
@@ -103,7 +103,7 @@ ships.missile = {
 
 ships.little_missile = {
 	radius = 0.5/32,
-	hull = 0.05,
+	hull = 0.5,
 	max_acc = 20,
 	cost = 40,
 	guns = {},

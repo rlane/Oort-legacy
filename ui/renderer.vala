@@ -353,7 +353,7 @@ namespace RISC {
 			}
 
 			foreach (unowned BulletHit hit in game.bullet_hits) {
-				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 0.1, 1, 20, (uint16)(hit.e*100));
+				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 0.1, 1, 20, uint16.max((uint16)(hit.e),1));
 			}
 
 			foreach (unowned Ship s in game.all_ships) {

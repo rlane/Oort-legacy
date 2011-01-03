@@ -105,7 +105,7 @@ public class RISC.Game {
 		b.dead = true;
 		if (b.team != s.team) {
 			var dv = s.physics.v.sub(b.physics.v);
-			var hit_energy = 0.5 * b.physics.m * dv.abs(); // XXX squared
+			var hit_energy = 0.5 * b.physics.m * dv.abs() * dv.abs();
 			s.hull -= hit_energy;
 			if (s.hull <= 0) {
 				s.dead = true;
