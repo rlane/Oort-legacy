@@ -12,7 +12,8 @@ end
 
 function thrust(a,acc)
 	if acc < 0 then
-		return
+		acc = -acc
+		a = a + math.pi
 	end
 
 	if acc > my_ship.max_acc then
