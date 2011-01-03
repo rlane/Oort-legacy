@@ -6,7 +6,7 @@ Introduction
 
 RISC is a programming game currently in early development. Two or more space
 fleets, each ship individually controlled by the player's Lua code, battle in
-2-dimensional space. The game simulates Newtonian physics, with the temporary
+2-dimensional space. The game simulates Newtonian physics with the
 simplification that ships can thrust and shoot in any direction.
 
 Compilation
@@ -16,27 +16,51 @@ RISC uses the standard autotools build system. It is known to compile on Linux
 and OS X, and cross-compile to Windows using mingw32. Required packages for
 various package managers are listed below:
 
-Arch Linux: glib2 luajit2 gtk2 gtkglext glew pkgconfig vala
-Ubuntu 10.10: build-essential valac pkg-config libglib2.0-dev libluajit-5.1-dev libglew1.5-dev libgtk2.0-dev libgtkglext1-dev
-Arch Linux/mingw32: mingw32-gcc mingw32-glib2 mingw32-gtk2 mingw32-lua mingw32-gtkglext mingw32-glew zip vala
-OS X MacPorts: gcc45 glew gtk2 gtkglext lua glib2-devel
+- Arch Linux: glib2 luajit2 gtk2 gtkglext glew pkgconfig vala
+
+- Ubuntu 10.10: build-essential valac pkg-config libglib2.0-dev libluajit-5.1-dev libglew1.5-dev libgtk2.0-dev libgtkglext1-dev
+
+- Arch Linux/mingw32: mingw32-gcc mingw32-glib2 mingw32-gtk2 mingw32-lua mingw32-gtkglext mingw32-glew zip vala
+
+- OS X MacPorts: gcc45 glew gtk2 gtkglext lua glib2-devel
 
 Gameplay
 --------
 
-To start the game, run risc\_ui /path/to/scenario /path/to/ai[s]. Omit
-the scenario argument to watch a demo scenario. Example command lines:
+RISC is a programming game, which means that after the simulation has begun the
+players have no control over the outcome. Instead, you play by writing a
+program (AI) that all ships on your team will individually execute.
 
-    risc\_ui
-    risc\_ui scenarios/basic.lua examples/switch.lua examples/switch.lua
-    risc\_ui scenarios/missile_practice.lua examples/rock.lua
+To get started, run the UI (`risc_ui` from the command line, or using the
+desktop shortcut on Windows). RISC will begin playing a demo scenario. Click
+the "File" menu and select "New Game". This will pop up a file chooser where
+you will pick the scenario. The file chooser starts in a directory containing
+scenarios distributed with the game. Pick "basic.json". Next you'll be prompted
+to select two AIs to participate in the battle. Click the file chooser buttons
+and select "switch.lua" for each. Now click "OK" to begin the simulation.
 
 ### Scenarios
 
-The initial configuration of the fleets is controlled by a scenario file, which
-is just Lua code with builtin functions to create teams and spawn ships. See
-the examples in the scenarios/ directory. A scenario is given a number (global
-"N") of AI filenames (global "AI") which it can assign to teams.
+The initial configuration of the fleets is specified by a JSON scenario file. A
+description of the format is given below:
+
+    name: (string) Name of the scenario.
+    description: (string) Short text describing the scenario.
+    author: (string) Name of the author.
+    teams: (array of objects):
+      name: (string) Team name.
+      color: (object):
+        r: (integer) Red component 0-255.
+        g: (integer) Green component 0-255.
+        b: (integer) Blue component 0-255.
+      ships: (array of objects):
+        class: (string) Ship class name.
+        x: (number) X coordinate.
+        x: (number) Y coordinate.
+
+See the `scenarios/` directory in the distribution for examples. The
+`scenarios/challenges/` directory has scenarios that pit a user AI
+against progressively more difficult opponents.
 
 ### Victory condition
 
@@ -49,56 +73,60 @@ provided by RISC to thrust, fire, etc. Each ship is given a timeslice per tick
 and preempted when its time is up. Execution resumes where it left off on the
 next tick. The ships run in independent Lua VMs and do not share any data. All
 coordination must be accomplished using ship orders and the radio. The amount
-of memory that can be allocated per ship is limited to 1 megabyte; this value
-may be changed in the future.
-
-The best reference for the RISC API is currently the Lua files in the examples/
-directory. A summary of the API is given below.
+of memory that can be allocated per ship is limited to 1 megabyte. See the
+examples/ directory in the distribution for sample AI.
 
 #### RISC API
 
-- position() - returns a tuple (x,y).
+- `position()` - returns `(x,y)`.
 
-- velocity() - returns a tuple (vx, vy).
+- `velocity()` - returns `(vx,vy)`.
 
-- energy() - return the ship's current energy level.
+- `energy()` - return the ship's current energy level.
 
-- team() - returns the name of this ship's team.
+- `thrust(angle, acceleration)` - start thrusting in the given direction.
 
-- class() - returns the name of this ship's class.
+- `fire(name, angle)` - fire the gun named `name` in the given direction.
 
-- thrust(angle, force) - start thrusting in the given direction.
+- `sensor_contacts(query=nil)` - returns a table of all the sensor contacts
+matching `query`. See the "Sensors" section for full details.
 
-- fire(name, angle) - fire the gun named "name" in the given direction.
+- `sensor_contact(id)` - given an id from from `sensor_contacts`, return just that contact.
 
-- sensor\_contacts() - returns a table of all the sensor contacts in range.
+- `send(msg)` - broadcast a message to all friendly ships.
 
-- sensor\_contact(id) - given an id from from sensor\_contacts, return just that contact.
-
-- send(msg) - broadcast a message to all friendly ships.
-
-- recv() - receive the next message from the radio. Returns nil if there are no
+- `recv()` - receive the next message from the radio. Returns `nil` if there are no
 messages on the queue.
 
-- spawn(class, filename, orders) - spawn a ship.
+- `spawn(class, filename, orders)` - spawn a ship.
 
-- yield() - deschedule the program until the next tick.
+- `yield()` - deschedule the program until the next tick.
 
-- explode() - self-destruct.
+- `explode()` - self-destruct.
 
-- debug\_line(x1, y1, x2, y2)
+- `debug_line(x1, y1, x2, y2)` - Draw a line in world coordinates for visual debugging.
 
-- clear\_debug\_lines()
+- `clear_debug_lines()` - Erase all debug lines.
 
-- orders - a string global containing the orders for this ship as set by the
+- `orders` - a string global containing the orders for this ship as set by the
 spawn() function.
 
-- ships - a global table containing all the properties of each ship class.
+- `class` - a string global containing this ship's class name.
+
+- `team` - a string global containing this ship's team's name.
+
+- `ships` - a global table containing all the properties of each ship class,
+keyed by class name.
+
+The standard `math`, `table`, and `string` libraries are provided. A library of
+useful utility functions (`lib.lua`) is also included in the global environment.
 
 ### Ships
 
 The available ship classes are specified by the ships.lua file. This table is
-available to the AI in the "ships" global.
+available to the AI in the `ships` global. The properties of existing ships can
+be changed by editing this file, but adding new ships requires adding
+corresponding code in the renderer.
 
 #### Energy
 
@@ -120,7 +148,8 @@ using these values until the next time thrust() is called.
 A ship can call the spawn() function to create a new ship. This costs a large
 amount of energy that depends on the specified class. Missiles are just another
 class of ships in RISC, so to launch a missile simply spawn it with orders of
-where to go.
+where to go. The classes of ships that can be spawned are controlled by the
+'spawnable' fields in ships.lua.
 
 #### Guns
 
@@ -135,7 +164,7 @@ energy relative to the ship.
 
 Hull strength varies among ship classes. When a bullet damages a ship its
 relative kinetic energy is subtracted from the ship's hull strength. If a
-ship's hull strength falls below zero it is destroyed.
+ship's hull strength reaches zero it is destroyed.
 
 #### Self-destruct
 
@@ -155,12 +184,34 @@ is empty. Multicast and radio jamming are future development items.
 
 #### Sensors
 
-The sensor\_contacts() function returns a table of all the ships detected by
-this ships sensors. This is currently all other ships in the battle, but this
-will change to be all ships within a certain range. Each contact is table with
-the keys id, team, class, x, y, vx, vy. Most of these are self explanatory. The
-id field can be passed to the sensor\_contact() function to return just the
-information for the given ship, which is significantly more efficient.
+The `sensor_contacts()` function returns a table of all the ships detected by
+this ships sensors. Each contact is a table with the fields `id`, `team`,
+`class`, `x`, `y`, `vx`, `vy`.  Most of these are self explanatory. The `id`
+field is an opaque string that can be passed to the `sensor_contact()` function
+to return just the information for the given ship, which is significantly more
+efficient.
+
+There is an optional `query` argument to `sensors_contact()`. A sensor query is
+a table whose format is given below:
+
+    enemy: (boolean) True to match only enemy ships, or false to match only friendly ships.
+    class: (string) Match only ships of the given class.
+    distance_lt: (number) Match only ships closer than the given distance.
+    distance_gt: (number) Match only ships further away than the given distance.
+    hull_lt: (number) Match only ships whose hull strength is less than the given amount.
+    hull_gt: (number) Match only ships whose hull strength is greater than the given amount.
+    limit: (integer) Return at most the given number of results.
+
+If a query option is omitted it has no effect. The ships returned by the query
+will be exactly those that match all of the given query options.
+
+### Determinism
+
+The simulation is designed to be deterministic. Given the same scenario, AI,
+and random seed it should play out in exactly the same way every time. There
+are some limitations to this: programs that exceed their timeslice or run out
+of memory will not behave identically across different Lua VMs (standard Lua vs
+LuaJIT). They should still be deterministic given the same VM.
 
 Graphical simulator
 -------------------
@@ -172,17 +223,17 @@ limited to real time (32 hz).
 
 Zoom: scroll wheel, or 'z' and 'x'
 
-Select a ship by clicking on it. This will display various information about
-the ship in the lower left corner. If the ship AI has drawn any debug graphics
-they will be displayed.
-
 Toggle all debug graphics: 'y'
 
 Pause: space
 
 Single-step: enter
 
-Save screenshot to "screenshot.tga": 'p'
+Take a screenshot: 'p'
+
+You can click on a ship to "pick" it. Data about the currently picked ship is
+shown in the lower-left corner of the display, and any debug lines this ship
+has drawn will be shown.
 
 Non-graphical simulator
 -----------------------

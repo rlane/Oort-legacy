@@ -331,9 +331,6 @@ public class RISC.Ship {
 		return 0;
 	}
 
-	public static void register(owned Ship s) {
-	}
-
 	public static int api_die(LuaVM L) {
 		unowned Ship s = lua_ship(L);
 		s.dead = true;

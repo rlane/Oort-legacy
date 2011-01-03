@@ -1,13 +1,23 @@
 Next:
+Real kinetic energy collisions
 Thrust consumes energy
-Machine-readable risc-dedicated output
 Universe boundary
-Update README
+Randomize default seed in new game dialog
+Think about lua scenarios
 Rename executables
 Rename project
 
-Future:
+1.0:
+Flesh out challenges
+More demo scenarios (space invaders, minefield)
+Workflow for adding new ships to ships.lua
+Option to specify ships.lua
+Machine-readable risc-dedicated output
+Limit number of results per sensor query
 Inline AI in scenario
+Remove escape keybinding
+
+Future:
 Limit sensor range
 Multicast radio
 Add bomber and "bomb" missile class that can't thrust
