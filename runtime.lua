@@ -35,8 +35,6 @@ function fire(name, a)
 
 	if _energy < gun.cost then
 		return
-	else
-		_energy = _energy - gun.cost
 	end
 
 	if last_fire_tick and last_fire_tick + gun.reload_time*32 > ticks then
@@ -44,6 +42,8 @@ function fire(name, a)
 	else
 		last_fire_ticks[name] = ticks
 	end
+
+	new_energy = _energy - gun.cost
 
 	x, y = sys_position()
 	v = gun.bullet_velocity
