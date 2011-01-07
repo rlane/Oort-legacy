@@ -1,8 +1,10 @@
 local my_class = class
+local ticks_per_second = 32
+local tick_length = 1.0/ticks_per_second
 local my_ship = ships[my_class]
 local last_fire_ticks = {}
 local _energy = my_ship.energy.initial
-local energy_tick_rate = my_ship.energy.rate / 32.0
+local energy_tick_rate = my_ship.energy.rate * tick_length
 local debug_preemption = false
 local ticks = 0
 
@@ -37,7 +39,7 @@ function fire(name, a)
 		return
 	end
 
-	if last_fire_tick and last_fire_tick + gun.reload_time*32 > ticks then
+	if last_fire_tick and last_fire_tick + gun.reload_time*ticks_per_second > ticks then
 		return
 	else
 		last_fire_ticks[name] = ticks
@@ -118,11 +120,11 @@ function explode()
 		local a, v, m, ttl, vx2, vy2
 		a = math.random()*math.pi*2
 		v = math.random()*exp.velocity
-		vx2 = vx + math.cos(a)*v
-		vy2 = vy + math.sin(a)*v
+		vx2 = math.cos(a)*v
+		vy2 = math.sin(a)*v
 		m = exp.mass
-		ttl = exp.ttl
-		sys_create_bullet(x,y,vx2,vy2,m,ttl,bullets.plasma)
+		ttl = tick_length*2
+		sys_create_bullet(x,y,vx2,vy2,m,ttl,bullets.explosion)
 	end
 
 	sys_die()

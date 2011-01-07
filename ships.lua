@@ -1,6 +1,7 @@
 bullets = {
 	slug = 1,
 	plasma = 2,
+	explosion = 3,
 }
 
 ships = {}
@@ -89,7 +90,7 @@ ships.missile = {
 	explosion = {
 		count = 128,
 		mass = 0.1,
-		velocity = 4,
+		velocity = 40,
 		ttl = 0.5,
 	},
 	count_for_victory = false,
@@ -108,9 +109,9 @@ ships.little_missile = {
 	cost = 40,
 	guns = {},
 	explosion = {
-		count = 32,
+		count = 64,
 		mass = 0.01,
-		velocity = 2,
+		velocity = 10,
 		ttl = 1,
 	},
 	count_for_victory = false,

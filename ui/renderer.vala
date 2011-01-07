@@ -290,6 +290,17 @@ namespace RISC {
 				RISC.GLUtil.color32(0x444444FF);
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
+			} else if (b.type == RISC.BulletType.EXPLOSION) {
+				var dp = b.physics.v.scale(Game.TICK_LENGTH);
+				var sp1 = S(b.physics.p);
+				var sp2 = S(b.physics.p.add(dp));
+
+				glBegin(GL_LINE_STRIP);
+				RISC.GLUtil.color32(0xFFFFFFFFu);
+				glVertex3d(sp1.x, sp1.y, 0);
+				RISC.GLUtil.color32(0xFFFFFF77u);
+				glVertex3d(sp2.x, sp2.y, 0);
+				glEnd();
 			}
 		}
 
@@ -343,6 +354,9 @@ namespace RISC {
 				if (b.type == BulletType.PLASMA) {
 					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
 							            double.min(b.physics.m/5,0.1), 3, 4, 6);
+				} else if (b.type == BulletType.EXPLOSION) {
+					Particle.shower(ParticleType.HIT, b.physics.p, vec2(0,0), vec2(0,0),
+							            0.2, 3, 10, 6);
 				}
 			}
 

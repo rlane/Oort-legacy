@@ -248,8 +248,8 @@ elseif my_class == "missile" or my_class == "little_missile" then
 		local x, y = position()
 		local vx, vy = velocity()
 
-		local ttt = distance(x, y, tx, ty) / (distance(vx, vy, tvx, tvy)+my_ship.explosion.velocity)
-		if ttt < 0.1 then
+		local ttt = distance(x, y, tx, ty) / distance(vx, vy, tvx, tvy)
+		if ttt < 1.0/32 then
 			explode()
 		end
 

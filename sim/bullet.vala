@@ -4,6 +4,7 @@ using Vector;
 public enum RISC.BulletType {
 	SLUG = 1,
 	PLASMA = 2,
+	EXPLOSION = 3,
 }
 
 [Compact]
