@@ -378,7 +378,7 @@ namespace RISC {
 		public void pick(int x, int y) {
 			Vec2 p = W(vec2(x, y));
 			foreach (unowned Ship s in game.all_ships) {
-				if (s.physics.p.distance(p) < s.physics.r) {
+				if (s.physics.p.distance(p) < s.physics.r && !s.dead) {
 					picked = s;
 					return;
 				}
