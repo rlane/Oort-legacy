@@ -1,0 +1,46 @@
+{
+	"author": "Rich Lane", 
+	"name": "demo2", 
+	"description": "Space Invaders",
+	"initial_view_scale": 32,
+	"teams": [
+		{
+			"name": "green",
+			"filename": "examples/demo2.lua",
+			"color": { "b": 0, "g": 255, "r": 0 }, 
+			"ships": [
+				{ "class": "mothership", "x": 0, "y": 10 }
+			]
+		},
+		{
+			"name": "blue",
+			"filename": "examples/demo2.lua",
+			"color": { "b": 255, "g": 0, "r": 0 }, 
+			"ships": [
+				{ "class": "fighter", "x": -15, "y": -10 },
+				{ "class": "fighter", "x": -10, "y": -10 },
+				{ "class": "fighter", "x": -5, "y": -10 },
+				{ "class": "fighter", "x": 0, "y": -10 },
+				{ "class": "fighter", "x": 5, "y": -10 },
+				{ "class": "fighter", "x": 10, "y": -10 },
+				{ "class": "fighter", "x": 15, "y": -10 },
+
+				{ "class": "fighter", "x": -15, "y": -7 },
+				{ "class": "fighter", "x": -10, "y": -7 },
+				{ "class": "fighter", "x": -5, "y": -7 },
+				{ "class": "fighter", "x": 0, "y": -7 },
+				{ "class": "fighter", "x": 5, "y": -7 },
+				{ "class": "fighter", "x": 10, "y": -7 },
+				{ "class": "fighter", "x": 15, "y": -7 },
+
+				{ "class": "fighter", "x": -15, "y": -4 },
+				{ "class": "fighter", "x": -10, "y": -4 },
+				{ "class": "fighter", "x": -5, "y": -4 },
+				{ "class": "fighter", "x": 0, "y": -4 },
+				{ "class": "fighter", "x": 5, "y": -4 },
+				{ "class": "fighter", "x": 10, "y": -4 },
+				{ "class": "fighter", "x": 15, "y": -4 }
+			]
+		} 
+	]
+}
