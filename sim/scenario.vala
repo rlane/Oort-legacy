@@ -18,6 +18,7 @@ public errordomain RISC.ScenarioLoadError {
 public class RISC.ParsedScenario {
 	public string name;
 	public string description;
+	public double initial_view_scale;
 	public List<ParsedTeam> teams;
 	public List<ParsedTeam> user_teams;
 }
@@ -102,6 +103,17 @@ namespace RISC.Scenario {
 			throw new ScenarioParseError.WRONG_TYPE("description field must be a string");
 		}
 		scn.description = description.string;
+
+		unowned cJSON initial_view_scale = root.objectItem("initial_view_scale");
+		if (initial_view_scale != null) {
+			if (initial_view_scale.type != cJSON.Type.Number) {
+				throw new ScenarioParseError.WRONG_TYPE("initial_view_scale field must be a number");
+			} else {
+				scn.initial_view_scale = initial_view_scale.double;
+			}
+		} else {
+			scn.initial_view_scale = 16;
+		}
 
 		unowned cJSON teams = root.objectItem("teams");
 		if (teams == null || teams.type != cJSON.Type.Array) {

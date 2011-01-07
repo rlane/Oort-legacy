@@ -34,12 +34,12 @@ public class RISC.ShipGfxClass {
 
 namespace RISC {
 	class Renderer {
-		public bool render_all_debug_lines;
+		public bool render_all_debug_lines = false;
 		public int screen_width = 640;
 		public int screen_height = 480;
 		public double view_scale;
 		public Vec2 view_pos;
-		public unowned Ship picked;
+		public unowned Ship picked = null;
 		public Game game;
 
 		Rand prng;
@@ -60,11 +60,11 @@ namespace RISC {
 			*/
 		}
 
-		public Renderer(Game game) {
-			render_all_debug_lines = false;
-			prng = new Rand();
+		public Renderer(Game game, double initial_view_scale) {
 			this.game = game;
-			reset();
+			view_scale = initial_view_scale;
+			prng = new Rand();
+			view_pos = vec2(0,0);
 		}
 
 		public void init() {
@@ -76,12 +76,6 @@ namespace RISC {
 			glEnable(GL_LINE_SMOOTH);
 			glEnable(GL_POINT_SMOOTH);
 			glLineWidth(1.2f);
-		}
-
-		public void reset() {
-			view_pos = vec2(0,0);
-			view_scale = 16.0;
-			picked = null;
 		}
 
 		public void render() {

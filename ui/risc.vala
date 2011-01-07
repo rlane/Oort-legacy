@@ -252,9 +252,6 @@ namespace RISC {
 				return;
 
 			Renderer.static_init();
-			if (renderer != null) {
-				renderer.reset();
-			}
 
 			gldrawable.gl_end();
 		}
@@ -337,7 +334,7 @@ namespace RISC {
 		public void start_game_int(uint32 seed, ParsedScenario scn, string[] ais) throws FileError, ScenarioLoadError, ThreadError {
 			if (game != null) stop_game();
 			game = new Game(seed, scn, ais);
-			start_renderer(game);
+			start_renderer(game, scn.initial_view_scale);
 			game_state = GameState.RUNNING;
 			ticker = Thread.create(this.run, true);
 		}
@@ -351,8 +348,8 @@ namespace RISC {
 			renderer = null;
 		}
 
-		public void start_renderer(Game game) {
-			renderer = new Renderer(game);
+		public void start_renderer(Game game, double initial_view_scale) {
+			renderer = new Renderer(game, initial_view_scale);
 			GLContext glcontext = WidgetGL.get_gl_context(drawing_area);
 			GLDrawable gldrawable = WidgetGL.get_gl_drawable(drawing_area);
 
