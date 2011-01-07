@@ -19,11 +19,12 @@ public class RISC.Physics {
 
 	static double collision_time(Physics q1, Physics q2)
 	{
+		double r_sum = q1.r + q2.r;
 		Vec2 dv = q1.v.sub(q2.v);
 		Vec2 dp = q1.p.sub(q2.p);
+		if (dp.abs() <= r_sum) return 0;
 		double a = dv.dot(dv);
 		double b = 2*dp.dot(dv);
-		double r_sum = q1.r + q2.r;
 		double c = dp.dot(dp) - r_sum*r_sum;
 		double disc = b*b - 4*a*c;
 		if (disc < 0) {
@@ -33,7 +34,8 @@ public class RISC.Physics {
 		} else {
 			double t0 = (-b - Math.sqrt(disc))/(2*a);
 			double t1 = (-b + Math.sqrt(disc))/(2*a);
-			// XXX filter negative
+			if (t0 < 0) return t1;
+			if (t1 < 0) return t0;
 			return double.min(t0, t1);
 		}
 	}
