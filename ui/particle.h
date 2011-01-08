@@ -7,6 +7,7 @@ enum particle_type {
 	PARTICLE_HIT,
 	PARTICLE_PLASMA,
 	PARTICLE_ENGINE,
+	PARTICLE_EXPLOSION,
 };
 
 struct particle {

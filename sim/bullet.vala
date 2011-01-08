@@ -17,6 +17,6 @@ public class RISC.Bullet {
 
 	public void tick() {
 		ttl -= Game.TICK_LENGTH;
-		if (ttl <= 0) dead = true;
+		if (ttl < 0) dead = true;
 	}
 }

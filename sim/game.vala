@@ -60,8 +60,8 @@ public class RISC.Game {
 	public void tick() {
 		check_bullet_hits();
 		tick_physics();
-		tick_ships();
 		tick_bullets();
+		tick_ships();
 		ticks += 1;
 	}
 
@@ -102,8 +102,8 @@ public class RISC.Game {
 	}
 
 	public void handle_bullet_hit(Ship s, Bullet b, Vec2 cp) {
-		b.dead = true;
 		if (b.team != s.team) {
+			b.dead = true;
 			var dv = s.physics.v.sub(b.physics.v);
 			var hit_energy = 0.5 * b.physics.m * dv.abs() * dv.abs();
 			s.hull -= hit_energy;

@@ -41,6 +41,7 @@ namespace RISC {
 		public Vec2 view_pos;
 		public unowned Ship picked = null;
 		public Game game;
+		public bool render_explosion_rays = false;
 
 		Rand prng;
 
@@ -290,15 +291,15 @@ namespace RISC {
 				RISC.GLUtil.color32(0x444444FF);
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
-			} else if (b.type == RISC.BulletType.EXPLOSION) {
+			} else if (render_explosion_rays && b.type == RISC.BulletType.EXPLOSION) {
 				var dp = b.physics.v.scale(Game.TICK_LENGTH);
 				var sp1 = S(b.physics.p);
 				var sp2 = S(b.physics.p.add(dp));
 
 				glBegin(GL_LINE_STRIP);
-				RISC.GLUtil.color32(0xFFFFFFFFu);
+				RISC.GLUtil.color32(0xFFFFFF33u);
 				glVertex3d(sp1.x, sp1.y, 0);
-				RISC.GLUtil.color32(0xFFFFFF77u);
+				RISC.GLUtil.color32(0xFFFFFF22u);
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
 			}
@@ -318,6 +319,14 @@ namespace RISC {
 				} else if (c.type == ParticleType.ENGINE) {
 					glPointSize((float)(0.1*c.ticks_left*view_scale/32));
 					glColor4ub(255, 217, 43, 10 + c.ticks_left*5);
+				} else if (c.type == ParticleType.EXPLOSION) {
+					var s = c.v.abs();
+					glPointSize((float)((0.05 + 0.05*c.ticks_left)*view_scale/32));
+					GLubyte r = 255;
+					GLubyte g = (GLubyte)(255*double.min(1.0, s*5+c.ticks_left*0.1));
+					GLubyte b = 50;
+					GLubyte a = 10 + c.ticks_left*20;
+					glColor4ub(r, g, b, a);
 				}
 				glBegin(GL_POINTS);
 				glVertex3d(p.x, p.y, 0);
@@ -351,12 +360,14 @@ namespace RISC {
 
 		public void tick() {
 			foreach (unowned Bullet b in game.all_bullets) {
+				if (b.dead) continue;
 				if (b.type == BulletType.PLASMA) {
 					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
 							            double.min(b.physics.m/5,0.1), 3, 4, 6);
 				} else if (b.type == BulletType.EXPLOSION) {
-					Particle.shower(ParticleType.HIT, b.physics.p, vec2(0,0), vec2(0,0),
-							            0.2, 3, 10, 6);
+					if (prng.next_double() < 0.1) {
+						Particle.shower(ParticleType.EXPLOSION, b.physics.p, vec2(0,0), b.physics.v.scale(Game.TICK_LENGTH).scale(0.001), 0.1, 5, 17, 6);
+					}
 				}
 			}
 

@@ -7,6 +7,8 @@ namespace RISC {
 		PLASMA,
 		[CCode (cname = "PARTICLE_ENGINE")]
 		ENGINE,
+		[CCode (cname = "PARTICLE_EXPLOSION")]
+		EXPLOSION,
 	}
 
 	[CCode (cname = "struct particle", destroy_function = "", cheader_filename = "particle.h")]

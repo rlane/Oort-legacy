@@ -22,12 +22,6 @@ ships.fighter = {
 			cost = 0.3,
 		}
 	},
-	explosion = {
-		count = 16,
-		mass = 0.1,
-		velocity = 2,
-		ttl = 1,
-	},
 	count_for_victory = true,
 	energy = {
 		initial = 20,
@@ -66,12 +60,6 @@ ships.mothership = {
 		flak2 = flak,
 		flak3 = flak,
 	},
-	explosion = {
-		count = 256,
-		mass = 1,
-		velocity = 2,
-		ttl = 2,
-	},
 	count_for_victory = true,
 	energy = {
 		initial = 500,
@@ -87,12 +75,7 @@ ships.missile = {
 	max_acc = 10,
 	cost = 60,
 	guns = {},
-	explosion = {
-		count = 128,
-		mass = 0.1,
-		velocity = 40,
-		ttl = 0.5,
-	},
+	warhead = 40,
 	count_for_victory = false,
 	energy = {
 		initial = 20,
@@ -108,12 +91,7 @@ ships.little_missile = {
 	max_acc = 20,
 	cost = 40,
 	guns = {},
-	explosion = {
-		count = 64,
-		mass = 0.01,
-		velocity = 10,
-		ttl = 1,
-	},
+	warhead = 30,
 	count_for_victory = false,
 	energy = {
 		initial = 10,

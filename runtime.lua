@@ -111,20 +111,22 @@ end
 
 function explode()
 	local x, y = sys_position()
-	local vx, vy = sys_velocity()
-	local i
-	local n = 128
-	local exp = my_ship.explosion
+	local e = _energy + (my_ship.warhead or 0)
+	local ray_energy = 0.1
+	local n = math.floor(e/ray_energy)
+	local len = 10
+	local v = len/tick_length
+	local m = 2*ray_energy/(v*v)
+	local da = 2*math.pi/n
+	local ttl = tick_length
 
-	for i = 1,exp.count do
-		local a, v, m, ttl, vx2, vy2
-		a = math.random()*math.pi*2
-		v = math.random()*exp.velocity
-		vx2 = math.cos(a)*v
-		vy2 = math.sin(a)*v
-		m = exp.mass
-		ttl = tick_length*2
-		sys_create_bullet(x,y,vx2,vy2,m,ttl,bullets.explosion)
+	local a = 0
+	local i
+	for i = 1,n do
+		local vx = math.cos(a)*v
+		local vy = math.sin(a)*v
+		sys_create_bullet(x,y,vx,vy,m,ttl,bullets.explosion)
+		a = a + da
 	end
 
 	sys_die()
