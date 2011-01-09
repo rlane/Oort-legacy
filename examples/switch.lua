@@ -2,8 +2,6 @@ local my_class = class
 local my_ship = ships[my_class]
 
 if my_class == "fighter" then
-	thrust(math.pi/2, 1)
-
 	local i = math.random(1,256)
 	local t = nil
 	local max_target_distance = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl*1.5
@@ -44,7 +42,7 @@ if my_class == "fighter" then
 		end
 
 		local follow
-		if follow_target and distance(x,y,0,0) < 50 then
+		if follow_target and distance(x,y,0,0) < 3000 then
 			follow = follow_target
 		else
 			follow = nil
@@ -92,8 +90,7 @@ if my_class == "fighter" then
 
 		if burn_time == 0 then
 			local dist = distance(x, y, follow_x, follow_y)
-			local speed = 1 + 1.0*math.sqrt(dist)
-			local a = lead(x, y, follow_x, follow_y, vx, vy, follow_vx, follow_vy, 10, math.huge)
+			local a = lead(x, y, follow_x, follow_y, vx, vy, follow_vx, follow_vy, my_ship.max_acc, math.huge)
 			if a then
 				local k = math.random(10)
 				if k < 7 then
@@ -110,7 +107,7 @@ if my_class == "fighter" then
 				end
 			else
 				local a = angle_between(vx, vy, 0, 0)
-				thrust(a, 10)
+				thrust(a, my_ship.max_acc)
 				burn_time = 10
 			end
 		else

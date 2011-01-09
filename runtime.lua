@@ -114,7 +114,7 @@ function explode()
 	local e = _energy + (my_ship.warhead or 0)
 	local ray_energy = 0.1
 	local n = math.floor(e/ray_energy)
-	local len = 10
+	local len = 800
 	local v = len/tick_length
 	local m = 2*ray_energy/(v*v)
 	local da = 2*math.pi/n

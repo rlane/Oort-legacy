@@ -112,7 +112,7 @@ namespace RISC.Scenario {
 				scn.initial_view_scale = initial_view_scale.double;
 			}
 		} else {
-			scn.initial_view_scale = 16;
+			scn.initial_view_scale = 0.2;
 		}
 
 		unowned cJSON teams = root.objectItem("teams");
@@ -203,7 +203,7 @@ namespace RISC.Scenario {
 
 				var pship = new ParsedShip();
 				pship.class_name = class_name.string;
-				pship.p = vec2(x_obj.double, y_obj.double);
+				pship.p = vec2(x_obj.double*80, y_obj.double*80);
 				pteam.ships.append((owned)pship);
 
 				j++;

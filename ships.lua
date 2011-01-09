@@ -7,15 +7,15 @@ bullets = {
 ships = {}
 
 ships.fighter = {
-	radius = 4/32,
+	radius = 10,
 	hull = 100,
-	max_acc = 10,
+	max_acc = 800,
 	cost = 200,
 	guns = {
 		main = {
 			bullet_type = bullets.slug,
 			bullet_mass = 0.001,
-			bullet_velocity = 50,
+			bullet_velocity = 3000,
 			bullet_ttl = 0.2,
 			spread = 0.1,
 			reload_time = 0.03,
@@ -33,7 +33,7 @@ ships.fighter = {
 
 local flak = {
 	bullet_mass = 0.01,
-	bullet_velocity = 25,
+	bullet_velocity = 2000,
 	bullet_ttl = 0.5,
 	bullet_type = bullets.slug,
 	spread = 0.2,
@@ -42,14 +42,14 @@ local flak = {
 }
 
 ships.mothership = {
-	radius = 1,
+	radius = 80,
 	hull = 10000,
-	max_acc = 2,
+	max_acc = 160,
 	cost = 2000,
 	guns = {
 		main = {
 			bullet_mass = 10,
-			bullet_velocity = 5,
+			bullet_velocity = 300,
 			bullet_ttl = 10,
 			bullet_type = bullets.plasma,
 			spread = 0.03,
@@ -70,9 +70,9 @@ ships.mothership = {
 }
 
 ships.missile = {
-	radius = 1/32,
+	radius = 2.5,
 	hull = 1.0,
-	max_acc = 10,
+	max_acc = 800,
 	cost = 60,
 	guns = {},
 	warhead = 40,
@@ -86,9 +86,9 @@ ships.missile = {
 }
 
 ships.little_missile = {
-	radius = 0.5/32,
+	radius = 1.0,
 	hull = 0.5,
-	max_acc = 20,
+	max_acc = 1600,
 	cost = 40,
 	guns = {},
 	warhead = 30,

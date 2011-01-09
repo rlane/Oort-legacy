@@ -323,7 +323,7 @@ namespace RISC {
 					var s = c.v.abs();
 					glPointSize((float)((0.05 + 0.05*c.ticks_left)*view_scale/32));
 					GLubyte r = 255;
-					GLubyte g = (GLubyte)(255*double.min(1.0, s*5+c.ticks_left*0.1));
+					GLubyte g = (GLubyte)(255*double.min(1.0, 0.0625*s+c.ticks_left*0.1));
 					GLubyte b = 50;
 					GLubyte a = 10 + c.ticks_left*20;
 					glColor4ub(r, g, b, a);
@@ -363,21 +363,22 @@ namespace RISC {
 				if (b.dead) continue;
 				if (b.type == BulletType.PLASMA) {
 					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
-							            double.min(b.physics.m/5,0.1), 3, 4, 6);
+							            double.min(b.physics.m/5,0.1)*80, 3, 4, 6);
 				} else if (b.type == BulletType.EXPLOSION) {
 					if (prng.next_double() < 0.1) {
-						Particle.shower(ParticleType.EXPLOSION, b.physics.p, vec2(0,0), b.physics.v.scale(Game.TICK_LENGTH).scale(0.001), 0.1, 5, 17, 6);
+						Particle.shower(ParticleType.EXPLOSION, b.physics.p, vec2(0,0), b.physics.v.scale(Game.TICK_LENGTH).scale(0.001), 8, 5, 17, 6);
 					}
 				}
 			}
 
 			foreach (unowned BulletHit hit in game.bullet_hits) {
-				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 0.1, 1, 20, uint16.max((uint16)(hit.e),1));
+				var n = uint16.max((uint16)(hit.e/80),1);
+				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
 			}
 
 			foreach (unowned Ship s in game.all_ships) {
 				if (s.physics.thrust.abs() != 0) {
-					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), s.physics.thrust.scale(-Game.TICK_LENGTH), 0.1, 2, 4, 8);
+					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), s.physics.thrust.scale(-Game.TICK_LENGTH), 8, 2, 4, 8);
 				}
 
 				double v_angle = atan2(s.physics.v.y, s.physics.v.x); // XXX reversed?
@@ -413,8 +414,8 @@ namespace RISC {
 
 		// XXX const
 		double zoom_force = 0.1;
-		double min_view_scale = 6;
-		double max_view_scale = 150;
+		double min_view_scale = 0.075;
+		double max_view_scale = 1.875;
 
 		public void zoom(int x, int y, double f) {
 			if (view_scale != min_view_scale && view_scale != max_view_scale) {
