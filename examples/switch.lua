@@ -94,15 +94,15 @@ if my_class == "fighter" then
 			if a then
 				local k = math.random(10)
 				if k < 7 then
-					thrust(a, my_ship.max_acc)
-					burn_time = 2
+					thrust(a, my_ship.max_acc/3)
+					burn_time = 8
 				elseif k < 8 then
 					a = normalize_angle(a + R(0.5,1) * sign(R(-1,1)))
 					thrust(a, my_ship.max_acc)
 					burn_time = 2
 				else
 					a = normalize_angle(a + (math.pi/2) * sign(R(-1,1)))
-					thrust(a, my_ship.max_acc)
+					thrust(a, my_ship.max_acc/2)
 					burn_time = 4
 				end
 			else

@@ -1,12 +1,19 @@
+-- constants
 local my_class = class
+local my_ship = ships[my_class]
 local ticks_per_second = 32
 local tick_length = 1.0/ticks_per_second
-local my_ship = ships[my_class]
+local exhaust_velocity = 10e3
+local debug_preemption = false
+
 local last_fire_ticks = {}
 local _energy = my_ship.energy.initial
 local energy_tick_rate = my_ship.energy.rate * tick_length
-local debug_preemption = false
 local ticks = 0
+
+-- engine consumption per tick
+local engine_power_cost = 0
+local engine_mass_cost = 0
 
 function energy()
 	return _energy
@@ -21,6 +28,10 @@ function thrust(a,acc)
 	if acc > my_ship.max_acc then
 		acc = my_ship.max_acc
 	end
+
+	local dv = acc*tick_length
+	engine_mass_cost = my_ship.mass*dv/exhaust_velocity
+	engine_power_cost = 0.5*engine_mass_cost*exhaust_velocity^2
 
 	sys_thrust(a,acc)
 end
@@ -45,7 +56,7 @@ function fire(name, a)
 		last_fire_ticks[name] = ticks
 	end
 
-	new_energy = _energy - gun.cost
+	_energy = _energy - gun.cost
 
 	x, y = sys_position()
 	v = gun.bullet_velocity
@@ -111,7 +122,8 @@ end
 
 function explode()
 	local x, y = sys_position()
-	local e = _energy + (my_ship.warhead or 0)
+	--local e = _energy + (my_ship.warhead or 0)
+	local e = my_ship.warhead or 0
 	local ray_energy = 0.1
 	local n = math.floor(e/ray_energy)
 	local len = 800
@@ -176,6 +188,12 @@ function debug_count_hook()
 end
 
 function tick_hook()
+	if _energy < engine_power_cost then
+		--print(my_class, " engine cost too high:", engine_power_cost, " > ", _energy)
+		thrust(0,0)
+	end
+	_energy = _energy - engine_power_cost
+
 	_energy = _energy + energy_tick_rate
 	if _energy > my_ship.energy.limit then
 		_energy = my_ship.energy.limit
