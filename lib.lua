@@ -24,6 +24,14 @@ function angle_between(x1, y1, x2, y2)
 	return a
 end
 
+function angle_diff(a, b)
+	local c = normalize_angle(b - a)
+	if c > math.pi then
+		c = c - two_pi
+	end
+	return c
+end
+
 -- a*x^2 + b*x + c
 function smallest_positive_root_of_quadratic_equation(a, b, c)
 	z = math.sqrt(b^2 - 4*a*c)

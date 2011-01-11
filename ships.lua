@@ -96,17 +96,17 @@ ships.mothership = {
 
 ships.missile = {
 	radius = 2.5,
-	hull = 1.0,
+	hull = 45e3,
 	mass = 500,
 	max_acc = 100,
 	cost = 10e9,
 	guns = {},
-	warhead = 40,
+	warhead = 100e3,
 	count_for_victory = false,
 	energy = {
-		initial = 10e9,
+		initial = 2e9,
 		rate = 0,
-		limit = 10e9,
+		limit = 2e9,
 	},
 	spawnable = {}
 }
@@ -114,16 +114,16 @@ ships.missile = {
 ships.little_missile = {
 	radius = 1.0,
 	mass = 100,
-	hull = 0.5,
+	hull = 45e3,
 	max_acc = 150,
 	cost = 3e9,
 	guns = {},
-	warhead = 30,
+	warhead = 300e3,
 	count_for_victory = false,
 	energy = {
-		initial = 3e9,
+		initial = 1e9,
 		rate = 0,
-		limit = 3e9,
+		limit = 1e9,
 	},
 	spawnable = {}
 }

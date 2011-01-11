@@ -4,7 +4,7 @@ Limit reaction mass / include in ship mass
 Add mass flow argument to thrust()
 Add lasers
 Human display units
-Fix exhaust/hit/explosion scaling
+Fix exhaust/hit scaling
 Fix scenario scale
 Symmetric basic scenario
 Save previous pause value when taking screenshot

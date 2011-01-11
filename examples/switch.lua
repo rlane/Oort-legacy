@@ -220,7 +220,7 @@ elseif my_class == "missile" or my_class == "little_missile" then
 	end
 
 	thrust(math.random()*2*math.pi, my_ship.max_acc)
-	sleep(16)
+	sleep(8)
 
 	while true do
 		local msg = recv()
@@ -250,13 +250,15 @@ elseif my_class == "missile" or my_class == "little_missile" then
 			explode()
 		end
 
-		local v = distance(0, 0, vx, vy)
-		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.max_acc+v, math.huge)
-		if a then
-			thrust(a, my_ship.max_acc)
-		else
-			explode()
-		end
+		local va = angle_between(0, 0, vx, vy)
+		local a = angle_between(x, y, tx, ty)
+		local da = -angle_diff(a, va)
+		local acc = 20*(da/math.pi)*my_ship.max_acc
+		local accx = acc*math.cos(va+math.pi/2) + my_ship.max_acc*math.cos(va)
+		local accy = acc*math.sin(va+math.pi/2) + my_ship.max_acc*math.sin(va)
+		local thrust_angle = angle_between(0, 0, accx, accy)
+		if da > math.pi/8 and energy() == 0 then explode() end
+		thrust(thrust_angle, my_ship.max_acc)
 
 		yield()
 	end
