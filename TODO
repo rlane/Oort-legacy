@@ -1,7 +1,14 @@
 Next:
+Improve picking
+Limit reaction mass / include in ship mass
+Add mass flow argument to thrust()
+Add lasers
+Human display units
+Fix exhaust/hit/explosion scaling
+Fix scenario scale
+Symmetric basic scenario
 Save previous pause value when taking screenshot
 Fix switch.lua thrusting
-Thrust consumes energy
 Universe boundary
 Randomize default seed in new game dialog
 Think about lua scenarios
