@@ -231,6 +231,8 @@ Single-step: enter
 
 Take a screenshot: 'p'
 
+Toggle FPS display: 'f'
+
 You can click on a ship to "pick" it. Data about the currently picked ship is
 shown in the lower-left corner of the display, and any debug lines this ship
 has drawn will be shown.

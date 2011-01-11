@@ -33,13 +33,17 @@ namespace RISC {
 		public bool paused;
 
 		private DrawingArea drawing_area;
-		private bool single_step;
-		private unowned Team winner;
+		private bool single_step = false;
+		private bool show_fps = false;
+		private unowned Team winner = null;
 		private Renderer renderer;
 		private Mutex tick_lock;
 		private unowned Thread ticker;
 		private bool shutting_down = false;
 		private Game game;
+
+		private long frame_usecs = 0;
+		private long sample_usecs = 0;
 
 		enum GameState {
 			DEMO,
@@ -144,15 +148,19 @@ namespace RISC {
 		private void *run() {
 			long usecs_target = (long) (million*Game.TICK_LENGTH);
 			TimeVal last = TimeVal();
+			TimeVal sample = last;
 			while (true) {
 				if (shutting_down) break;
 				tick_lock.lock();
 				tick();
 				tick_lock.unlock();
 				TimeVal now = TimeVal();
+				frame_usecs = (7*frame_usecs + (now.tv_sec-last.tv_sec)*million + (now.tv_usec - last.tv_usec))/8;
+				sample_usecs = (7*sample_usecs + (now.tv_sec-sample.tv_sec)*million + (now.tv_usec - sample.tv_usec))/8;
+				sample = TimeVal();
 				long usecs = (now.tv_sec-last.tv_sec)*million + (now.tv_usec - last.tv_usec);
 				Thread.usleep(long.max(usecs_target - usecs, 1000));
-				last = now;
+				last = TimeVal();
 			}
 			return null;
 		}
@@ -223,15 +231,20 @@ namespace RISC {
 
 			renderer.render();
 			
+			RISC.GLUtil.color32((uint32)0xFFFFFFAA);
+
+			if (show_fps && frame_usecs != 0 && sample_usecs != 0) {
+				RISC.GLUtil.printf(rect.width-9*9, rect.height-15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
+				RISC.GLUtil.printf(rect.width-15*9, rect.height-25, "Max FPS: %.1f", (1000*1000.0)/frame_usecs);
+			}
+
 			switch (game_state) {
 			case GameState.DEMO:
-				RISC.GLUtil.color32((uint32)0xFFFFFFAA);
 				RISC.GLUtil.printf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
 				break;
 			case GameState.RUNNING:
 				break;
 			case GameState.FINISHED:
-				RISC.GLUtil.color32((uint32)0xFFFFFFAA);
 				RISC.GLUtil.printf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
 				break;
 			}
@@ -280,6 +293,9 @@ namespace RISC {
 					break;
 				case "p":
 					show_screenshot_dialog();
+					break;
+				case "f":
+					show_fps = !show_fps;
 					break;
 				case "Escape":
 					shutdown();
