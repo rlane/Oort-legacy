@@ -1,0 +1,25 @@
+{
+	"name": "Challenge 4",
+	"author": "Rich Lane",
+	"description": "Missiles",
+	"teams": [
+
+		{
+			"name": "green",
+			"color": { "r": 0, "g": 255, "b": 0 },
+			"ships": [
+				{ "class": "fighter", "x": -20, "y": 0 }
+			]
+		},
+
+		{
+			"name": "eggplant",
+			"filename": "examples/challenge04.lua",
+			"color": { "r": 124, "g": 0, "b": 93 },
+			"ships": [
+				{ "class": "small_target", "x": 20, "y": 10 }
+			]
+		}
+
+	]
+}

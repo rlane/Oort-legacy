@@ -127,3 +127,19 @@ ships.little_missile = {
 	},
 	spawnable = {}
 }
+
+ships.small_target = {
+	radius = 10.0,
+	mass = 1,
+	hull = 1e6,
+	max_acc = 1000,
+	cost = 0,
+	guns = {},
+	count_for_victory = true,
+	energy = {
+		initial = 1e12,
+		rate = 1e12,
+		limit = 1e12,
+	},
+	spawnable = {}
+}

@@ -66,6 +66,7 @@ challenge: all
 	./dedicated/risc_dedicated scenarios/challenge01.json solutions/challenge01.lua
 	./dedicated/risc_dedicated scenarios/challenge02.json solutions/challenge02.lua
 	./dedicated/risc_dedicated scenarios/challenge03.json solutions/challenge03.lua
+	./dedicated/risc_dedicated scenarios/challenge04.json solutions/challenge04.lua
 
 run: all
 	./dedicated/risc_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
