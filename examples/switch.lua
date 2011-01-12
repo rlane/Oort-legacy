@@ -57,7 +57,7 @@ if my_class == "fighter" then
 			follow_x, follow_y = follow:position()
 			follow_vx, follow_vy = follow:velocity()
 		end
-		debug_square(follow_x, follow_y, 0.5)
+		debug_square(follow_x, follow_y, 2*my_ship.radius)
 
 		local urgent_target = 
 			      min_by(sensor_contacts{ distance_lt = max_target_distance, class = "missile", enemy = true }, fire_score) or
@@ -76,7 +76,7 @@ if my_class == "fighter" then
 		if fire_target then
 			local tx, ty = fire_target:position()
 			local tvx, tvy = fire_target:velocity()
-			debug_diamond(tx, ty, 0.5)
+			debug_diamond(tx, ty, my_ship.radius)
 			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
 			if a then
 				fire("main", a)
@@ -89,8 +89,7 @@ if my_class == "fighter" then
 		end
 
 		if burn_time == 0 then
-			local dist = distance(x, y, follow_x, follow_y)
-			local a = lead(x, y, follow_x, follow_y, vx, vy, follow_vx, follow_vy, my_ship.max_acc, math.huge)
+			local a = angle_between(x, y, follow_x, follow_y)
 			if a then
 				local k = math.random(10)
 				if k < 7 then
@@ -257,7 +256,7 @@ elseif my_class == "missile" or my_class == "little_missile" then
 		local accx = acc*math.cos(va+math.pi/2) + my_ship.max_acc*math.cos(va)
 		local accy = acc*math.sin(va+math.pi/2) + my_ship.max_acc*math.sin(va)
 		local thrust_angle = angle_between(0, 0, accx, accy)
-		if da > math.pi/8 and energy() == 0 then explode() end
+		if da > math.pi/8 and energy() < 10e6 then explode() end
 		thrust(thrust_angle, my_ship.max_acc)
 
 		yield()
