@@ -7,6 +7,7 @@ local exhaust_velocity = 10e3
 local debug_preemption = false
 
 local last_fire_ticks = {}
+local last_spawn_ticks = {}
 local _energy = my_ship.energy.initial
 local energy_tick_rate = my_ship.energy.rate * tick_length
 local ticks = 0
@@ -93,13 +94,6 @@ function recv()
 	return sys_recv()
 end
 
-function check_spawnable(class)
-	for i,v in ipairs(my_ship.spawnable) do
-		if v == class then return true end
-	end
-	return false
-end
-
 function spawn(class, orders)
 	local ship = ships[class]
 
@@ -107,15 +101,23 @@ function spawn(class, orders)
 		error(string.format("class %s does not exist", class))
 	end
 
-	if not check_spawnable(class) then
+	local cooldown_time = my_ship.spawnable[class]
+	if not cooldown_time then
 		error(string.format("class %s is not spawnable by %s", class, my_class))
 	end
 
 	if _energy < ship.cost then
 		return
-	else
-		_energy = _energy - ship.cost
 	end
+
+	local last_spawn_tick = last_spawn_ticks[class]
+	if last_spawn_tick and last_spawn_tick + cooldown_time*ticks_per_second > ticks then
+		return
+	else
+		last_spawn_ticks[class] = ticks
+	end
+
+	_energy = _energy - ship.cost
 
 	sys_spawn(class, orders)
 end

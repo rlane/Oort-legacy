@@ -53,7 +53,9 @@ ships.fighter = {
 		rate = 5e9,
 		limit = 15e9,
 	},
-	spawnable = { 'little_missile' }
+	spawnable = {
+		little_missile = 5,
+	}
 }
 
 local flak = {
@@ -93,7 +95,11 @@ ships.mothership = {
 		rate = 5e9,
 		limit = 100e9,
 	},
-	spawnable = { 'little_missile', 'missile', 'fighter' }
+	spawnable = {
+		little_missile = 1,
+		missile = 2,
+		fighter = 5
+	}
 }
 
 ships.missile = {
