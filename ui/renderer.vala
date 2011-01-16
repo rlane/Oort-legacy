@@ -404,13 +404,15 @@ namespace RISC {
 		// XXX find ship with minimum distance, allow 5 px error
 		public void pick(int x, int y) {
 			Vec2 p = W(vec2(x, y));
+			picked = null;
+			double min_dist = 10/view_scale;
 			foreach (unowned Ship s in game.all_ships) {
-				if (s.physics.p.distance(p) < s.physics.r && !s.dead) {
+				var dist = s.physics.p.distance(p);
+				if (!s.dead && ((dist < min_dist) || (picked == null && dist < s.physics.r))) {
 					picked = s;
-					return;
+					if (dist < min_dist) min_dist = dist;
 				}
 			}
-			picked = null;
 		}
 
 		// XXX const
