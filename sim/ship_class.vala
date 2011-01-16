@@ -6,6 +6,8 @@ public class RISC.ShipClass {
 	public double radius;
 	public double hull;
 	public bool count_for_victory;
+	public double mass;
+	public double reaction_mass;
 
 	static HashTable<string,ShipClass> ship_classes;
 
@@ -36,6 +38,8 @@ public class RISC.ShipClass {
 			L.get_field(-1, "count_for_victory");
 			c.count_for_victory = L.to_boolean(-1);
 			L.pop(1);
+			c.mass = L.get_field_number(-1, "mass");
+			c.reaction_mass = L.get_field_number(-1, "reaction_mass");
 			ship_classes.insert(name, (owned)c);
 			L.pop(1);
 		}

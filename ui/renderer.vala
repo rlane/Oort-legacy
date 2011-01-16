@@ -336,7 +336,7 @@ namespace RISC {
 
 		private void render_picked_info(Ship s) {
 			int x = 15;
-			int y = 82;
+			int y = 94;
 			int dy = 12;
 			GLUtil.color32((uint32)0xAAFFFFAA);
 			GLUtil.printf(x, y-0*dy, "%s %.8x", s.class.name, s.api_id);
@@ -345,6 +345,7 @@ namespace RISC {
 			GLUtil.printf(x, y-3*dy, @"velocity: $(s.physics.v) %0.3g", s.physics.v.abs());
 			GLUtil.printf(x, y-4*dy, @"thrust: $(s.physics.thrust) %0.3g", s.physics.thrust.abs());
 			GLUtil.printf(x, y-5*dy, "energy: %0.3g", s.get_energy());
+			GLUtil.printf(x, y-6*dy, "reaction mass: %0.3g", s.reaction_mass);
 		}
 
 		public void reshape(int width, int height) {

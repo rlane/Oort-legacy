@@ -59,6 +59,7 @@ public class RISC.Ship {
 	public Gfx gfx;
 	public Debug debug;
 	public weak Game game;
+	public double reaction_mass;
 
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);
@@ -72,7 +73,8 @@ public class RISC.Ship {
 		this.game = game;
 		this.class = klass;
 		this.team = team;
-		physics = new Physics() { p=p, p0=p, v=v, thrust=vec2(0,0), m=1, r=klass.radius };
+		this.reaction_mass = klass.reaction_mass;
+		physics = new Physics() { p=p, p0=p, v=v, thrust=vec2(0,0), m=reaction_mass+klass.mass, r=klass.radius };
 		prng = new Rand.with_seed(seed);
 		mq = new Queue<Msg>();
 		api_id = prng.next_int();
@@ -252,6 +254,12 @@ public class RISC.Ship {
 		L.push_number(s.physics.v.x);
 		L.push_number(s.physics.v.y);
 		return 2;
+	}
+
+	public static int api_reaction_mass(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		L.push_number(s.reaction_mass);
+		return 1;
 	}
 
 	public static int api_create_bullet(LuaVM L) {

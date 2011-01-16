@@ -152,6 +152,7 @@ sandbox_api = {
 	thrust = thrust,
 	position = sys_position,
 	velocity = sys_velocity,
+	reaction_mass = reaction_mass,
 	energy = energy,
 	fire = fire,
 	yield = yield,
