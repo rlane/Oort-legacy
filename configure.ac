@@ -45,15 +45,6 @@ else
 fi
 AC_SUBST(RISC_EXTRA_LDFLAGS)
 
-AC_ARG_WITH(luajit, Use luajit)
-if test "x${with_luajit}" = "xyes"; then
-	PKG_CHECK_MODULES(RISC_LUA, luajit)
-else
-	PKG_CHECK_MODULES(RISC_LUA, lua)
-fi
-AC_SUBST(RISC_LUA_CFLAGS)
-AC_SUBST(RISC_LUA_LIBS)
-
 AC_ARG_WITH(valgrind, Use valgrind)
 if test "x${with_valgrind}" = "xyes"; then
 	PKG_CHECK_MODULES(VALGRIND, valgrind)
@@ -71,6 +62,7 @@ AC_CONFIG_FILES([
 	vapi/Makefile
 	test/Makefile
 	cjson/Makefile
+	luajit_build/Makefile
 ])
 
 AC_OUTPUT

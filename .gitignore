@@ -53,3 +53,4 @@ ui/risc.c
 sim/paths.c
 
 sim/librisc-1.0.a
+luajit_build/luajit-stamp

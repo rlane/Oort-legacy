@@ -2,11 +2,11 @@ NULL =
 
 AM_CFLAGS = \
 	$(RISC_CFLAGS) \
-	$(RISC_LUA_CFLAGS) \
 	$(VALGRIND_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/cjson \
+	-I $(top_srcdir)/luajit/src \
 	$(NULL)
 
 AM_VALAFLAGS = \
@@ -41,8 +41,8 @@ libsim_a_SOURCES = \
 
 noinst_HEADERS = util.h risc.h risc.vapi util.vapi
 
-libsim_a_LDFLAGS = $(RISC_LIBS) $(RISC_LUA_LIBS)
-libsim_a_LIBADD = $(top_srcdir)/cjson/libcjson.a
+libsim_a_LDFLAGS = $(RISC_LIBS)
+libsim_a_LIBADD = $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
 
 risc.h: libsim_a_vala.stamp
 

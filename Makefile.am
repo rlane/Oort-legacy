@@ -5,6 +5,7 @@ AUTOMAKE_OPTIONS = foreign
 #Build in these directories:
 
 SUBDIRS = \
+	luajit_build \
 	cjson \
 	vector \
 	sim \
