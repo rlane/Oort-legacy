@@ -16,13 +16,13 @@ RISC uses the standard autotools build system. It is known to compile on Linux
 and OS X, and cross-compile to Windows using mingw32. Required packages for
 various package managers are listed below:
 
-- Arch Linux: glib2 luajit2 gtk2 gtkglext glew pkgconfig vala
+- Arch Linux: glib2 gtk2 gtkglext glew pkgconfig vala
 
-- Ubuntu 10.10: build-essential valac pkg-config libglib2.0-dev libluajit-5.1-dev libglew1.5-dev libgtk2.0-dev libgtkglext1-dev
+- Ubuntu 10.10: build-essential valac pkg-config libglib2.0-dev libglew1.5-dev libgtk2.0-dev libgtkglext1-dev
 
-- Arch Linux/mingw32: mingw32-gcc mingw32-glib2 mingw32-gtk2 mingw32-lua mingw32-gtkglext mingw32-glew zip vala
+- Arch Linux/mingw32: mingw32-gcc mingw32-glib2 mingw32-gtk2 mingw32-gtkglext mingw32-glew zip vala
 
-- OS X MacPorts: gcc45 glew gtk2 gtkglext lua glib2-devel
+- OS X MacPorts: gcc45 glew gtk2 gtkglext glib2-devel
 
 Gameplay
 --------
