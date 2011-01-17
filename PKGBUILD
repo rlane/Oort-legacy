@@ -1,7 +1,7 @@
 # Maintainer: Rich Lane <rlane@club.cc.cmu.edu>
 
 pkgname=risc-git
-pkgver=20101226
+pkgver=20110116
 pkgrel=1
 pkgdesc="A space fleet programming game"
 arch=('i686' 'x86_64')
@@ -32,6 +32,8 @@ build() {
   rm -rf "$srcdir/$_gitname-build"
   git clone "$srcdir/$_gitname" "$srcdir/$_gitname-build" -b $_gitbranch
   cd "$srcdir/$_gitname-build"
+	git submodule init
+	git submodule update
 
   ./autogen.sh && ./configure --prefix=/usr && make
 }
