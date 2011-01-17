@@ -6,5 +6,9 @@ manifest-dist:
 	find ../luajit -path ../luajit/.git -prune -o -type f -a -print > manifest-dist
 
 luajit-stamp:
-	cd $(top_srcdir)/luajit && make amalg
+if MINGW32
+	cd $(top_srcdir)/luajit && make BUILDMODE=static Q= HOST_CC="gcc -m32" CROSS=`echo $(CC) | sed -e 's/gcc//'` TARGET_SYS="Windows" clean all
+else
+	cd $(top_srcdir)/luajit && make BUILDMODE=static Q= clean all
+endif
 	touch luajit-stamp
