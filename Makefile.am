@@ -58,10 +58,10 @@ DISTCLEANFILES = \
 	$(NULL)
 
 benchmark: all
-	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/risc_dedicated scenarios/benchmark.json
+	RISC_NUM_THREADS=0 valgrind --tool=callgrind --collect-atstart=no ./dedicated/risc_dedicated -s 1 --max-ticks 20 scenarios/benchmark.json
 
-benchmark-threaded: all
-	RISC_SEED=0 RISC_NUM_THREADS=0 RISC_MAX_TICKS=20 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/risc_dedicated scenarios/benchmark.json
+benchmark-cache: all
+	RISC_NUM_THREADS=0 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/risc_dedicated -s 1 --max-ticks 20 scenarios/benchmark.json
 
 challenge: all
 	./dedicated/risc_dedicated scenarios/challenge01.json solutions/challenge01.lua
