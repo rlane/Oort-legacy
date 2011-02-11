@@ -237,6 +237,10 @@ elseif my_class == "missile" or my_class == "little_missile" then
 			explode()
 		end
 
+		if energy() < 0.01*my_ship.energy.limit then
+			explode()
+		end
+
 		local tx, ty = t:position()
 		local tvx, tvy = t:velocity()
 
