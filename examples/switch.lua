@@ -88,7 +88,9 @@ if my_class == "fighter" then
 			--debug_box_off()
 		end
 
-		if burn_time == 0 then
+		if distance(0, 0, vx, vy) > my_ship.max_acc*2 then
+			thrust(angle_between(vx, vy, 0, 0), my_ship.max_acc);
+		elseif burn_time <= 0 then
 			local a = angle_between(x, y, follow_x, follow_y)
 			if a then
 				local k = math.random(10)
