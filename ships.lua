@@ -113,9 +113,9 @@ ships.missile = {
 	warhead = 1e6,
 	count_for_victory = false,
 	energy = {
-		initial = 2e9,
+		initial = 1e9,
 		rate = 0,
-		limit = 2e9,
+		limit = 1e9,
 	},
 	spawnable = {}
 }
@@ -131,9 +131,9 @@ ships.little_missile = {
 	warhead = 300e3,
 	count_for_victory = false,
 	energy = {
-		initial = 1e9,
+		initial = 3e8,
 		rate = 0,
-		limit = 1e9,
+		limit = 3e8,
 	},
 	spawnable = {}
 }
