@@ -138,7 +138,7 @@ namespace RISC {
 		}
 
 		void render_mothership(Ship s) {
-			int depth = int.min(int.max((int)Math.log2(view_scale), 2), 8);
+			int depth = int.min(int.max((int)Math.log2(view_scale*100), 2), 8);
 			GLUtil.color32(s.team.color | 0xEE);
 			glPushMatrix();
 			glScaled(0.5, 0.3, 0.3);
