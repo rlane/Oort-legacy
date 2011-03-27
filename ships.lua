@@ -72,7 +72,7 @@ ships.mothership = {
 	radius = 80,
 	mass = 1e6,
 	reaction_mass = 1e6,
-	hull = 4.5e6,
+	hull = 50e6,
 	max_acc = 10,
 	cost = 50e9,
 	guns = {
@@ -91,9 +91,9 @@ ships.mothership = {
 	},
 	count_for_victory = true,
 	energy = {
-		initial = 50e9,
-		rate = 5e9,
-		limit = 100e9,
+		initial = 100e9,
+		rate = 20e9,
+		limit = 1e12,
 	},
 	spawnable = {
 		little_missile = 1,
