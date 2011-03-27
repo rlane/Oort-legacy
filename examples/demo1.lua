@@ -6,7 +6,7 @@ local missile_selector = function(k,c)
 	if c:team() ~= my_team and c:class() == "little_missile" then
 		local x, y = position()
 		local tx, ty = c:position()
-		return distance(x,y,tx,ty) < 3
+		return distance(x,y,tx,ty) < 600
 	else
 		return false
 	end
@@ -18,12 +18,12 @@ if my_class == "fighter" then
 		local x, y = position()
 		local a = angle_between(x, y, 0, 0)
 		if i == 0 then
-			if distance(x, y, 0, 0) < 10 then
-				thrust(a+math.pi/2, 1)
+			if distance(x, y, 0, 0) < 1000 then
+				thrust(a+math.pi/2, 10)
 			end
 			i = 1
 		elseif i == 1 then
-			thrust(a, 3)
+			thrust(a, 30)
 			i = 0
 		end
 
@@ -46,16 +46,16 @@ elseif my_class == "mothership" then
 		local x, y = position()
 		local a = angle_between(x, y, 0, 0)
 		if i == 0 then
-			if distance(x, y, 0, 0) < 4 then
-				thrust(a-math.pi/2, 1)
+			if distance(x, y, 0, 0) < 400 then
+				thrust(a-math.pi/2, 5.0/3)
 			end
 			i = 1
 		elseif i == 1 then
-			thrust(a, 3)
+			thrust(a, 5)
 			i = 0
 		end
 
-		if energy() == my_ship.energy.limit and math.random(100) == 1 then
+		if energy() > my_ship.energy.limit*0.1 and math.random(100) == 1 then
 			for i = 1,4 do
 				local _, t = pick(sensor_contacts{}, fighter_selector)
 				if t then
@@ -89,7 +89,7 @@ elseif my_class == "little_missile" then
 		local x, y = position()
 		local vx, vy = velocity()
 
-		local ttt = distance(x, y, tx, ty) / (distance(vx, vy, tvx, tvy)+my_ship.explosion.velocity)
+		local ttt = distance(x, y, tx, ty) / (distance(vx, vy, tvx, tvy))
 		if ttt < 0.1 then
 			explode()
 		end
