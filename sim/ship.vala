@@ -17,7 +17,6 @@ public class RISC.Ship {
 
 	public struct Gfx {
 		public void *@class;
-		public double angle;
 	}
 
 	public struct DebugLine {
@@ -74,7 +73,7 @@ public class RISC.Ship {
 		this.class = klass;
 		this.team = team;
 		this.reaction_mass = klass.reaction_mass;
-		physics = new Physics() { p=p, p0=p, v=v, thrust=vec2(0,0), m=reaction_mass+klass.mass, r=klass.radius };
+		physics = new Physics() { p=p, p0=p, v=v, thrust=vec2(0,0), m=reaction_mass+klass.mass, r=klass.radius, h=0, w=0, wa=0 };
 		prng = new Rand.with_seed(seed);
 		mq = new Queue<Msg>();
 		api_id = prng.next_int();

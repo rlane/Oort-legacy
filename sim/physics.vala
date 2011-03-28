@@ -7,6 +7,9 @@ public class RISC.Physics {
 	public Vector.Vec2 p0;
 	public Vector.Vec2 v;
 	public Vector.Vec2 thrust;
+	public double h;
+	public double w;
+	public double wa;
 	public double r;
 	public double m;
 
@@ -15,6 +18,8 @@ public class RISC.Physics {
 		p0 = p;
 		p = p.add(v.add(acc.scale(0.5)).scale(Game.TICK_LENGTH));
 		v = v.add(acc);
+		h = h + (w+0.5*wa*Game.TICK_LENGTH)*Game.TICK_LENGTH;
+		w = w + wa*Game.TICK_LENGTH;
 	}
 
 	static double collision_time(Physics q1, Physics q2)
@@ -66,6 +71,9 @@ public class RISC.Physics {
 		q.thrust = thrust;
 		q.r = r;
 		q.m = m;
+		q.h = h;
+		q.w = w;
+		q.wa = wa;
 		return q;
 	}
 }

@@ -4,8 +4,6 @@ using Math;
 
 [Compact]
 public class RISC.ShipGfxClass {
-	public double rotfactor;
-
 	public static ShipGfxClass fighter;
 	public static ShipGfxClass mothership;
 	public static ShipGfxClass missile;
@@ -13,11 +11,11 @@ public class RISC.ShipGfxClass {
 	public static ShipGfxClass unknown;
 	
 	public static void init() {
-		fighter = new ShipGfxClass() { rotfactor=0.5 };
-		mothership = new ShipGfxClass() { rotfactor=0.05 };
-		missile = new ShipGfxClass() { rotfactor=0.6 };
-		little_missile = new ShipGfxClass() { rotfactor=0.7 };
-		unknown = new ShipGfxClass() { rotfactor=1.0 };
+		fighter = new ShipGfxClass();
+		mothership = new ShipGfxClass();
+		missile = new ShipGfxClass();
+		little_missile = new ShipGfxClass();
+		unknown = new ShipGfxClass();
 	}
 
 	public static unowned ShipGfxClass lookup(string name)
@@ -184,7 +182,7 @@ namespace RISC {
 
 		void render_ship(Ship s) {
 			var sp = S(s.physics.p);
-			double angle = s.gfx.angle;
+			double angle = s.physics.h;
 			double scale = view_scale * s.class.radius;
 
 			glPushMatrix();
@@ -192,6 +190,7 @@ namespace RISC {
 			glScaled(scale, scale, scale);
 			glRotated(Util.rad2deg(angle), 0, 0, 1);
 
+			// XXX move into class
 			if (s.class.name == "mothership") {
 				render_mothership(s);
 			} else if (s.class.name == "fighter") {
@@ -381,11 +380,6 @@ namespace RISC {
 				if (s.physics.thrust.abs() != 0) {
 					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), s.physics.thrust.scale(-Game.TICK_LENGTH), 8, 2, 4, 8);
 				}
-
-				double v_angle = atan2(s.physics.v.y, s.physics.v.x); // XXX reversed?
-				double da = normalize_angle(v_angle - s.gfx.angle);
-				unowned ShipGfxClass gfx_class = (ShipGfxClass)s.gfx.class;
-				s.gfx.angle = normalize_angle(s.gfx.angle + gfx_class.rotfactor*da);
 			}
 		}
 
@@ -431,7 +425,6 @@ namespace RISC {
 		static void on_ship_created(Ship s)
 		{
 			s.gfx.class = ShipGfxClass.lookup(s.class.name);
-			s.gfx.angle = atan2(s.physics.v.y, s.physics.v.x);
 		}
 	}
 
