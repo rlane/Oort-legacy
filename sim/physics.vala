@@ -18,7 +18,12 @@ public class RISC.Physics {
 		p0 = p;
 		p = p.add(v.add(acc.scale(0.5)).scale(Game.TICK_LENGTH));
 		v = v.add(acc);
-		h = h + (w+0.5*wa*Game.TICK_LENGTH)*Game.TICK_LENGTH;
+		h += (w+0.5*wa*Game.TICK_LENGTH)*Game.TICK_LENGTH;
+		if (h > Math.PI*2) {
+			h -= Math.PI*2;
+		} else if (h < 0) {
+			h += Math.PI*2;
+		}
 		w = w + wa*Game.TICK_LENGTH;
 	}
 

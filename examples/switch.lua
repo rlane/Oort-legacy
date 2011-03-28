@@ -88,6 +88,13 @@ if my_class == "fighter" then
 			--debug_box_off()
 		end
 
+
+		if true then
+			local a = angle_between(x, y, follow_x, follow_y)
+			local h = heading()
+			thrust_angular(-1*angle_diff(a,h)-0.5*angular_velocity())
+		end
+
 		if distance(0, 0, vx, vy) > my_ship.max_acc*2 then
 			thrust(angle_between(vx, vy, 0, 0), my_ship.max_acc);
 		elseif burn_time <= 0 then

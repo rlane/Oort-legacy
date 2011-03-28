@@ -335,16 +335,19 @@ namespace RISC {
 
 		private void render_picked_info(Ship s) {
 			int x = 15;
-			int y = 94;
 			int dy = 12;
+			int y = 22+9*dy;
 			GLUtil.color32((uint32)0xAAFFFFAA);
 			GLUtil.printf(x, y-0*dy, "%s %.8x", s.class.name, s.api_id);
 			GLUtil.printf(x, y-1*dy, "hull: %.2f", s.hull);
 			GLUtil.printf(x, y-2*dy, @"position: $(s.physics.p)");
-			GLUtil.printf(x, y-3*dy, @"velocity: $(s.physics.v) %0.3g", s.physics.v.abs());
-			GLUtil.printf(x, y-4*dy, @"thrust: $(s.physics.thrust) %0.3g", s.physics.thrust.abs());
-			GLUtil.printf(x, y-5*dy, "energy: %0.3g", s.get_energy());
-			GLUtil.printf(x, y-6*dy, "reaction mass: %0.3g", s.reaction_mass);
+			GLUtil.printf(x, y-3*dy, "heading: %0.3g", s.physics.h);
+			GLUtil.printf(x, y-4*dy, @"velocity: $(s.physics.v) %0.3g", s.physics.v.abs());
+			GLUtil.printf(x, y-5*dy, "angular velocity: %0.3g", s.physics.w);
+			GLUtil.printf(x, y-6*dy, @"thrust: $(s.physics.thrust) %0.3g", s.physics.thrust.abs());
+			GLUtil.printf(x, y-7*dy, "angular acceleration: %0.3g", s.physics.wa);
+			GLUtil.printf(x, y-8*dy, "energy: %0.3g", s.get_energy());
+			GLUtil.printf(x, y-9*dy, "reaction mass: %0.3g", s.reaction_mass);
 		}
 
 		public void reshape(int width, int height) {

@@ -96,8 +96,11 @@ public class RISC.Ship {
 		global_lua.set_alloc_func((Lua.AllocFunc)ai_allocator, this);
 		global_lua.open_libs();
 		global_lua.register("sys_thrust", api_thrust);
+		global_lua.register("sys_thrust_angular", api_thrust_angular);
 		global_lua.register("sys_position", api_position);
+		global_lua.register("sys_heading", api_heading);
 		global_lua.register("sys_velocity", api_velocity);
+		global_lua.register("sys_angular_velocity", api_angular_velocity);
 		global_lua.register("sys_create_bullet", api_create_bullet);
 		global_lua.register("sys_sensor_contacts", api_sensor_contacts);
 		global_lua.register("sys_sensor_contact", api_sensor_contact);
@@ -241,6 +244,12 @@ public class RISC.Ship {
 		return 0;
 	}
 
+	public static int api_thrust_angular(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		s.physics.wa = L.check_number(1);
+		return 0;
+	}
+
 	public static int api_position(LuaVM L) {
 		unowned Ship s = lua_ship(L);
 		L.push_number(s.physics.p.x);
@@ -248,11 +257,23 @@ public class RISC.Ship {
 		return 2;
 	}
 
+	public static int api_heading(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		L.push_number(s.physics.h);
+		return 1;
+	}
+
 	public static int api_velocity(LuaVM L) {
 		unowned Ship s = lua_ship(L);
 		L.push_number(s.physics.v.x);
 		L.push_number(s.physics.v.y);
 		return 2;
+	}
+
+	public static int api_angular_velocity(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		L.push_number(s.physics.w);
+		return 1;
 	}
 
 	public static int api_reaction_mass(LuaVM L) {

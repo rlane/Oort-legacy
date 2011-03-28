@@ -37,6 +37,11 @@ function thrust(a,acc)
 	sys_thrust(a,acc)
 end
 
+function thrust_angular(a)
+	-- XXX validate and charge
+	sys_thrust_angular(a)
+end
+
 function fire(name, a)
 	local x,y,v,vx,vy,m,ttl
 	local gun = my_ship.guns[name]
@@ -157,8 +162,11 @@ end
 
 sandbox_api = {
 	thrust = thrust,
+	thrust_angular = thrust_angular,
 	position = sys_position,
+	heading = sys_heading,
 	velocity = sys_velocity,
+	angular_velocity = sys_angular_velocity,
 	reaction_mass = reaction_mass,
 	energy = energy,
 	fire = fire,
