@@ -51,4 +51,11 @@ static inline double vec2_dot(Vec2 a, Vec2 b)
 	return a.x*b.x + a.y*b.y;
 }
 
+static inline Vec2 vec2_rotate(Vec2 a, double angle)
+{
+	Vec2 r = { a.x*cos(angle) - a.y*sin(angle),
+		         a.x*sin(angle) + a.y*cos(angle) };
+	return r;
+}
+
 #endif

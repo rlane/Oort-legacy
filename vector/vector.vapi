@@ -11,6 +11,7 @@ namespace Vector {
 		public Vector.Vec2 sub (Vector.Vec2 v);
 		public double dot (Vector.Vec2 v);
 		public double distance (Vector.Vec2 v);
+		public Vector.Vec2 rotate (double angle);
 
 		public string to_string() {
 			return "(%0.3g, %0.3g)".printf(x, y);
