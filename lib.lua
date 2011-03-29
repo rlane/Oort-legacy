@@ -182,3 +182,31 @@ function debug_diamond(x,y,l)
 	debug_line(x, y+l, x-l, y)
 	debug_line(x-l, y, x, y-l)
 end
+
+function rotate(x,y,a)
+	return x*math.cos(a) - y*math.cos(a), x*math.sin(a) + y*math.cos(a)
+end
+
+function drive_towards(tx, ty, speed)
+	local my_class = class
+	local my_ship = ships[my_class]
+	local x, y = position()
+	local vx, vy = velocity()
+	local a = angle_between(x, y, tx, ty)
+	local h = heading()
+	local diff = angle_diff(a,h)
+	thrust_angular(-1*diff-1*angular_velocity())
+
+	rvx, rvy = rotate(vx, vy, -h)
+	thrust_lateral(-1*rvy)
+
+	if rvx > speed then
+		thrust_main(speed-rvx)
+	elseif math.abs(diff) < math.pi/4 then
+		thrust_main(my_ship.max_acc)
+	elseif math.abs(diff) > 3*math.pi/4 then
+		thrust_main(-my_ship.max_acc)
+	else
+		thrust_main(0)
+	end
+end

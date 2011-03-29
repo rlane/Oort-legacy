@@ -352,12 +352,15 @@ namespace RISC {
 			int x = 15;
 			int dy = 12;
 			int y = 22+11*dy;
+			var rv = s.physics.v.rotate(s.physics.h);
 			GLUtil.color32((uint32)0xAAFFFFAA);
 			GLUtil.printf(x, y-0*dy, "%s %.8x %s", s.class.name, s.api_id, s.controlled ? "(player controlled)" : "");
 			GLUtil.printf(x, y-1*dy, "hull: %s", fmt(s.hull,"J"));
 			GLUtil.printf(x, y-2*dy, "position: (%s, %s)", fmt(s.physics.p.x,"m"), fmt(s.physics.p.y,"m"));
 			GLUtil.printf(x, y-3*dy, "heading: %s", fmt(s.physics.h,"rad"));
-			GLUtil.printf(x, y-4*dy, "velocity: (%s, %s)", fmt(s.physics.v.x,"m/s"), fmt(s.physics.v.y,"m/s"));
+			GLUtil.printf(x, y-4*dy, "velocity: (%s, %s) rel=(%s, %s)",
+			                         fmt(s.physics.v.x,"m/s"), fmt(s.physics.v.y,"m/s"),
+			                         fmt(rv.x,"m/s"), fmt(rv.y,"m/s"));
 			GLUtil.printf(x, y-5*dy, "angular velocity: %s", fmt(s.physics.w,"rad/s"));
 			GLUtil.printf(x, y-6*dy, "acceleration:");
 			GLUtil.printf(x, y-7*dy, " main: %s", fmt(s.physics.acc.x,"m/s\xFD"));

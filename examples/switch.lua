@@ -88,39 +88,34 @@ if my_class == "fighter" then
 			--debug_box_off()
 		end
 
+		drive_towards(follow_x, follow_y, my_ship.max_acc)
 
-		if true then
-			local a = angle_between(x, y, follow_x, follow_y)
-			local h = heading()
-			thrust_angular(-1*angle_diff(a,h)-0.5*angular_velocity())
-		end
-
-		if distance(0, 0, vx, vy) > my_ship.max_acc*2 then
-			thrust(angle_between(vx, vy, 0, 0), my_ship.max_acc);
-		elseif burn_time <= 0 then
-			local a = angle_between(x, y, follow_x, follow_y)
-			if a then
-				local k = math.random(10)
-				if k < 7 then
-					thrust(a, my_ship.max_acc/3)
-					burn_time = 8
-				elseif k < 8 then
-					a = normalize_angle(a + R(0.5,1) * sign(R(-1,1)))
-					thrust(a, my_ship.max_acc)
-					burn_time = 2
-				else
-					a = normalize_angle(a + (math.pi/2) * sign(R(-1,1)))
-					thrust(a, my_ship.max_acc/2)
-					burn_time = 4
-				end
-			else
-				local a = angle_between(vx, vy, 0, 0)
-				thrust(a, my_ship.max_acc)
-				burn_time = 10
-			end
-		else
-			burn_time = burn_time - 1
-		end
+--		if distance(0, 0, vx, vy) > my_ship.max_acc*2 then
+--			thrust(angle_between(vx, vy, 0, 0), my_ship.max_acc);
+--		elseif burn_time <= 0 then
+--			local a = angle_between(x, y, follow_x, follow_y)
+--			if a then
+--				local k = math.random(10)
+--				if k < 7 then
+--					thrust(a, my_ship.max_acc/3)
+--					burn_time = 8
+--				elseif k < 8 then
+--					a = normalize_angle(a + R(0.5,1) * sign(R(-1,1)))
+--					thrust(a, my_ship.max_acc)
+--					burn_time = 2
+--				else
+--					a = normalize_angle(a + (math.pi/2) * sign(R(-1,1)))
+--					thrust(a, my_ship.max_acc/2)
+--					burn_time = 4
+--				end
+--			else
+--				local a = angle_between(vx, vy, 0, 0)
+--				thrust(a, my_ship.max_acc)
+--				burn_time = 10
+--			end
+--		else
+--			burn_time = burn_time - 1
+--		end
 
 		if follow_target and energy() > ships.little_missile.cost and math.random(50) == 7 then
 			spawn("little_missile", follow_target:id())
@@ -227,9 +222,6 @@ elseif my_class == "missile" or my_class == "little_missile" then
 		error("bad orders: n=" .. #orders)
 	end
 
-	thrust(math.random()*2*math.pi, my_ship.max_acc)
-	sleep(8)
-
 	while true do
 		local msg = recv()
 		if msg then
@@ -239,7 +231,9 @@ elseif my_class == "missile" or my_class == "little_missile" then
 		local t = sensor_contact(target_id)
 
 		if not t then
-			thrust(0, 0)
+			thrust_main(0)
+			thrust_lateral(0)
+			thrust_angular(0)
 			sleep(64)
 			explode()
 		end
@@ -262,15 +256,17 @@ elseif my_class == "missile" or my_class == "little_missile" then
 			explode()
 		end
 
-		local va = angle_between(0, 0, vx, vy)
-		local a = angle_between(x, y, tx, ty)
-		local da = -angle_diff(a, va)
-		local acc = 20*(da/math.pi)*my_ship.max_acc
-		local accx = acc*math.cos(va+math.pi/2) + my_ship.max_acc*math.cos(va)
-		local accy = acc*math.sin(va+math.pi/2) + my_ship.max_acc*math.sin(va)
-		local thrust_angle = angle_between(0, 0, accx, accy)
-		if da > math.pi/8 and energy() < 10e6 then explode() end
-		thrust(thrust_angle, my_ship.max_acc)
+		drive_towards(tx, ty, my_ship.max_acc*3)
+
+--		local va = angle_between(0, 0, vx, vy)
+--		local a = angle_between(x, y, tx, ty)
+--		local da = -angle_diff(a, va)
+--		local acc = 20*(da/math.pi)*my_ship.max_acc
+--		local accx = acc*math.cos(va+math.pi/2) + my_ship.max_acc*math.cos(va)
+--		local accy = acc*math.sin(va+math.pi/2) + my_ship.max_acc*math.sin(va)
+--		local thrust_angle = angle_between(0, 0, accx, accy)
+--		if da > math.pi/8 and energy() < 10e6 then explode() end
+--		thrust(thrust_angle, my_ship.max_acc)
 
 		yield()
 	end
