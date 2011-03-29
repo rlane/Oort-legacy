@@ -333,21 +333,37 @@ namespace RISC {
 			}
 		}
 
+		private string fmt(double v, string unit) {
+			var i = 0;
+			var sign = v < 0 ? -1 : 1;
+			var prefixes = " kMGTPEZY";
+			for (i = 0; i < prefixes.length && sign*v > 1000; i++) {
+				v /= 1000;
+			}
+			if (v < 1e-9) {
+				v = 0;
+			}
+			var prefix = i == 0 ? "" : "%c".printf((int)prefixes[i]);
+			return "%0.3g %s%s".printf(v, prefix, unit);
+		}
+
 		private void render_picked_info(Ship s) {
 			int x = 15;
 			int dy = 12;
-			int y = 22+9*dy;
+			int y = 22+11*dy;
 			GLUtil.color32((uint32)0xAAFFFFAA);
 			GLUtil.printf(x, y-0*dy, "%s %.8x", s.class.name, s.api_id);
-			GLUtil.printf(x, y-1*dy, "hull: %.2f", s.hull);
-			GLUtil.printf(x, y-2*dy, @"position: $(s.physics.p)");
-			GLUtil.printf(x, y-3*dy, "heading: %0.3g", s.physics.h);
-			GLUtil.printf(x, y-4*dy, @"velocity: $(s.physics.v) %0.3g", s.physics.v.abs());
-			GLUtil.printf(x, y-5*dy, "angular velocity: %0.3g", s.physics.w);
-			GLUtil.printf(x, y-6*dy, @"acceleration: $(s.physics.acc) %0.3g", s.physics.acc.abs());
-			GLUtil.printf(x, y-7*dy, "angular acceleration: %0.3g", s.physics.wa);
-			GLUtil.printf(x, y-8*dy, "energy: %0.3g", s.get_energy());
-			GLUtil.printf(x, y-9*dy, "reaction mass: %0.3g", s.reaction_mass);
+			GLUtil.printf(x, y-1*dy, "hull: %s", fmt(s.hull,"J"));
+			GLUtil.printf(x, y-2*dy, "position: (%s, %s)", fmt(s.physics.p.x,"m"), fmt(s.physics.p.y,"m"));
+			GLUtil.printf(x, y-3*dy, "heading: %s", fmt(s.physics.h,"rad"));
+			GLUtil.printf(x, y-4*dy, "velocity: (%s, %s)", fmt(s.physics.v.x,"m/s"), fmt(s.physics.v.y,"m/s"));
+			GLUtil.printf(x, y-5*dy, "angular velocity: %s", fmt(s.physics.w,"rad/s"));
+			GLUtil.printf(x, y-6*dy, "acceleration:");
+			GLUtil.printf(x, y-7*dy, " main: %s", fmt(s.physics.acc.x,"m/s\xFD"));
+			GLUtil.printf(x, y-8*dy, " lateral: %s", fmt(s.physics.acc.y,"m/s\xFD"));
+			GLUtil.printf(x, y-9*dy, " angular: %s", fmt(s.physics.wa,"rad/s\xFD"));
+			GLUtil.printf(x, y-10*dy, "energy: %s", fmt(s.get_energy(),"J"));
+			GLUtil.printf(x, y-11*dy, "reaction mass: %s", fmt(s.reaction_mass*1000,"g"));
 		}
 
 		public void reshape(int width, int height) {
