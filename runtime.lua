@@ -20,26 +20,36 @@ function energy()
 	return _energy
 end
 
-function thrust(a,acc)
-	if acc < 0 then
-		acc = -acc
-		a = a + math.pi
+function clamp(v,min,max)
+	if v < min then return min
+	elseif v > max then return max
+	else return v
 	end
-
-	if acc > my_ship.max_acc then
-		acc = my_ship.max_acc
-	end
-
-	local dv = acc*tick_length
-	engine_mass_cost = my_ship.mass*dv/exhaust_velocity
-	engine_power_cost = 0.5*engine_mass_cost*exhaust_velocity^2
-
-	sys_thrust(a,acc)
 end
 
-function thrust_angular(a)
+function thrust_main(acc)
+	acc = clamp(acc,-my_ship.max_acc,my_ship.max_acc);
+
+--	local dv = acc*tick_length
+--	engine_mass_cost = my_ship.mass*dv/exhaust_velocity
+--	engine_power_cost = 0.5*engine_mass_cost*exhaust_velocity^2
+
+	sys_thrust_main(acc)
+end
+
+function thrust_lateral(acc)
+	acc = clamp(acc,-my_ship.max_acc,my_ship.max_acc);
+
+--	local dv = acc*tick_length
+--	engine_mass_cost = my_ship.mass*dv/exhaust_velocity
+--	engine_power_cost = 0.5*engine_mass_cost*exhaust_velocity^2
+
+	sys_thrust_lateral(acc)
+end
+
+function thrust_angular(acc)
 	-- XXX validate and charge
-	sys_thrust_angular(a)
+	sys_thrust_angular(acc)
 end
 
 function fire(name, a)
@@ -161,7 +171,8 @@ function yield()
 end
 
 sandbox_api = {
-	thrust = thrust,
+	thrust_main = thrust_main,
+	thrust_lateral = thrust_lateral,
 	thrust_angular = thrust_angular,
 	position = sys_position,
 	heading = sys_heading,

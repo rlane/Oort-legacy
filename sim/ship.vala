@@ -73,7 +73,7 @@ public class RISC.Ship {
 		this.class = klass;
 		this.team = team;
 		this.reaction_mass = klass.reaction_mass;
-		physics = new Physics() { p=p, p0=p, v=v, thrust=vec2(0,0), m=reaction_mass+klass.mass, r=klass.radius, h=0, w=0, wa=0 };
+		physics = new Physics() { p=p, p0=p, v=v, acc=vec2(0,0), m=reaction_mass+klass.mass, r=klass.radius, h=0, w=0, wa=0 };
 		prng = new Rand.with_seed(seed);
 		mq = new Queue<Msg>();
 		api_id = prng.next_int();
@@ -95,7 +95,8 @@ public class RISC.Ship {
 		mem.allocator = global_lua.get_alloc_func(out mem.allocator_ud);
 		global_lua.set_alloc_func((Lua.AllocFunc)ai_allocator, this);
 		global_lua.open_libs();
-		global_lua.register("sys_thrust", api_thrust);
+		global_lua.register("sys_thrust_main", api_thrust_main);
+		global_lua.register("sys_thrust_lateral", api_thrust_lateral);
 		global_lua.register("sys_thrust_angular", api_thrust_angular);
 		global_lua.register("sys_position", api_position);
 		global_lua.register("sys_heading", api_heading);
@@ -236,11 +237,15 @@ public class RISC.Ship {
 		return (Ship)v;
 	}
 
-	public static int api_thrust(LuaVM L) {
+	public static int api_thrust_main(LuaVM L) {
 		unowned Ship s = lua_ship(L);
-		double a = L.check_number(1);
-		double f = L.check_number(2);
-		s.physics.thrust = vec2(cos(a), sin(a)).scale(f * s.physics.m);
+		s.physics.acc.x = L.check_number(1);
+		return 0;
+	}
+
+	public static int api_thrust_lateral(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+		s.physics.acc.y = L.check_number(1);
 		return 0;
 	}
 
@@ -296,9 +301,9 @@ public class RISC.Ship {
 		var p = vec2(x,y);
 		var v = vec2(vx,vy);
 		var r = 1.0/32; // XXX
-		var thrust = vec2(0,0);
+		var acc = vec2(0,0);
 
-		var physics = new Physics() { p=p, p0=p, v=v, thrust=thrust, m=m, r=r };
+		var physics = new Physics() { p=p, p0=p, v=v, acc=acc, m=m, r=r };
 		var b = new Bullet() { team=s.team, physics=(owned)physics, ttl=ttl, type=(BulletType)type };
 
 		s.game.new_bullets_lock.lock();

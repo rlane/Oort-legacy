@@ -237,7 +237,7 @@ namespace RISC {
 				glScaled(view_scale, view_scale, view_scale);
 				glBegin(GL_LINES);
 				glVertex3d(0, 0, 0);
-				glVertex3d(s.physics.thrust.x, s.physics.thrust.y, 0);
+				glVertex3d(s.physics.acc.x, s.physics.acc.y, 0);
 				glEnd();
 				glPopMatrix();
 
@@ -344,7 +344,7 @@ namespace RISC {
 			GLUtil.printf(x, y-3*dy, "heading: %0.3g", s.physics.h);
 			GLUtil.printf(x, y-4*dy, @"velocity: $(s.physics.v) %0.3g", s.physics.v.abs());
 			GLUtil.printf(x, y-5*dy, "angular velocity: %0.3g", s.physics.w);
-			GLUtil.printf(x, y-6*dy, @"thrust: $(s.physics.thrust) %0.3g", s.physics.thrust.abs());
+			GLUtil.printf(x, y-6*dy, @"acceleration: $(s.physics.acc) %0.3g", s.physics.acc.abs());
 			GLUtil.printf(x, y-7*dy, "angular acceleration: %0.3g", s.physics.wa);
 			GLUtil.printf(x, y-8*dy, "energy: %0.3g", s.get_energy());
 			GLUtil.printf(x, y-9*dy, "reaction mass: %0.3g", s.reaction_mass);
@@ -380,8 +380,8 @@ namespace RISC {
 			}
 
 			foreach (unowned Ship s in game.all_ships) {
-				if (s.physics.thrust.abs() != 0) {
-					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), s.physics.thrust.scale(-Game.TICK_LENGTH), 8, 2, 4, 8);
+				if (s.physics.acc.abs() != 0) {
+					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), s.physics.acc.scale(-Game.TICK_LENGTH), 8, 2, 4, 8);
 				}
 			}
 		}

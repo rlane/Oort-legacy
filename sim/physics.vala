@@ -6,7 +6,7 @@ public class RISC.Physics {
 	public Vector.Vec2 p;
 	public Vector.Vec2 p0;
 	public Vector.Vec2 v;
-	public Vector.Vec2 thrust;
+	public Vector.Vec2 acc;
 	public double h;
 	public double w;
 	public double wa;
@@ -14,10 +14,10 @@ public class RISC.Physics {
 	public double m;
 
 	public void tick_one() {
-		var acc = thrust.scale(Game.TICK_LENGTH/m);
+		var dv = acc.rotate(h).scale(Game.TICK_LENGTH);
 		p0 = p;
-		p = p.add(v.add(acc.scale(0.5)).scale(Game.TICK_LENGTH));
-		v = v.add(acc);
+		p = p.add(v.add(dv.scale(0.5)).scale(Game.TICK_LENGTH));
+		v = v.add(dv);
 		h += (w+0.5*wa*Game.TICK_LENGTH)*Game.TICK_LENGTH;
 		if (h > Math.PI*2) {
 			h -= Math.PI*2;
@@ -73,7 +73,7 @@ public class RISC.Physics {
 		q.p = p;
 		q.p0 = p0;
 		q.v = v;
-		q.thrust = thrust;
+		q.acc = acc;
 		q.r = r;
 		q.m = m;
 		q.h = h;
