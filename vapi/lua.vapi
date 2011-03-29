@@ -262,7 +262,7 @@ namespace Lua {
 		[CCode (cname = "lua_pushcclosure")]
 		public void push_cclosure (CallbackFunc f, int n);
 		[CCode (cname = "lua_pushboolean")]
-		public void push_boolean (int b);
+		public void push_boolean (bool b);
 		[CCode (cname = "lua_pushlightuserdata")]
 		public void push_lightuserdata (void* p);
 		[CCode (cname = "lua_pushthread")]

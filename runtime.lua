@@ -215,6 +215,8 @@ function debug_count_hook()
 end
 
 function tick_hook()
+	ctl_tick_hook();
+
 	if _energy < engine_power_cost then
 		--print(my_class, " engine cost too high:", engine_power_cost, " > ", _energy)
 		thrust(0,0)
@@ -266,4 +268,54 @@ function sandbox(f)
 
 	setfenv(f, env)
 	return f
+end
+
+function control_begin()
+	thrust_main(0)
+	thrust_lateral(0)
+	thrust_angular(0)
+end
+
+function control_end()
+	thrust_main(0)
+	thrust_lateral(0)
+	thrust_angular(0)
+end
+
+local ctl_fwd = false
+local ctl_back = false
+local ctl_left = false
+local ctl_right = false
+local ctl_turn_left = false
+local ctl_turn_right = false
+local ctl_fire = false
+function control(key,pressed)
+	if key == 'w' then ctl_fwd = pressed end
+	if key == 's' then ctl_back = pressed end
+	if key == 'a' then ctl_left = pressed end
+	if key == 'd' then ctl_right = pressed end
+	if key == 'j' then ctl_turn_left = pressed end
+	if key == 'l' then ctl_turn_right = pressed end
+	if key == 'i' then ctl_fire = pressed end
+
+	local main = 0
+	local lateral = 0
+	local angular = 0
+
+	if ctl_fwd then main = main + 1 end
+	if ctl_back then main = main - 1 end
+	if ctl_left then lateral = lateral - 1 end
+	if ctl_right then lateral = lateral + 1 end
+	if ctl_turn_left then angular = angular - 1 end
+	if ctl_turn_right then angular = angular + 1 end
+
+	thrust_main(my_ship.max_acc*main)
+	thrust_lateral(my_ship.max_acc*lateral)
+	thrust_angular(1*angular)
+end
+
+function ctl_tick_hook()
+	if ctl_fire then
+		fire("main", sys_heading())
+	end
 end

@@ -59,6 +59,7 @@ public class RISC.Ship {
 	public Debug debug;
 	public weak Game game;
 	public double reaction_mass;
+	public bool controlled;
 
 	[CCode (has_target = false)]
 	public delegate void OnShipCreated(Ship s);
@@ -79,6 +80,7 @@ public class RISC.Ship {
 		api_id = prng.next_int();
 		dead = false;
 		ai_dead = false;
+		controlled = false;
 		hull = klass.hull;
 		tail_head = 0;
 		for (int i = 0; i < 16 /*XXX*/; i++) { tail[i] = vec2(double.NAN, double.NAN); }
@@ -169,7 +171,7 @@ public class RISC.Ship {
 			if (tail_head == TAIL_SEGMENTS) tail_head = 0;
 		}
 
-		if (!ai_dead) {
+		if (!ai_dead && !controlled) {
 			var ret = ai_run(10000);
 			if (!ret) ai_dead = true;
 		}
@@ -690,5 +692,24 @@ public class RISC.Ship {
 	~Ship() {
 		while (mq.pop_head() != null);
 		//print("destroy ship %p\n", this);
+	}
+
+	public void control_begin() {
+		controlled = true;
+		global_lua.get_global("control_begin");
+		global_lua.call(0, 0);
+	}
+
+	public void control_end() {
+		controlled = false;
+		global_lua.get_global("control_end");
+		global_lua.call(0, 0);
+	}
+
+	public void control(string key, bool pressed) {
+		global_lua.get_global("control");
+		global_lua.push_string(key);
+		global_lua.push_boolean(pressed);
+		global_lua.call(2, 0);
 	}
 }

@@ -235,6 +235,7 @@ namespace RISC {
 				glPushMatrix();
 				glTranslated(sp.x, sp.y, 0);
 				glScaled(view_scale, view_scale, view_scale);
+				glRotated(Util.rad2deg(s.physics.h), 0, 0, 1);
 				glBegin(GL_LINES);
 				glVertex3d(0, 0, 0);
 				glVertex3d(s.physics.acc.x, s.physics.acc.y, 0);
@@ -340,7 +341,7 @@ namespace RISC {
 			for (i = 0; i < prefixes.length && sign*v > 1000; i++) {
 				v /= 1000;
 			}
-			if (v < 1e-9) {
+			if (sign*v < 1e-9) {
 				v = 0;
 			}
 			var prefix = i == 0 ? "" : "%c".printf((int)prefixes[i]);
@@ -352,7 +353,7 @@ namespace RISC {
 			int dy = 12;
 			int y = 22+11*dy;
 			GLUtil.color32((uint32)0xAAFFFFAA);
-			GLUtil.printf(x, y-0*dy, "%s %.8x", s.class.name, s.api_id);
+			GLUtil.printf(x, y-0*dy, "%s %.8x %s", s.class.name, s.api_id, s.controlled ? "(player controlled)" : "");
 			GLUtil.printf(x, y-1*dy, "hull: %s", fmt(s.hull,"J"));
 			GLUtil.printf(x, y-2*dy, "position: (%s, %s)", fmt(s.physics.p.x,"m"), fmt(s.physics.p.y,"m"));
 			GLUtil.printf(x, y-3*dy, "heading: %s", fmt(s.physics.h,"rad"));

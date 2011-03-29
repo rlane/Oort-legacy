@@ -96,6 +96,7 @@ namespace RISC {
 			drawing_area.configure_event.connect(on_configure_event);
 			drawing_area.expose_event.connect(on_expose_event);
 			key_press_event.connect(on_key_press_event);
+			key_release_event.connect(on_key_release_event);
 			drawing_area.button_press_event.connect(on_button_press_event);
 			drawing_area.scroll_event.connect(on_scroll_event);
 
@@ -300,8 +301,30 @@ namespace RISC {
 				case "Escape":
 					shutdown();
 					break;
+				case "o":
+					if (renderer.picked != null) {
+						if (!renderer.picked.controlled) {
+							renderer.picked.control_begin();
+						} else {
+							renderer.picked.control_end();
+						}
+					}
+					break;
+				default:
+					if (renderer.picked != null && renderer.picked.controlled) {
+						renderer.picked.control(key, true);
+					}
+					break;
 			}
 
+			return true;
+		}
+
+		private bool on_key_release_event(Widget widget, EventKey event) {
+			string key = Gdk.keyval_name(event.keyval);
+			if (renderer.picked != null && renderer.picked.controlled) {
+				renderer.picked.control(key, false);
+			}
 			return true;
 		}
 
