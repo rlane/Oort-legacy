@@ -9,8 +9,7 @@ while true do
 	t = sensor_contact(t:id())
 	local x, y = position()
 	local tx, ty = t:position()
-	local a = angle_between(x,y,tx,ty)
-	thrust(a,2)
-	fire("main", a)
+	drive_towards(tx,ty,100)
+	fire("main", angle_between(x,y,tx,ty))
 	yield()
 end

@@ -1,5 +1,4 @@
-thrust(math.random()*math.pi*2,ships[class].max_acc/10)
-
 while true do
+	drive_towards(1000, 1000, 100)
 	yield()
 end

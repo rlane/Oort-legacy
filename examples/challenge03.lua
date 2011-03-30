@@ -1,11 +1,7 @@
-local my_ship = ships[class]
-thrust(1.57, my_ship.max_acc)
-for i = 1,32 do
-	yield()
-end
-
 while true do
-	yield()
-	x, y = position()
-	thrust(angle_between(x,y,0,0), my_ship.max_acc/3)
+	local tx, ty = math.random(-1000,1000), math.random(-1000,1000)
+	for i = 1,256 do
+		drive_towards(tx,ty,1000)
+		yield()
+	end
 end

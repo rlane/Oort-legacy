@@ -187,6 +187,24 @@ function rotate(x,y,a)
 	return x*math.cos(a) - y*math.cos(a), x*math.sin(a) + y*math.cos(a)
 end
 
+function turn_to(angle)
+	local h = heading()
+	local diff = angle_diff(angle,h)
+	thrust_angular(-1*diff-1*angular_velocity())
+end
+
+function turn_towards(tx,ty)
+	local x, y = position()
+	local a = angle_between(x, y, tx, ty)
+	turn_to(a)
+end
+
+function turn_away(tx,ty)
+	local x, y = position()
+	local a = angle_between(tx, ty, x, y)
+	turn_to(a)
+end
+
 function drive_towards(tx, ty, speed)
 	local my_class = class
 	local my_ship = ships[my_class]
