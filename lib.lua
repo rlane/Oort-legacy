@@ -184,13 +184,13 @@ function debug_diamond(x,y,l)
 end
 
 function rotate(x,y,a)
-	return x*math.cos(a) - y*math.cos(a), x*math.sin(a) + y*math.cos(a)
+	return x*math.cos(a) - y*math.sin(a), x*math.sin(a) + y*math.cos(a)
 end
 
 function turn_to(angle)
 	local h = heading()
 	local diff = angle_diff(angle,h)
-	thrust_angular(-1*diff-1*angular_velocity())
+	thrust_angular(-2*diff-1*angular_velocity())
 end
 
 function turn_towards(tx,ty)
