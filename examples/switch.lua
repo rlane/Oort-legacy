@@ -194,7 +194,7 @@ elseif my_class == "missile" or my_class == "little_missile" then
 		error("bad orders: n=" .. #orders)
 	end
 
-	local last_bearing = nil
+	local seek = create_proportional_navigator(5, my_ship.max_acc)
 
 	while true do
 		local msg = recv()
@@ -216,38 +216,20 @@ elseif my_class == "missile" or my_class == "little_missile" then
 			explode()
 		end
 
+		local x, y = position()
+		local vx, vy = velocity()
 		local tx, ty = t:position()
 		local tvx, tvy = t:velocity()
 
 		clear_debug_lines()
 		debug_diamond(tx, ty, 16*my_ship.radius)
-		
-		local x, y = position()
-		local vx, vy = velocity()
 
 		local ttt = distance(x, y, tx, ty) / distance(vx, vy, tvx, tvy)
 		if ttt < 1.0/32 then
 			explode()
 		end
 
-		local bearing = angle_between(x, y, tx, ty)
-
-		if last_bearing then
-			local h = heading()
-			local bearing_rate = angle_diff(bearing, last_bearing)*32.0
-			local dvx, dvy = vx-tvx, vy-tvy
-			local rvx, rvy = rotate(dvx, dvy, -bearing)
-
-			local k = 5
-			local v = rvx
-			local n = -k*v*bearing_rate
-
-			thrust_main(my_ship.max_acc)
-			thrust_lateral(n)
-			turn_to(bearing)
-		end
-
-		last_bearing = bearing
+		seek(tx, ty, tvx, tvy)
 
 		yield()
 	end

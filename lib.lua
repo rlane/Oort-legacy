@@ -245,3 +245,27 @@ function drive_towards(tx, ty, speed)
 		thrust_main(0)
 	end
 end
+
+function create_proportional_navigator(k, a)
+	local last_bearing = nil
+	return function(tx, ty, tvx, tvy)
+		local x, y = position()
+		local bearing = angle_between(x, y, tx, ty)
+
+		if last_bearing then
+			local vx, vy = velocity()
+			local h = heading()
+
+			local bearing_rate = angle_diff(bearing, last_bearing)*32.0
+			local dvx, dvy = vx-tvx, vy-tvy
+			local rvx, rvy = rotate(dvx, dvy, -bearing)
+			local n = -k*rvx*bearing_rate
+
+			thrust_main(a)
+			thrust_lateral(n)
+			turn_to(bearing)
+		end
+
+		last_bearing = bearing
+	end
+end
