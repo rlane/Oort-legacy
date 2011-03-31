@@ -8,7 +8,7 @@
 			"name": "green",
 			"color": { "b": 0, "g": 255, "r": 0 }, 
 			"ships": [
-				{ "class": "fighter", "y": 0, "x": 0 }
+				{ "class": "fighter", "y": 0, "x": 0, "h": 0 }
 			]
 		},
 
@@ -17,7 +17,7 @@
 			"color": { "b": 93, "g": 0, "r": 124 }, 
 			"filename": "examples/challenge02.lua",
 			"ships": [
-				{ "class": "fighter", "y": -0.42246829272363, "x": 1.3607508686188 }
+				{ "class": "fighter", "y": -0.42246829272363, "x": 1.3607508686188, "h": 1 }
 			]
 		} 
 	] 

@@ -35,6 +35,7 @@ public class RISC.ParsedTeam {
 public class RISC.ParsedShip {
 	public string class_name;
 	public Vec2 p;
+	public double h;
 }
 
 namespace RISC.Scenario {
@@ -64,7 +65,7 @@ namespace RISC.Scenario {
 					throw new ScenarioLoadError.INVALID_SHIP_CLASS("Invalid ship class '%s'", pship.class_name);
 				}
 
-				Ship s = new Ship(game, klass, team, pship.p, vec2(0,0), game.prng.next_int());
+				Ship s = new Ship(game, klass, team, pship.p, vec2(0,0), pship.h, game.prng.next_int());
 
 				if (!s.create_ai(null)) {
 					throw new ScenarioLoadError.FAILED_AI_CREATION("Failed to create AI");
@@ -201,9 +202,15 @@ namespace RISC.Scenario {
 					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].y must be a number", team_name.string, j);
 				}
 
+				unowned cJSON h_obj = ship_obj.objectItem("h");
+				if (h_obj.type != cJSON.Type.Number) {
+					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].h must be a number", team_name.string, j);
+				}
+
 				var pship = new ParsedShip();
 				pship.class_name = class_name.string;
 				pship.p = vec2(x_obj.double*80, y_obj.double*80);
+				pship.h = h_obj.double;
 				pteam.ships.append((owned)pship);
 
 				j++;

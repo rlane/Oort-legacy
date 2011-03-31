@@ -69,12 +69,12 @@ public class RISC.Ship {
 		return (int)(a.api_id - b.api_id);
 	}
 
-	public Ship(Game game, ShipClass klass, Team team, Vec2 p, Vec2 v, uint32 seed) {
+	public Ship(Game game, ShipClass klass, Team team, Vec2 p, Vec2 v, double h, uint32 seed) {
 		this.game = game;
 		this.class = klass;
 		this.team = team;
 		this.reaction_mass = klass.reaction_mass;
-		physics = new Physics() { p=p, p0=p, v=v, acc=vec2(0,0), m=reaction_mass+klass.mass, r=klass.radius, h=0, w=0, wa=0 };
+		physics = new Physics() { p=p, p0=p, v=v, acc=vec2(0,0), m=reaction_mass+klass.mass, r=klass.radius, h=h, w=0, wa=0 };
 		prng = new Rand.with_seed(seed);
 		mq = new Queue<Msg>();
 		api_id = prng.next_int();
@@ -353,7 +353,7 @@ public class RISC.Ship {
 		if (klass == null) return L.arg_error(1, "invalid ship class");
 		unowned uint8[] orders = L.check_data(2);
 
-		Ship child = new Ship(s.game, klass, s.team, s.physics.p, s.physics.v, s.prng.next_int());
+		Ship child = new Ship(s.game, klass, s.team, s.physics.p, s.physics.v, s.physics.h, s.prng.next_int());
 
 		if (!child.create_ai(orders)) {
 			return L.err("Failed to create AI");
