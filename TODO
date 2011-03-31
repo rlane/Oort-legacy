@@ -1,8 +1,18 @@
+Merge:
+Fix engine energy consumption
+Fix drive() throttle
+Fix turn_to() hysteresis
+
 Next:
+Only fire mothership main gun at motherships
+Limit firing arcs
 Limit reaction mass / include in ship mass
+Generic missile AI
+Retarget missiles
+Don't thrust missile in wrong direction
+Lock camera to ship
+Move player controls to AI
 Add mass flow argument to thrust()
-Add lasers
-Human display units
 Fix hit scaling
 Fix scenario scale
 Symmetric basic scenario
@@ -22,6 +32,7 @@ Option to specify ships.lua
 Machine-readable risc-dedicated output
 Limit number of results per sensor query
 Inline AI in scenario
+Scenario editor
 Remove escape keybinding
 
 Future:
@@ -30,7 +41,6 @@ Multicast radio
 Add bomber and "bomb" missile class that can't thrust
 Radio jamming
 Sensor jamming - reduce range at which you can detect and be detected
-Lock camera to ship
 Implement shields
 Default view origin and scale in scenario metadata
 Limit view boundary
@@ -38,7 +48,6 @@ Timeout in scenario metadata
 Replay files
 
 Maybe:
-Implement angular motion
-Limit thrust/firing arcs
-Player controls ship
 Add debugger interface
+Collision detection between ships
+Non-circular ship bounding box
