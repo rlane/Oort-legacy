@@ -194,6 +194,8 @@ elseif my_class == "missile" or my_class == "little_missile" then
 		error("bad orders: n=" .. #orders)
 	end
 
+	local last_bearing = nil
+
 	while true do
 		local msg = recv()
 		if msg then
@@ -228,7 +230,24 @@ elseif my_class == "missile" or my_class == "little_missile" then
 			explode()
 		end
 
-		drive_towards(tx, ty, my_ship.max_acc*3)
+		local bearing = angle_between(x, y, tx, ty)
+
+		if last_bearing then
+			local h = heading()
+			local bearing_rate = angle_diff(bearing, last_bearing)*32.0
+			local dvx, dvy = vx-tvx, vy-tvy
+			local rvx, rvy = rotate(dvx, dvy, -bearing)
+
+			local k = 5
+			local v = rvx
+			local n = -k*v*bearing_rate
+
+			thrust_main(my_ship.max_acc)
+			thrust_lateral(n)
+			turn_to(bearing)
+		end
+
+		last_bearing = bearing
 
 		yield()
 	end
