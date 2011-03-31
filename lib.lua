@@ -187,10 +187,27 @@ function rotate(x,y,a)
 	return x*math.cos(a) - y*math.sin(a), x*math.sin(a) + y*math.cos(a)
 end
 
+function accelerated_goto(p,v,a)
+	local _a = a
+	local _b = 2*v
+	local _c = -p + v*v/(2*a)
+	--printf("a=%0.3g b=%0.3g c=%0.3g\n", _a, _b, _c)
+	local t = smallest_positive_root_of_quadratic_equation(_a,_b,_c)
+	--printf("p=%0.3g v=%0.3g a=%0.3g t=%0.3g\n", p, v, a, t)
+	if t > 0 then
+		return 1
+	else
+		return -1
+	end
+end
+
 function turn_to(angle)
 	local h = heading()
-	local diff = angle_diff(angle,h)
-	thrust_angular(-2*diff-1*angular_velocity())
+	local w = angular_velocity()
+	local wa = 1 -- ship class
+	local diff = angle_diff(h,angle)
+	local f = accelerated_goto(diff,-w,wa)
+	thrust_angular(f*wa)
 end
 
 function turn_towards(tx,ty)
