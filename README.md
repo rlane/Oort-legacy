@@ -6,8 +6,7 @@ Introduction
 
 RISC is a programming game currently in early development. Two or more space
 fleets, each ship individually controlled by the player's Lua code, battle in
-2-dimensional space. The game simulates Newtonian physics with the
-simplification that ships can thrust and shoot in any direction.
+2-dimensional space with Newtonian physics.
 
 Compilation
 -----------
@@ -57,6 +56,7 @@ description of the format is given below:
         class: (string) Ship class name.
         x: (number) X coordinate.
         x: (number) Y coordinate.
+        h: (number) Heading in radians.
 
 See the `scenarios/` directory in the distribution for examples. The
 `scenarios/challenges/` directory has scenarios that pit a user AI
@@ -84,7 +84,11 @@ examples/ directory in the distribution for sample AI.
 
 - `energy()` - return the ship's current energy level.
 
-- `thrust(angle, acceleration)` - start thrusting in the given direction.
+- `thrust_main(acc)` - set the main thruster to produce the given acceleration.
+
+- `thrust_lateral(acc)` - set the lateral thrusters to produce the given acceleration.
+
+- `thrust_angular(acc)` - set the angular acceleration.
 
 - `fire(name, angle)` - fire the gun named `name` in the given direction.
 
@@ -119,7 +123,9 @@ spawn() function.
 keyed by class name.
 
 The standard `math`, `table`, and `string` libraries are provided. A library of
-useful utility functions (`lib.lua`) is also included in the global environment.
+useful utility functions (`lib.lua`) is also included in the global
+environment. The utility functions include a standard missile AI which is
+useful for beginning players.
 
 ### Ships
 
@@ -131,17 +137,20 @@ corresponding code in the renderer.
 #### Energy
 
 Every ship has an energy supply with a certain recharge rate and a limited
-capacity. Energy is used to fire guns and spawn ships. If a ship attempts an
-action without having the required energy it is ignored. The ship classes vary
-in their energy characteristics; for example, motherships have a large energy
-supply that regenerates quickly while missiles have a small energy supply that
-does not regenerate at all.
+capacity. Energy is used to fire guns, spawn ships, and thrust. If a ship
+attempts an action without having the required energy it is ignored. The ship
+classes vary in their energy characteristics; for example, motherships have a
+large energy supply that regenerates quickly while missiles have a small energy
+supply that does not regenerate at all.
 
 #### Thrust
 
-The thrust() function takes an angle and acceleration. The maximum value of the
-acceleration depends on the ship class. The engine will accelerate the ship
-using these values until the next time thrust() is called.
+Each ship has three sets of thrusters: main, lateral, and angular. The main
+thrusters operate parallel to the ship's heading while the lateral thrusters
+are perpendicular. The maximum accelerations for each thruster are defined by
+the ship's class. The engines will continue applying the given acceleration
+until it is changed by a call to a thrust function or the ship's energy runs
+out.
 
 #### Spawning
 
@@ -233,9 +242,16 @@ Take a screenshot: 'p'
 
 Toggle FPS display: 'f'
 
+Toggle following picked ship: 'v'
+
+Toggle player control of picked ship: 'o'
+
 You can click on a ship to "pick" it. Data about the currently picked ship is
 shown in the lower-left corner of the display, and any debug lines this ship
 has drawn will be shown.
+
+Just for fun, you can take over your currently picked ship with the 'o' key.
+The keys 'ws', 'ad', and 'jl' control the thrusters and 'i' fires the main gun.
 
 Non-graphical simulator
 -----------------------
