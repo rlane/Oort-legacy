@@ -357,7 +357,7 @@ namespace RISC {
 			int x = 15;
 			int dy = 12;
 			int y = 22+11*dy;
-			var rv = s.physics.v.rotate(s.physics.h);
+			var rv = s.physics.v.rotate(-s.physics.h);
 			GLUtil.color32((uint32)0xAAFFFFAA);
 			GLUtil.printf(x, y-0*dy, "%s %.8x %s", s.class.name, s.api_id, s.controlled ? "(player controlled)" : "");
 			GLUtil.printf(x, y-1*dy, "hull: %s", fmt(s.hull,"J"));
