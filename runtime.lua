@@ -13,8 +13,12 @@ local energy_tick_rate = my_ship.energy.rate * tick_length
 local ticks = 0
 
 -- engine consumption per tick
-local engine_power_cost = 0
-local engine_mass_cost = 0
+local engine_main_power_cost = 0
+local engine_main_mass_cost = 0
+local engine_lateral_power_cost = 0
+local engine_lateral_mass_cost = 0
+local engine_angular_power_cost = 0
+local engine_angular_mass_cost = 0
 
 function energy()
 	return _energy
@@ -29,26 +33,25 @@ end
 
 function thrust_main(acc)
 	acc = clamp(acc,-my_ship.max_main_acc,my_ship.max_main_acc);
-
---	local dv = acc*tick_length
---	engine_mass_cost = my_ship.mass*dv/exhaust_velocity
---	engine_power_cost = 0.5*engine_mass_cost*exhaust_velocity^2
-
+	local dv = acc*tick_length
+	engine_main_mass_cost = my_ship.mass*dv/exhaust_velocity
+	engine_main_power_cost = 0.5*engine_main_mass_cost*exhaust_velocity^2
 	sys_thrust_main(acc)
 end
 
 function thrust_lateral(acc)
 	acc = clamp(acc,-my_ship.max_lateral_acc,my_ship.max_lateral_acc);
-
---	local dv = acc*tick_length
---	engine_mass_cost = my_ship.mass*dv/exhaust_velocity
---	engine_power_cost = 0.5*engine_mass_cost*exhaust_velocity^2
-
+	local dv = acc*tick_length
+	engine_lateral_mass_cost = my_ship.mass*dv/exhaust_velocity
+	engine_lateral_power_cost = 0.5*engine_lateral_mass_cost*exhaust_velocity^2
 	sys_thrust_lateral(acc)
 end
 
 function thrust_angular(acc)
-	-- XXX validate and charge
+	acc = clamp(acc,-my_ship.max_angular_acc,my_ship.max_angular_acc);
+	local dv = acc*tick_length
+	engine_angular_mass_cost = my_ship.mass*dv/exhaust_velocity
+	engine_angular_power_cost = 0.5*engine_angular_mass_cost*exhaust_velocity^2
 	sys_thrust_angular(acc)
 end
 
@@ -217,11 +220,14 @@ end
 function tick_hook()
 	ctl_tick_hook();
 
-	if _energy < engine_power_cost then
+	local power_draw = engine_main_power_cost + engine_lateral_power_cost + engine_angular_power_cost
+	if _energy < power_draw then
 		--print(my_class, " engine cost too high:", engine_power_cost, " > ", _energy)
-		thrust(0,0)
+		thrust_main(0)
+		thrust_lateral(0)
+		thrust_angular(0)
 	end
-	_energy = _energy - engine_power_cost
+	_energy = _energy - power_draw
 
 	_energy = _energy + energy_tick_rate
 	if _energy > my_ship.energy.limit then
