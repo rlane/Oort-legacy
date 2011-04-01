@@ -229,12 +229,13 @@ function drive_towards(tx, ty, speed)
 	local vx, vy = velocity()
 	local a = angle_between(x, y, tx, ty)
 	local h = heading()
-	local diff = angle_diff(a,h)
-	thrust_angular(-1*diff-1*angular_velocity())
 
 	rvx, rvy = rotate(vx, vy, -h)
 	thrust_lateral(-1*rvy)
 
+	turn_to(a)
+
+	local diff = angle_diff(a,h)
 	if rvx > speed then
 		thrust_main(speed-rvx)
 	elseif math.abs(diff) < math.pi/4 then
