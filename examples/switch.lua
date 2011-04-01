@@ -87,7 +87,7 @@ if my_class == "fighter" then
 			--debug_box_off()
 		end
 
-		drive_towards(follow_x, follow_y, my_ship.max_main_acc)
+		drive_towards(follow_x, follow_y, my_ship.max_main_acc*3)
 
 		if follow_target and energy() > ships.little_missile.cost and math.random(50) == 7 then
 			spawn("little_missile", follow_target:id())

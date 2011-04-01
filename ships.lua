@@ -131,17 +131,17 @@ ships.little_missile = {
 	mass = 20,
 	reaction_mass = 80,
 	hull = 30e3,
-	max_main_acc = 150,
-	max_lateral_acc = 40,
-	max_angular_acc = 2,
+	max_main_acc = 200,
+	max_lateral_acc = 80,
+	max_angular_acc = 3,
 	cost = 3e9,
 	guns = {},
 	warhead = 300e3,
 	count_for_victory = false,
 	energy = {
-		initial = 3e8,
+		initial = 200e6,
 		rate = 0,
-		limit = 3e8,
+		limit = 200e6,
 	},
 	spawnable = {}
 }
