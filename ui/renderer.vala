@@ -442,8 +442,8 @@ namespace RISC {
 
 		// XXX const
 		double zoom_force = 0.1;
-		double min_view_scale = 0.075;
-		double max_view_scale = 1.875;
+		double min_view_scale = 0.05;
+		double max_view_scale = 6.0;
 
 		public void zoom(int x, int y, double f) {
 			if (view_scale != min_view_scale && view_scale != max_view_scale) {
