@@ -71,37 +71,7 @@ elseif my_class == "mothership" then
 		yield()
 	end
 elseif my_class == "little_missile" then
-	local target_id = orders
-	local start_angle = math.random()*2*math.pi
-	for i = 1,16 do
-		turn_to(start_angle)
-		yield()
-	end
-
-	while true do
-		local t = sensor_contact(target_id)
-
-		if not t then
-			sleep(64)
-			explode()
-		end
-
-		local x, y = position()
-		local vx, vy = velocity()
-		local tx, ty = t:position()
-		local tvx, tvy = t:velocity()
-
-		clear_debug_lines()
-		debug_diamond(tx, ty, 16*my_ship.radius)
-		drive_towards(tx,ty,500)
-
-		local ttt = distance(x, y, tx, ty) / (distance(vx, vy, tvx, tvy))
-		if ttt < 0.5 then
-			explode()
-		end
-
-		yield()
-	end
+	standard_missile_ai()
 else
 	explode()
 end

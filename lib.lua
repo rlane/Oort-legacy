@@ -269,3 +269,28 @@ function create_proportional_navigator(k, a)
 		last_bearing = bearing
 	end
 end
+
+function standard_missile_ai()
+	local seek = create_proportional_navigator(5, my_ship.max_main_acc)
+
+	while true do
+		t = sensor_contact(orders)
+
+		if not t or energy() < 0.01*my_ship.energy.limit then
+			explode()
+		end
+
+		local x, y = position()
+		local vx, vy = velocity()
+		local tx, ty = t:position()
+		local tvx, tvy = t:velocity()
+
+		clear_debug_lines()
+		debug_diamond(tx, ty, 16*my_ship.radius)
+
+		seek(tx, ty, tvx, tvy)
+
+		if distance(x,y,tx,ty)/distance(vx,vy,tvx,tvy) < 1/32 then explode() end
+		yield()
+	end
+end

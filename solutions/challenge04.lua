@@ -12,23 +12,5 @@ if class == "fighter" then
 		yield()
 	end
 elseif class == "little_missile" then
-	local seek = create_proportional_navigator(5, my_ship.max_main_acc)
-
-	while true do
-		t = sensor_contact(orders)
-
-		if not t or energy() < 0.01*my_ship.energy.limit then
-			explode()
-		end
-
-		local x, y = position()
-		local vx, vy = velocity()
-		local tx, ty = t:position()
-		local tvx, tvy = t:velocity()
-
-		seek(tx, ty, tvx, tvy)
-
-		if distance(x,y,tx,ty)/distance(vx,vy,tvx,tvy) < 1/32 then explode() end
-		yield()
-	end
+	standard_missile_ai()
 end

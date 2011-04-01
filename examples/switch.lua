@@ -189,48 +189,5 @@ elseif my_class == "mothership" then
 		yield()
 	end
 elseif my_class == "missile" or my_class == "little_missile" then
-	local target_id = orders
-	if (#orders ~= 4) then
-		error("bad orders: n=" .. #orders)
-	end
-
-	local seek = create_proportional_navigator(5, my_ship.max_main_acc)
-
-	while true do
-		local msg = recv()
-		if msg then
-			--print("missile msg: " .. msg)
-		end
-
-		local t = sensor_contact(target_id)
-
-		if not t then
-			thrust_main(0)
-			thrust_lateral(0)
-			thrust_angular(0)
-			sleep(64)
-			explode()
-		end
-
-		if energy() < 0.01*my_ship.energy.limit then
-			explode()
-		end
-
-		local x, y = position()
-		local vx, vy = velocity()
-		local tx, ty = t:position()
-		local tvx, tvy = t:velocity()
-
-		clear_debug_lines()
-		debug_diamond(tx, ty, 16*my_ship.radius)
-
-		local ttt = distance(x, y, tx, ty) / distance(vx, vy, tvx, tvy)
-		if ttt < 1.0/32 then
-			explode()
-		end
-
-		seek(tx, ty, tvx, tvy)
-
-		yield()
-	end
+	standard_missile_ai()
 end
