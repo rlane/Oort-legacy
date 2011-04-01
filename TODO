@@ -1,8 +1,6 @@
 Next:
 Limit firing arcs
 Limit reaction mass / include in ship mass
-Generic missile AI
-Retarget missiles
 Don't thrust missile in wrong direction
 Fix turn_to() hysteresis
 Lock camera to ship

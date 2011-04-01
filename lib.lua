@@ -275,7 +275,17 @@ function standard_missile_ai()
 	local seek = create_proportional_navigator(5, my_ship.max_main_acc)
 
 	while true do
-		t = sensor_contact(orders)
+		local t = sensor_contact(orders)
+
+		if not t then
+			local ts = sensor_contacts{ enemy = true }
+			local x, y = position()
+			function min_fn(t)
+				local tx, ty = t:position()
+				return distance(x, y, tx, ty)
+			end
+			t = min_by(ts, min_fn)
+		end
 
 		if not t or energy() < 0.01*my_ship.energy.limit then
 			explode()
