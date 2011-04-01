@@ -7,7 +7,7 @@ for i = 1,64 do
 	yield()
 end
 
-thrust_main(my_ship.max_acc/10)
+thrust_main(my_ship.max_main_acc/10)
 sleep(64)
 
 while true do

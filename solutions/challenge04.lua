@@ -12,7 +12,7 @@ if class == "fighter" then
 		yield()
 	end
 elseif class == "little_missile" then
-	local seek = create_proportional_navigator(5, my_ship.max_acc)
+	local seek = create_proportional_navigator(5, my_ship.max_main_acc)
 
 	while true do
 		t = sensor_contact(orders)

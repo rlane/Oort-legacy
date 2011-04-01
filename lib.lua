@@ -1,5 +1,7 @@
 target_debug = false
 local my_team = team
+local my_class = class
+local my_ship = ships[my_class]
 local two_pi = math.pi * 2
 
 function printf(...)
@@ -204,7 +206,7 @@ end
 function turn_to(angle)
 	local h = heading()
 	local w = angular_velocity()
-	local wa = 1 -- ship class
+	local wa = my_ship.max_angular_acc
 	local diff = angle_diff(h,angle)
 	local f = accelerated_goto(diff,-w,wa)
 	thrust_angular(f*wa)
@@ -223,8 +225,6 @@ function turn_away(tx,ty)
 end
 
 function drive_towards(tx, ty, speed)
-	local my_class = class
-	local my_ship = ships[my_class]
 	local x, y = position()
 	local vx, vy = velocity()
 	local a = angle_between(x, y, tx, ty)
@@ -238,9 +238,9 @@ function drive_towards(tx, ty, speed)
 	if rvx > speed then
 		thrust_main(speed-rvx)
 	elseif math.abs(diff) < math.pi/4 then
-		thrust_main(my_ship.max_acc)
+		thrust_main(my_ship.max_main_acc)
 	elseif math.abs(diff) > 3*math.pi/4 then
-		thrust_main(-my_ship.max_acc)
+		thrust_main(-my_ship.max_main_acc)
 	else
 		thrust_main(0)
 	end

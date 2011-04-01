@@ -87,7 +87,7 @@ if my_class == "fighter" then
 			--debug_box_off()
 		end
 
-		drive_towards(follow_x, follow_y, my_ship.max_acc)
+		drive_towards(follow_x, follow_y, my_ship.max_main_acc)
 
 		if follow_target and energy() > ships.little_missile.cost and math.random(50) == 7 then
 			spawn("little_missile", follow_target:id())
@@ -194,7 +194,7 @@ elseif my_class == "missile" or my_class == "little_missile" then
 		error("bad orders: n=" .. #orders)
 	end
 
-	local seek = create_proportional_navigator(5, my_ship.max_acc)
+	local seek = create_proportional_navigator(5, my_ship.max_main_acc)
 
 	while true do
 		local msg = recv()

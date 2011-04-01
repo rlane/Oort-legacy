@@ -28,7 +28,7 @@ function clamp(v,min,max)
 end
 
 function thrust_main(acc)
-	acc = clamp(acc,-my_ship.max_acc,my_ship.max_acc);
+	acc = clamp(acc,-my_ship.max_main_acc,my_ship.max_main_acc);
 
 --	local dv = acc*tick_length
 --	engine_mass_cost = my_ship.mass*dv/exhaust_velocity
@@ -38,7 +38,7 @@ function thrust_main(acc)
 end
 
 function thrust_lateral(acc)
-	acc = clamp(acc,-my_ship.max_acc,my_ship.max_acc);
+	acc = clamp(acc,-my_ship.max_lateral_acc,my_ship.max_lateral_acc);
 
 --	local dv = acc*tick_length
 --	engine_mass_cost = my_ship.mass*dv/exhaust_velocity
@@ -309,8 +309,8 @@ function control(key,pressed)
 	if ctl_turn_left then angular = angular - 1 end
 	if ctl_turn_right then angular = angular + 1 end
 
-	thrust_main(my_ship.max_acc*main)
-	thrust_lateral(my_ship.max_acc*lateral)
+	thrust_main(my_ship.max_main_acc*main)
+	thrust_lateral(my_ship.max_lateral_acc*lateral)
 	thrust_angular(1*angular)
 end
 
