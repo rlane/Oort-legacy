@@ -114,7 +114,7 @@ elseif my_class == "mothership" then
 		if not main_target and main_target_retry == 16 then
 			local x, y = position()
 			local vx, vy = velocity()
-			main_target = pick_close_enemy(x, y, my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl, 0.5)
+			main_target = sensor_contacts{ distance_lt = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl, class = "mothership", enemy = true }[1]
 			main_target_retry = 0
 		elseif not main_target then
 			main_target_retry = main_target_retry + 1
