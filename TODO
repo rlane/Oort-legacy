@@ -1,5 +1,4 @@
 Next:
-Only fire mothership main gun at motherships
 Limit firing arcs
 Limit reaction mass / include in ship mass
 Generic missile AI
@@ -11,7 +10,6 @@ Move player controls to AI
 Add mass flow argument to thrust()
 Fix hit scaling
 Fix scenario scale
-Symmetric basic scenario
 Save previous pause value when taking screenshot
 Fix switch.lua thrusting
 Universe boundary

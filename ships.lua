@@ -82,12 +82,12 @@ ships.mothership = {
 	guns = {
 		main = {
 			bullet_mass = 10,
-			bullet_velocity = 300,
+			bullet_velocity = 400,
 			bullet_ttl = 20,
 			bullet_type = bullets.plasma,
 			spread = 0.03,
-			reload_time = 2,
-			cost = 0.45e6,
+			reload_time = 1,
+			cost = 1e6,
 		},
 		flak1 = flak,
 		flak2 = flak,
