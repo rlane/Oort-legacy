@@ -40,6 +40,7 @@ namespace RISC {
 		public unowned Ship picked = null;
 		public Game game;
 		public bool render_explosion_rays = false;
+		public bool follow_picked = false;
 
 		Rand prng;
 
@@ -82,6 +83,10 @@ namespace RISC {
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
+
+			if (follow_picked && picked != null) {
+				view_pos = picked.physics.p;
+			}
 
 			foreach (unowned Ship s in game.all_ships) {
 				render_ship(s);

@@ -310,6 +310,11 @@ namespace RISC {
 						}
 					}
 					break;
+				case "v":
+					if (renderer.picked != null) {
+						renderer.follow_picked = !renderer.follow_picked;
+					}
+					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {
 						renderer.picked.control(key, true);
@@ -339,6 +344,7 @@ namespace RISC {
 
 			switch (event.button) {
 				case 1:
+					renderer.follow_picked = false;
 					renderer.pick(x,y);
 					break;
 				default:
