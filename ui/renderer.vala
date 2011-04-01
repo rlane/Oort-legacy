@@ -406,7 +406,10 @@ namespace RISC {
 
 			foreach (unowned Ship s in game.all_ships) {
 				if (s.physics.acc.abs() != 0) {
-					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), s.physics.acc.scale(-Game.TICK_LENGTH), 8, 2, 4, 8);
+					var vec_main = vec2(-s.physics.acc.x, 0).rotate(s.physics.h).scale(10);
+					var vec_lateral = vec2(0, -s.physics.acc.y).rotate(s.physics.h).scale(10);
+					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_main.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
+					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_lateral.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
 				}
 			}
 		}

@@ -8,7 +8,7 @@
 			"name": "green",
 			"color": { "r": 0, "g": 255, "b": 0 },
 			"ships": [
-				{ "class": "fighter", "x": -20, "y": 0, "h": 0 }
+				{ "class": "fighter", "x": 0, "y": 0, "h": 0 }
 			]
 		},
 
@@ -17,7 +17,10 @@
 			"filename": "examples/challenge04.lua",
 			"color": { "r": 124, "g": 0, "b": 93 },
 			"ships": [
-				{ "class": "small_target", "x": 20, "y": 10, "h": 3.14 }
+				{ "class": "small_target", "x": 10, "y": 10, "h": 3.14 },
+				{ "class": "small_target", "x": -10, "y": 10, "h": 3.14 },
+				{ "class": "small_target", "x": 10, "y": -10, "h": 3.14 },
+				{ "class": "small_target", "x": -10, "y": -10, "h": 3.14 }
 			]
 		}
 
