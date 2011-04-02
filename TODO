@@ -1,15 +1,14 @@
 Next:
 Limit firing arcs
+Add ion cannon frigate
 Limit reaction mass / include in ship mass
+Add mass flow argument to thrust()
 Don't thrust missile in wrong direction
 Fix turn_to() hysteresis
-Lock camera to ship
 Move player controls to AI
-Add mass flow argument to thrust()
 Fix hit scaling
 Fix scenario scale
 Save previous pause value when taking screenshot
-Fix switch.lua thrusting
 Universe boundary
 Randomize default seed in new game dialog
 Think about lua scenarios
