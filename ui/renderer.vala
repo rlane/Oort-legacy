@@ -343,7 +343,7 @@ namespace RISC {
 			var i = 0;
 			var sign = v < 0 ? -1 : 1;
 			var prefixes = " kMGTPEZY";
-			for (i = 0; i < prefixes.length && sign*v > 1000; i++) {
+			for (i = 0; i < prefixes.length && sign*v >= 1000; i++) {
 				v /= 1000;
 			}
 			if (sign*v < 1e-9) {
