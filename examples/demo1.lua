@@ -51,10 +51,10 @@ elseif my_class == "mothership" then
 		local dist = distance(0,0,x,y)
 
 		turn_towards(0,0)
-		thrust_main(5)
+		thrust_main(1)
 
 		if dist < 400 then
-			thrust_lateral(5.0/3)
+			thrust_lateral(1.0/3)
 		else
 			thrust_lateral(0)
 		end
