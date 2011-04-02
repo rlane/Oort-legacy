@@ -226,8 +226,9 @@ function tick_hook()
 		thrust_main(0)
 		thrust_lateral(0)
 		thrust_angular(0)
+	else
+		_energy = _energy - power_draw
 	end
-	_energy = _energy - power_draw
 
 	_energy = _energy + energy_tick_rate
 	if _energy > my_ship.energy.limit then
