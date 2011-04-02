@@ -188,22 +188,22 @@ namespace RISC.Scenario {
 				}
 
 				unowned cJSON class_name = ship_obj.objectItem("class");
-				if (class_name.type != cJSON.Type.String) {
+				if (class_name == null || class_name.type != cJSON.Type.String) {
 					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].class must be a string", team_name.string, j);
 				}
 
 				unowned cJSON x_obj = ship_obj.objectItem("x");
-				if (x_obj.type != cJSON.Type.Number) {
+				if (x_obj == null || x_obj.type != cJSON.Type.Number) {
 					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].x must be a number", team_name.string, j);
 				}
 
 				unowned cJSON y_obj = ship_obj.objectItem("y");
-				if (y_obj.type != cJSON.Type.Number) {
+				if (y_obj == null || y_obj.type != cJSON.Type.Number) {
 					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].y must be a number", team_name.string, j);
 				}
 
 				unowned cJSON h_obj = ship_obj.objectItem("h");
-				if (h_obj.type != cJSON.Type.Number) {
+				if (h_obj == null || h_obj.type != cJSON.Type.Number) {
 					throw new ScenarioParseError.WRONG_TYPE("field teams.%s.ships[%d].h must be a number", team_name.string, j);
 				}
 
