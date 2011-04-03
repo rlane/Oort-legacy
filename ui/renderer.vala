@@ -169,12 +169,14 @@ namespace RISC {
 		void render_ion_cannon_frigate(Ship s) {
 			GLUtil.color32(s.team.color | 0xBB);
 			glBegin(GL_LINE_LOOP);
-			glVertex3d(-0.80, -0.41, 0);
-			glVertex3d(-0.80, 0.41, 0);
-			glVertex3d(0.95, 0.1, 0);
-			glVertex3d(0.7, 0.1, 0);
-			glVertex3d(0.7, -0.1, 0);
-			glVertex3d(0.95, -0.1, 0);
+			glVertex3d(-0.80, -0.3, 0);
+			glVertex3d(-0.80, 0.3, 0);
+			glVertex3d(0.95, 0.2, 0);
+			glVertex3d(0.95, 0.08, 0);
+			glVertex3d(0.7, 0.08, 0);
+			glVertex3d(0.7, -0.08, 0);
+			glVertex3d(0.95, -0.08, 0);
+			glVertex3d(0.95, -0.2, 0);
 			glEnd();
 		}
 
@@ -317,15 +319,15 @@ namespace RISC {
 				var sp = S(b.physics.p);
 				var angle = Math.atan2(b.physics.v.y, b.physics.v.x);
 				var length = b.physics.v.distance(vec2(0,0)) * Game.TICK_LENGTH;
-				var width = 2;
+				var width = 3;
 				glPushMatrix();
 				glTranslated(sp.x, sp.y, 0);
 				glRotated(Util.rad2deg(angle), 0, 0, 1);
 				glScaled(view_scale, view_scale, view_scale);
 				glBegin(GL_QUADS);
 				RISC.GLUtil.color32(0x6464FFAA);
-				glVertex3d(0.7*20, width, 0);
-				glVertex3d(0.7*20, -width, 0);
+				glVertex3d(0.7*40, width, 0);
+				glVertex3d(0.7*40, -width, 0);
 				glVertex3d(length, -width, 0);
 				glVertex3d(length, width, 0);
 				glEnd();

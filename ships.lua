@@ -66,7 +66,7 @@ ships.fighter = {
 }
 
 ships.ion_cannon_frigate = {
-	radius = 20,
+	radius = 40,
 	mass = 30e3,
 	reaction_mass = 40e3,
 	hull = 10e6,

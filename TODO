@@ -1,13 +1,13 @@
 Next:
-Fix bullet rendering
+Fix engine particle scaling
+Fix hit particle scaling
 Limit firing arcs
 Limit reaction mass / include in ship mass
-Ion cannon beam graphics
+Ion cannon beam texture
 Add mass flow argument to thrust()
 Don't thrust missile in wrong direction
 Fix turn_to() hysteresis
 Move player controls to AI
-Fix hit scaling
 Fix scenario scale
 Save previous pause value when taking screenshot
 Universe boundary
