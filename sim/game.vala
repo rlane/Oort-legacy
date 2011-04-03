@@ -62,6 +62,8 @@ public class RISC.Game {
 		tick_physics();
 		tick_bullets();
 		tick_ships();
+		all_bullets.concat((owned) new_bullets);
+		new_bullets = null;
 		ticks += 1;
 	}
 
@@ -142,9 +144,6 @@ public class RISC.Game {
 	}
 
 	void tick_bullets() {
-		all_bullets.concat((owned) new_bullets);
-		new_bullets = null;
-
 		foreach (unowned Bullet b in all_bullets) {
 			b.tick();
 		}
