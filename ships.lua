@@ -67,7 +67,7 @@ ships.fighter = {
 
 ships.ion_cannon_frigate = {
 	radius = 40,
-	mass = 30e3,
+	mass = 160e3,
 	reaction_mass = 40e3,
 	hull = 10e6,
 	max_main_acc = 20,
@@ -84,14 +84,14 @@ ships.ion_cannon_frigate = {
 			angle = 0.0,
 			coverage = 0.0,
 			reload_time = 0,
-			cost = 300e6,
+			cost = 30e9/32,
 		}
 	},
 	count_for_victory = true,
 	energy = {
-		initial = 5e9,
-		rate = 5e9,
-		limit = 15e9,
+		initial = 10e9,
+		rate = 17e9,
+		limit = 20e9,
 	},
 	spawnable = {
 	}
