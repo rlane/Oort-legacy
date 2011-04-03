@@ -1,7 +1,8 @@
 Next:
+Fix bullet rendering
 Limit firing arcs
-Add ion cannon frigate
 Limit reaction mass / include in ship mass
+Ion cannon beam graphics
 Add mass flow argument to thrust()
 Don't thrust missile in wrong direction
 Fix turn_to() hysteresis

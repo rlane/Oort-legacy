@@ -95,6 +95,43 @@ if my_class == "fighter" then
 
 		yield()
 	end
+elseif my_class == "ion_cannon_frigate" then
+	local main_target = nil
+	local main_target_retry = 0
+	local max_dist = my_ship.guns.main.bullet_velocity * my_ship.guns.main.bullet_ttl
+
+	while true do
+		clear_debug_lines()
+
+		if not main_target and main_target_retry == 16 then
+			local x, y = position()
+			local vx, vy = velocity()
+			main_target = sensor_contacts{ class = "ion_cannon_frigate", enemy = true }[1] or
+                    sensor_contacts{ class = "mothership", enemy = true }[1]
+			main_target_retry = 0
+		elseif not main_target then
+			main_target_retry = main_target_retry + 1
+		else
+			main_target = sensor_contact(main_target:id())
+		end
+
+		if main_target then
+			local x, y = position()
+			local tx, ty = main_target:position()
+			local bearing = angle_between(x, y, tx, ty)
+			local da = angle_diff(heading(),bearing)
+			local dist = distance(x, y, tx, ty)
+			debug_square(tx, ty, 2*my_ship.radius)
+			if dist <= max_dist and math.abs(da) < 0.1 then
+				fire("main", heading())
+			end
+			drive_towards(tx, ty, 200);
+		else
+			drive_towards(0, 0, 100);
+		end
+
+		yield()
+	end
 elseif my_class == "mothership" then
 	local i = 0
 	local t = nil

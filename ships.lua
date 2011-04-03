@@ -21,10 +21,13 @@
 -- Allow continuous thrust at 1/3 power:
 -- P = 5 GW
 
+local pi = 3.141592653589793
+
 bullets = {
 	slug = 1,
 	plasma = 2,
 	explosion = 3,
+	ion_beam = 4,
 }
 
 ships = {}
@@ -45,6 +48,8 @@ ships.fighter = {
 			bullet_velocity = 3000,
 			bullet_ttl = 0.2,
 			spread = 0.1,
+			angle = 0.0,
+			coverage = 2*pi,
 			reload_time = 0.03,
 			cost = 4.5e3,
 		}
@@ -60,12 +65,46 @@ ships.fighter = {
 	}
 }
 
+ships.ion_cannon_frigate = {
+	radius = 20,
+	mass = 30e3,
+	reaction_mass = 40e3,
+	hull = 10e6,
+	max_main_acc = 20,
+	max_lateral_acc = 2,
+	max_angular_acc = 0.5,
+	cost = 30e9,
+	guns = {
+		main = {
+			bullet_type = bullets.ion_beam,
+			bullet_mass = 0.0001,
+			bullet_velocity = 32e3,
+			bullet_ttl = 1.0/32,
+			spread = 0.0,
+			angle = 0.0,
+			coverage = 0.0,
+			reload_time = 0,
+			cost = 300e6,
+		}
+	},
+	count_for_victory = true,
+	energy = {
+		initial = 5e9,
+		rate = 5e9,
+		limit = 15e9,
+	},
+	spawnable = {
+	}
+}
+
 local flak = {
 	bullet_mass = 0.01,
 	bullet_velocity = 2000,
 	bullet_ttl = 0.5,
 	bullet_type = bullets.slug,
 	spread = 0.2,
+	angle = 0.0,
+	coverage = 2*pi,
 	reload_time = 0.15,
 	cost = 20e3,
 }
@@ -86,6 +125,8 @@ ships.mothership = {
 			bullet_ttl = 20,
 			bullet_type = bullets.plasma,
 			spread = 0.03,
+			angle = 0.0,
+			coverage = 2*pi,
 			reload_time = 1,
 			cost = 1e6,
 		},

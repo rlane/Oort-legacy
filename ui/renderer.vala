@@ -5,6 +5,7 @@ using Math;
 [Compact]
 public class RISC.ShipGfxClass {
 	public static ShipGfxClass fighter;
+	public static ShipGfxClass ion_cannon_frigate;
 	public static ShipGfxClass mothership;
 	public static ShipGfxClass missile;
 	public static ShipGfxClass little_missile;
@@ -12,6 +13,7 @@ public class RISC.ShipGfxClass {
 	
 	public static void init() {
 		fighter = new ShipGfxClass();
+		ion_cannon_frigate = new ShipGfxClass();
 		mothership = new ShipGfxClass();
 		missile = new ShipGfxClass();
 		little_missile = new ShipGfxClass();
@@ -22,6 +24,7 @@ public class RISC.ShipGfxClass {
 	{
 		switch (name) {
 			case "fighter": return fighter;
+			case "ion_cannon_frigate": return ion_cannon_frigate;
 			case "mothership": return mothership;
 			case "missile": return missile;
 			case "little_missile": return little_missile;
@@ -163,6 +166,18 @@ namespace RISC {
 			glEnd();
 		}
 
+		void render_ion_cannon_frigate(Ship s) {
+			GLUtil.color32(s.team.color | 0xBB);
+			glBegin(GL_LINE_LOOP);
+			glVertex3d(-0.80, -0.41, 0);
+			glVertex3d(-0.80, 0.41, 0);
+			glVertex3d(0.95, 0.1, 0);
+			glVertex3d(0.7, 0.1, 0);
+			glVertex3d(0.7, -0.1, 0);
+			glVertex3d(0.95, -0.1, 0);
+			glEnd();
+		}
+
 		void render_missile(Ship s) {
 			GLUtil.color32((uint32)0x88888800 | 0x55);
 			GLUtil.render_circle(5);
@@ -200,6 +215,8 @@ namespace RISC {
 				render_mothership(s);
 			} else if (s.class.name == "fighter") {
 				render_fighter(s);
+			} else if (s.class.name == "ion_cannon_frigate") {
+				render_ion_cannon_frigate(s);
 			} else if (s.class.name == "missile") {
 				render_missile(s);
 			} else if (s.class.name == "little_missile") {
@@ -296,6 +313,23 @@ namespace RISC {
 				RISC.GLUtil.color32(0x444444FF);
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
+			} else if (b.type == RISC.BulletType.ION_BEAM) {
+				var sp = S(b.physics.p);
+				var angle = Math.atan2(b.physics.v.y, b.physics.v.x);
+				var length = b.physics.v.distance(vec2(0,0)) * Game.TICK_LENGTH;
+				var width = 2;
+				glPushMatrix();
+				glTranslated(sp.x, sp.y, 0);
+				glRotated(Util.rad2deg(angle), 0, 0, 1);
+				glScaled(view_scale, view_scale, view_scale);
+				glBegin(GL_QUADS);
+				RISC.GLUtil.color32(0x6464FFAA);
+				glVertex3d(0.7*20, width, 0);
+				glVertex3d(0.7*20, -width, 0);
+				glVertex3d(length, -width, 0);
+				glVertex3d(length, width, 0);
+				glEnd();
+				glPopMatrix();
 			} else if (render_explosion_rays && b.type == RISC.BulletType.EXPLOSION) {
 				var dp = b.physics.v.scale(Game.TICK_LENGTH);
 				var sp1 = S(b.physics.p);

@@ -1,3 +1,5 @@
+lib()
+
 -- constants
 local my_class = class
 local my_ship = ships[my_class]
@@ -66,6 +68,10 @@ function fire(name, a)
 	local last_fire_tick = last_fire_ticks[name]
 
 	if _energy < gun.cost then
+		return
+	end
+
+	if math.abs(angle_diff(normalize_angle(sys_heading() + gun.angle), a)) > gun.coverage/2 then
 		return
 	end
 
