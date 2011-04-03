@@ -35,7 +35,7 @@ end
 
 function thrust_main(acc)
 	acc = clamp(acc,-my_ship.max_main_acc,my_ship.max_main_acc);
-	local dv = acc*tick_length
+	local dv = math.abs(acc)*tick_length
 	engine_main_mass_cost = my_ship.mass*dv/exhaust_velocity
 	engine_main_power_cost = 0.5*engine_main_mass_cost*exhaust_velocity^2
 	sys_thrust_main(acc)
@@ -43,7 +43,7 @@ end
 
 function thrust_lateral(acc)
 	acc = clamp(acc,-my_ship.max_lateral_acc,my_ship.max_lateral_acc);
-	local dv = acc*tick_length
+	local dv = math.abs(acc)*tick_length
 	engine_lateral_mass_cost = my_ship.mass*dv/exhaust_velocity
 	engine_lateral_power_cost = 0.5*engine_lateral_mass_cost*exhaust_velocity^2
 	sys_thrust_lateral(acc)
@@ -51,7 +51,7 @@ end
 
 function thrust_angular(acc)
 	acc = clamp(acc,-my_ship.max_angular_acc,my_ship.max_angular_acc);
-	local dv = acc*tick_length
+	local dv = math.abs(acc)*tick_length
 	engine_angular_mass_cost = my_ship.mass*dv/exhaust_velocity
 	engine_angular_power_cost = 0.5*engine_angular_mass_cost*exhaust_velocity^2
 	sys_thrust_angular(acc)
