@@ -436,7 +436,7 @@ namespace RISC {
 			}
 
 			foreach (unowned BulletHit hit in game.bullet_hits) {
-				var n = uint16.max((uint16)(hit.e/1000),1);
+				var n = uint16.max((uint16)(hit.e/10000),1);
 				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
 			}
 
