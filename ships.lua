@@ -155,14 +155,14 @@ ships.missile = {
 	max_main_acc = 100,
 	max_lateral_acc = 20,
 	max_angular_acc = 1.5,
-	cost = 6e9,
+	cost = 11e9,
 	guns = {},
 	warhead = 1e6,
 	count_for_victory = false,
 	energy = {
-		initial = 5e9,
+		initial = 10e9,
 		rate = 0,
-		limit = 5e9,
+		limit = 10e9,
 	},
 	spawnable = {}
 }
