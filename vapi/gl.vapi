@@ -1220,7 +1220,7 @@ namespace GL
 	public static void glGetTexImage (GLenum target, GLint level, GLenum format, GLenum type, GLvoid* pixels);
 
 	// 1.1 functions
-	public static void glGenTextures (GLsizei n, [CCode (array_length = false)] GLuint[] textures);
+	public static void glGenTextures (GLsizei n, GLuint *textures);
 	public static void glDeleteTextures (GLsizei n, [CCode (array_length = false)] GLuint[] textures);
 	public static void glBindTexture (GLenum target, GLuint texture);
 	public static void glPrioritizeTextures (GLsizei n, [CCode (array_length = false)] GLuint[] textures, [CCode (array_length = false)] GLclampf[] priorities);

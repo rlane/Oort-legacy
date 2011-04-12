@@ -46,6 +46,7 @@ namespace RISC {
 		public bool follow_picked = false;
 
 		Rand prng;
+		Texture ion_beam_tex;
 
 		public static void static_init() {
 			if (GLEW.init()) {
@@ -68,10 +69,11 @@ namespace RISC {
 			view_scale = initial_view_scale;
 			prng = new Rand();
 			view_pos = vec2(0,0);
+
+			ion_beam_tex = new IonBeamTexture();
 		}
 
 		public void init() {
-			glEnable(GL_TEXTURE_2D);
 			glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
 			glShadeModel(GL_SMOOTH);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -324,14 +326,24 @@ namespace RISC {
 				glTranslated(sp.x, sp.y, 0);
 				glRotated(Util.rad2deg(angle), 0, 0, 1);
 				glScaled(view_scale, view_scale, view_scale);
+				glEnable(GL_TEXTURE_2D);
+				glBlendFunc(GL_ONE, GL_ONE);
+				ion_beam_tex.bind();
 				glBegin(GL_QUADS);
 				RISC.GLUtil.color32(0x6464FFAA);
+				glTexCoord2f(0, 0);
 				glVertex3d(0.7*40, width, 0);
+				glTexCoord2f(1.0f, 0);
 				glVertex3d(0.7*40, -width, 0);
+				glTexCoord2f(1.0f, 1.0f);
 				glVertex3d(length, -width, 0);
+				glTexCoord2f(0, 1.0f);
 				glVertex3d(length, width, 0);
 				glEnd();
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glDisable(GL_TEXTURE_2D);
 				glPopMatrix();
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			} else if (render_explosion_rays && b.type == RISC.BulletType.EXPLOSION) {
 				var dp = b.physics.v.scale(Game.TICK_LENGTH);
 				var sp1 = S(b.physics.p);

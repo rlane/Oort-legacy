@@ -32,7 +32,7 @@ AM_VALAFLAGS = \
 	$(NULL)
 
 bin_PROGRAMS = risc_ui
-risc_ui_SOURCES = risc.vala renderer.vala glutil.c particle.c font.c
+risc_ui_SOURCES = risc.vala renderer.vala glutil.c particle.c font.c textures.vala
 noinst_HEADERS = glutil.h particle.h tga.h font.h font.vapi particle.vapi glutil.vapi
 risc_ui_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
 risc_ui_LDFLAGS = $(RISC_EXTRA_LDFLAGS)
