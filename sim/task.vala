@@ -2,7 +2,7 @@ public class RISC.TaskPool {
 	[CCode (has_target=false)]
 	public delegate void TaskFunc(void *arg1, void *arg2);
 
-	private ThreadPool thread_pool;
+	private ThreadPool<TaskData> thread_pool;
 	private Cond cvar;
 	private Mutex mtx;
 	public int in_flight; // XXX atomic
@@ -17,7 +17,7 @@ public class RISC.TaskPool {
 
 	public TaskPool(int thread_pool_size) throws ThreadError {
 		if (thread_pool_size > 0) {
-			thread_pool = new ThreadPool((Func)static_worker, thread_pool_size, true);
+			thread_pool = new ThreadPool<TaskData>((Func<TaskData>)static_worker, thread_pool_size, true);
 			cvar = new Cond();
 			mtx = new Mutex();
 			in_flight = 0;
@@ -25,7 +25,7 @@ public class RISC.TaskPool {
 	}
 
 	[CCode (cname = "leak")]
-	extern static void *leak(owned TaskData t);
+	extern static unowned TaskData leak(owned TaskData t);
 
 	public void run(TaskFunc f, void *arg1, void *arg2) {
 		if (thread_pool != null) {
@@ -33,9 +33,8 @@ public class RISC.TaskPool {
 			mtx.lock();
 			in_flight++;
 			mtx.unlock();
-			void *p = leak((owned)t); // XXX
 			try {
-				thread_pool.push(p);
+				thread_pool.push(leak((owned)t)); // XXX
 			} catch (ThreadError e) {
 				error(e.message);
 			}

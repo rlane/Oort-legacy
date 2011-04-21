@@ -4,8 +4,8 @@ uint32 opt_seed;
 int opt_max_ticks;
 
 const OptionEntry[] options = {
-	{ "seed", 's', 0, OptionArg.INT, &opt_seed, "Random number generator seed", null },
-	{ "max-ticks", 0, 0, OptionArg.INT, &opt_max_ticks, "Exit after given number of ticks", null },
+	{ "seed", 's', 0, OptionArg.INT, ref opt_seed, "Random number generator seed", null },
+	{ "max-ticks", 0, 0, OptionArg.INT, ref opt_max_ticks, "Exit after given number of ticks", null },
 	{ null }
 };
 

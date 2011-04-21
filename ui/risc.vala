@@ -6,7 +6,7 @@ using RISC;
 uint32 opt_seed;
 
 const OptionEntry[] options = {
-	{ "seed", 's', 0, OptionArg.INT, &opt_seed, "Random number generator seed", null },
+	{ "seed", 's', 0, OptionArg.INT, ref opt_seed, "Random number generator seed", null },
 	{ null }
 };
 
@@ -38,7 +38,7 @@ namespace RISC {
 		private unowned Team winner = null;
 		private Renderer renderer;
 		private Mutex tick_lock;
-		private unowned Thread ticker;
+		private unowned Thread<void*> ticker;
 		private bool shutting_down = false;
 		private Game game;
 
@@ -105,8 +105,8 @@ namespace RISC {
 
 		public void new_game() {
 			var scenario_chooser = new FileChooserDialog("Select scenario", this, Gtk.FileChooserAction.OPEN,
-			                                             Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT,
-																									 Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
+			                                             Gtk.Stock.OK, Gtk.ResponseType.ACCEPT,
+			                                             Gtk.Stock.CANCEL, Gtk.ResponseType.REJECT);
 			scenario_chooser.set_current_folder(data_path("scenarios"));
 			try {
 				scenario_chooser.add_shortcut_folder(data_path("scenarios"));
@@ -123,8 +123,8 @@ namespace RISC {
 		public void show_screenshot_dialog() {
 			paused = true;
 			var chooser = new FileChooserDialog("Save screenshot", this, Gtk.FileChooserAction.SAVE,
-			                                    Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT,
-																					Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT);
+			                                    Gtk.Stock.OK, Gtk.ResponseType.ACCEPT,
+			                                    Gtk.Stock.CANCEL, Gtk.ResponseType.REJECT);
 			chooser.set_current_name("screenshot.tga");
 			chooser.response.connect( (response_id) => {
 				if (response_id == Gtk.ResponseType.ACCEPT) {
@@ -381,7 +381,7 @@ namespace RISC {
 			game = new Game(seed, scn, ais);
 			start_renderer(game, scn.initial_view_scale);
 			game_state = GameState.RUNNING;
-			ticker = Thread.create(this.run, true);
+			ticker = Thread.create<void*>(this.run, true);
 		}
 
 		public void stop_game() {
@@ -481,8 +481,8 @@ namespace RISC {
 			seed_hbox.pack_start(seed_entry, false, false, 0);
 			this.vbox.pack_start(seed_hbox, false, false, 0);
 
-			add_button(STOCK_CLOSE, ResponseType.CLOSE);
-			this.ok_button = add_button(STOCK_OK, ResponseType.APPLY);
+			add_button(Gtk.Stock.CLOSE, ResponseType.CLOSE);
+			this.ok_button = add_button(Gtk.Stock.OK, ResponseType.APPLY);
 			this.ok_button.sensitive = 0 == this.scn.user_teams.length();
 
 			this.response.connect(on_response);
@@ -509,7 +509,7 @@ namespace RISC {
 				for (var i = 0; i < n; i++) {
 					ais[i] = ai_choosers[i].get_filename();
 				}
-				start_game(seed_entry.text.to_int(), scn, ais);
+				start_game(int.parse(seed_entry.text), scn, ais);
 				destroy();
 				break;
 			case ResponseType.CLOSE:

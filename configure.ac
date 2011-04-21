@@ -9,7 +9,7 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_RANLIB
 
-AM_PROG_VALAC([0.10.2])
+AM_PROG_VALAC([0.12.0])
 
 # Set up prefix-relative directories
 if test "x${prefix}" = "xNONE"; then

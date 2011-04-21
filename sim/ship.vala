@@ -649,11 +649,11 @@ public class RISC.Ship {
 
 		L.create_table((int)s.game.all_ships.length(), 0);
 		int i = 0;
-		foreach (unowned Ship s in s.game.all_ships) {
+		foreach (unowned Ship s2 in s.game.all_ships) {
 			if (query.enabled(QueryOption.LIMIT) && i >= query.limit) break;
-			if (query.match(s)) {
+			if (query.match(s2)) {
 				i++;
-				SensorContact.create(L, s, metatable_index);
+				SensorContact.create(L, s2, metatable_index);
 				L.raw_seti(-2, i);
 			}
 		}
@@ -669,11 +669,11 @@ public class RISC.Ship {
 		L.pop(1);
 
 		uint32 _id = *((uint32*)id);
-		foreach (unowned Ship s in s.game.all_ships) {
-			if (s.api_id == _id) {
+		foreach (unowned Ship s2 in s.game.all_ships) {
+			if (s2.api_id == _id) {
 				L.push_lightuserdata((void*)SensorContact.MAGIC);
 				L.raw_get(Lua.PseudoIndex.REGISTRY);
-				SensorContact.create(L, s, L.get_top());
+				SensorContact.create(L, s2, L.get_top());
 				return 1;
 			}
 		}
