@@ -37,6 +37,11 @@ int main(string[] args) {
 		return 1;
 	}
 
+	if (args.length < 2) {
+		print("Scenario argument required.\n");
+		return 1;
+	}
+
 	var scenario_filename = args[1];
 	var ai_filenames = args[2:(args.length)];
 
@@ -45,6 +50,11 @@ int main(string[] args) {
 		scn = Scenario.parse(scenario_filename);
 	} catch (Error e) {
 		error("Failed to parse scenario: %s", e.message);
+	}
+
+	if (ai_filenames.length != scn.user_teams.length()) {
+		print("expected %u AIs, got %d.\n", scn.user_teams.length(), ai_filenames.length);
+		return 1;
 	}
 
 	Game game;
