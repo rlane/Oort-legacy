@@ -72,9 +72,21 @@ namespace RISC {
 			var b = new MenuBuilder();
 
 			b.menu(menubar, "_Game", parent => {
-				b.leaf(parent, "_New", () => { new_game(); });
-				b.leaf(parent, "_Stop", () => { start_demo_game(); });
-				b.leaf(parent, "_Quit", () => { shutdown(); });
+				b.leaf(parent, "_New", new_game);
+				b.leaf(parent, "_Stop", start_demo_game);
+				b.leaf(parent, "_Pause", toggle_paused);
+				b.leaf(parent, "_Single step", do_single_step);
+				b.leaf(parent, "_Quit", shutdown);
+			});
+
+			b.menu(menubar, "_View", parent => {
+				b.leaf(parent, "Zoom _in", menu_zoom_in);
+				b.leaf(parent, "Zoom _out", menu_zoom_out);
+				b.leaf(parent, "_Screenshot", show_screenshot_dialog);
+				b.leaf(parent, "All _debug lines", toggle_render_all_debug_lines);
+				b.leaf(parent, "_Framerate", toggle_show_fps);
+				b.leaf(parent, "Follo_w ship", toggle_follow_picked);
+				b.leaf(parent, "_Control ship", toggle_control_picked);
 			});
 
 			b.menu(menubar, "_Help", parent => {
@@ -283,34 +295,25 @@ namespace RISC {
 					renderer.zoom(x, y, 1.0/1.1);
 					break;
 				case "space":
-					paused = !paused;
+					toggle_paused();
 					break;
 				case "Return":
-					paused = false;
-					single_step = true;
+					do_single_step();
 					break;
 				case "y":
-					renderer.render_all_debug_lines = !renderer.render_all_debug_lines;
+					toggle_render_all_debug_lines();
 					break;
 				case "p":
 					show_screenshot_dialog();
 					break;
 				case "f":
-					show_fps = !show_fps;
+					toggle_show_fps();
 					break;
 				case "o":
-					if (renderer.picked != null) {
-						if (!renderer.picked.controlled) {
-							renderer.picked.control_begin();
-						} else {
-							renderer.picked.control_end();
-						}
-					}
+					toggle_control_picked();
 					break;
 				case "v":
-					if (renderer.picked != null) {
-						renderer.follow_picked = !renderer.follow_picked;
-					}
+					toggle_follow_picked();
 					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {
@@ -320,6 +323,47 @@ namespace RISC {
 			}
 
 			return true;
+		}
+
+		private void toggle_paused() {
+			paused = !paused;
+		}
+
+		private void do_single_step() {
+			paused = false;
+			single_step = true;
+		}
+
+		private void toggle_render_all_debug_lines() {
+			renderer.render_all_debug_lines = !renderer.render_all_debug_lines;
+		}
+
+		private void toggle_show_fps() {
+			show_fps = !show_fps;
+		}
+
+		private void toggle_follow_picked() {
+			if (renderer.picked != null) {
+				renderer.follow_picked = !renderer.follow_picked;
+			}
+		}
+
+		private void toggle_control_picked() {
+			if (renderer.picked != null) {
+				if (!renderer.picked.controlled) {
+					renderer.picked.control_begin();
+				} else {
+					renderer.picked.control_end();
+				}
+			}
+		}
+
+		private void menu_zoom_in() {
+			renderer.zoom(drawing_area.allocation.width/2, drawing_area.allocation.height/2, 2);
+		}
+
+		private void menu_zoom_out() {
+			renderer.zoom(drawing_area.allocation.width/2, drawing_area.allocation.height/2, 0.5);
 		}
 
 		private bool on_key_release_event(Widget widget, EventKey event) {

@@ -1,8 +1,9 @@
 1.0:
-Add menus for all keybindings
+Use checkboxes for toggle menu items
 Limit firing arcs
 Limit reaction mass / include in ship mass
 Add mass flow argument to thrust()
+Limit angular velocity
 Don't thrust missile in wrong direction
 Fix turn_to() hysteresis
 Fix scenario scale
