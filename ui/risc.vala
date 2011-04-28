@@ -477,7 +477,7 @@ namespace RISC {
 			var seed_hbox = new Gtk.HBox(false, 5);
 			seed_hbox.pack_start(new Label("Seed:"));
 			this.seed_entry = new Gtk.Entry();
-			this.seed_entry.text = "0";
+			this.seed_entry.text = Random.int_range(0,1000).to_string();
 			seed_hbox.pack_start(seed_entry, false, false, 0);
 			this.vbox.pack_start(seed_hbox, false, false, 0);
 
