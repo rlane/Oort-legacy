@@ -1,29 +1,18 @@
-Next:
+1.0:
 Limit firing arcs
 Limit reaction mass / include in ship mass
-Ion cannon beam texture
 Add mass flow argument to thrust()
 Don't thrust missile in wrong direction
 Fix turn_to() hysteresis
-Move player controls to AI
 Fix scenario scale
 Save previous pause value when taking screenshot
 Universe boundary
 Randomize default seed in new game dialog
-Think about lua scenarios
 Rename executables
 Rename project
-
-1.0:
 Flesh out challenges
-More demo scenarios (space invaders, minefield)
-Workflow for adding new ships to ships.lua
-Option to specify ships.lua
-Machine-readable risc-dedicated output
-Limit number of results per sensor query
-Inline AI in scenario
-Scenario editor
 Remove escape keybinding
+Machine-readable risc-dedicated output
 
 Future:
 Limit sensor range
@@ -36,6 +25,14 @@ Default view origin and scale in scenario metadata
 Limit view boundary
 Timeout in scenario metadata
 Replay files
+Move player controls to AI
+Think about lua scenarios
+More demo scenarios (space invaders, minefield)
+Workflow for adding new ships to ships.lua
+Option to specify ships.lua
+Limit number of results per sensor query
+Inline AI in scenario
+Scenario editor
 
 Maybe:
 Add debugger interface
