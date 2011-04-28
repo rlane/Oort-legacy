@@ -298,9 +298,6 @@ namespace RISC {
 				case "f":
 					show_fps = !show_fps;
 					break;
-				case "Escape":
-					shutdown();
-					break;
 				case "o":
 					if (renderer.picked != null) {
 						if (!renderer.picked.controlled) {
