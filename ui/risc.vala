@@ -14,14 +14,14 @@ namespace RISC {
 	class MenuBuilder : GLib.Object {
 		public delegate void MenuAction();
 		public void leaf(MenuShell parent, string label, MenuAction action) {
-			var item = new MenuItem.with_label(label);
+			var item = new MenuItem.with_mnemonic(label);
 			parent.append(item);
 			item.activate.connect((widget) => action());
 		}
 
 		public delegate void MenuBuilder(MenuShell parent);
 		public void menu(MenuShell parent, string label, MenuBuilder builder) {
-			var item = new MenuItem.with_label(label);
+			var item = new MenuItem.with_mnemonic(label);
 			var menu = new Menu();
 			item.set_submenu(menu);
 			parent.append(item);
@@ -71,14 +71,14 @@ namespace RISC {
 			var menubar = new MenuBar();
 			var b = new MenuBuilder();
 
-			b.menu(menubar, "Game", parent => {
-				b.leaf(parent, "New", () => { new_game(); });
-				b.leaf(parent, "Stop", () => { start_demo_game(); });
-				b.leaf(parent, "Quit", () => { shutdown(); });
+			b.menu(menubar, "_Game", parent => {
+				b.leaf(parent, "_New", () => { new_game(); });
+				b.leaf(parent, "_Stop", () => { start_demo_game(); });
+				b.leaf(parent, "_Quit", () => { shutdown(); });
 			});
 
-			b.menu(menubar, "Help", parent => {
-				b.leaf(parent, "About", show_about);
+			b.menu(menubar, "_Help", parent => {
+				b.leaf(parent, "_About", show_about);
 			});
 
 			return menubar;

@@ -1,5 +1,5 @@
 1.0:
-Add menu mnemonics
+Add menus for all keybindings
 Limit firing arcs
 Limit reaction mass / include in ship mass
 Add mass flow argument to thrust()
