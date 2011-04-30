@@ -1,18 +1,18 @@
 NULL = 
 
 AM_CFLAGS = \
-	$(RISC_CFLAGS) \
-	$(RISC_UI_CFLAGS) \
+	$(OORT_CFLAGS) \
+	$(OORT_UI_CFLAGS) \
 	-include $(CONFIG_HEADER) \
-	-include risc.h \
+	-include oort.h \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
 	$(NULL)
 
-LIBS = $(RISC_LIBS) $(RISC_UI_LIBS) -lm
+LIBS = $(OORT_LIBS) $(OORT_UI_LIBS) -lm
 
 AM_VALAFLAGS = \
-	--pkg risc \
+	--pkg oort \
 	--pkg lua \
 	--pkg vector \
 	--pkg util \
@@ -31,8 +31,8 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/ui \
 	$(NULL)
 
-bin_PROGRAMS = risc_ui
-risc_ui_SOURCES = risc.vala renderer.vala glutil.c particle.c font.c textures.vala
+bin_PROGRAMS = oort_ui
+oort_ui_SOURCES = oort.vala renderer.vala glutil.c particle.c font.c textures.vala
 noinst_HEADERS = glutil.h particle.h tga.h font.h font.vapi particle.vapi glutil.vapi
-risc_ui_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
-risc_ui_LDFLAGS = $(RISC_EXTRA_LDFLAGS)
+oort_ui_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
+oort_ui_LDFLAGS = $(OORT_EXTRA_LDFLAGS)

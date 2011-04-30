@@ -1,7 +1,7 @@
 NULL = 
 
 AM_CFLAGS = \
-	$(RISC_CFLAGS) \
+	$(OORT_CFLAGS) \
 	$(VALGRIND_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
@@ -10,7 +10,7 @@ AM_CFLAGS = \
 	$(NULL)
 
 AM_VALAFLAGS = \
-	--library risc -H risc.h \
+	--library oort -H oort.h \
 	--vapidir $(top_srcdir)/vapi \
 	--vapidir $(top_srcdir)/vector \
 	--vapidir $(top_srcdir)/cjson \
@@ -39,12 +39,12 @@ libsim_a_SOURCES = \
 	paths.vala \
 	$(NULL)
 
-noinst_HEADERS = util.h risc.h risc.vapi util.vapi
+noinst_HEADERS = util.h oort.h oort.vapi util.vapi
 
-libsim_a_LDFLAGS = $(RISC_LIBS)
+libsim_a_LDFLAGS = $(OORT_LIBS)
 libsim_a_LIBADD = $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
 
-risc.h: libsim_a_vala.stamp
+oort.h: libsim_a_vala.stamp
 
 EXTRA_DIST = \
 	$(NULL)

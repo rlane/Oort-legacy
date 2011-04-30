@@ -1,13 +1,13 @@
 !include "MUI2.nsh"
  
-Name "RISC"
-OutFile "risc-installer-win32.exe"
+Name "OORT"
+OutFile "oort-installer-win32.exe"
 
 ;Default installation folder
-InstallDir "$LOCALAPPDATA\RISC"
+InstallDir "$LOCALAPPDATA\OORT"
   
 ;Get installation folder from registry if available
-InstallDirRegKey HKCU "Software\RISC" ""
+InstallDirRegKey HKCU "Software\OORT" ""
 
 ;Request application privileges for Windows Vista
 RequestExecutionLevel user
@@ -33,30 +33,30 @@ RequestExecutionLevel user
 
 !insertmacro MUI_LANGUAGE "English"
 
-Section "!RISC" SecCore
+Section "!OORT" SecCore
 SectionIn RO
   SetOutPath $INSTDIR
-	File /r "risc-win32/*"
+	File /r "oort-win32/*"
 
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RISC" DisplayName "RISC"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RISC" UninstallString '"$INSTDIR\Uninstall.exe"'
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RISC" DisplayIcon $INSTDIR\gfx\icon.ico
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OORT" DisplayName "OORT"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OORT" UninstallString '"$INSTDIR\Uninstall.exe"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OORT" DisplayIcon $INSTDIR\gfx\icon.ico
   WriteUninstaller "$INSTDIR\uninstall.exe"
 SectionEnd
 
 Section "Desktop icon" SecDesktop
-  CreateShortcut "$DESKTOP\RISC.lnk" "$INSTDIR\risc_ui.exe"
+  CreateShortcut "$DESKTOP\OORT.lnk" "$INSTDIR\oort_ui.exe"
 SectionEnd
 
 Section -AdditionalIcons
-  CreateDirectory "$SMPROGRAMS\RISC"
-  CreateShortcut "$SMPROGRAMS\RISC\RISC.lnk" "$INSTDIR\risc_ui.exe"
-  CreateShortCut "$SMPROGRAMS\RISC\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+  CreateDirectory "$SMPROGRAMS\OORT"
+  CreateShortcut "$SMPROGRAMS\OORT\OORT.lnk" "$INSTDIR\oort_ui.exe"
+  CreateShortCut "$SMPROGRAMS\OORT\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 SectionEnd
 
 Section "Uninstall"
 	RMDir /r $INSTDIR
-	RMDir /r "$SMPROGRAMS\RISC"
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RISC"
-  Delete "$DESKTOP\RISC.lnk"
+	RMDir /r "$SMPROGRAMS\OORT"
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OORT"
+  Delete "$DESKTOP\OORT.lnk"
 SectionEnd

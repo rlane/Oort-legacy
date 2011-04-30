@@ -3,7 +3,7 @@ using Vector;
 using Math;
 
 [Compact]
-public class RISC.Ship {
+public class Oort.Ship {
 	public const int TAIL_SEGMENTS = 16;
 	public const int TAIL_TICKS = 4;
 	public const int MAX_DEBUG_LINES = 32;

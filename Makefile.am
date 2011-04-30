@@ -15,13 +15,13 @@ SUBDIRS = \
 	test \
 	$(NULL)
 
-riscdocdir = $(docdir)
-riscdoc_DATA = \
+oortdocdir = $(docdir)
+oortdoc_DATA = \
 	README.md \
 	$(NULL)
 
-riscluadir = $(datadir)/risc
-nobase_risclua_DATA = \
+oortluadir = $(datadir)/oort
+nobase_oortlua_DATA = \
 	ships.lua \
 	lib.lua \
 	examples/target.lua \
@@ -46,8 +46,8 @@ nobase_risclua_DATA = \
 	$(NULL)
 
 EXTRA_DIST = \
-	$(nobase_risclua_DATA) \
-	$(riscdoc_DATA) \
+	$(nobase_oortlua_DATA) \
+	$(oortdoc_DATA) \
 	installer.nsi \
 	$(NULL)
 
@@ -58,22 +58,22 @@ DISTCLEANFILES = \
 	$(NULL)
 
 benchmark: all
-	RISC_NUM_THREADS=0 valgrind --tool=callgrind --collect-atstart=no ./dedicated/risc_dedicated -s 1 --max-ticks 20 scenarios/benchmark.json
+	OORT_NUM_THREADS=0 valgrind --tool=callgrind --collect-atstart=no ./dedicated/oort_dedicated -s 1 --max-ticks 20 scenarios/benchmark.json
 
 benchmark-cache: all
-	RISC_NUM_THREADS=0 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/risc_dedicated -s 1 --max-ticks 20 scenarios/benchmark.json
+	OORT_NUM_THREADS=0 valgrind --tool=callgrind --collect-atstart=no --cache-sim=yes --branch-sim=yes ./dedicated/oort_dedicated -s 1 --max-ticks 20 scenarios/benchmark.json
 
 challenge: all
-	./dedicated/risc_dedicated scenarios/challenge01.json solutions/challenge01.lua
-	./dedicated/risc_dedicated scenarios/challenge02.json solutions/challenge02.lua
-	./dedicated/risc_dedicated scenarios/challenge03.json solutions/challenge03.lua
-	./dedicated/risc_dedicated scenarios/challenge04.json solutions/challenge04.lua
+	./dedicated/oort_dedicated scenarios/challenge01.json solutions/challenge01.lua
+	./dedicated/oort_dedicated scenarios/challenge02.json solutions/challenge02.lua
+	./dedicated/oort_dedicated scenarios/challenge03.json solutions/challenge03.lua
+	./dedicated/oort_dedicated scenarios/challenge04.json solutions/challenge04.lua
 
 run: all
-	./dedicated/risc_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
+	./dedicated/oort_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
 
 run-ui: all
-	./ui/risc_ui scenarios/basic.json examples/switch.lua examples/switch.lua
+	./ui/oort_ui scenarios/basic.json examples/switch.lua examples/switch.lua
 
 DLL_DIR=/usr/i486-mingw32/bin
 
@@ -85,22 +85,22 @@ DLLS=\
 	libpangocairo-1.0-0.dll libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpng14.dll zlib1.dll \
 	libpixman-1-0.dll glew32.dll
 
-.PHONY: risc-win32
-risc-win32: all
-	rm -rf risc-win32
-	mkdir risc-win32
-	cp ui/risc_ui.exe dedicated/risc_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) risc-win32/
-	cp ships.lua runtime.lua lib.lua risc-win32/
-	dos2unix --u2d < README.md > risc-win32/README.txt
-	dos2unix --u2d < TODO > risc-win32/TODO.txt
-	mkdir risc-win32/scenarios
-	cp scenarios/*.json risc-win32/scenarios
-	mkdir risc-win32/examples
-	cp examples/*.lua risc-win32/examples
+.PHONY: oort-win32
+oort-win32: all
+	rm -rf oort-win32
+	mkdir oort-win32
+	cp ui/oort_ui.exe dedicated/oort_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) oort-win32/
+	cp ships.lua runtime.lua lib.lua oort-win32/
+	dos2unix --u2d < README.md > oort-win32/README.txt
+	dos2unix --u2d < TODO > oort-win32/TODO.txt
+	mkdir oort-win32/scenarios
+	cp scenarios/*.json oort-win32/scenarios
+	mkdir oort-win32/examples
+	cp examples/*.lua oort-win32/examples
 
-risc-installer-win32.exe: risc-win32 installer.nsi
+oort-installer-win32.exe: oort-win32 installer.nsi
 	makensis installer.nsi
 
 memcheck: all
-	G_DEBUG=gc-friendly G_SLICE=always-malloc RISC_MAX_TICKS=10 valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/risc_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
+	G_DEBUG=gc-friendly G_SLICE=always-malloc OORT_MAX_TICKS=10 valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/oort_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
 	@echo "Memcheck output saved to memcheck.out"

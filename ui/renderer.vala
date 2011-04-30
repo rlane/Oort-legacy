@@ -3,7 +3,7 @@ using Vector;
 using Math;
 
 [Compact]
-public class RISC.ShipGfxClass {
+public class Oort.ShipGfxClass {
 	public static ShipGfxClass fighter;
 	public static ShipGfxClass ion_cannon_frigate;
 	public static ShipGfxClass mothership;
@@ -33,7 +33,7 @@ public class RISC.ShipGfxClass {
 	}
 }
 
-namespace RISC {
+namespace Oort {
 	class Renderer {
 		public bool render_all_debug_lines = false;
 		public int screen_width = 640;
@@ -53,7 +53,7 @@ namespace RISC {
 				error("GLEW initialization failed");
 			}
 			ShipGfxClass.init();
-			RISC.Ship.gfx_create_cb = on_ship_created;
+			Oort.Ship.gfx_create_cb = on_ship_created;
 
 			/*
 			print("Vendor: %s\n", glGetString(GL_VENDOR));
@@ -299,11 +299,11 @@ namespace RISC {
 		}
 
 		private void render_bullet(Bullet b) {
-			RISC.GLUtil.color32((uint32)0xFFFFFFAA);
+			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
 
 			if (b.dead) return;
 
-			if (b.type == RISC.BulletType.SLUG) {
+			if (b.type == Oort.BulletType.SLUG) {
 				var dp = b.physics.v.scale(1.0/64);
 				var offset = b.physics.v.scale(prng.next_double()/64);
 				var p1 = b.physics.p.add(offset);
@@ -312,12 +312,12 @@ namespace RISC {
 				var sp2 = S(p2);
 
 				glBegin(GL_LINE_STRIP);
-				RISC.GLUtil.color32(0x44444455);
+				Oort.GLUtil.color32(0x44444455);
 				glVertex3d(sp1.x, sp1.y, 0);
-				RISC.GLUtil.color32(0x444444FF);
+				Oort.GLUtil.color32(0x444444FF);
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
-			} else if (b.type == RISC.BulletType.ION_BEAM) {
+			} else if (b.type == Oort.BulletType.ION_BEAM) {
 				var sp = S(b.physics.p);
 				var angle = Math.atan2(b.physics.v.y, b.physics.v.x);
 				var length = b.physics.v.distance(vec2(0,0)) * Game.TICK_LENGTH;
@@ -330,7 +330,7 @@ namespace RISC {
 				glBlendFunc(GL_ONE, GL_ONE);
 				ion_beam_tex.bind();
 				glBegin(GL_QUADS);
-				RISC.GLUtil.color32(0x6464FFAA);
+				Oort.GLUtil.color32(0x6464FFAA);
 				glTexCoord2f(0, 0);
 				glVertex3d(0.7*40, width, 0);
 				glTexCoord2f(1.0f, 0);
@@ -344,15 +344,15 @@ namespace RISC {
 				glDisable(GL_TEXTURE_2D);
 				glPopMatrix();
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			} else if (render_explosion_rays && b.type == RISC.BulletType.EXPLOSION) {
+			} else if (render_explosion_rays && b.type == Oort.BulletType.EXPLOSION) {
 				var dp = b.physics.v.scale(Game.TICK_LENGTH);
 				var sp1 = S(b.physics.p);
 				var sp2 = S(b.physics.p.add(dp));
 
 				glBegin(GL_LINE_STRIP);
-				RISC.GLUtil.color32(0xFFFFFF33u);
+				Oort.GLUtil.color32(0xFFFFFF33u);
 				glVertex3d(sp1.x, sp1.y, 0);
-				RISC.GLUtil.color32(0xFFFFFF22u);
+				Oort.GLUtil.color32(0xFFFFFF22u);
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
 			}

@@ -33,24 +33,24 @@ compile
 config.h
 stamp-h1
 
-dedicated/risc_dedicated*
-ui/risc_ui*
-sim/risc.vapi
+dedicated/oort_dedicated*
+ui/oort_ui*
+sim/oort.vapi
 README
 
-dedicated/risc-dedicated.c
+dedicated/oort-dedicated.c
 sim/bullet.c
 sim/game.c
 sim/physics.c
-sim/risc.h
+sim/oort.h
 sim/scenario.c
 sim/ship_class.c
 sim/ship.c
 sim/task.c
 sim/team.c
 ui/renderer.c
-ui/risc.c
+ui/oort.c
 sim/paths.c
 
-sim/librisc-1.0.a
+sim/liboort-1.0.a
 luajit_build/luajit-stamp

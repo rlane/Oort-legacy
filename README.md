@@ -1,17 +1,17 @@
-RISC
+Oort
 ====
 
 Introduction
 ------------
 
-RISC is a programming game currently in early development. Two or more space
+Oort is a programming game currently in early development. Two or more space
 fleets, each ship individually controlled by the player's Lua code, battle in
 2-dimensional space with Newtonian physics.
 
 Compilation
 -----------
 
-RISC uses the standard autotools build system. It is known to compile on Linux
+Oort uses the standard autotools build system. It is known to compile on Linux
 and OS X, and cross-compile to Windows using mingw32. Required packages for
 various package managers are listed below:
 
@@ -26,12 +26,12 @@ various package managers are listed below:
 Gameplay
 --------
 
-RISC is a programming game, which means that after the simulation has begun the
+Oort is a programming game, which means that after the simulation has begun the
 players have no control over the outcome. Instead, you play by writing a
 program (AI) that all ships on your team will individually execute.
 
-To get started, run the UI (`risc_ui` from the command line, or using the
-desktop shortcut on Windows). RISC will begin playing a demo scenario. Click
+To get started, run the UI (`oort_ui` from the command line, or using the
+desktop shortcut on Windows). Oort will begin playing a demo scenario. Click
 the "File" menu and select "New Game". This will pop up a file chooser where
 you will pick the scenario. The file chooser starts in a directory containing
 scenarios distributed with the game. Pick "basic.json". Next you'll be prompted
@@ -69,14 +69,14 @@ The team with the last ship alive (not counting missiles) is the winner.
 ### AI
 
 Every ship in the game is controlled by a Lua program that calls functions
-provided by RISC to thrust, fire, etc. Each ship is given a timeslice per tick
+provided by Oort to thrust, fire, etc. Each ship is given a timeslice per tick
 and preempted when its time is up. Execution resumes where it left off on the
 next tick. The ships run in independent Lua VMs and do not share any data. All
 coordination must be accomplished using ship orders and the radio. The amount
 of memory that can be allocated per ship is limited to 1 megabyte. See the
 examples/ directory in the distribution for sample AI.
 
-#### RISC API
+#### Oort API
 
 - `position()` - returns `(x,y)`.
 
@@ -156,7 +156,7 @@ out.
 
 A ship can call the spawn() function to create a new ship. This costs a large
 amount of energy that depends on the specified class. Missiles are just another
-class of ships in RISC, so to launch a missile simply spawn it with orders of
+class of ships in Oort, so to launch a missile simply spawn it with orders of
 where to go. The classes of ships that can be spawned are controlled by the
 'spawnable' fields in ships.lua.
 
@@ -225,7 +225,7 @@ LuaJIT). They should still be deterministic given the same VM.
 Graphical simulator
 -------------------
 
-The "risc\_ui" binary renders the battle with OpenGL. The simulation speed is
+The "oort\_ui" binary renders the battle with OpenGL. The simulation speed is
 limited to real time (32 hz).
 
 ### Controls
@@ -256,19 +256,19 @@ The keys 'ws', 'ad', and 'jl' control the thrusters and 'i' fires the main gun.
 Non-graphical simulator
 -----------------------
 
-The "risc\_dedicated" binary runs the simulation and outputs which team won. It
+The "oort\_dedicated" binary runs the simulation and outputs which team won. It
 isn't framerate-limited and so can run much more quickly. A future task is to
-have risc\_dedicated output a recording of the battle that can be replayed in a
+have oort\_dedicated output a recording of the battle that can be replayed in a
 graphical viewer later.
 
 Contributing
 ------------
 
-Mailing list: risc-game-dev@lists.sourceforge.net.
+Mailing list: oort-game-dev@lists.sourceforge.net.
 
-Subscribe at [https://lists.sourceforge.net/lists/listinfo/risc-game-dev](https://lists.sourceforge.net/lists/listinfo/risc-game-dev).
+Subscribe at [https://lists.sourceforge.net/lists/listinfo/oort-game-dev](https://lists.sourceforge.net/lists/listinfo/oort-game-dev).
 
 Screenshot
 ----------
 
-![RISC screenshot](risc/wiki/screenshot-1.png)
+![Oort screenshot](Oort/wiki/screenshot-1.png)

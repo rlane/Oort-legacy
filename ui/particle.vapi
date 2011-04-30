@@ -1,4 +1,4 @@
-namespace RISC {
+namespace Oort {
 	[CCode (cheader_filename = "particle.h")]
 	public enum ParticleType {
 		[CCode (cname = "PARTICLE_HIT")]

@@ -1,7 +1,7 @@
 using GL;
 using Math;
 
-namespace RISC {
+namespace Oort {
 	public class Texture {
 		public GLuint id;
 

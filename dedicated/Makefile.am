@@ -1,15 +1,15 @@
 NULL = 
 
 AM_CFLAGS = \
-	$(RISC_CFLAGS) \
+	$(OORT_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
-	-include risc.h \
+	-include oort.h \
 	$(NULL)
 
 AM_VALAFLAGS = \
-	--pkg risc \
+	--pkg oort \
 	--pkg lua \
 	--pkg vector \
 	--pkg util \
@@ -20,9 +20,9 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/sim \
 	$(NULL)
 
-LIBS=$(RISC_LIBS) -lm
+LIBS=$(OORT_LIBS) -lm
 
-bin_PROGRAMS = risc_dedicated
-risc_dedicated_SOURCES = risc-dedicated.vala
-risc_dedicated_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
-risc_dedicated_LDFLAGS = $(RISC_EXTRA_LDFLAGS)
+bin_PROGRAMS = oort_dedicated
+oort_dedicated_SOURCES = oort-dedicated.vala
+oort_dedicated_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
+oort_dedicated_LDFLAGS = $(OORT_EXTRA_LDFLAGS)

@@ -1,7 +1,7 @@
-using RISC;
+using Oort;
 using Vector;
 
-public enum RISC.BulletType {
+public enum Oort.BulletType {
 	SLUG = 1,
 	PLASMA = 2,
 	EXPLOSION = 3,
@@ -9,7 +9,7 @@ public enum RISC.BulletType {
 }
 
 [Compact]
-public class RISC.Bullet {
+public class Oort.Bullet {
 	public Physics physics;
 	public unowned Team team;
 	public double ttl;

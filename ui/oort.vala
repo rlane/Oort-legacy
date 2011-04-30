@@ -1,7 +1,7 @@
 using Gtk;
 using Gdk;
 using Lua;
-using RISC;
+using Oort;
 
 uint32 opt_seed;
 
@@ -10,7 +10,7 @@ const OptionEntry[] options = {
 	{ null }
 };
 
-namespace RISC {
+namespace Oort {
 	class MenuBuilder : GLib.Object {
 		public delegate void MenuAction();
 		public void leaf(MenuShell parent, string label, MenuAction action) {
@@ -54,7 +54,7 @@ namespace RISC {
 		private GameState game_state;
 
 		public MainWindow() throws ThreadError {
-			this.title = "RISC";
+			this.title = "Oort";
 			this.destroy.connect(shutdown);
 			set_reallocate_redraws(true);
 
@@ -244,21 +244,21 @@ namespace RISC {
 
 			renderer.render();
 			
-			RISC.GLUtil.color32((uint32)0xFFFFFFAA);
+			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
 
 			if (show_fps && frame_usecs != 0 && sample_usecs != 0) {
-				RISC.GLUtil.printf(rect.width-9*9, rect.height-15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
-				RISC.GLUtil.printf(rect.width-15*9, rect.height-25, "Max FPS: %.1f", (1000*1000.0)/frame_usecs);
+				Oort.GLUtil.printf(rect.width-9*9, rect.height-15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
+				Oort.GLUtil.printf(rect.width-15*9, rect.height-25, "Max FPS: %.1f", (1000*1000.0)/frame_usecs);
 			}
 
 			switch (game_state) {
 			case GameState.DEMO:
-				RISC.GLUtil.printf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
+				Oort.GLUtil.printf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
 				break;
 			case GameState.RUNNING:
 				break;
 			case GameState.FINISHED:
-				RISC.GLUtil.printf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
+				Oort.GLUtil.printf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
 				break;
 			}
 

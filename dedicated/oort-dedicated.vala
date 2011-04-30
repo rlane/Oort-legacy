@@ -1,4 +1,4 @@
-using RISC;
+using Oort;
 
 uint32 opt_seed;
 int opt_max_ticks;
@@ -13,7 +13,7 @@ int main(string[] args) {
 	GLib.Environment.set_application_name(Config.PACKAGE_NAME);
 
 	Paths.init(args[0]);
-	print("using data from %s\n", RISC.Paths.resource_dir.get_path());
+	print("using data from %s\n", Oort.Paths.resource_dir.get_path());
 
 	opt_seed = 0;
 	opt_max_ticks = -1;

@@ -1,21 +1,21 @@
-using RISC;
+using Oort;
 using Lua;
 using Vector;
 
-public errordomain RISC.ScenarioParseError {
+public errordomain Oort.ScenarioParseError {
 	JSON_SYNTAX,
 	WRONG_TYPE,
 	BAD_VALUE,
 	NUM_TEAMS,
 }
 
-public errordomain RISC.ScenarioLoadError {
+public errordomain Oort.ScenarioLoadError {
 	NUM_USER_AI,
 	INVALID_SHIP_CLASS,
 	FAILED_AI_CREATION,
 }
 
-public class RISC.ParsedScenario {
+public class Oort.ParsedScenario {
 	public string name;
 	public string description;
 	public double initial_view_scale;
@@ -23,7 +23,7 @@ public class RISC.ParsedScenario {
 	public List<ParsedTeam> user_teams;
 }
 
-public class RISC.ParsedTeam {
+public class Oort.ParsedTeam {
 	public string name;
 	public string filename;
 	public uint8 color_red;
@@ -32,13 +32,13 @@ public class RISC.ParsedTeam {
 	public List<ParsedShip> ships;
 }
 
-public class RISC.ParsedShip {
+public class Oort.ParsedShip {
 	public string class_name;
 	public Vec2 p;
 	public double h;
 }
 
-namespace RISC.Scenario {
+namespace Oort.Scenario {
 	public void load(Game game, ParsedScenario scn, string[] ais) throws ScenarioLoadError, FileError {
 		if (scn.user_teams.length() != ais.length) {
 			throw new ScenarioLoadError.NUM_USER_AI("Expected %u user AIs, got %d", scn.user_teams.length(), ais.length);

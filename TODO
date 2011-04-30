@@ -10,9 +10,8 @@ Fix scenario scale
 Save previous pause value when taking screenshot
 Universe boundary
 Rename executables
-Rename project
 Flesh out challenges
-Machine-readable risc-dedicated output
+Machine-readable oort-dedicated output
 
 Future:
 Limit sensor range

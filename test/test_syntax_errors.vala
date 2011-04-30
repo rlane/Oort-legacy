@@ -1,4 +1,4 @@
-using RISC;
+using Oort;
 
 int main(string[] args) {
 	Test.init(ref args);
@@ -10,7 +10,7 @@ int main(string[] args) {
 	Log.set_always_fatal(0);
 
 	Paths.init(args[0]);
-	print("using data from %s\n", RISC.Paths.resource_dir.get_path());
+	print("using data from %s\n", Oort.Paths.resource_dir.get_path());
 
 	assert(ShipClass.load(data_path("ships.lua")));
 

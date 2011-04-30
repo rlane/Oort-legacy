@@ -1,7 +1,7 @@
 using Lua;
 
 [Compact]
-public class RISC.ShipClass {
+public class Oort.ShipClass {
 	public string name;
 	public double radius;
 	public double hull;

@@ -1,4 +1,4 @@
-public class RISC.TaskPool {
+public class Oort.TaskPool {
 	[CCode (has_target=false)]
 	public delegate void TaskFunc(void *arg1, void *arg2);
 

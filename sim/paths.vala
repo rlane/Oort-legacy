@@ -1,4 +1,4 @@
-namespace RISC.Paths {
+namespace Oort.Paths {
 	public File resource_dir;
 
 	public static void init(string arg0) {
@@ -25,7 +25,7 @@ namespace RISC.Paths {
 	}
 }
 
-namespace RISC {
+namespace Oort {
 	public static string data_path(string rel) {
 		return "%s/%s".printf(Paths.resource_dir.get_path(), rel);
 	}

@@ -1,15 +1,15 @@
-using RISC;
+using Oort;
 using Vector;
 
 [Compact]
-public class RISC.BulletHit {
+public class Oort.BulletHit {
 	public unowned Ship s;
 	public unowned Bullet b;
 	public Vector.Vec2 cp;
 	public double e;
 }
 
-public class RISC.Game {
+public class Oort.Game {
 	public int ticks = 0;
 	public Rand prng;
 	public uint8[] runtime_code;
@@ -47,7 +47,7 @@ public class RISC.Game {
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
 		lib_code = load_resource("lib.lua");
-		tasks = new TaskPool(Util.envtol("RISC_NUM_THREADS", 8));
+		tasks = new TaskPool(Util.envtol("Oort_NUM_THREADS", 8));
 		Scenario.load(this, scn, ais);
 	}
 

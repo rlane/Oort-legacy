@@ -1,5 +1,5 @@
 [CCode (cheader_filename = "util.h")]
-namespace RISC.Util {
+namespace Oort.Util {
 	[CCode (cname = "envtol")]
 	public int envtol(string k, int i);
 	[CCode (cname = "is_win32")]

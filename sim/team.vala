@@ -1,4 +1,4 @@
-public class RISC.Team {
+public class Oort.Team {
 	public uint32 color;
 	public string name;
 	public string filename;

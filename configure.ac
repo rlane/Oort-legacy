@@ -1,4 +1,4 @@
-AC_INIT([RISC], [0.1.0], [rlane@club.cc.cmu.edu], [risc], [http://github.com/rlane/risc])
+AC_INIT([Oort], [0.1.0], [rlane@club.cc.cmu.edu], [Oort], [http://github.com/rlane/Oort])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE([no-dist-gzip dist-bzip2])
@@ -30,20 +30,20 @@ GTK_REQUIRED=2.10.0
 GTKGLEXT_REQUIRED=1.2
 GLEW_REQUIRED=1.5.6
 
-PKG_CHECK_MODULES(RISC, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gio-2.0 >= $GLIB_REQUIRED)
-PKG_CHECK_MODULES(RISC_UI, gtk+-2.0 >= $GTK_REQUIRED gtkglext-1.0 >= $GTKGLEXT_REQUIRED glew >= $GLEW_REQUIRED)
-AC_SUBST(RISC_CFLAGS)
-AC_SUBST(RISC_LIBS)
-AC_SUBST(RISC_UI_CFLAGS)
-AC_SUBST(RISC_UI_LIBS)
+PKG_CHECK_MODULES(OORT, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gio-2.0 >= $GLIB_REQUIRED)
+PKG_CHECK_MODULES(OORT_UI, gtk+-2.0 >= $GTK_REQUIRED gtkglext-1.0 >= $GTKGLEXT_REQUIRED glew >= $GLEW_REQUIRED)
+AC_SUBST(OORT_CFLAGS)
+AC_SUBST(OORT_LIBS)
+AC_SUBST(OORT_UI_CFLAGS)
+AC_SUBST(OORT_UI_LIBS)
 
 AC_ARG_ENABLE(standalone, Create standalone executables)
 if test "x${enable_standalone}" = "xyes"; then
-	RISC_EXTRA_LDFLAGS="-all-static"
+	OORT_EXTRA_LDFLAGS="-all-static"
 else
-	RISC_EXTRA_LDFLAGS=
+	OORT_EXTRA_LDFLAGS=
 fi
-AC_SUBST(RISC_EXTRA_LDFLAGS)
+AC_SUBST(OORT_EXTRA_LDFLAGS)
 
 AC_ARG_WITH(valgrind, Use valgrind)
 if test "x${with_valgrind}" = "xyes"; then

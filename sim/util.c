@@ -46,7 +46,7 @@ guint64 thread_ns(void)
 #endif
 }
 
-void risc_util_toggle_callgrind_collection() {
+void oort_util_toggle_callgrind_collection() {
 #ifdef WITH_VALGRIND
 	CALLGRIND_TOGGLE_COLLECT;
 #endif

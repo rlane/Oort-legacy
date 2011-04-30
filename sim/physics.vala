@@ -1,8 +1,8 @@
-using RISC;
+using Oort;
 using Vector;
 
 [Compact]
-public class RISC.Physics {
+public class Oort.Physics {
 	public Vector.Vec2 p;
 	public Vector.Vec2 p0;
 	public Vector.Vec2 v;

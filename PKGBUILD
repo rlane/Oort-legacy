@@ -1,17 +1,17 @@
 # Maintainer: Rich Lane <rlane@club.cc.cmu.edu>
 
-pkgname=risc-git
+pkgname=oort-git
 pkgver=20110116
 pkgrel=1
 pkgdesc="A space fleet programming game"
 arch=('i686' 'x86_64')
-url="https://github.com/rlane/risc"
+url="https://github.com/rlane/oort"
 license=("GPL")
 depends=('glib2' 'gtk2' 'gtkglext' 'glew')
 makedepends=('pkgconfig' 'vala')
 
-_gitroot="git://github.com/rlane/risc"
-_gitname="risc"
+_gitroot="git://github.com/rlane/oort"
+_gitname="oort"
 _gitbranch="master"
 
 build() {
