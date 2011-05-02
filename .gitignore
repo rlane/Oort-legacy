@@ -49,6 +49,7 @@ sim/ship.c
 sim/task.c
 sim/team.c
 ui/renderer.c
+ui/textures.c
 ui/oort.c
 sim/paths.c
 
