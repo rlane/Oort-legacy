@@ -1,6 +1,5 @@
 1.0:
 Use checkboxes for toggle menu items
-Limit firing arcs
 Limit reaction mass / include in ship mass
 Add mass flow argument to thrust()
 Limit angular velocity

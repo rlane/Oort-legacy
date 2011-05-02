@@ -17,7 +17,8 @@ if my_class == "fighter" then
 		if c:id() == target_id then
 			return 0
 		else
-			return distance(x,y,c:position())
+			local a = angle_between(x,y,c:position())
+			return math.abs(angle_diff(heading(), a))
 		end
 	end
 

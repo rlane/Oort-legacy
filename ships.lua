@@ -49,7 +49,7 @@ ships.fighter = {
 			bullet_ttl = 0.2,
 			spread = 0.1,
 			angle = 0.0,
-			coverage = 2*pi,
+			coverage = 0.8*pi,
 			reload_time = 0.03,
 			cost = 4.5e3,
 		}
