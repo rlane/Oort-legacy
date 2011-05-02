@@ -41,7 +41,6 @@ public class Oort.Ship {
 	public unowned ShipClass @class;
 	public unowned Team team;
 	public Physics physics;
-	public double energy;
 	public double hull;
 	public weak Lua.LuaVM lua;
 	public Lua.LuaVM global_lua;
@@ -58,7 +57,6 @@ public class Oort.Ship {
 	public Gfx gfx;
 	public Debug debug;
 	public weak Game game;
-	public double reaction_mass;
 	public bool controlled;
 
 	[CCode (has_target = false)]
@@ -73,8 +71,7 @@ public class Oort.Ship {
 		this.game = game;
 		this.class = klass;
 		this.team = team;
-		this.reaction_mass = klass.reaction_mass;
-		physics = new Physics() { p=p, p0=p, v=v, acc=vec2(0,0), m=reaction_mass+klass.mass, r=klass.radius, h=h, w=0, wa=0 };
+		physics = new Physics() { p=p, p0=p, v=v, acc=vec2(0,0), m=klass.reaction_mass+klass.mass, r=klass.radius, h=h, w=0, wa=0 };
 		prng = new Rand.with_seed(seed);
 		mq = new Queue<Msg>();
 		api_id = prng.next_int();
@@ -181,6 +178,8 @@ public class Oort.Ship {
 			global_lua.get_global("tick_hook");
 			global_lua.call(0, 0);
 		}
+
+		physics.m = @class.mass + get_reaction_mass();
 	}
 
 	public static void debug_hook(Lua.LuaVM L, ref Lua.Debug a) {
@@ -280,12 +279,6 @@ public class Oort.Ship {
 	public static int api_angular_velocity(LuaVM L) {
 		unowned Ship s = lua_ship(L);
 		L.push_number(s.physics.w);
-		return 1;
-	}
-
-	public static int api_reaction_mass(LuaVM L) {
-		unowned Ship s = lua_ship(L);
-		L.push_number(s.reaction_mass);
 		return 1;
 	}
 
@@ -683,6 +676,14 @@ public class Oort.Ship {
 
 	public double get_energy() {
 		global_lua.get_global("energy");
+		global_lua.call(0, 1);
+		double e = global_lua.to_number(-1);
+		global_lua.pop(1);
+		return e;
+	}
+
+	public double get_reaction_mass() {
+		global_lua.get_global("reaction_mass");
 		global_lua.call(0, 1);
 		double e = global_lua.to_number(-1);
 		global_lua.pop(1);

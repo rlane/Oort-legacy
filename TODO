@@ -1,7 +1,7 @@
 1.0:
-Use checkboxes for toggle menu items
-Limit reaction mass / include in ship mass
-Add mass flow argument to thrust()
+Add optional mass flow argument to thrust()
+Rename mothership to carrier
+Add refueling to carrier
 Limit angular velocity
 Don't thrust missile in wrong direction
 Fix turn_to() hysteresis
@@ -31,6 +31,7 @@ Option to specify ships.lua
 Limit number of results per sensor query
 Inline AI in scenario
 Scenario editor
+Use checkboxes for toggle menu items
 
 Maybe:
 Add debugger interface

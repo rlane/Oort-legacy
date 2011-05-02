@@ -420,7 +420,7 @@ namespace Oort {
 			GLUtil.printf(x, y-8*dy, " lateral: %s", fmt(s.physics.acc.y,"m/s\xFD"));
 			GLUtil.printf(x, y-9*dy, " angular: %s", fmt(s.physics.wa,"rad/s\xFD"));
 			GLUtil.printf(x, y-10*dy, "energy: %s", fmt(s.get_energy(),"J"));
-			GLUtil.printf(x, y-11*dy, "reaction mass: %s", fmt(s.reaction_mass*1000,"g"));
+			GLUtil.printf(x, y-11*dy, "reaction mass: %s", fmt(s.get_reaction_mass()*1000,"g"));
 		}
 
 		public void reshape(int width, int height) {

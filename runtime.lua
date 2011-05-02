@@ -11,6 +11,7 @@ local debug_preemption = false
 local last_fire_ticks = {}
 local last_spawn_ticks = {}
 local _energy = my_ship.energy.initial
+local _reaction_mass = my_ship.reaction_mass
 local energy_tick_rate = my_ship.energy.rate * tick_length
 local ticks = 0
 
@@ -24,6 +25,10 @@ local engine_angular_mass_cost = 0
 
 function energy()
 	return _energy
+end
+
+function reaction_mass()
+	return _reaction_mass
 end
 
 function clamp(v,min,max)
@@ -234,6 +239,16 @@ function tick_hook()
 		thrust_angular(0)
 	else
 		_energy = _energy - power_draw
+	end
+
+	local reaction_mass_draw = engine_main_mass_cost + engine_lateral_mass_cost + engine_angular_mass_cost
+	if _reaction_mass < reaction_mass_draw then
+		--print(my_class, " engine cost too high:", engine_power_cost, " > ", _energy)
+		thrust_main(0)
+		thrust_lateral(0)
+		thrust_angular(0)
+	else
+		_reaction_mass = _reaction_mass - reaction_mass_draw
 	end
 
 	_energy = _energy + energy_tick_rate
