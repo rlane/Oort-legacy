@@ -144,7 +144,14 @@ elseif my_class == "mothership" then
 			--print("mothership msg: " .. msg)
 		end
 
-		main_target = sensor_contacts{ distance_lt = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl, enemy = true }[1]
+		local range = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl
+		main_target = sensor_contacts{ distance_lt = range, enemy = true, class = "missile", limit = 1 }[1] or
+                  sensor_contacts{ distance_lt = range, enemy = true, class = "little_missile", limit = 1 }[1]
+
+		if not main_target and energy() > 0.1*my_ship.energy.limit then
+			main_target = sensor_contacts{ distance_lt = range, enemy = true, limit = 1 }[1]
+		end
+
 		if main_target then
 			local x, y = position()
 			local tx, ty = main_target:position()
