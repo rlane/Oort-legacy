@@ -247,7 +247,7 @@ function drive_towards(tx, ty, speed)
 	end
 end
 
-function create_proportional_navigator(k, a)
+function create_proportional_navigator(k, a, ev)
 	local last_bearing = nil
 	return function(tx, ty, tvx, tvy)
 		local x, y = position()
@@ -262,8 +262,8 @@ function create_proportional_navigator(k, a)
 			local rvx, rvy = rotate(dvx, dvy, -bearing)
 			local n = -k*rvx*bearing_rate
 
-			thrust_main(a)
-			thrust_lateral(n)
+			thrust_main(a, ev)
+			thrust_lateral(n, ev)
 			turn_to(bearing)
 		end
 
@@ -272,7 +272,7 @@ function create_proportional_navigator(k, a)
 end
 
 function standard_missile_ai()
-	local seek = create_proportional_navigator(5, my_ship.max_main_acc)
+	local seek = create_proportional_navigator(5, my_ship.max_main_acc, 8e3)
 
 	while true do
 		local t = sensor_contact(orders)

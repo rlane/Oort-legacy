@@ -5,7 +5,7 @@ local my_class = class
 local my_ship = ships[my_class]
 local ticks_per_second = 32
 local tick_length = 1.0/ticks_per_second
-local exhaust_velocity = 10e3
+local default_exhaust_velocity = 10e3
 local debug_preemption = false
 
 local last_fire_ticks = {}
@@ -38,7 +38,8 @@ function clamp(v,min,max)
 	end
 end
 
-function thrust_main(acc)
+function thrust_main(acc,exhaust_velocity)
+	exhaust_velocity = exhaust_velocity or default_exhaust_velocity
 	acc = clamp(acc,-my_ship.max_main_acc,my_ship.max_main_acc);
 	local dv = math.abs(acc)*tick_length
 	engine_main_mass_cost = my_ship.mass*dv/exhaust_velocity
@@ -46,7 +47,8 @@ function thrust_main(acc)
 	sys_thrust_main(acc)
 end
 
-function thrust_lateral(acc)
+function thrust_lateral(acc,exhaust_velocity)
+	exhaust_velocity = exhaust_velocity or default_exhaust_velocity
 	acc = clamp(acc,-my_ship.max_lateral_acc,my_ship.max_lateral_acc);
 	local dv = math.abs(acc)*tick_length
 	engine_lateral_mass_cost = my_ship.mass*dv/exhaust_velocity
@@ -54,7 +56,8 @@ function thrust_lateral(acc)
 	sys_thrust_lateral(acc)
 end
 
-function thrust_angular(acc)
+function thrust_angular(acc,exhaust_velocity)
+	exhaust_velocity = exhaust_velocity or default_exhaust_velocity
 	acc = clamp(acc,-my_ship.max_angular_acc,my_ship.max_angular_acc);
 	local dv = math.abs(acc)*tick_length
 	engine_angular_mass_cost = my_ship.mass*dv/exhaust_velocity

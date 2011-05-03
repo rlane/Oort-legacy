@@ -1,5 +1,4 @@
 1.0:
-Add optional mass flow argument to thrust()
 Rename mothership to carrier
 Add refueling to carrier
 Limit angular velocity
