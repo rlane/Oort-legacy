@@ -98,8 +98,9 @@ function fire(name, a)
 	vx = vx + math.cos(a)*v
 	vy = vy + math.sin(a)*v
 	m = gun.bullet_mass
+	r = gun.bullet_radius
 	ttl = gun.bullet_ttl
-	sys_create_bullet(x,y,vx,vy,m,ttl,gun.bullet_type)
+	sys_create_bullet(x,y,vx,vy,m,r,ttl,gun.bullet_type)
 end
 
 function sensor_contacts(query)
@@ -168,6 +169,7 @@ function explode()
 	end
 	local v = len/tick_length
 	local m = 2*ray_energy/(v*v)
+	local r = 1
 	local da = 2*math.pi/n
 	local ttl = tick_length
 
@@ -176,7 +178,7 @@ function explode()
 	for i = 1,n do
 		local vx = math.cos(a)*v
 		local vy = math.sin(a)*v
-		sys_create_bullet(x,y,vx,vy,m,ttl,bullets.explosion)
+		sys_create_bullet(x,y,vx,vy,m,r,ttl,bullets.explosion)
 		a = a + da
 	end
 

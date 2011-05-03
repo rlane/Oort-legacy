@@ -290,12 +290,12 @@ public class Oort.Ship {
 		double vx = L.check_number(3);
 		double vy = L.check_number(4);
 		double m = L.check_number(5);
-		double ttl = L.check_number(6);
-		int type = L.check_int(7);
+		double r = L.check_number(6);
+		double ttl = L.check_number(7);
+		int type = L.check_int(8);
 
 		var p = vec2(x,y);
 		var v = vec2(vx,vy);
-		var r = 1.0/32; // XXX
 		var acc = vec2(0,0);
 
 		var physics = new Physics() { p=p, p0=p, v=v, acc=acc, m=m, r=r };
