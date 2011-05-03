@@ -99,18 +99,6 @@ ships.ion_cannon_frigate = {
 	}
 }
 
-local flak = {
-	bullet_mass = 0.01,
-	bullet_velocity = 2000,
-	bullet_ttl = 0.5,
-	bullet_type = bullets.slug,
-	spread = 0.2,
-	angle = 0.0,
-	coverage = 2*pi,
-	reload_time = 0.15,
-	cost = 20e3,
-}
-
 ships.mothership = {
 	radius = 80,
 	mass = 1e6,
@@ -122,19 +110,17 @@ ships.mothership = {
 	cost = 50e9,
 	guns = {
 		main = {
-			bullet_mass = 10,
-			bullet_velocity = 400,
-			bullet_ttl = 20,
-			bullet_type = bullets.plasma,
-			spread = 0.03,
-			angle = 0.0,
+			bullet_type = bullets.ion_beam,
+			bullet_mass = 0.00005,
+			bullet_velocity = 8e3,
+			bullet_ttl = 1.0/32,
+			bullet_radius = 1,
+			spread = 0.01,
+			angle = 0,
 			coverage = 2*pi,
-			reload_time = 1,
-			cost = 1e6,
+			reload_time = 0,
+			cost = 30e9/32,
 		},
-		flak1 = flak,
-		flak2 = flak,
-		flak3 = flak,
 	},
 	count_for_victory = true,
 	energy = {
