@@ -273,6 +273,7 @@ end
 
 function standard_missile_ai()
 	local seek = create_proportional_navigator(5, my_ship.max_main_acc, 8e3)
+	local i = 0
 
 	while true do
 		local t = sensor_contact(orders)
@@ -299,7 +300,13 @@ function standard_missile_ai()
 		clear_debug_lines()
 		debug_diamond(tx, ty, 16*my_ship.radius)
 
-		seek(tx, ty, tvx, tvy)
+		if i < 16 then
+			i = i + 1
+			turn_towards(tx, ty)
+			thrust_main(i*my_ship.max_main_acc/16)
+		else
+			seek(tx, ty, tvx, tvy)
+		end
 
 		if distance(x,y,tx,ty)/distance(vx,vy,tvx,tvy) < 1/32 then explode() end
 		yield()

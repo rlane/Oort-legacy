@@ -227,9 +227,5 @@ elseif my_class == "mothership" then
 		yield()
 	end
 elseif my_class == "missile" or my_class == "little_missile" then
-	for i = 1,16 do
-		turn_to(math.random(0,2*math.pi))
-		thrust_main(my_ship.max_main_acc)
-	end
 	standard_missile_ai()
 end
