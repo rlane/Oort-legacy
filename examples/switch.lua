@@ -154,9 +154,15 @@ elseif my_class == "mothership" then
 
 		if main_target then
 			local x, y = position()
+			local vx, vy = velocity()
 			local tx, ty = main_target:position()
-			local a = angle_between(x,y,tx,ty)
-			fire("main", a)
+			local tvx, tvy = main_target:velocity()
+			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
+			if a then
+				fire("main", a)
+			else
+				main_target = nil
+			end
 		end
 
 		if math.random(1,1000) == 5 then
