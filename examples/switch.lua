@@ -60,8 +60,7 @@ if my_class == "fighter" then
 		debug_square(follow_x, follow_y, 2*my_ship.radius)
 
 		local urgent_target = 
-			      min_by(sensor_contacts{ distance_lt = max_target_distance, class = "missile", enemy = true }, fire_score) or
-			      min_by(sensor_contacts{ distance_lt = max_target_distance, class = "little_missile", enemy = true }, fire_score)
+			      min_by(sensor_contacts{ distance_lt = max_target_distance, class = "missile", enemy = true }, fire_score)
 		if urgent_target then fire_target = urgent_target end
 
 		if not fire_target and fire_target_retry >= 16 then
