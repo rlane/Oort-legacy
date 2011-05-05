@@ -6,6 +6,7 @@ public enum Oort.BulletType {
 	PLASMA = 2,
 	EXPLOSION = 3,
 	ION_BEAM = 4,
+	LASER_BEAM = 5,
 }
 
 [Compact]

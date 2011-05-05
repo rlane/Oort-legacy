@@ -28,6 +28,7 @@ bullets = {
 	plasma = 2,
 	explosion = 3,
 	ion_beam = 4,
+	laser_beam = 5,
 }
 
 ships = {}
@@ -110,11 +111,11 @@ ships.mothership = {
 	cost = 50e9,
 	guns = {
 		main = {
-			bullet_type = bullets.ion_beam,
-			bullet_mass = 0.00008,
-			bullet_velocity = 8e3,
+			bullet_type = bullets.laser_beam,
+			bullet_mass = 0.00001,
+			bullet_velocity = 16e3,
 			bullet_ttl = 1.0/32,
-			bullet_radius = 1,
+			bullet_radius = 2,
 			spread = 0.01,
 			angle = 0,
 			coverage = 2*pi,

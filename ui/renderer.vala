@@ -47,6 +47,7 @@ namespace Oort {
 
 		Rand prng;
 		Texture ion_beam_tex;
+		Texture laser_beam_tex;
 
 		public static void static_init() {
 			if (GLEW.init()) {
@@ -71,6 +72,7 @@ namespace Oort {
 			view_pos = vec2(0,0);
 
 			ion_beam_tex = new IonBeamTexture();
+			laser_beam_tex = new LaserBeamTexture();
 		}
 
 		public void init() {
@@ -335,6 +337,33 @@ namespace Oort {
 				glVertex3d(0.7*40, width, 0);
 				glTexCoord2f(1.0f, 0);
 				glVertex3d(0.7*40, -width, 0);
+				glTexCoord2f(1.0f, 1.0f);
+				glVertex3d(length, -width, 0);
+				glTexCoord2f(0, 1.0f);
+				glVertex3d(length, width, 0);
+				glEnd();
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glDisable(GL_TEXTURE_2D);
+				glPopMatrix();
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			} else if (b.type == Oort.BulletType.LASER_BEAM) {
+				var sp = S(b.physics.p);
+				var angle = Math.atan2(b.physics.v.y, b.physics.v.x);
+				var length = b.physics.v.distance(vec2(0,0)) * Game.TICK_LENGTH;
+				var width = b.physics.r;
+				glPushMatrix();
+				glTranslated(sp.x, sp.y, 0);
+				glRotated(Util.rad2deg(angle), 0, 0, 1);
+				glScaled(view_scale, view_scale, view_scale);
+				glEnable(GL_TEXTURE_2D);
+				glBlendFunc(GL_ONE, GL_ONE);
+				laser_beam_tex.bind();
+				glBegin(GL_QUADS);
+				Oort.GLUtil.color32(0x6464FFAA);
+				glTexCoord2f(0, 0);
+				glVertex3d(0, width, 0);
+				glTexCoord2f(1.0f, 0);
+				glVertex3d(0, -width, 0);
 				glTexCoord2f(1.0f, 1.0f);
 				glVertex3d(length, -width, 0);
 				glTexCoord2f(0, 1.0f);
