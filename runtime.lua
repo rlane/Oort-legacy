@@ -73,34 +73,53 @@ function fire(name, a)
 		error(string.format("gun %s does not exist", name))
 	end
 
-	local last_fire_tick = last_fire_ticks[name]
+	if gun.type == "bullet" then
+		local last_fire_tick = last_fire_ticks[name]
 
-	if _energy < gun.cost then
-		return
+		if _energy < gun.cost then
+			return
+		end
+
+		if math.abs(angle_diff(normalize_angle(sys_heading() + gun.angle), a)) > gun.coverage/2 then
+			return
+		end
+
+		if last_fire_tick and last_fire_tick + gun.reload_time*ticks_per_second > ticks then
+			return
+		else
+			last_fire_ticks[name] = ticks
+		end
+
+		_energy = _energy - gun.cost
+
+		x, y = sys_position()
+		v = gun.velocity
+		vx, vy = sys_velocity()
+		a = a + gun.spread*(math.random() - 0.5)
+		vx = vx + math.cos(a)*v
+		vy = vy + math.sin(a)*v
+		sys_create_bullet(x, y, vx, vy, gun.mass, gun.radius, gun.ttl, gun.graphics)
+	elseif gun.type == "beam" then
+		local cost = gun.cost * tick_length
+
+		if _energy < cost then
+			return
+		end
+
+		if math.abs(angle_diff(normalize_angle(sys_heading() + gun.angle), a)) > gun.coverage/2 then
+			return
+		end
+
+		_energy = _energy - cost
+
+		x, y = sys_position()
+		v = gun.length/tick_length
+		local m = tick_length*2*gun.damage/(v*v)
+		vx, vy = sys_velocity()
+		vx = vx + math.cos(a)*v
+		vy = vy + math.sin(a)*v
+		sys_create_bullet(x, y, vx, vy, m, gun.width/2, tick_length, gun.graphics)
 	end
-
-	if math.abs(angle_diff(normalize_angle(sys_heading() + gun.angle), a)) > gun.coverage/2 then
-		return
-	end
-
-	if last_fire_tick and last_fire_tick + gun.reload_time*ticks_per_second > ticks then
-		return
-	else
-		last_fire_ticks[name] = ticks
-	end
-
-	_energy = _energy - gun.cost
-
-	x, y = sys_position()
-	v = gun.bullet_velocity
-	vx, vy = sys_velocity()
-	a = a + gun.spread*(math.random() - 0.5)
-	vx = vx + math.cos(a)*v
-	vy = vy + math.sin(a)*v
-	m = gun.bullet_mass
-	r = gun.bullet_radius
-	ttl = gun.bullet_ttl
-	sys_create_bullet(x,y,vx,vy,m,r,ttl,gun.bullet_type)
 end
 
 function sensor_contacts(query)

@@ -4,7 +4,7 @@ local my_ship = ships[my_class]
 if my_class == "fighter" then
 	local i = math.random(1,256)
 	local t = nil
-	local max_target_distance = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl*1.5
+	local max_target_distance = my_ship.guns.main.velocity*my_ship.guns.main.ttl*1.5
 	local origin = { x = 0, y = 0, vx = 0, vy = 0 }
 	local target_selector = function(k,c) return c:class() ~= "little_missile" end
 	local follow_target = nil
@@ -76,7 +76,7 @@ if my_class == "fighter" then
 			local tx, ty = fire_target:position()
 			local tvx, tvy = fire_target:velocity()
 			debug_diamond(tx, ty, my_ship.radius)
-			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
+			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.velocity, my_ship.guns.main.ttl)
 			if a then
 				fire("main", a)
 			else
@@ -98,7 +98,7 @@ if my_class == "fighter" then
 elseif my_class == "ion_cannon_frigate" then
 	local main_target = nil
 	local main_target_retry = 0
-	local max_dist = my_ship.guns.main.bullet_velocity * my_ship.guns.main.bullet_ttl
+	local max_dist = my_ship.guns.main.length
 
 	while true do
 		clear_debug_lines()
@@ -143,7 +143,7 @@ elseif my_class == "mothership" then
 			--print("mothership msg: " .. msg)
 		end
 
-		local range = my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl
+		local range = my_ship.guns.main.length
 		main_target = sensor_contacts{ distance_lt = range, enemy = true, class = "missile", limit = 1 }[1] or
                   sensor_contacts{ distance_lt = range, enemy = true, class = "little_missile", limit = 1 }[1]
 
@@ -156,7 +156,8 @@ elseif my_class == "mothership" then
 			local vx, vy = velocity()
 			local tx, ty = main_target:position()
 			local tvx, tvy = main_target:velocity()
-			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
+			--local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.velocity, my_ship.guns.main.ttl)
+			local a = angle_between(x, y, tx+tvx/32.0, ty+tvy/32.0)
 			if a then
 				fire("main", a)
 			else

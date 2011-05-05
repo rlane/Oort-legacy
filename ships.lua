@@ -27,8 +27,11 @@ bullets = {
 	slug = 1,
 	plasma = 2,
 	explosion = 3,
-	ion_beam = 4,
-	laser_beam = 5,
+}
+
+beams = {
+	ion = 4,
+	laser = 5,
 }
 
 ships = {}
@@ -44,11 +47,12 @@ ships.fighter = {
 	cost = 10e9,
 	guns = {
 		main = {
-			bullet_type = bullets.slug,
-			bullet_mass = 0.001,
-			bullet_radius = 1.0/32,
-			bullet_velocity = 3000,
-			bullet_ttl = 0.2,
+			type = "bullet",
+			graphics = bullets.slug,
+			mass = 0.001,
+			radius = 1.0/32,
+			velocity = 3000,
+			ttl = 0.2,
 			spread = 0.1,
 			angle = 0.0,
 			coverage = 0.8*pi,
@@ -78,16 +82,14 @@ ships.ion_cannon_frigate = {
 	cost = 30e9,
 	guns = {
 		main = {
-			bullet_type = bullets.ion_beam,
-			bullet_mass = 0.0001,
-			bullet_velocity = 32e3,
-			bullet_ttl = 1.0/32,
-			bullet_radius = 3,
-			spread = 0.0,
+			type = "beam",
+			graphics = beams.ion,
+			damage = 1.6e6,
+			length = 1e3,
+			width = 6,
 			angle = 0.0,
 			coverage = 0.0,
-			reload_time = 0,
-			cost = 30e9/32,
+			cost = 30e9,
 		}
 	},
 	count_for_victory = true,
@@ -111,16 +113,14 @@ ships.mothership = {
 	cost = 50e9,
 	guns = {
 		main = {
-			bullet_type = bullets.laser_beam,
-			bullet_mass = 0.00001,
-			bullet_velocity = 16e3,
-			bullet_ttl = 1.0/32,
-			bullet_radius = 2,
-			spread = 0.01,
+			type = "beam",
+			graphics = beams.laser,
+			damage = 41e3,
+			length = 500,
+			width = 4,
 			angle = 0,
 			coverage = 2*pi,
-			reload_time = 0,
-			cost = 20e9/32,
+			cost = 20e9,
 		},
 	},
 	count_for_victory = true,
