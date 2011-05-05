@@ -323,7 +323,7 @@ namespace Oort {
 				var sp = S(b.physics.p);
 				var angle = Math.atan2(b.physics.v.y, b.physics.v.x);
 				var length = b.physics.v.distance(vec2(0,0)) * Game.TICK_LENGTH;
-				var width = 3;
+				var width = b.physics.r;
 				glPushMatrix();
 				glTranslated(sp.x, sp.y, 0);
 				glRotated(Util.rad2deg(angle), 0, 0, 1);
