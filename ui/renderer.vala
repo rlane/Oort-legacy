@@ -103,6 +103,10 @@ namespace Oort {
 				render_bullet(b);
 			}
 
+			foreach (unowned Beam b in game.all_beams) {
+				render_beam(b);
+			}
+
 			render_particles();
 			
 			if (picked != null) {
@@ -319,60 +323,6 @@ namespace Oort {
 				Oort.GLUtil.color32(0x444444FF);
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
-			} else if (b.type == Oort.BulletType.ION_BEAM) {
-				var sp = S(b.physics.p);
-				var angle = Math.atan2(b.physics.v.y, b.physics.v.x);
-				var length = b.physics.v.distance(vec2(0,0)) * Game.TICK_LENGTH;
-				var width = b.physics.r;
-				glPushMatrix();
-				glTranslated(sp.x, sp.y, 0);
-				glRotated(Util.rad2deg(angle), 0, 0, 1);
-				glScaled(view_scale, view_scale, view_scale);
-				glEnable(GL_TEXTURE_2D);
-				glBlendFunc(GL_ONE, GL_ONE);
-				ion_beam_tex.bind();
-				glBegin(GL_QUADS);
-				Oort.GLUtil.color32(0x6464FFAA);
-				glTexCoord2f(0, 0);
-				glVertex3d(0.7*40, width, 0);
-				glTexCoord2f(1.0f, 0);
-				glVertex3d(0.7*40, -width, 0);
-				glTexCoord2f(1.0f, 1.0f);
-				glVertex3d(length, -width, 0);
-				glTexCoord2f(0, 1.0f);
-				glVertex3d(length, width, 0);
-				glEnd();
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glDisable(GL_TEXTURE_2D);
-				glPopMatrix();
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			} else if (b.type == Oort.BulletType.LASER_BEAM) {
-				var sp = S(b.physics.p);
-				var angle = Math.atan2(b.physics.v.y, b.physics.v.x);
-				var length = b.physics.v.distance(vec2(0,0)) * Game.TICK_LENGTH;
-				var width = b.physics.r;
-				glPushMatrix();
-				glTranslated(sp.x, sp.y, 0);
-				glRotated(Util.rad2deg(angle), 0, 0, 1);
-				glScaled(view_scale, view_scale, view_scale);
-				glEnable(GL_TEXTURE_2D);
-				glBlendFunc(GL_ONE, GL_ONE);
-				laser_beam_tex.bind();
-				glBegin(GL_QUADS);
-				Oort.GLUtil.color32(0x6464FFAA);
-				glTexCoord2f(0, 0);
-				glVertex3d(0, width, 0);
-				glTexCoord2f(1.0f, 0);
-				glVertex3d(0, -width, 0);
-				glTexCoord2f(1.0f, 1.0f);
-				glVertex3d(length, -width, 0);
-				glTexCoord2f(0, 1.0f);
-				glVertex3d(length, width, 0);
-				glEnd();
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glDisable(GL_TEXTURE_2D);
-				glPopMatrix();
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			} else if (render_explosion_rays && b.type == Oort.BulletType.EXPLOSION) {
 				var dp = b.physics.v.scale(Game.TICK_LENGTH);
 				var sp1 = S(b.physics.p);
@@ -385,6 +335,46 @@ namespace Oort {
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
 			}
+		}
+
+		private void render_beam(Beam b) {
+			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
+			Texture tex = null;
+			var offset = 0.0;
+			var sp = S(b.p);
+			var angle = b.a;
+			var length = b.length;
+			var width = b.width/2;
+
+			if (b.graphics == Oort.BeamGraphics.ION) {
+				tex = ion_beam_tex;
+				offset = 0.7*40;
+			} else if (b.graphics == Oort.BeamGraphics.LASER) {
+				tex = laser_beam_tex;
+			}
+
+			glPushMatrix();
+			glTranslated(sp.x, sp.y, 0);
+			glRotated(Util.rad2deg(angle), 0, 0, 1);
+			glScaled(view_scale, view_scale, view_scale);
+			glEnable(GL_TEXTURE_2D);
+			glBlendFunc(GL_ONE, GL_ONE);
+			tex.bind();
+			glBegin(GL_QUADS);
+			Oort.GLUtil.color32(0x6464FFAA);
+			glTexCoord2f(0, 0);
+			glVertex3d(offset, width, 0);
+			glTexCoord2f(1.0f, 0);
+			glVertex3d(offset, -width, 0);
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex3d(length, -width, 0);
+			glTexCoord2f(0, 1.0f);
+			glVertex3d(length, width, 0);
+			glEnd();
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_TEXTURE_2D);
+			glPopMatrix();
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		private void render_particles() {
@@ -478,6 +468,11 @@ namespace Oort {
 
 			foreach (unowned BulletHit hit in game.bullet_hits) {
 				var n = uint16.max((uint16)(hit.e/10000),1);
+				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
+			}
+
+			foreach (unowned BeamHit hit in game.beam_hits) {
+				var n = uint16.max((uint16)(hit.e/500),1);
 				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
 			}
 

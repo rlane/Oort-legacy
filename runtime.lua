@@ -113,12 +113,7 @@ function fire(name, a)
 		_energy = _energy - cost
 
 		x, y = sys_position()
-		v = gun.length/tick_length
-		local m = tick_length*2*gun.damage/(v*v)
-		vx, vy = sys_velocity()
-		vx = vx + math.cos(a)*v
-		vy = vy + math.sin(a)*v
-		sys_create_bullet(x, y, vx, vy, m, gun.width/2, tick_length, gun.graphics)
+		sys_create_beam(x, y, a, gun.length, gun.width, gun.damage, gun.graphics)
 	end
 end
 

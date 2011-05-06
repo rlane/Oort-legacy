@@ -102,6 +102,7 @@ public class Oort.Ship {
 		global_lua.register("sys_velocity", api_velocity);
 		global_lua.register("sys_angular_velocity", api_angular_velocity);
 		global_lua.register("sys_create_bullet", api_create_bullet);
+		global_lua.register("sys_create_beam", api_create_beam);
 		global_lua.register("sys_sensor_contacts", api_sensor_contacts);
 		global_lua.register("sys_sensor_contact", api_sensor_contact);
 		global_lua.register("sys_random", api_random);
@@ -304,6 +305,32 @@ public class Oort.Ship {
 		s.game.new_bullets_lock.lock();
 		s.game.new_bullets.append((owned) b);
 		s.game.new_bullets_lock.unlock();
+
+		return 0;
+	}
+
+	public static int api_create_beam(LuaVM L) {
+		unowned Ship s = lua_ship(L);
+
+		double x = L.check_number(1);
+		double y = L.check_number(2);
+		double a = L.check_number(3);
+		double length = L.check_number(4);
+		double width = L.check_number(5);
+		double damage = L.check_number(6);
+		int graphics = L.check_int(7);
+
+		var b = new Beam() { team=s.team,
+		                     p=vec2(x,y),
+		                     a=a,
+		                     length=length,
+		                     width=width,
+		                     damage=damage,
+		                     graphics=(BeamGraphics)graphics };
+
+		s.game.new_beams_lock.lock();
+		s.game.new_beams.append((owned) b);
+		s.game.new_beams_lock.unlock();
 
 		return 0;
 	}

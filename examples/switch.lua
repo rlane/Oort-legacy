@@ -153,11 +153,8 @@ elseif my_class == "mothership" then
 
 		if main_target then
 			local x, y = position()
-			local vx, vy = velocity()
 			local tx, ty = main_target:position()
-			local tvx, tvy = main_target:velocity()
-			--local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.velocity, my_ship.guns.main.ttl)
-			local a = angle_between(x, y, tx+tvx/32.0, ty+tvy/32.0)
+			local a = angle_between(x, y, tx, ty)
 			if a then
 				fire("main", a)
 			else

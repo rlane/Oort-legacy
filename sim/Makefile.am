@@ -28,6 +28,7 @@ lib_LIBRARIES = libsim.a
 
 libsim_a_SOURCES = \
 	bullet.vala \
+	beam.vala \
 	game.vala \
 	physics.vala \
 	scenario.vala \
@@ -55,6 +56,7 @@ CLEANFILES = \
 
 DISTCLEANFILES = \
 	bullet.c \
+	beam.c \
 	game.c \
 	physics.c \
 	scenario.c \

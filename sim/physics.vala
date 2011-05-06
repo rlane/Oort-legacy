@@ -1,5 +1,6 @@
 using Oort;
 using Vector;
+using Math;
 
 [Compact]
 public class Oort.Physics {
@@ -63,6 +64,69 @@ public class Oort.Physics {
 		} else {
 			rcp = q2.p.add(q2.v.scale(t));
 			return true;
+		}
+	}
+
+	public static bool solve_quadratic(double a, double b, double c, out double x1, out double x2) {
+		var disc = b*b - 4*a*c;
+		if (disc < 0) {
+			return false;
+		} else {
+			x1 = (-b + Math.sqrt(disc))/(2*a);
+			x2 = (-b - Math.sqrt(disc))/(2*a);
+			return true;
+		}
+	}
+
+	public static bool check_quadrant(double a, double x, double y) {
+		if (x >= 0 && y >= 0) {
+			return a >= 0 && a <= PI/2;
+		} else if (x < 0 && y >= 0) {
+			return a >= PI/2 && a <= PI;
+		} else if (x < 0 && y < 0) {
+			return a >= PI && a <= 3*PI/2;
+		} else {
+			return a >= 3*PI/2 && a <= 2*PI;
+		}
+	}
+
+	public static bool check_beam_collision(Physics q, Beam beam, double interval, out Vector.Vec2 rcp) {
+		var dp = q.p.sub(beam.p);
+		var x0 = dp.x;
+		var y0 = dp.y;
+		var r = beam.width/2 + q.r;
+		var m = Math.tan(beam.a);
+
+		// y = m*x
+		// (x-x_0)^2 + (y-y_0)^2 = r^2
+		// (x-x_0)^2 + (m*x-y_0)^2 - r^2 = 0
+		// m^2 * x^2 - 2*m*x*y_0 - r^2 + x^2 - 2*x_0*x + x_0^2 + y_0^2 = 0
+		// (m^2 + 1)*x^2 + (-2*m*y_0 - 2*x_0)*x + (x_0^2 + y_0^2 - r^2)
+
+		var a = m*m + 1;
+		var b = -2*(m*y0 + x0);
+		var c = x0*x0 + y0*y0 - r*r;
+
+		double x1, x2;
+		if (solve_quadratic(a, b, c, out x1, out x2)) {
+			var y1 = m*x1;
+			var y2 = m*x2;
+			var d1_sqr = x1*x1 + y1*y1;
+			var d2_sqr = x2*x2 + y2*y2;
+			var x1_valid = d1_sqr < beam.length*beam.length && check_quadrant(beam.a, x1, y1);
+			var x2_valid = d2_sqr < beam.length*beam.length && check_quadrant(beam.a, x2, y2);
+
+			if (x1_valid && (!x2_valid || d1_sqr < d2_sqr)) {
+				rcp = beam.p.add(vec2(x1,m*x1));
+				return true;
+			} else if (x2_valid) {
+				rcp = beam.p.add(vec2(x2,m*x2));
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
 		}
 	}
 

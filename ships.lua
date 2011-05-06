@@ -30,8 +30,8 @@ bullets = {
 }
 
 beams = {
-	ion = 4,
-	laser = 5,
+	ion = 1,
+	laser = 2,
 }
 
 ships = {}

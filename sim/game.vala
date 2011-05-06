@@ -9,6 +9,14 @@ public class Oort.BulletHit {
 	public double e;
 }
 
+[Compact]
+public class Oort.BeamHit {
+	public unowned Ship s;
+	public unowned Beam b;
+	public Vector.Vec2 cp;
+	public double e;
+}
+
 public class Oort.Game {
 	public int ticks = 0;
 	public Rand prng;
@@ -18,6 +26,7 @@ public class Oort.Game {
 	public ParsedScenario scn;
 	public string[] ais;
 	public List<BulletHit> bullet_hits = null;
+	public List<BeamHit> beam_hits = null;
 	public List<Ship> all_ships = null;
 	public List<Ship> new_ships = null;
 	public Mutex new_ships_lock;
@@ -26,6 +35,9 @@ public class Oort.Game {
 	public List<Bullet> all_bullets;
 	public List<Bullet> new_bullets;
 	public Mutex new_bullets_lock;
+	public List<Beam> all_beams;
+	public List<Beam> new_beams;
+	public Mutex new_beams_lock;
 	public List<Team> teams;
 	public TaskPool tasks;
 
@@ -43,6 +55,7 @@ public class Oort.Game {
 		this.ais = ais;
 		new_ships_lock = new Mutex();
 		new_bullets_lock = new Mutex();
+		new_beams_lock = new Mutex();
 		radio_lock = new Mutex();
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
@@ -53,17 +66,21 @@ public class Oort.Game {
 
 	public void purge() {
 		bullet_hits = null;
+		beam_hits = null;
 		purge_bullets();
 		purge_ships();
 	}
 
 	public void tick() {
 		check_bullet_hits();
+		check_beam_hits();
 		tick_physics();
 		tick_bullets();
 		tick_ships();
 		all_bullets.concat((owned) new_bullets);
 		new_bullets = null;
+		all_beams = (owned) new_beams;
+		new_beams = null;
 		ticks += 1;
 	}
 
@@ -119,6 +136,33 @@ public class Oort.Game {
 			hit.cp = cp;
 			hit.e = hit_energy;
 			bullet_hits.prepend((owned) hit);
+		}
+	}
+
+	public void check_beam_hits() {
+		foreach (unowned Ship s in all_ships) {
+			foreach (unowned Beam b in all_beams) {
+				Vec2 cp;
+				if (Physics.check_beam_collision(s.physics, b, TICK_LENGTH, out cp)) {
+					handle_beam_hit(s, b, cp);
+				}
+			}
+		}
+	}
+
+	public void handle_beam_hit(Ship s, Beam b, Vec2 cp) {
+		if (b.team != s.team) {
+			s.hull -= b.damage * TICK_LENGTH;
+			if (s.hull <= 0) {
+				s.dead = true;
+			}
+
+			BeamHit hit = new BeamHit();
+			hit.s = s;
+			hit.b = b;
+			hit.cp = cp;
+			hit.e = b.damage*TICK_LENGTH;
+			beam_hits.prepend((owned) hit);
 		}
 	}
 
