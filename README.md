@@ -139,7 +139,7 @@ corresponding code in the renderer.
 Every ship has an energy supply with a certain recharge rate and a limited
 capacity. Energy is used to fire guns, spawn ships, and thrust. If a ship
 attempts an action without having the required energy it is ignored. The ship
-classes vary in their energy characteristics; for example, motherships have a
+classes vary in their energy characteristics; for example, carriers have a
 large energy supply that regenerates quickly while missiles have a small energy
 supply that does not regenerate at all.
 

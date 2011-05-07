@@ -108,7 +108,7 @@ elseif my_class == "ion_cannon_frigate" then
 			local vx, vy = velocity()
 			main_target = sensor_contacts{ class = "ion_cannon_frigate", enemy = true }[1] or
 			              sensor_contacts{ class = "assault_frigate", enemy = true }[1] or
-			              sensor_contacts{ class = "mothership", enemy = true }[1]
+			              sensor_contacts{ class = "carrier", enemy = true }[1]
 			main_target_retry = 0
 		elseif not main_target then
 			main_target_retry = main_target_retry + 1
@@ -146,7 +146,7 @@ elseif my_class == "assault_frigate" then
 
 	local priorities = {
 		fighter = 2,
-		mothership = 1.2,
+		carrier = 1.2,
 		ion_cannon_frigate = 1,
 		assault_frigate = 0.5,
 	}
@@ -242,7 +242,7 @@ elseif my_class == "assault_frigate" then
 
 		yield()
 	end
-elseif my_class == "mothership" then
+elseif my_class == "carrier" then
 	local i = 0
 	local t = nil
 	local main_target = nil
@@ -250,7 +250,7 @@ elseif my_class == "mothership" then
 	while true do
 		local msg = recv()
 		if msg then
-			--print("mothership msg: " .. msg)
+			--print("carrier msg: " .. msg)
 		end
 
 		local range = my_ship.guns.main.length
@@ -278,7 +278,7 @@ elseif my_class == "mothership" then
 
 		if math.random(1,100) == 7 then
 			local target_selector = function(k,c) return true end
-			local _, t = pick(sensor_contacts{ class = "mothership", enemy = true }, target_selector)
+			local _, t = pick(sensor_contacts{ class = "carrier", enemy = true }, target_selector)
 			if t then
 				spawn("missile", t:id())
 			end

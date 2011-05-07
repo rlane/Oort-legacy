@@ -44,7 +44,7 @@ if my_class == "fighter" then
 
 		yield()
 	end
-elseif my_class == "mothership" then
+elseif my_class == "carrier" then
 	local i = 0
 	while true do
 		local x, y = position()

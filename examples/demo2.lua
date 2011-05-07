@@ -1,7 +1,7 @@
 local my_class = class
 local my_ship = ships[my_class]
 
-if class == "mothership" then
+if class == "carrier" then
 	local main_target = nil
 	local dest = nil
 	while true do
@@ -90,7 +90,7 @@ elseif class == "fighter" then
 		acc = -acc
 	end
 
-	local t = sensor_contacts{enemy=true, class="mothership"}[1]
+	local t = sensor_contacts{enemy=true, class="carrier"}[1]
 	while true do
 		t = sensor_contact(t:id())
 		local x,y = position()

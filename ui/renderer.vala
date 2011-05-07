@@ -7,7 +7,7 @@ public class Oort.ShipGfxClass {
 	public static ShipGfxClass fighter;
 	public static ShipGfxClass ion_cannon_frigate;
 	public static ShipGfxClass assault_frigate;
-	public static ShipGfxClass mothership;
+	public static ShipGfxClass carrier;
 	public static ShipGfxClass missile;
 	public static ShipGfxClass little_missile;
 	public static ShipGfxClass unknown;
@@ -16,7 +16,7 @@ public class Oort.ShipGfxClass {
 		fighter = new ShipGfxClass();
 		ion_cannon_frigate = new ShipGfxClass();
 		assault_frigate = new ShipGfxClass();
-		mothership = new ShipGfxClass();
+		carrier = new ShipGfxClass();
 		missile = new ShipGfxClass();
 		little_missile = new ShipGfxClass();
 		unknown = new ShipGfxClass();
@@ -28,7 +28,7 @@ public class Oort.ShipGfxClass {
 			case "fighter": return fighter;
 			case "ion_cannon_frigate": return ion_cannon_frigate;
 			case "assault_frigate": return assault_frigate;
-			case "mothership": return mothership;
+			case "carrier": return carrier;
 			case "missile": return missile;
 			case "little_missile": return little_missile;
 			default: return unknown;
@@ -154,17 +154,20 @@ namespace Oort {
 			}
 		}
 
-		void render_mothership(Ship s) {
+		void render_carrier(Ship s) {
 			int depth = int.min(int.max((int)Math.log2(view_scale*100), 2), 8);
 			GLUtil.color32(s.team.color | 0xEE);
 			glPushMatrix();
-			glScaled(0.5, 0.3, 0.3);
+			glScaled(1.0, 0.7, 0.3);
+			glPushMatrix();
+			glScaled(0.5, 0.3, 0.5);
 			GLUtil.render_circle(5);
 			glPopMatrix();
 			triangle_fractal(depth);
 			glPushMatrix();
 			glRotated(180, 0, 0, 1);
 			triangle_fractal(depth);
+			glPopMatrix();
 			glPopMatrix();
 		}
 
@@ -238,8 +241,8 @@ namespace Oort {
 			glRotated(Util.rad2deg(angle), 0, 0, 1);
 
 			// XXX move into class
-			if (s.class.name == "mothership") {
-				render_mothership(s);
+			if (s.class.name == "carrier") {
+				render_carrier(s);
 			} else if (s.class.name == "fighter") {
 				render_fighter(s);
 			} else if (s.class.name == "ion_cannon_frigate") {

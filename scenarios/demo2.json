@@ -9,7 +9,7 @@
 			"filename": "examples/demo2.lua",
 			"color": { "b": 0, "g": 255, "r": 0 }, 
 			"ships": [
-				{ "class": "mothership", "x": 0, "y": 10 }
+				{ "class": "carrier", "x": 0, "y": 10 }
 			]
 		},
 		{

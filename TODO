@@ -1,5 +1,4 @@
 1.0:
-Rename mothership to carrier
 Add refueling to carrier
 Limit angular velocity
 Don't thrust missile in wrong direction

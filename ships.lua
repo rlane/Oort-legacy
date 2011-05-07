@@ -147,7 +147,7 @@ ships.assault_frigate = {
 	}
 }
 
-ships.mothership = {
+ships.carrier = {
 	radius = 80,
 	mass = 1e6,
 	reaction_mass = 1e6,
