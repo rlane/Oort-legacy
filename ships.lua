@@ -102,6 +102,51 @@ ships.ion_cannon_frigate = {
 	}
 }
 
+ships.assault_frigate = {
+	radius = 40,
+	mass = 160e3,
+	reaction_mass = 40e3,
+	hull = 15e6,
+	max_main_acc = 20,
+	max_lateral_acc = 4,
+	max_angular_acc = 0.7,
+	cost = 30e9,
+	guns = {
+		main = {
+			type = "bullet",
+			graphics = bullets.plasma,
+			mass = 1.0,
+			radius = 1.0/32,
+			velocity = 600,
+			ttl = 5.0,
+			spread = 0.02,
+			angle = 0.0,
+			coverage = 2*pi,
+			reload_time = 0.6,
+			cost = 1e9,
+		},
+		laser = {
+			type = "beam",
+			graphics = beams.laser,
+			damage = 41e3,
+			length = 300,
+			width = 4,
+			angle = 0,
+			coverage = 2*pi,
+			cost = 10e9,
+		}
+	},
+	count_for_victory = true,
+	energy = {
+		initial = 10e9,
+		rate = 17e9,
+		limit = 20e9,
+	},
+	spawnable = {
+		little_missile = 3,
+	}
+}
+
 ships.mothership = {
 	radius = 80,
 	mass = 1e6,

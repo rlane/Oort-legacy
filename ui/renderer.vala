@@ -6,6 +6,7 @@ using Math;
 public class Oort.ShipGfxClass {
 	public static ShipGfxClass fighter;
 	public static ShipGfxClass ion_cannon_frigate;
+	public static ShipGfxClass assault_frigate;
 	public static ShipGfxClass mothership;
 	public static ShipGfxClass missile;
 	public static ShipGfxClass little_missile;
@@ -14,6 +15,7 @@ public class Oort.ShipGfxClass {
 	public static void init() {
 		fighter = new ShipGfxClass();
 		ion_cannon_frigate = new ShipGfxClass();
+		assault_frigate = new ShipGfxClass();
 		mothership = new ShipGfxClass();
 		missile = new ShipGfxClass();
 		little_missile = new ShipGfxClass();
@@ -25,6 +27,7 @@ public class Oort.ShipGfxClass {
 		switch (name) {
 			case "fighter": return fighter;
 			case "ion_cannon_frigate": return ion_cannon_frigate;
+			case "assault_frigate": return assault_frigate;
 			case "mothership": return mothership;
 			case "missile": return missile;
 			case "little_missile": return little_missile;
@@ -188,6 +191,20 @@ namespace Oort {
 			glEnd();
 		}
 
+		void render_assault_frigate(Ship s) {
+			GLUtil.color32(s.team.color | 0xBB);
+			glBegin(GL_LINE_LOOP);
+			glVertex3d(-0.80, -0.4, 0);
+			glVertex3d(-0.80, 0.4, 0);
+			glVertex3d(0.0, 0.2, 0);
+			glVertex3d(0.0, 0.4, 0);
+			glVertex3d(0.95, 0.2, 0);
+			glVertex3d(0.95, -0.2, 0);
+			glVertex3d(0.0, -0.4, 0);
+			glVertex3d(0.0, -0.2, 0);
+			glEnd();
+		}
+
 		void render_missile(Ship s) {
 			GLUtil.color32((uint32)0x88888800 | 0x55);
 			GLUtil.render_circle(5);
@@ -227,6 +244,8 @@ namespace Oort {
 				render_fighter(s);
 			} else if (s.class.name == "ion_cannon_frigate") {
 				render_ion_cannon_frigate(s);
+			} else if (s.class.name == "assault_frigate") {
+				render_assault_frigate(s);
 			} else if (s.class.name == "missile") {
 				render_missile(s);
 			} else if (s.class.name == "little_missile") {
