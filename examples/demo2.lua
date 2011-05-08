@@ -8,7 +8,7 @@ if class == "carrier" then
 		if not main_target then
 			local x, y = position()
 			local vx, vy = velocity()
-			main_target = pick_close_enemy(x, y, my_ship.guns.main.bullet_velocity*my_ship.guns.main.bullet_ttl, 0.5)
+			main_target = pick_close_enemy(x, y, my_ship.guns.main.velocity*my_ship.guns.main.ttl, 0.5)
 		else
 			main_target = sensor_contact(main_target:id())
 		end
@@ -18,7 +18,7 @@ if class == "carrier" then
 			local vx, vy = velocity()
 			local tx, ty = main_target:position()
 			local tvx, tvy = main_target:velocity()
-			local a2 = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
+			local a2 = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.velocity, my_ship.guns.main.ttl)
 			if a2 then
 				fire("main", a2)
 			else

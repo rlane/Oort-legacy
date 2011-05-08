@@ -36,7 +36,7 @@ if my_class == "fighter" then
 			local vx, vy = velocity()
 			local tx, ty = t:position()
 			local tvx, tvy = t:velocity()
-			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
+			local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.velocity, my_ship.guns.main.ttl)
 			if a then
 				fire("main", a)
 			end
