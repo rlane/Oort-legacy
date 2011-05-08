@@ -34,12 +34,13 @@ config.h
 stamp-h1
 
 dedicated/oort_dedicated*
-ui/oort_ui*
+ui/oort*
 sim/oort.vapi
 README
 
 dedicated/oort-dedicated.c
 sim/bullet.c
+sim/beam.c
 sim/game.c
 sim/physics.c
 sim/oort.h

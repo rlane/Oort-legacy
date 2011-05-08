@@ -27,6 +27,8 @@ various package managers are listed below:
 
 - OS X MacPorts: gcc45 glew gtk2 gtkglext glib2-devel
 
+This project uses Git submodules to pull in LuaJIT, so after cloning you'll need to run `git submodule init && git submodule update`.
+
 Gameplay
 --------
 
@@ -34,7 +36,7 @@ Oort is a programming game, which means that after the simulation has begun the
 players have no control over the outcome. Instead, you play by writing a
 program (AI) that all ships on your team will individually execute.
 
-To get started, run the UI (`oort_ui` from the command line, or using the
+To get started, run the UI (`oort` from the command line, or using the
 desktop shortcut on Windows). Oort will begin playing a demo scenario. Click
 the "File" menu and select "New Game". This will pop up a file chooser where
 you will pick the scenario. The file chooser starts in a directory containing

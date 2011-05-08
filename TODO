@@ -1,7 +1,6 @@
 0.1:
 Add refueling to carrier
 Fix scenario scale
-Rename executables
 
 1.0:
 Limit angular velocity

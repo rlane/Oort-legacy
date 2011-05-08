@@ -73,7 +73,7 @@ run: all
 	./dedicated/oort_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
 
 run-ui: all
-	./ui/oort_ui scenarios/basic.json examples/switch.lua examples/switch.lua
+	./ui/oort scenarios/basic.json examples/switch.lua examples/switch.lua
 
 DLL_DIR=/usr/i486-mingw32/bin
 
@@ -89,7 +89,7 @@ DLLS=\
 oort-win32: all
 	rm -rf oort-win32
 	mkdir oort-win32
-	cp ui/oort_ui.exe dedicated/oort_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) oort-win32/
+	cp ui/oort.exe dedicated/oort_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) oort-win32/
 	cp ships.lua runtime.lua lib.lua oort-win32/
 	dos2unix --u2d < README.md > oort-win32/README.txt
 	dos2unix --u2d < TODO > oort-win32/TODO.txt

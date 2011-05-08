@@ -31,8 +31,8 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/ui \
 	$(NULL)
 
-bin_PROGRAMS = oort_ui
-oort_ui_SOURCES = oort.vala renderer.vala glutil.c particle.c font.c textures.vala
+bin_PROGRAMS = oort
+oort_SOURCES = oort.vala renderer.vala glutil.c particle.c font.c textures.vala
 noinst_HEADERS = glutil.h particle.h tga.h font.h font.vapi particle.vapi glutil.vapi
-oort_ui_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
-oort_ui_LDFLAGS = $(OORT_EXTRA_LDFLAGS)
+oort_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
+oort_LDFLAGS = $(OORT_EXTRA_LDFLAGS)

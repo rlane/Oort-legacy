@@ -1,4 +1,4 @@
-AC_INIT([Oort], [0.1.0], [rlane@club.cc.cmu.edu], [Oort], [http://github.com/rlane/Oort])
+AC_INIT([Oort], [0.1.0], [rlane@club.cc.cmu.edu], [oort], [http://github.com/rlane/Oort])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE([no-dist-gzip dist-bzip2])
