@@ -1,12 +1,14 @@
-1.0:
+0.1:
 Add refueling to carrier
+Fix scenario scale
+Rename executables
+
+1.0:
 Limit angular velocity
 Don't thrust missile in wrong direction
 Fix turn_to() hysteresis
-Fix scenario scale
 Save previous pause value when taking screenshot
 Universe boundary
-Rename executables
 Flesh out challenges
 Machine-readable oort-dedicated output
 

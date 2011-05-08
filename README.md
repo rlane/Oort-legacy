@@ -8,6 +8,10 @@ Oort is a programming game currently in early development. Two or more space
 fleets, each ship individually controlled by the player's Lua code, battle in
 2-dimensional space with Newtonian physics.
 
+- Code: [https://github.com/rlane/Oort](https://github.com/rlane/Oort)
+- Forum: [http://oort.lefora.com](http://oort.lefora.com)
+- Bug tracker: [https://github.com/rlane/Oort/issues](https://github.com/rlane/Oort/issues)
+
 Compilation
 -----------
 
@@ -264,9 +268,7 @@ graphical viewer later.
 Contributing
 ------------
 
-Mailing list: oort-game-dev@lists.sourceforge.net.
-
-Subscribe at [https://lists.sourceforge.net/lists/listinfo/oort-game-dev](https://lists.sourceforge.net/lists/listinfo/oort-game-dev).
+Fork the project on GitHub and send me a merge request.
 
 Screenshot
 ----------
