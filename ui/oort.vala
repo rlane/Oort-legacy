@@ -317,7 +317,9 @@ namespace Oort {
 					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {
+						tick_lock.lock();
 						renderer.picked.control(key, true);
+						tick_lock.unlock();
 					}
 					break;
 			}
