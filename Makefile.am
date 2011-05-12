@@ -102,5 +102,5 @@ oort-installer-win32.exe: oort-win32 installer.nsi
 	makensis installer.nsi
 
 memcheck: all
-	G_DEBUG=gc-friendly G_SLICE=always-malloc OORT_MAX_TICKS=10 valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/oort_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
+	G_DEBUG=gc-friendly G_SLICE=always-malloc valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/oort_dedicated --max-ticks 10 scenarios/basic.json examples/switch.lua examples/switch.lua
 	@echo "Memcheck output saved to memcheck.out"
