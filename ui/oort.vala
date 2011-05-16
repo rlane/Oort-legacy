@@ -133,6 +133,7 @@ namespace Oort {
 		}
 
 		public void show_screenshot_dialog() {
+			var saved_paused = paused;
 			paused = true;
 			var chooser = new FileChooserDialog("Save screenshot", this, Gtk.FileChooserAction.SAVE,
 			                                    Gtk.Stock.OK, Gtk.ResponseType.ACCEPT,
@@ -143,7 +144,7 @@ namespace Oort {
 					screenshot(chooser.get_filename());
 				}
 				chooser.destroy();
-				paused = false;
+				paused = saved_paused;
 			});
 			chooser.show();
 		}
