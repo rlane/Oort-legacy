@@ -388,7 +388,9 @@ namespace Oort {
 			switch (event.button) {
 				case 1:
 					renderer.follow_picked = false;
+					tick_lock.lock();
 					renderer.pick(x,y);
+					tick_lock.unlock();
 					break;
 				default:
 					break;
