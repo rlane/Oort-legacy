@@ -153,12 +153,12 @@ ships.carrier = {
 	},
 	spawnable = {
 		little_missile = 1,
-		missile = 2,
+		torpedo = 2,
 		fighter = 5
 	}
 }
 
-ships.missile = {
+ships.torpedo = {
 	radius = 2.5,
 	hull = 10e3,
 	mass = 1e3,

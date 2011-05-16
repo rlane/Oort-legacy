@@ -74,7 +74,7 @@ function pick_close_enemy(x, y, max_dist, prob)
 	local t = nil
 	for k, c in pairs(contacts) do
 		local cx, cy = c:position()
-		if c:team() ~= my_team and distance(cx, cy, x, y) < max_dist and c:class() ~= "missile" and (not t or (math.random() < prob)) then
+		if c:team() ~= my_team and distance(cx, cy, x, y) < max_dist and c:class() ~= "torpedo" and (not t or (math.random() < prob)) then
 			t = c
 		end
 	end

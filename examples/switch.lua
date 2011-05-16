@@ -60,7 +60,7 @@ if my_class == "fighter" then
 		debug_square(follow_x, follow_y, 2*my_ship.radius)
 
 		local urgent_target = 
-			      min_by(sensor_contacts{ distance_lt = max_target_distance, class = "missile", enemy = true }, fire_score)
+			      min_by(sensor_contacts{ distance_lt = max_target_distance, class = "torpedo", enemy = true }, fire_score)
 		if urgent_target then fire_target = urgent_target end
 
 		if not fire_target and fire_target_retry >= 16 then
@@ -220,7 +220,7 @@ elseif my_class == "assault_frigate" then
 		end
 
 		local range = my_ship.guns.laser.length
-		local laser_target = sensor_contacts{ distance_lt = range, enemy = true, class = "missile", limit = 1 }[1] or
+		local laser_target = sensor_contacts{ distance_lt = range, enemy = true, class = "torpedo", limit = 1 }[1] or
 		                     sensor_contacts{ distance_lt = range, enemy = true, class = "little_missile", limit = 1 }[1]
 
 		if not laser_target and energy() > 0.1*my_ship.energy.limit then
@@ -254,7 +254,7 @@ elseif my_class == "carrier" then
 		end
 
 		local range = my_ship.guns.main.length
-		main_target = sensor_contacts{ distance_lt = range, enemy = true, class = "missile", limit = 1 }[1] or
+		main_target = sensor_contacts{ distance_lt = range, enemy = true, class = "torpedo", limit = 1 }[1] or
 		              sensor_contacts{ distance_lt = range, enemy = true, class = "little_missile", limit = 1 }[1]
 
 		if not main_target and energy() > 0.1*my_ship.energy.limit then
@@ -280,7 +280,7 @@ elseif my_class == "carrier" then
 			local target_selector = function(k,c) return true end
 			local _, t = pick(sensor_contacts{ class = "carrier", enemy = true }, target_selector)
 			if t then
-				spawn("missile", t:id())
+				spawn("torpedo", t:id())
 			end
 		end
 
@@ -298,6 +298,6 @@ elseif my_class == "carrier" then
 
 		yield()
 	end
-elseif my_class == "missile" or my_class == "little_missile" then
+elseif my_class == "torpedo" or my_class == "little_missile" then
 	standard_missile_ai()
 end
