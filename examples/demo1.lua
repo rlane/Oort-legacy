@@ -3,7 +3,7 @@ local my_team = team
 local my_ship = ships[my_class]
 local fighter_selector = function(k,c) return c:team() ~= my_team and c:class() == "fighter" end
 local missile_selector = function(k,c)
-	if c:team() ~= my_team and c:class() == "little_missile" then
+	if c:team() ~= my_team and c:class() == "missile" then
 		local x, y = position()
 		local tx, ty = c:position()
 		return distance(x,y,tx,ty) < 600
@@ -63,14 +63,14 @@ elseif my_class == "carrier" then
 			for i = 1,4 do
 				local _, t = pick(sensor_contacts{}, fighter_selector)
 				if t then
-					spawn("little_missile", t:id())
+					spawn("missile", t:id())
 				end
 			end
 		end
 
 		yield()
 	end
-elseif my_class == "little_missile" then
+elseif my_class == "missile" then
 	standard_missile_ai()
 else
 	explode()

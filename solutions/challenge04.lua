@@ -7,10 +7,10 @@ if class == "fighter" then
 		local tx, ty = t:position()
 		turn_towards(tx,ty)
 		if t then
-			spawn("little_missile", t:id())
+			spawn("missile", t:id())
 		end
 		yield()
 	end
-elseif class == "little_missile" then
+elseif class == "missile" then
 	standard_missile_ai()
 end

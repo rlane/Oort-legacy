@@ -6,7 +6,7 @@ if my_class == "fighter" then
 	local t = nil
 	local max_target_distance = my_ship.guns.main.velocity*my_ship.guns.main.ttl*1.5
 	local origin = { x = 0, y = 0, vx = 0, vy = 0 }
-	local target_selector = function(k,c) return c:class() ~= "little_missile" end
+	local target_selector = function(k,c) return c:class() ~= "missile" end
 	local follow_target = nil
 	local follow_target_retry = 0
 	local fire_target = nil
@@ -89,8 +89,8 @@ if my_class == "fighter" then
 
 		drive_towards(follow_x, follow_y, my_ship.max_main_acc*3)
 
-		if follow_target and energy() > ships.little_missile.cost and math.random(50) == 7 then
-			spawn("little_missile", follow_target:id())
+		if follow_target and energy() > ships.missile.cost and math.random(50) == 7 then
+			spawn("missile", follow_target:id())
 		end
 
 		yield()
@@ -138,7 +138,7 @@ elseif my_class == "assault_frigate" then
 	local t = nil
 	local max_target_distance = my_ship.guns.main.velocity*my_ship.guns.main.ttl*1.5
 	local origin = { x = 0, y = 0, vx = 0, vy = 0 }
-	local target_selector = function(k,c) return c:class() ~= "little_missile" end
+	local target_selector = function(k,c) return c:class() ~= "missile" end
 	local follow_target = nil
 	local follow_target_retry = 0
 	local fire_target = nil
@@ -221,7 +221,7 @@ elseif my_class == "assault_frigate" then
 
 		local range = my_ship.guns.laser.length
 		local laser_target = sensor_contacts{ distance_lt = range, enemy = true, class = "torpedo", limit = 1 }[1] or
-		                     sensor_contacts{ distance_lt = range, enemy = true, class = "little_missile", limit = 1 }[1]
+		                     sensor_contacts{ distance_lt = range, enemy = true, class = "missile", limit = 1 }[1]
 
 		if not laser_target and energy() > 0.1*my_ship.energy.limit then
 			laser_target = sensor_contacts{ distance_lt = range, enemy = true, limit = 1 }[1]
@@ -236,8 +236,8 @@ elseif my_class == "assault_frigate" then
 
 		drive_towards(follow_x, follow_y, my_ship.max_main_acc*3)
 
-		if follow_target and energy() > ships.little_missile.cost and math.random(50) == 7 then
-			spawn("little_missile", follow_target:id())
+		if follow_target and energy() > ships.missile.cost and math.random(50) == 7 then
+			spawn("missile", follow_target:id())
 		end
 
 		yield()
@@ -255,7 +255,7 @@ elseif my_class == "carrier" then
 
 		local range = my_ship.guns.main.length
 		main_target = sensor_contacts{ distance_lt = range, enemy = true, class = "torpedo", limit = 1 }[1] or
-		              sensor_contacts{ distance_lt = range, enemy = true, class = "little_missile", limit = 1 }[1]
+		              sensor_contacts{ distance_lt = range, enemy = true, class = "missile", limit = 1 }[1]
 
 		if not main_target and energy() > 0.1*my_ship.energy.limit then
 			main_target = sensor_contacts{ distance_lt = range, enemy = true, limit = 1 }[1]
@@ -285,10 +285,10 @@ elseif my_class == "carrier" then
 		end
 
 		if math.random(50) == 7 then
-			local target_selector = function(k,c) return c:class() ~= "little_missile" end
+			local target_selector = function(k,c) return c:class() ~= "missile" end
 			local _, t = pick(sensor_contacts{ enemy = true }, target_selector)
 			if t then
-				spawn("little_missile", t:id())
+				spawn("missile", t:id())
 			end
 		end
 
@@ -298,6 +298,6 @@ elseif my_class == "carrier" then
 
 		yield()
 	end
-elseif my_class == "torpedo" or my_class == "little_missile" then
+elseif my_class == "torpedo" or my_class == "missile" then
 	standard_missile_ai()
 end

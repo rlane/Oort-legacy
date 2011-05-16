@@ -44,7 +44,7 @@ ships.fighter = {
 		limit = 15e9,
 	},
 	spawnable = {
-		little_missile = 5,
+		missile = 5,
 	}
 }
 
@@ -120,7 +120,7 @@ ships.assault_frigate = {
 		limit = 20e9,
 	},
 	spawnable = {
-		little_missile = 3,
+		missile = 3,
 	}
 }
 
@@ -152,7 +152,7 @@ ships.carrier = {
 		limit = 100e9,
 	},
 	spawnable = {
-		little_missile = 1,
+		missile = 1,
 		torpedo = 2,
 		fighter = 5
 	}
@@ -178,7 +178,7 @@ ships.torpedo = {
 	spawnable = {}
 }
 
-ships.little_missile = {
+ships.missile = {
 	radius = 1.0,
 	mass = 200,
 	reaction_mass = 80,

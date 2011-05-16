@@ -9,7 +9,7 @@ public class Oort.ShipGfxClass {
 	public static ShipGfxClass assault_frigate;
 	public static ShipGfxClass carrier;
 	public static ShipGfxClass missile;
-	public static ShipGfxClass little_missile;
+	public static ShipGfxClass torpedo;
 	public static ShipGfxClass unknown;
 	
 	public static void init() {
@@ -18,7 +18,7 @@ public class Oort.ShipGfxClass {
 		assault_frigate = new ShipGfxClass();
 		carrier = new ShipGfxClass();
 		missile = new ShipGfxClass();
-		little_missile = new ShipGfxClass();
+		torpedo = new ShipGfxClass();
 		unknown = new ShipGfxClass();
 	}
 
@@ -30,7 +30,7 @@ public class Oort.ShipGfxClass {
 			case "assault_frigate": return assault_frigate;
 			case "carrier": return carrier;
 			case "missile": return missile;
-			case "little_missile": return little_missile;
+			case "torpedo": return torpedo;
 			default: return unknown;
 		}
 	}
@@ -208,12 +208,12 @@ namespace Oort {
 			glEnd();
 		}
 
-		void render_missile(Ship s) {
+		void render_torpedo(Ship s) {
 			GLUtil.color32((uint32)0x88888800 | 0x55);
 			GLUtil.render_circle(5);
 		}
 
-		void render_little_missile(Ship s) {
+		void render_missile(Ship s) {
 			GLUtil.color32((uint32)0x88888800 | 0x55);
 			glBegin(GL_LINES);
 			glVertex3d(-0.70, -0.71, 0);
@@ -251,15 +251,15 @@ namespace Oort {
 				render_assault_frigate(s);
 			} else if (s.class.name == "missile") {
 				render_missile(s);
-			} else if (s.class.name == "little_missile") {
-				render_little_missile(s);
+			} else if (s.class.name == "torpedo") {
+				render_torpedo(s);
 			} else {
 				render_unknown(s);
 			}
 
 			glPopMatrix();
 
-			int tail_alpha_max = s.class.name.contains("missile") ? 16 : 64;
+			int tail_alpha_max = (s.class.name.contains("missile") || s.class.name.contains("torpedo")) ? 16 : 64;
 			glBegin(GL_LINE_STRIP);
 			GLUtil.color32(s.team.color | tail_alpha_max);
 			glVertex3d(sp.x, sp.y, 0);
