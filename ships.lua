@@ -160,7 +160,7 @@ ships.carrier = {
 
 ships.torpedo = {
 	radius = 2.5,
-	hull = 10e3,
+	hull = 20e3,
 	mass = 1e3,
 	reaction_mass = 400,
 	max_main_acc = 100,
