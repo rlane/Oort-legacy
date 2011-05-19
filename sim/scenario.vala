@@ -24,6 +24,7 @@ public class Oort.ParsedScenario {
 }
 
 public class Oort.ParsedTeam {
+	public int id;
 	public string name;
 	public string filename;
 	public uint8 color_red;
@@ -57,7 +58,7 @@ namespace Oort.Scenario {
 			uint8[] code;
 			FileUtils.get_data(ai_filename, out code);
 			uint32 color = pteam.color_red << 24 | pteam.color_green << 16 | pteam.color_blue << 8;
-			var team = new Team() { name=pteam.name, color=color, filename=ai_filename, code=(owned)code };
+			var team = new Team() { id=pteam.id, name=pteam.name, color=color, filename=ai_filename, code=(owned)code };
 
 			foreach (ParsedShip pship in pteam.ships) {
 				unowned ShipClass klass = ShipClass.lookup(pship.class_name);
@@ -168,6 +169,7 @@ namespace Oort.Scenario {
 			}
 
 			var pteam = new ParsedTeam();
+			pteam.id = i;
 			pteam.name = team_name.string;
 			pteam.color_red = (uint8)color_red.int;
 			pteam.color_green = (uint8)color_green.int;
@@ -222,6 +224,7 @@ namespace Oort.Scenario {
 			}
 
 			scn.teams.append((owned)pteam);
+			i++;
 			team_obj = team_obj.next;
 		}
 

@@ -104,7 +104,7 @@ int main(string[] args) {
 			print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.filename, game.ticks*Game.TICK_LENGTH);
 
 			if (opt_results != null) {
-				var results = @"$(winner.name)\t$(game.ticks*Game.TICK_LENGTH)\n";
+				var results = @"$(winner.id)\t$(winner.name)\t$(game.ticks*Game.TICK_LENGTH)\n";
 				try {
 					FileUtils.set_contents(opt_results, results);
 				} catch (Error e) {
