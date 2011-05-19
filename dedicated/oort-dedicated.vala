@@ -2,10 +2,12 @@ using Oort;
 
 uint32 opt_seed;
 int opt_max_ticks;
+string opt_results;
 
 const OptionEntry[] options = {
 	{ "seed", 's', 0, OptionArg.INT, ref opt_seed, "Random number generator seed", null },
 	{ "max-ticks", 0, 0, OptionArg.INT, ref opt_max_ticks, "Exit after given number of ticks", null },
+	{ "results", 0, 0, OptionArg.STRING, ref opt_results, "Write the results to a file", null },
 	{ null }
 };
 
@@ -100,6 +102,16 @@ int main(string[] args) {
 		unowned Team winner = game.check_victory();
 		if (winner != null) {
 			print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.filename, game.ticks*Game.TICK_LENGTH);
+
+			if (opt_results != null) {
+				var results = @"$(winner.name)\t$(game.ticks*Game.TICK_LENGTH)\n";
+				try {
+					FileUtils.set_contents(opt_results, results);
+				} catch (Error e) {
+					error("Failed to output results: %s", e.message);
+				}
+			}
+
 			break;
 		}
 
