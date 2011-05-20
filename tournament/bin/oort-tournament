@@ -28,7 +28,7 @@ tmpfiles = ai_names.map do |ai_name|
 end
 
 results_file = Tempfile.new 'oort'
-system "./dedicated/oort_dedicated --results #{results_file.path} --seed #{seed} #{SCENARIO} examples/switch.lua examples/switch.lua"
+system "./dedicated/oort_dedicated --results #{results_file.path} --seed #{seed} #{SCENARIO} #{tmpfiles.map(&:path) * ' '}"
 fail "oort_dedicated failed" unless $?.success?
 
 winner_id, winner_team_name, elapsed = File.read(results_file.path).split("\t")
