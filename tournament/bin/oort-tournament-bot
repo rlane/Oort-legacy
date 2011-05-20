@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'mechanize'
+require 'oort-tournament/db'
 
 DB_FILENAME = "db.yaml"
 TMP_FILENAME = ".db.yaml.tmp"
@@ -9,14 +10,7 @@ URL = 'http://oort.lefora.com/'
 USERNAME = ARGV[0] or fail "username required"
 PASSWORD = ARGV[1] or fail "password required"
 
-if File.exists? DB_FILENAME
-  db = File.open(DB_FILENAME) { |io| YAML.load io }
-else
-  db = {
-    'seen' => [],
-    'ais' => {},
-  }
-end
+db = OortTournament::DB.new
 
 agent = Mechanize.new
 page = agent.get(URL)
@@ -26,11 +20,11 @@ form.email = USERNAME
 form.password = PASSWORD
 page = agent.submit form, form.buttons.first
 page = agent.page.link_with(:text => 'messages').click
-page.links.each do |l|
+page.links.reverse.each do |l|
   l.href =~ %r|/mailbox/view/(\d+)| or next
   msgid = $1.to_i
-  next if db['seen'].member? msgid
-  db['seen'] << msgid
+  next if db.seen_msgids.member? msgid
+  db.seen_msgids << msgid
   puts "processing message #{msgid}"
   begin
     page = l.click
@@ -47,21 +41,14 @@ page.links.each do |l|
     puts "no name found" unless subject =~ /Message: (\w+)$/
     name = $1
 
-    fail "name conflict" if db['ais'].member? name
+    fail "name conflict" if db.ais.member? name
 
     puts "#{sender.inspect} registered #{name} as #{sha1}"
-    db['ais'][name] = {
-      'user' => sender,
-      'sha1' => sha1,
-    }
+    db.create_ai name, sender, sha1
   rescue
     puts "failed to process message #{msgid}: #{$!.message}"
     #puts page.send :html_body
   end
 end
 
-File.open(TMP_FILENAME, 'w') do |io|
-  YAML.dump db, io
-end
-
-File.rename TMP_FILENAME, DB_FILENAME
+db.save

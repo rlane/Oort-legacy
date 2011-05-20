@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+require 'saulabs/trueskill'
+require 'oort-tournament/db'
+
+include Saulabs::TrueSkill
+
+db = OortTournament::DB.new
+
+ratings = ARGV.map do |name|
+  ai = db.ais[name]
+  rating = Rating.new ai['mean'], ai['deviation'], ai['activity']
+  [name, rating]
+end
+
+graph = FactorGraph.new(ratings.map { |x| [x[1]] }, (1...(ratings.size)).to_a)
+graph.update_skills
+
+ratings.each do |name, rating|
+  db.ais[name].merge!(
+    'mean' => rating.mean,
+    'deviation' => rating.deviation,
+    'activity' => rating.activity
+  )
+end
+
+db.save
