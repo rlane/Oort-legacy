@@ -4,8 +4,8 @@ Oort
 Introduction
 ------------
 
-Oort is a programming game currently in early development. Two or more space
-fleets, each ship individually controlled by the player's Lua code, battle in
+Oort is a programming game currently in development. Two or more space fleets,
+each ship individually controlled by the player's Lua code, battle in
 2-dimensional space with Newtonian physics.
 
 - Code: [https://github.com/rlane/Oort](https://github.com/rlane/Oort)
@@ -173,7 +173,8 @@ and you pass this name to the fire() function. Guns have varying bullet
 masses, bullet velocities, bullet lifetimes, reload times, and energy
 costs to fire. The gun's bullet velocity is added to the ship velocity.
 Whenever a bullet impacts a ship it does damage equal to its kinetic
-energy relative to the ship.
+energy relative to the ship. Some ships also have simpler hit-scan beam
+weapons, which are often used to shoot down incoming missiles or fighters.
 
 #### Hull
 
@@ -184,11 +185,10 @@ ship's hull strength reaches zero it is destroyed.
 #### Self-destruct
 
 The explode() function causes the ship to self-destruct. An explosion (spray of
-bullets) is created and the ship is destroyed. The characteristics of the
-explosion depend on the ship class, but it is important to note that because
-the shrapnel velocities are added to the ship velocity a fast-moving ship will
-have a more conical shrapnel pattern. Calling explode() should be rare for most
-ship classes, but it is the typical behavior for missiles.
+bullets) is created and the ship is destroyed. The damage done by the explosion
+varies with the ship class and decreases with distance. Calling explode()
+should be rare for most ship classes, but it is the typical behavior for
+missiles.
 
 #### Radio
 
@@ -231,7 +231,7 @@ LuaJIT). They should still be deterministic given the same VM.
 Graphical simulator
 -------------------
 
-The "oort\_ui" binary renders the battle with OpenGL. The simulation speed is
+The "oort" binary renders the battle with OpenGL. The simulation speed is
 limited to real time (32 hz).
 
 ### Controls
