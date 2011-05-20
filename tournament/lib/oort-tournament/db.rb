@@ -29,11 +29,11 @@ class DB
     end
   end
 
-  def create_ai name, user, sha1
+  def create_ai name, user, gist
     fail "already exists" if ais.member? name
     ais[name] = {
       'user' => user,
-      'sha1' => sha1,
+      'gist' => gist,
       'mean' => 25,
       'deviation' => 25 / 3.0,
       'activity' => 1,

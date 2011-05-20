@@ -20,7 +20,7 @@ puts "#{ai1} vs #{ai2}"
 
 tmpfiles = ai_names.map do |ai_name|
   ai = db.ais[ai_name]
-  data = Gist.read ai['sha1']
+  data = Gist.read ai['gist']
   Tempfile.new('oort').tap do |io|
     io.write data
     io.close
