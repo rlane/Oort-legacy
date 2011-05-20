@@ -1,9 +1,8 @@
 #!/usr/bin/env ruby
 require 'saulabs/trueskill'
 require 'oort-tournament/db'
-require 'net/http'
 require 'tempfile'
-require 'json'
+require 'gist'
 
 include Saulabs::TrueSkill
 
@@ -19,23 +18,12 @@ ai_names = [ai1, ai2]
 
 puts "#{ai1} vs #{ai2}"
 
-Net::HTTP.start("gist.github.com", 443, :use_ssl => true) do |conn|
-  tmpfiles = ai_names.map do |ai_name|
-    ai = db.ais[ai_name]
-    path = "/api/v1/json/#{ai['sha1']}"
-    res = conn.get(path)
-    metadata = JSON.parse(res.body)
-    path = "/raw/#{ai['sha1']}/#{metadata['gists'][0]['files'][0]}"
-    res = conn.get(path)
-    case res
-    when Net::HTTPOK
-      Tempfile.new('oort').tap do |io|
-        io.write res.body
-        io.close
-      end
-    else
-      fail "failed to retrieve AI #{ai_name}: #{res.class}"
-    end
+tmpfiles = ai_names.map do |ai_name|
+  ai = db.ais[ai_name]
+  data = Gist.read ai['sha1']
+  Tempfile.new('oort').tap do |io|
+    io.write data
+    io.close
   end
 end
 
