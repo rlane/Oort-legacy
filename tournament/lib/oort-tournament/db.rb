@@ -3,7 +3,7 @@ require 'yaml'
 module OortTournament
 
 class DB
-  def initialize filename="oort-tournament-db.yaml"
+  def initialize filename="tournament/oort-tournament-db.yaml"
     @filename = filename
     if File.exists? @filename
       @db = File.open(@filename) { |io| YAML.load io }
@@ -16,7 +16,7 @@ class DB
   end
     
   def save
-    tmp_filename = ".#{@filename}.tmp"
+    tmp_filename = File.join(File.dirname(@filename), ".#{File.basename(@filename)}.tmp")
     File.open(tmp_filename, 'w') { |io| YAML.dump @db, io }
     File.rename tmp_filename, @filename
   end
