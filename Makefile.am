@@ -92,7 +92,6 @@ oort-win32: all
 	cp ui/oort.exe dedicated/oort_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) oort-win32/
 	cp ships.lua runtime.lua lib.lua oort-win32/
 	dos2unix --u2d < README.md > oort-win32/README.txt
-	dos2unix --u2d < TODO > oort-win32/TODO.txt
 	mkdir oort-win32/scenarios
 	cp scenarios/*.json oort-win32/scenarios
 	mkdir oort-win32/examples

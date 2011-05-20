@@ -1,13 +1,13 @@
 !include "MUI2.nsh"
  
-Name "OORT"
+Name "Oort"
 OutFile "oort-installer-win32.exe"
 
 ;Default installation folder
-InstallDir "$LOCALAPPDATA\OORT"
+InstallDir "$LOCALAPPDATA\Oort"
   
 ;Get installation folder from registry if available
-InstallDirRegKey HKCU "Software\OORT" ""
+InstallDirRegKey HKCU "Software\Oort" ""
 
 ;Request application privileges for Windows Vista
 RequestExecutionLevel user
@@ -33,30 +33,30 @@ RequestExecutionLevel user
 
 !insertmacro MUI_LANGUAGE "English"
 
-Section "!OORT" SecCore
+Section "!Oort" SecCore
 SectionIn RO
   SetOutPath $INSTDIR
 	File /r "oort-win32/*"
 
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OORT" DisplayName "OORT"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OORT" UninstallString '"$INSTDIR\Uninstall.exe"'
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OORT" DisplayIcon $INSTDIR\gfx\icon.ico
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Oort" DisplayName "Oort"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Oort" UninstallString '"$INSTDIR\Uninstall.exe"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Oort" DisplayIcon $INSTDIR\gfx\icon.ico
   WriteUninstaller "$INSTDIR\uninstall.exe"
 SectionEnd
 
 Section "Desktop icon" SecDesktop
-  CreateShortcut "$DESKTOP\OORT.lnk" "$INSTDIR\oort_ui.exe"
+  CreateShortcut "$DESKTOP\Oort.lnk" "$INSTDIR\oort.exe"
 SectionEnd
 
 Section -AdditionalIcons
-  CreateDirectory "$SMPROGRAMS\OORT"
-  CreateShortcut "$SMPROGRAMS\OORT\OORT.lnk" "$INSTDIR\oort_ui.exe"
-  CreateShortCut "$SMPROGRAMS\OORT\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+  CreateDirectory "$SMPROGRAMS\Oort"
+  CreateShortcut "$SMPROGRAMS\Oort\Oort.lnk" "$INSTDIR\oort.exe"
+  CreateShortCut "$SMPROGRAMS\Oort\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 SectionEnd
 
 Section "Uninstall"
 	RMDir /r $INSTDIR
-	RMDir /r "$SMPROGRAMS\OORT"
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OORT"
-  Delete "$DESKTOP\OORT.lnk"
+	RMDir /r "$SMPROGRAMS\Oort"
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Oort"
+  Delete "$DESKTOP\Oort.lnk"
 SectionEnd

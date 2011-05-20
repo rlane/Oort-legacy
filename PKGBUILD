@@ -1,16 +1,16 @@
 # Maintainer: Rich Lane <rlane@club.cc.cmu.edu>
 
 pkgname=oort-git
-pkgver=20110116
+pkgver=20110519
 pkgrel=1
 pkgdesc="A space fleet programming game"
 arch=('i686' 'x86_64')
-url="https://github.com/rlane/oort"
+url="https://github.com/rlane/Oort"
 license=("GPL")
 depends=('glib2' 'gtk2' 'gtkglext' 'glew')
 makedepends=('pkgconfig' 'vala')
 
-_gitroot="git://github.com/rlane/oort"
+_gitroot="git://github.com/rlane/Oort"
 _gitname="oort"
 _gitbranch="master"
 
