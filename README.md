@@ -42,7 +42,7 @@ the "File" menu and select "New Game". This will pop up a file chooser where
 you will pick the scenario. The file chooser starts in a directory containing
 scenarios distributed with the game. Pick "basic.json". Next you'll be prompted
 to select two AIs to participate in the battle. Click the file chooser buttons
-and select "switch.lua" for each. Now click "OK" to begin the simulation.
+and select "reference.lua" for each. Now click "OK" to begin the simulation.
 
 ### Scenarios
 

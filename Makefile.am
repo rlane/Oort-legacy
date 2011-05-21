@@ -26,7 +26,7 @@ nobase_oortlua_DATA = \
 	lib.lua \
 	examples/target.lua \
 	examples/challenge01.lua \
-	examples/switch.lua \
+	examples/reference.lua \
 	examples/challenge02.lua \
 	examples/demo1.lua \
 	examples/challenge03.lua \
@@ -70,10 +70,10 @@ challenge: all
 	./dedicated/oort_dedicated scenarios/challenge04.json solutions/challenge04.lua
 
 run: all
-	./dedicated/oort_dedicated scenarios/basic.json examples/switch.lua examples/switch.lua
+	./dedicated/oort_dedicated scenarios/basic.json examples/reference.lua examples/reference.lua
 
 run-ui: all
-	./ui/oort scenarios/basic.json examples/switch.lua examples/switch.lua
+	./ui/oort scenarios/basic.json examples/reference.lua examples/reference.lua
 
 DLL_DIR=/usr/i486-mingw32/bin
 
@@ -101,5 +101,5 @@ oort-installer-win32.exe: oort-win32 installer.nsi
 	makensis installer.nsi
 
 memcheck: all
-	G_DEBUG=gc-friendly G_SLICE=always-malloc valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/oort_dedicated --max-ticks 10 scenarios/basic.json examples/switch.lua examples/switch.lua
+	G_DEBUG=gc-friendly G_SLICE=always-malloc valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-reachable=yes --num-callers=20 --log-file=memcheck.out ./dedicated/oort_dedicated --max-ticks 10 scenarios/basic.json examples/reference.lua examples/reference.lua
 	@echo "Memcheck output saved to memcheck.out"
