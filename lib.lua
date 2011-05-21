@@ -36,28 +36,28 @@ end
 
 -- a*x^2 + b*x + c
 function smallest_positive_root_of_quadratic_equation(a, b, c)
-	z = math.sqrt(b^2 - 4*a*c)
-	x1 = (b + z)/(2*a)
-	x2 = (b - z)/(2*a)
+	local z = math.sqrt(b^2 - 4*a*c)
+	local x1 = (b + z)/(2*a)
+	local x2 = (b - z)/(2*a)
 	if x1 < 0 then return x2 end
 	if x2 < 0 then return x1 end
 	return math.min(x1, x2)
 end
 
 function lead(x1, y1, x2, y2, vx1, vy1, vx2, vy2, w, t_max)
-	dx = x2 - x1
-	dy = y2 - y1
-	dvx = vx2 - vx1
-	dvy = vy2 - vy1
+	local dx = x2 - x1
+	local dy = y2 - y1
+	local dvx = vx2 - vx1
+	local dvy = vy2 - vy1
 	--printf("dvx=%0.2g dvy=%0.2g\n", dvx, dvy)
-	a = (dvx^2 + dvy^2) - w^2
-	b = 2 * (dx*dvx + dy*dvy)
-	c = dx^2 + dy^2
-	t = smallest_positive_root_of_quadratic_equation(a, b, c)
+	local a = (dvx^2 + dvy^2) - w^2
+	local b = 2 * (dx*dvx + dy*dvy)
+	local c = dx^2 + dy^2
+	local t = smallest_positive_root_of_quadratic_equation(a, b, c)
 	--printf("t=%.03g\n", t)
 	if t >= 0 and t <= t_max then
-		x3 = x2 + dvx*t
-		y3 = y2 + dvy*t
+		local x3 = x2 + dvx*t
+		local y3 = y2 + dvy*t
 		--printf("x3=%0.2g y3=%0.2g\n", x3, y3)
 		return angle_between(x1, y1, x3, y3)
 	else
@@ -230,7 +230,7 @@ function drive_towards(tx, ty, speed)
 	local a = angle_between(x, y, tx, ty)
 	local h = heading()
 
-	rvx, rvy = rotate(vx, vy, -h)
+	local rvx, rvy = rotate(vx, vy, -h)
 	thrust_lateral(-1*rvy)
 
 	turn_to(a)
@@ -281,7 +281,7 @@ function standard_missile_ai()
 		if not t then
 			local ts = sensor_contacts{ enemy = true }
 			local x, y = position()
-			function min_fn(t)
+			local min_fn = function(t)
 				local tx, ty = t:position()
 				return distance(x, y, tx, ty)
 			end

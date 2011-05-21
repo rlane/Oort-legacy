@@ -23,6 +23,8 @@ local engine_lateral_mass_cost = 0
 local engine_angular_power_cost = 0
 local engine_angular_mass_cost = 0
 
+fortytwo = 42
+
 function energy()
 	return _energy
 end
@@ -279,7 +281,6 @@ end
 
 function sandbox(f)
 	local env = {
-		_G = {},
 		error = error,
 		assert = assert,
 		ipairs = ipairs,
@@ -301,6 +302,7 @@ function sandbox(f)
 		ships = copy_table(ships, {})
 	}
 
+	env._G = env
 	env.math = copy_table(math, {})
 	env.math.random = sys_random
 	env.math.randomseed = nil
@@ -312,6 +314,8 @@ function sandbox(f)
 
 	setfenv(lib, env)
 	lib()
+
+	strict(env._G)
 
 	setfenv(f, env)
 	return f

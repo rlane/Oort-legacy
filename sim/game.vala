@@ -23,6 +23,7 @@ public class Oort.Game {
 	public uint8[] runtime_code;
 	public uint8[] ships_code;
 	public uint8[] lib_code;
+	public uint8[] strict_code;
 	public ParsedScenario scn;
 	public string[] ais;
 	public List<BulletHit> bullet_hits = null;
@@ -60,6 +61,7 @@ public class Oort.Game {
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
 		lib_code = load_resource("lib.lua");
+		strict_code = load_resource("strict.lua");
 		tasks = new TaskPool(Util.envtol("Oort_NUM_THREADS", 8));
 		Scenario.load(this, scn, ais);
 	}

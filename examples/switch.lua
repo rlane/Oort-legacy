@@ -14,7 +14,7 @@ if my_class == "fighter" then
 
 	local function fire_score(c)
 		local x,y = position()
-		if c:id() == target_id then
+		if follow_target and c:id() == follow_target:id() then
 			return 0
 		else
 			local a = angle_between(x,y,c:position())
@@ -153,7 +153,7 @@ elseif my_class == "assault_frigate" then
 
 	local function fire_score(c)
 		local x,y = position()
-		if c:id() == target_id then
+		if follow_target and c:id() == follow_target:id() then
 			return 0
 		else
 			local priority = priorities[c:class()] or 1.0

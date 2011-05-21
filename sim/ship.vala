@@ -144,6 +144,11 @@ public class Oort.Ship {
 		}
 		global_lua.set_global("lib");
 
+		if (global_lua.load_buffer(game.strict_code) != 0) {
+			error("Failed to load strict.lua: %s", global_lua.to_string(-1));
+		}
+		global_lua.set_global("strict");
+
 		if (global_lua.load_buffer(game.runtime_code) != 0) {
 			error("Failed to load runtime.lua: %s", global_lua.to_string(-1));
 		}
