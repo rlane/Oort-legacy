@@ -31,8 +31,11 @@ forum.list_messages.each do |msgid|
     puts "#{msg.sender.inspect} registered #{name} as #{gist}"
     db.create_ai name, msg.sender, gist
     db.seen_msgids << msgid
+
+    msg.reply "Your AI has been registered in the tournament."
   rescue
     puts "failed to process message #{msgid}: #{$!.message}"
+    msg.reply "Failed to register AI: #{$!.message}" if msg
     #puts page.send :html_body
   end
 end

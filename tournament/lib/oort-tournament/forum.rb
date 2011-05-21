@@ -31,11 +31,18 @@ class OortForum
     attr_reader :sender, :subject, :site, :body
 
     def initialize forum, id
-      @page = forum.agent.get "#{URL}/mailbox/view/#{id}"
+      @forum = forum
+      @page = @forum.agent.get "#{URL}/mailbox/view/#{id}"
       @sender = @page.search("//div[@id='mailbox_content']/div[1]/div[1]/b/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
       @subject = @page.search("//div[@id='content']/div[@class='section header-section']/h1[@class='item_title']/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
       @site = @page.search("//div[@id='content']/div[@class='section header-section']/div[@class='item_subtitle']/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
       @body = @page.search("//div[@id='mailbox_content']/div[1]/div[2]/p/text()").map(&:to_s).map(&:strip).reject(&:empty?).join("\n")
+    end
+
+    def reply text
+      form = @page.forms.first
+      form.body = text
+      @forum.agent.submit form, form.buttons.first
     end
   end
 end
