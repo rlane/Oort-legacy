@@ -7,6 +7,7 @@ AM_CFLAGS = \
 	-include oort.h \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
+	-I $(top_srcdir)/luajit/src \
 	$(NULL)
 
 LIBS = $(OORT_LIBS) $(OORT_UI_LIBS) -lm

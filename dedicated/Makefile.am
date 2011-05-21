@@ -5,6 +5,7 @@ AM_CFLAGS = \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
+	-I $(top_srcdir)/luajit/src \
 	-include oort.h \
 	$(NULL)
 
