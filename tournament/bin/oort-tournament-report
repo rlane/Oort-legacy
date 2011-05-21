@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+require 'oort-tournament/db'
+
+db = OortTournament::DB.new
+
+ais = db.ais.sort_by { |name,ai| -ai['mean'] }
+
+ais.each do |name,ai|
+  puts "#{name} #{ai['user']} #{'%0.2f' % ai['mean']} #{'%0.2f' % ai['deviation']}"
+end
