@@ -12,6 +12,7 @@ const OptionEntry[] options = {
 };
 
 int main(string[] args) {
+	GLib.Intl.setlocale(LocaleCategory.ALL, "");
 	GLib.Environment.set_application_name(Config.PACKAGE_NAME);
 
 	Paths.init(args[0]);
