@@ -211,7 +211,7 @@ namespace Oort.Scenario {
 
 				var pship = new ParsedShip();
 				pship.class_name = class_name.string;
-				pship.p = vec2(x_obj.double*80, y_obj.double*80);
+				pship.p = vec2(x_obj.double, y_obj.double);
 				pship.h = h_obj.double;
 				pteam.ships.append((owned)pship);
 
