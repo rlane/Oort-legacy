@@ -24,16 +24,18 @@ class OortForum
   end
 
   def get_message id
-    page = @agent.get "#{URL}/mailbox/view/#{id}"
-    sender = page.search("//div[@id='mailbox_content']/div[1]/div[1]/b/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
-    subject = page.search("//div[@id='content']/div[@class='section header-section']/h1[@class='item_title']/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
-    site = page.search("//div[@id='content']/div[@class='section header-section']/div[@class='item_subtitle']/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
-    body = page.search("//div[@id='mailbox_content']/div[1]/div[2]/p/text()").map(&:to_s).map(&:strip).reject(&:empty?).join("\n")
-    {
-      :sender => sender,
-      :subject => subject,
-      :site => site,
-      :body => body,
-    }
+    Message.new self, id
+  end
+
+  class Message
+    attr_reader :sender, :subject, :site, :body
+
+    def initialize forum, id
+      @page = forum.agent.get "#{URL}/mailbox/view/#{id}"
+      @sender = @page.search("//div[@id='mailbox_content']/div[1]/div[1]/b/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
+      @subject = @page.search("//div[@id='content']/div[@class='section header-section']/h1[@class='item_title']/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
+      @site = @page.search("//div[@id='content']/div[@class='section header-section']/div[@class='item_subtitle']/text()").map(&:to_s).map(&:strip).reject(&:empty?).first
+      @body = @page.search("//div[@id='mailbox_content']/div[1]/div[2]/p/text()").map(&:to_s).map(&:strip).reject(&:empty?).join("\n")
+    end
   end
 end
