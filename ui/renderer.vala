@@ -345,6 +345,15 @@ namespace Oort {
 				Oort.GLUtil.color32(0x444444FF);
 				glVertex3d(sp2.x, sp2.y, 0);
 				glEnd();
+			} else if (b.type == Oort.BulletType.REFUEL) {
+				double scale = view_scale * b.physics.r;
+				var sp = S(b.physics.p);
+				GLUtil.color32((uint32)0x777777AA);
+				glPushMatrix();
+				glTranslated(sp.x, sp.y, 0);
+				glScaled(scale, scale, scale);
+				GLUtil.render_circle(20);
+				glPopMatrix();
 			} else if (render_explosion_rays && b.type == Oort.BulletType.EXPLOSION) {
 				var dp = b.physics.v.scale(Game.TICK_LENGTH);
 				var sp1 = S(b.physics.p);

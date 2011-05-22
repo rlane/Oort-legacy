@@ -119,6 +119,10 @@ public class Oort.Ship {
 
 		SensorContact.register(global_lua);
 
+		uint8 *id = (uint8*) (&api_id);
+		global_lua.push_lstring(id, 4);
+		global_lua.set_global("id");
+
 		global_lua.push_string(@class.name);
 		global_lua.set_global("class");
 
@@ -305,7 +309,7 @@ public class Oort.Ship {
 		var acc = vec2(0,0);
 
 		var physics = new Physics() { p=p, p0=p, v=v, acc=acc, m=m, r=r };
-		var b = new Bullet() { team=s.team, physics=(owned)physics, ttl=ttl, type=(BulletType)type };
+		var b = new Bullet() { shooter_id=s.api_id, team=s.team, physics=(owned)physics, ttl=ttl, type=(BulletType)type };
 
 		s.game.new_bullets_lock.lock();
 		s.game.new_bullets.append((owned) b);
@@ -704,6 +708,12 @@ public class Oort.Ship {
 		}
 
 		return 0;
+	}
+
+	public void refuel_hit(double m) {
+		global_lua.get_global("refuel_hit");
+		global_lua.push_number(m);
+		global_lua.call(1, 0);
 	}
 
 	public double get_energy() {

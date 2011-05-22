@@ -23,8 +23,6 @@ local engine_lateral_mass_cost = 0
 local engine_angular_power_cost = 0
 local engine_angular_mass_cost = 0
 
-fortytwo = 42
-
 function energy()
 	return _energy
 end
@@ -82,6 +80,10 @@ function fire(name, a)
 			return
 		end
 
+		if gun.refuel and _reaction_mass < gun.mass then
+			return
+		end
+
 		if math.abs(angle_diff(normalize_angle(sys_heading() + gun.angle), a)) > gun.coverage/2 then
 			return
 		end
@@ -93,6 +95,10 @@ function fire(name, a)
 		end
 
 		_energy = _energy - gun.cost
+
+		if gun.refuel then
+			_reaction_mass = _reaction_mass - gun.mass
+		end
 
 		x, y = sys_position()
 		v = gun.velocity
@@ -279,6 +285,10 @@ function tick_hook()
 	ticks = ticks + 1
 end
 
+function refuel_hit(m)
+	_reaction_mass = math.min(_reaction_mass+m, my_ship.reaction_mass)
+end
+
 function sandbox(f)
 	local env = {
 		error = error,
@@ -296,6 +306,7 @@ function sandbox(f)
 		-- dofile = safe_dofile,
 		io = { write = io.write },
 
+		id = id,
 		orders = orders,
 		class = my_class,
 		team = team,

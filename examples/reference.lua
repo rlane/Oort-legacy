@@ -131,6 +131,15 @@ elseif my_class == "ion_cannon_frigate" then
 			drive_towards(0, 0, 100);
 		end
 
+		if reaction_mass() < 0.1*my_ship.reaction_mass then
+			local carrier = sensor_contacts{ enemy=false, class="carrier", limit=1 }[1]
+			if carrier then
+				local tx, ty = carrier:position()
+				drive_towards(tx, ty, 50)
+				send("refuel\0" .. id)
+			end
+		end
+
 		yield()
 	end
 elseif my_class == "assault_frigate" then
@@ -240,6 +249,15 @@ elseif my_class == "assault_frigate" then
 			spawn("missile", follow_target:id())
 		end
 
+		if reaction_mass() < 0.1*my_ship.reaction_mass then
+			local carrier = sensor_contacts{ enemy=false, class="carrier", limit=1 }[1]
+			if carrier then
+				local tx, ty = carrier:position()
+				drive_towards(tx, ty, 50)
+				send("refuel\0" .. id)
+			end
+		end
+
 		yield()
 	end
 elseif my_class == "carrier" then
@@ -248,9 +266,29 @@ elseif my_class == "carrier" then
 	local main_target = nil
 
 	while true do
+		clear_debug_lines()
+
 		local msg = recv()
-		if msg then
+		while msg do
 			--print("carrier msg: " .. msg)
+			cmd, arg = msg:match("(%a+)%z(.+)")
+			if cmd == "refuel" and my_ship.guns.refuel then
+				local refuel_target_id = arg
+				local refuel_range = my_ship.guns.refuel.velocity*my_ship.guns.refuel.ttl
+				local refuel_target = sensor_contact(refuel_target_id)
+				if refuel_target then
+					local x, y = position()
+					local vx, vy = velocity()
+					local tx, ty = refuel_target:position()
+					local tvx, tvy = refuel_target:velocity()
+					debug_diamond(tx, ty, my_ship.radius)
+					local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.refuel.velocity, my_ship.guns.refuel.ttl)
+					if a then
+						fire("refuel", a)
+					end
+				end
+			end
+			msg = recv()
 		end
 
 		local range = my_ship.guns.main.length

@@ -123,8 +123,13 @@ public class Oort.Game {
 	}
 
 	public void handle_bullet_hit(Ship s, Bullet b, Vec2 cp) {
-		if (b.team != s.team) {
-			b.dead = true;
+		if (b.shooter_id == s.api_id) {
+			return;
+		}
+
+		b.dead = true;
+
+		if (b.type != BulletType.REFUEL && b.team != s.team) {
 			var dv = s.physics.v.sub(b.physics.v);
 			var hit_energy = 0.5 * b.physics.m * dv.abs() * dv.abs();
 			s.hull -= hit_energy;
@@ -138,6 +143,8 @@ public class Oort.Game {
 			hit.cp = cp;
 			hit.e = hit_energy;
 			bullet_hits.prepend((owned) hit);
+		} else if (b.type == BulletType.REFUEL) {
+			s.refuel_hit(b.physics.m);
 		}
 	}
 

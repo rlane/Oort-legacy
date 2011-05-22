@@ -220,6 +220,14 @@ a table whose format is given below:
 If a query option is omitted it has no effect. The ships returned by the query
 will be exactly those that match all of the given query options.
 
+#### Refueling
+
+Some ships (such as the carrier) are equipped with a "refuel" gun. This device
+fires large packets of reaction mass. Any ship that collides with them can
+transfer the mass into its internal storage. Refueling is an advanced technique
+that is only necessary for longer battles. Using it effectively requires
+significant coordination between the carrier and the ship to be refueled.
+
 ### Determinism
 
 The simulation is designed to be deterministic. Given the same scenario, AI,
