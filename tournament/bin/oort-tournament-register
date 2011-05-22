@@ -12,11 +12,12 @@ Usage:
 where [options] are:
 EOS
 
+  opt :database, "Location of tournament database", :short => 'D', :default => 'oort-tournament.yaml'
 end
 
 name = ARGV[0] or Trollop.die("name argument required")
 filename = ARGV[1] or Trollop.die("filename argument required")
 
-db = OortTournament::DB.new
+db = OortTournament::DB.new $opts[:database]
 ai = db.create_ai name, 'local', 'file', filename
 db.save

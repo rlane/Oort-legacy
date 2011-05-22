@@ -3,7 +3,7 @@ require 'yaml'
 module OortTournament
 
 class DB
-  def initialize filename="tournament/oort-tournament-db.yaml"
+  def initialize filename
     @filename = filename
     if File.exists? @filename
       @db = File.open(@filename) { |io| YAML.load io }

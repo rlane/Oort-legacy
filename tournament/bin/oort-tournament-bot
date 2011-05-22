@@ -15,12 +15,13 @@ Usage:
 where [options] are:
 EOS
 
-  opt :username, "Forum bot username", :type => :string, :required => true
-  opt :password, "Forum bot password", :type => :string, :required => true
-  opt :no_reply, "Don't reply to messages"
+  opt :username, "Forum bot username", :short => 'u', :type => :string, :required => true
+  opt :password, "Forum bot password", :short => 'p', :type => :string, :required => true
+  opt :no_reply, "Don't reply to messages", :short => 'N'
+  opt :database, "Location of tournament database", :short => 'D', :default => 'oort-tournament.yaml'
 end
 
-db = OortTournament::DB.new
+db = OortTournament::DB.new $opts[:database]
 
 forum = OortForum.new
 forum.login $opts[:username], $opts[:password]

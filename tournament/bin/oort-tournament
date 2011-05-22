@@ -20,16 +20,19 @@ where [options] are:
 EOS
 
   opt :iters, "Number of games to run", :short => 'i', :default => 1
+  opt :database, "Location of tournament database", :short => 'D', :default => 'oort-tournament.yaml'
 end
 
 def run_game
-  db = OortTournament::DB.new
+  db = OortTournament::DB.new $opts[:database]
 
   seed = $$
   puts "seed: #{$$}"
 
   ai1, ai2, = *db.ais.keys.shuffle
   ai_names = [ai1, ai2]
+
+  fail "need at least two AIs" unless ai1 and ai2
 
   puts "#{ai1} vs #{ai2}"
 

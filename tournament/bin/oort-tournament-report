@@ -1,7 +1,21 @@
 #!/usr/bin/env ruby
 require 'oort-tournament/db'
+require 'trollop'
 
-db = OortTournament::DB.new
+$opts = Trollop.options do
+  banner <<-EOS
+Add a local AI to an Oort tournament database
+
+Usage:
+       oort-tournament-register [options] name filename
+
+where [options] are:
+EOS
+
+  opt :database, "Location of tournament database", :short => 'D', :default => 'oort-tournament.yaml'
+end
+
+db = OortTournament::DB.new $opts[:database]
 
 ais = db.ais.sort_by { |name,ai| -ai['mean'] }
 
