@@ -1,16 +1,29 @@
 #!/usr/bin/env ruby
 require 'oort-tournament/db'
 require 'oort-tournament/forum'
+require 'trollop'
 
 SHA1_REGEX = /\b[0-9a-fA-F]{20}\b/
 
-USERNAME = ARGV[0] or fail "username required"
-PASSWORD = ARGV[1] or fail "password required"
+$opts = Trollop.options do
+  banner <<-EOS
+Read the forum bot's private message queue
+
+Usage:
+       oort-tournament-bot [options]
+
+where [options] are:
+EOS
+
+  opt :username, "Forum bot username", :type => :string, :required => true
+  opt :password, "Forum bot password", :type => :string, :required => true
+  opt :no_reply, "Don't reply to messages"
+end
 
 db = OortTournament::DB.new
 
 forum = OortForum.new
-forum.login USERNAME, PASSWORD
+forum.login $opts[:username], $opts[:password]
 
 forum.list_messages.each do |msgid|
   next if db.seen_msgids.member? msgid
@@ -29,13 +42,13 @@ forum.list_messages.each do |msgid|
     fail "name conflict" if db.ais.member? name
 
     puts "#{msg.sender.inspect} registered #{name} as #{gist}"
-    db.create_ai name, msg.sender, gist
+    db.create_ai name, msg.sender, 'gist', gist
     db.seen_msgids << msgid
 
-    msg.reply "Your AI has been registered in the tournament."
+    msg.reply "Your AI has been registered in the tournament." unless $opts[:no_reply]
   rescue
     puts "failed to process message #{msgid}: #{$!.message}"
-    msg.reply "Failed to register AI: #{$!.message}" if msg
+    msg.reply "Failed to register AI: #{$!.message}" if msg and not $opts[:no_reply]
     #puts page.send :html_body
   end
 end

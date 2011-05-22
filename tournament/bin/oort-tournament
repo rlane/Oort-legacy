@@ -33,18 +33,29 @@ def run_game
 
   puts "#{ai1} vs #{ai2}"
 
-  tmpfiles = ai_names.map do |ai_name|
+  tempfiles = []
+  filenames = ai_names.map do |ai_name|
     ai = db.ais[ai_name]
-    data = Gist.read ai['gist']
-    Tempfile.new('oort').tap do |io|
-      io.write data
+    case ai['location_type']
+    when 'gist'
+      io = Tempfile.new('oort')
+      io.write Gist.read ai['location']
       io.close
+      tempfiles << io
+      io.path
+    when 'file'
+      ai['location']
+    else
+      fail "unknown location type #{ai['location_type'].inspect}"
     end
   end
 
   results_file = Tempfile.new 'oort'
-  system "./dedicated/oort_dedicated --results #{results_file.path} --seed #{seed} #{SCENARIO} #{tmpfiles.map(&:path) * ' '}"
+  system "./dedicated/oort_dedicated --results #{results_file.path} --seed #{seed} #{SCENARIO} #{filenames * ' '}"
   fail "oort_dedicated failed" unless $?.success?
+
+  tempfiles.map(&:unlink)
+  tempfiles = nil
 
   winner_id, winner_team_name, elapsed = File.read(results_file.path).split("\t")
   winner_id = winner_id.to_i

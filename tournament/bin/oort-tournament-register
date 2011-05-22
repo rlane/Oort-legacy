@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+require 'oort-tournament/db'
+require 'trollop'
+
+$opts = Trollop.options do
+  banner <<-EOS
+Add a local AI to an Oort tournament database
+
+Usage:
+       oort-tournament-register [options] name filename
+
+where [options] are:
+EOS
+
+end
+
+name = ARGV[0] or Trollop.die("name argument required")
+filename = ARGV[1] or Trollop.die("filename argument required")
+
+db = OortTournament::DB.new
+ai = db.create_ai name, 'local', 'file', filename
+db.save
