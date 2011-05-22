@@ -3,61 +3,79 @@ require 'saulabs/trueskill'
 require 'oort-tournament/db'
 require 'tempfile'
 require 'gist'
+require 'trollop'
 
 include Saulabs::TrueSkill
 
 SCENARIO = "scenarios/basic.json"
 
-seed = $$
-puts "seed: #{$$}"
+$opts = Trollop.options do
+  banner <<-EOS
+Oort tournament runner
 
-db = OortTournament::DB.new
+Usage:
+       oort-tournament [options]
 
-ai1, ai2, = *db.ais.keys.shuffle
-ai_names = [ai1, ai2]
+where [options] are:
+EOS
 
-puts "#{ai1} vs #{ai2}"
+  opt :iters, "Number of games to run", :short => 'i', :default => 1
+end
 
-tmpfiles = ai_names.map do |ai_name|
-  ai = db.ais[ai_name]
-  data = Gist.read ai['gist']
-  Tempfile.new('oort').tap do |io|
-    io.write data
-    io.close
+def run_game
+  db = OortTournament::DB.new
+
+  seed = $$
+  puts "seed: #{$$}"
+
+  ai1, ai2, = *db.ais.keys.shuffle
+  ai_names = [ai1, ai2]
+
+  puts "#{ai1} vs #{ai2}"
+
+  tmpfiles = ai_names.map do |ai_name|
+    ai = db.ais[ai_name]
+    data = Gist.read ai['gist']
+    Tempfile.new('oort').tap do |io|
+      io.write data
+      io.close
+    end
   end
+
+  results_file = Tempfile.new 'oort'
+  system "./dedicated/oort_dedicated --results #{results_file.path} --seed #{seed} #{SCENARIO} #{tmpfiles.map(&:path) * ' '}"
+  fail "oort_dedicated failed" unless $?.success?
+
+  winner_id, winner_team_name, elapsed = File.read(results_file.path).split("\t")
+  winner_id = winner_id.to_i
+  winner_name = ai_names[winner_id]
+
+  puts "winner: #{winner_id} #{winner_name}"
+
+  # the trueskill gem is broken
+  ai_names.sort_by! { |x| x == winner_name ? 0 : 1 }
+
+  ratings = ai_names.map do |name|
+    ai = db.ais[name]
+    Rating.new ai['mean'], ai['deviation'], ai['activity']
+  end
+
+  ranks = [1] + [2]*(ratings.size-1)
+  #pp ai_names.zip(ratings, ranks)
+  graph = FactorGraph.new(ratings.map { |x| [x] }, ranks)
+  graph.update_skills
+  #pp ai_names.zip(ratings, ranks)
+
+  ai_names.zip(ratings).each do |name, rating|
+    puts "#{name}: d_mean=#{rating.mean-db.ais[name]['mean']} d_dev=#{rating.deviation-db.ais[name]['deviation']}"
+    db.ais[name].merge!(
+      'mean' => rating.mean,
+      'deviation' => rating.deviation,
+      'activity' => rating.activity
+    )
+  end
+
+  db.save
 end
 
-results_file = Tempfile.new 'oort'
-system "./dedicated/oort_dedicated --results #{results_file.path} --seed #{seed} #{SCENARIO} #{tmpfiles.map(&:path) * ' '}"
-fail "oort_dedicated failed" unless $?.success?
-
-winner_id, winner_team_name, elapsed = File.read(results_file.path).split("\t")
-winner_id = winner_id.to_i
-winner_name = ai_names[winner_id]
-
-puts "winner: #{winner_id} #{winner_name}"
-
-# the trueskill gem is broken
-ai_names.sort_by! { |x| x == winner_name ? 0 : 1 }
-
-ratings = ai_names.map do |name|
-  ai = db.ais[name]
-  Rating.new ai['mean'], ai['deviation'], ai['activity']
-end
-
-ranks = [1] + [2]*(ratings.size-1)
-#pp ai_names.zip(ratings, ranks)
-graph = FactorGraph.new(ratings.map { |x| [x] }, ranks)
-graph.update_skills
-#pp ai_names.zip(ratings, ranks)
-
-ai_names.zip(ratings).each do |name, rating|
-  puts "#{name}: d_mean=#{rating.mean-db.ais[name]['mean']} d_dev=#{rating.deviation-db.ais[name]['deviation']}"
-  db.ais[name].merge!(
-    'mean' => rating.mean,
-    'deviation' => rating.deviation,
-    'activity' => rating.activity
-  )
-end
-
-db.save
+$opts[:iters].times { run_game }
