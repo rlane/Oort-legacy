@@ -55,16 +55,20 @@ def run_game
 
   results_file = Tempfile.new 'oort'
   system "./dedicated/oort_dedicated --results #{results_file.path} --seed #{seed} #{SCENARIO} #{filenames * ' '}"
-  fail "oort_dedicated failed" unless $?.success?
-
   tempfiles.map(&:unlink)
   tempfiles = nil
+  unless $?.success?
+    results_file.unlink
+    puts "simulator failed"
+    return
+  end
 
   winner_id, winner_team_name, elapsed = File.read(results_file.path).split("\t")
   winner_id = winner_id.to_i
   winner_name = ai_names[winner_id]
 
   puts "winner: #{winner_id} #{winner_name}"
+  results_file.unlink
 
   # the trueskill gem is broken
   ai_names.sort_by! { |x| x == winner_name ? 0 : 1 }
