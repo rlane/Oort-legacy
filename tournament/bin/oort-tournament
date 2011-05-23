@@ -26,8 +26,8 @@ end
 def run_game
   db = OortTournament::DB.new $opts[:database]
 
-  seed = $$
-  puts "seed: #{$$}"
+  seed = rand(10000000)
+  puts "seed: #{seed}"
 
   ai1, ai2, = *db.ais.keys.shuffle
   ai_names = [ai1, ai2]
