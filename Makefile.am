@@ -25,11 +25,7 @@ nobase_oortlua_DATA = \
 	ships.lua \
 	lib.lua \
 	examples/target.lua \
-	examples/challenge01.lua \
 	examples/reference.lua \
-	examples/challenge02.lua \
-	examples/demo1.lua \
-	examples/challenge03.lua \
 	scenarios/challenge01.json \
 	scenarios/basic.json \
 	scenarios/furball2.json \

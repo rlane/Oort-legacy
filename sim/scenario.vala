@@ -26,7 +26,7 @@ public class Oort.ParsedScenario {
 public class Oort.ParsedTeam {
 	public int id;
 	public string name;
-	public string filename;
+	public uint8[]? code;
 	public uint8 color_red;
 	public uint8 color_green;
 	public uint8 color_blue;
@@ -47,18 +47,19 @@ namespace Oort.Scenario {
 
 		int ai_index = 0;
 		foreach (ParsedTeam pteam in scn.teams) {
+			uint8[] code;
 			string ai_filename;
-			if (pteam.filename != null) {
-				ai_filename = pteam.filename;
+			if (pteam.code != null) {
+				code = pteam.code;
+				ai_filename = "inline";
 			} else {
 				assert(ai_index < ais.length);
 				ai_filename = ais[ai_index++];
+				FileUtils.get_data(ai_filename, out code);
 			}
 
-			uint8[] code;
-			FileUtils.get_data(ai_filename, out code);
 			uint32 color = pteam.color_red << 24 | pteam.color_green << 16 | pteam.color_blue << 8;
-			var team = new Team() { id=pteam.id, name=pteam.name, color=color, filename=ai_filename, code=(owned)code };
+			var team = new Team() { id=pteam.id, name=pteam.name, color=color, code=(owned)code, filename=ai_filename };
 
 			foreach (ParsedShip pship in pteam.ships) {
 				unowned ShipClass klass = ShipClass.lookup(pship.class_name);
@@ -163,9 +164,9 @@ namespace Oort.Scenario {
 				throw new ScenarioParseError.BAD_VALUE("teams.%s.color.b must be in the range [0,255]", team_name.string);
 			}
 
-			unowned cJSON filename_obj = team_obj.objectItem("filename");
-			if (filename_obj != null && filename_obj.type != cJSON.Type.String) {
-				throw new ScenarioParseError.WRONG_TYPE("teams.%s.color.filename must be a string", filename_obj.name);
+			unowned cJSON code_obj = team_obj.objectItem("code");
+			if (code_obj != null && code_obj.type != cJSON.Type.String) {
+				throw new ScenarioParseError.WRONG_TYPE("teams.%s.color.code must be a string", code_obj.name);
 			}
 
 			var pteam = new ParsedTeam();
@@ -174,7 +175,7 @@ namespace Oort.Scenario {
 			pteam.color_red = (uint8)color_red.int;
 			pteam.color_green = (uint8)color_green.int;
 			pteam.color_blue = (uint8)color_blue.int;
-			pteam.filename = (filename_obj != null) ? data_path(filename_obj.string) : null;
+			pteam.code = (code_obj != null) ? code_obj.string.data : null;
 			pteam.ships = null;
 
 			unowned cJSON ships = team_obj.objectItem("ships");
@@ -219,7 +220,7 @@ namespace Oort.Scenario {
 				ship_obj = ship_obj.next;
 			}
 
-			if (pteam.filename == null) {
+			if (pteam.code == null) {
 				scn.user_teams.append(pteam);
 			}
 

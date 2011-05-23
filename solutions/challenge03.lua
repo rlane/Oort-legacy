@@ -1,17 +1,20 @@
-function target_selector(k,c)
-	return c:team() ~= team
-end
-
-my_ship = ships[class]
+local my_ship = ships[class]
+local target = nil
 
 while true do
-	local contacts = sensor_contacts({})
-	local tid, t = pick(contacts, target_selector)
-	local x, y = position()
-	local vx, vy = velocity()
-	local tx, ty = t:position()
-	local tvx, tvy = t:velocity()
-	local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.bullet_velocity, my_ship.guns.main.bullet_ttl)
-	if (a) then fire("main", a) end
+	if not target then
+		target = sensor_contacts{ enemy=true, limit=1 }[1]
+	end
+
+	if target then
+		local x, y = position()
+		local vx, vy = velocity()
+		local tx, ty = target:position()
+		local tvx, tvy = target:velocity()
+		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.velocity, my_ship.guns.main.ttl)
+		drive_towards(tx, ty, 300)
+		if (a) then fire("main", a) end
+	end
+
 	yield()
 end
