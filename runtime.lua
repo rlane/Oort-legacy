@@ -74,8 +74,6 @@ function fire(name, a)
 	end
 
 	if gun.type == "bullet" then
-		local last_fire_tick = last_fire_ticks[name]
-
 		if _energy < gun.cost then
 			return
 		end
@@ -88,10 +86,10 @@ function fire(name, a)
 			return
 		end
 
-		if last_fire_tick and last_fire_tick + gun.reload_time*ticks_per_second > ticks then
-			return
-		else
+		if check_gun_ready(name) then
 			last_fire_ticks[name] = ticks
+		else
+			return
 		end
 
 		_energy = _energy - gun.cost
@@ -122,6 +120,20 @@ function fire(name, a)
 
 		x, y = sys_position()
 		sys_create_beam(x, y, a, gun.length, gun.width, gun.damage, gun.graphics)
+	end
+end
+
+function check_gun_ready(name)
+	local gun = my_ship.guns[name]
+	if gun.type == "bullet" then
+		local last_fire_tick = last_fire_ticks[name]
+		if last_fire_tick then
+			return last_fire_tick + gun.reload_time*ticks_per_second < ticks
+		else
+			return true
+		end
+	else
+		return true
 	end
 end
 
@@ -222,6 +234,7 @@ sandbox_api = {
 	reaction_mass = reaction_mass,
 	energy = energy,
 	fire = fire,
+	check_gun_ready = check_gun_ready,
 	yield = yield,
 	sensor_contacts = sensor_contacts,
 	sensor_contact = sensor_contact,
