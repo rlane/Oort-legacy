@@ -17,8 +17,15 @@ end
 
 db = OortTournament::DB.new $opts[:database]
 
-ais = db.ais.sort_by { |name,ai| -ai['mean'] }
+ais = db.ais
 
-ais.each do |name,ai|
-  puts "#{name} #{ai['user']} #{'%0.2f' % ai['mean']} #{'%0.2f' % ai['deviation']}"
+# we want to be sure that the true skill is greater than the score
+ais = db.ais.map do |name,ai|
+  ai['name'] = name
+  ai['score'] = ai['mean'] - 3*ai['deviation']
+  ai
+end.sort_by { |ai| -ai['score'] }
+
+ais.each do |ai|
+  puts "#{'%0.1f' % ai['score']} #{ai['name']} #{ai['user']} (mean=#{'%0.2f' % ai['mean']} stddev=#{'%0.2f' % ai['deviation']})"
 end
