@@ -31,13 +31,6 @@ function reaction_mass()
 	return _reaction_mass
 end
 
-function clamp(v,min,max)
-	if v < min then return min
-	elseif v > max then return max
-	else return v
-	end
-end
-
 function thrust_main(acc,exhaust_velocity)
 	exhaust_velocity = exhaust_velocity or default_exhaust_velocity
 	acc = clamp(acc,-my_ship.max_main_acc,my_ship.max_main_acc);

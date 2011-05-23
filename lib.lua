@@ -8,6 +8,13 @@ function printf(...)
 	io.write(string.format(...))
 end
 
+function clamp(v,min,max)
+	if v < min then return min
+	elseif v > max then return max
+	else return v
+	end
+end
+
 function sleep(ticks)
 	local i
 	for i = 1,ticks do
@@ -310,5 +317,32 @@ function standard_missile_ai()
 
 		if distance(x,y,tx,ty)/distance(vx,vy,tvx,tvy) < 1/32 then explode() end
 		yield()
+	end
+end
+
+function chance(n)
+	return math.random(1,n*32) == 1
+end
+
+function fire_at_contact(gun_name, t)
+	if not check_gun_ready(gun_name) then
+		return
+	end
+
+	local gun = my_ship.guns[gun_name]
+	local x, y = position()
+	local tx, ty = t:position()
+	if gun.type == "bullet" then
+		local vx, vy = velocity()
+		local tvx, tvy = t:velocity()
+		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, gun.velocity, gun.ttl)
+		if a then
+			fire(gun_name, a)
+		end
+	elseif gun.type == "beam" then
+		if distance(x, y, tx, ty) < gun.length then
+			local a = angle_between(x, y, tx, ty)
+			fire(gun_name, a)
+		end
 	end
 end
