@@ -24,6 +24,8 @@ oortluadir = $(datadir)/oort
 nobase_oortlua_DATA = \
 	ships.lua \
 	lib.lua \
+	strict.lua \
+	runtime.lua \
 	examples/target.lua \
 	examples/reference.lua \
 	scenarios/challenge01.json \
@@ -35,7 +37,6 @@ nobase_oortlua_DATA = \
 	scenarios/challenge02.json \
 	scenarios/demo1.json \
 	scenarios/challenge03.json \
-	runtime.lua \
 	solutions/challenge01.lua \
 	solutions/challenge02.lua \
 	solutions/challenge03.lua \
