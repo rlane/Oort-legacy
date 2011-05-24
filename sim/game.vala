@@ -86,10 +86,6 @@ public class Oort.Game {
 		ticks += 1;
 	}
 
-	~Game() {
-		assert(tasks.in_flight == 0);
-	}
-
 	public unowned Team? check_victory() {
 		unowned Team winner = null;
 
