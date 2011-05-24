@@ -94,6 +94,8 @@ namespace Oort {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
 
+			render_boundary();
+
 			if (follow_picked && picked != null) {
 				view_pos = picked.physics.p;
 			}
@@ -435,6 +437,17 @@ namespace Oort {
 				glVertex3d(p.x, p.y, 0);
 				glEnd();
 			}
+		}
+
+		private void render_boundary() {
+			glColor4ub(50, 255, 50, 100);
+			glPushMatrix();
+			double scale = view_scale*game.scn.radius;
+			Vec2 sp = S(vec2(0,0));
+			glTranslated(sp.x, sp.y, 0);
+			glScaled(scale, scale, scale);
+			GLUtil.render_circle(64);
+			glPopMatrix();
 		}
 
 		private string fmt(double v, string unit) {
