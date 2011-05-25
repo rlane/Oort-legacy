@@ -440,7 +440,7 @@ namespace Oort {
 		}
 
 		private void render_boundary() {
-			glColor4ub(50, 255, 50, 100);
+			glColor4ub(50, 50, 50, 100);
 			glPushMatrix();
 			double scale = view_scale*game.scn.radius;
 			Vec2 sp = S(vec2(0,0));
