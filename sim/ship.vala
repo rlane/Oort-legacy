@@ -134,9 +134,8 @@ public class Oort.Ship {
 			global_lua.set_global("orders");
 		}
 
-		string data_dir = Paths.resource_dir.get_path();
-		global_lua.push_string(data_dir);
-		global_lua.set_global("data_dir");
+		global_lua.push_number(game.scn.radius);
+		global_lua.set_global("scenario_radius");
 
 		if (global_lua.load_buffer(game.ships_code) != 0) {
 			error("Failed to load ships.lua: %s", global_lua.to_string(-1));

@@ -62,6 +62,7 @@ function primary_target_scorer(c)
 	local heading_score = math.abs(angle_diff(heading(), a))/math.pi
 	local distance_score = clamp(0, 1, math.log(distance(x, y, c:position()))/3)
 	local rand_score = math.random()
+	if distance(0, 0, c:position()) > scenario_radius then return math.huge end
 	return 0.1*heading_score +
 	       0.2*distance_score +
 	       0.4*class_score +
@@ -72,7 +73,8 @@ end
 function pick_primary_target()
 	if primary_target then
 		primary_target = sensor_contact(primary_target:id())
-		if primary_target then
+		if primary_target and
+		   not (distance(0, 0, primary_target:position()) > scenario_radius) then
 			local tx, ty = primary_target:position()
 			debug_square(tx, ty, 2*my_ship.radius)
 			return

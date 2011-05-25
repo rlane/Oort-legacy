@@ -70,7 +70,9 @@ against progressively more difficult opponents.
 
 ### Victory condition
 
-The team with the last ship alive (not counting missiles) is the winner.
+The team with the last ship alive (not counting missiles) is the winner. Ships
+beyond a certain radius from the origin (see `scenario_radius` below) are not
+counted.
 
 ### AI
 
@@ -127,6 +129,9 @@ spawn() function.
 
 - `ships` - a global table containing all the properties of each ship class,
 keyed by class name.
+
+- `scenario_radius` - a global number informing the AI how far it can go from
+the origin before it is ignored when checking for victory.
 
 The standard `math`, `table`, and `string` libraries are provided. A library of
 useful utility functions (`lib.lua`) is also included in the global

@@ -316,6 +316,7 @@ function sandbox(f)
 		orders = orders,
 		class = my_class,
 		team = team,
+		scenario_radius = scenario_radius,
 		ships = copy_table(ships, {})
 	}
 
