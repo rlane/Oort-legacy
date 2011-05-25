@@ -145,6 +145,28 @@ available to the AI in the `ships` global. The properties of existing ships can
 be changed by editing this file, but adding new ships requires adding
 corresponding code in the renderer.
 
+- Carrier: Large ship with huge energy and reaction mass reserves. Accelerates
+very slowly. No guns besides a point-defense laser, but can spawn
+fighters, torpedos, and missiles.
+
+- Assault frigate: Medium-sized ship with a powerful main gun and point-defense
+laser. Can spawn missiles. Effective against carriers, frigates, or small groups
+of fighters.
+
+- Ion cannon frigate: Medium-size ship with a very powerful beam weapon. The
+beam can only shoot straight ahead, so this ship is not effective against fighters
+or fast-moving frigates.
+
+- Fighter: Small, highly manueverable ship. Has a 144 degree coverage main gun
+and can spawn missiles. Effective against fighters, and in groups can
+destroy larger ships.
+
+- Missile: Extremely manueverable and carries a small warhead. Easily destroyed
+by point-defense lasers.
+
+- Torpedo: Slower, heavily armored missile. Carries a large warhead and can
+survive defensive lasers.
+
 #### Energy
 
 Every ship has an energy supply with a certain recharge rate and a limited
