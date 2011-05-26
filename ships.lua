@@ -15,38 +15,38 @@ beams = {
 ships = {}
 
 ships.fighter = {
-	radius = 10,
-	mass = 10e3,
-	reaction_mass = 20e3,
+	radius = 10, -- m
+	mass = 10e3, -- kg
+	reaction_mass = 20e3, -- kg
 	refuelable = true,
-	hull = 450e3,
-	max_main_acc = 100,
-	max_lateral_acc = 10,
-	max_angular_acc = 1,
-	cost = 10e9,
+	hull = 450e3, -- J
+	max_main_acc = 100, -- m/s^2
+	max_lateral_acc = 10, -- m/s^2
+	max_angular_acc = 1, -- m/s^2
+	cost = 10e9, -- J
 	guns = {
 		main = {
-			type = "bullet",
+			type = "bullet", -- bullet or beam
 			graphics = bullets.slug,
-			mass = 0.001,
-			radius = 1.0/32,
-			velocity = 3000,
-			ttl = 0.2,
-			spread = 0.1,
-			angle = 0.0,
-			coverage = 0.8*pi,
-			reload_time = 0.03,
-			cost = 4.5e3,
+			mass = 0.001, -- kg
+			radius = 1.0/32, -- m
+			velocity = 3000, -- m/s
+			ttl = 0.2, -- s
+			spread = 0.1, -- radians
+			angle = 0.0, -- radians
+			coverage = 0.8*pi, -- radians
+			reload_time = 0.03, -- s
+			cost = 4.5e3, -- J
 		}
 	},
 	count_for_victory = true,
 	energy = {
-		initial = 5e9,
-		rate = 5e9,
-		limit = 15e9,
+		initial = 5e9, -- J
+		rate = 5e9, -- Watts
+		limit = 15e9, -- J
 	},
 	spawnable = {
-		missile = 5,
+		missile = 5, -- cooldown time, s
 	}
 }
 
@@ -64,12 +64,12 @@ ships.ion_cannon_frigate = {
 		main = {
 			type = "beam",
 			graphics = beams.ion,
-			damage = 1.6e6,
-			length = 1e3,
-			width = 6,
-			angle = 0.0,
-			coverage = 0.0,
-			cost = 30e9,
+			damage = 1.6e6, -- Watts
+			length = 1e3, -- m
+			width = 6, -- m
+			angle = 0.0, -- radians
+			coverage = 0.0, -- radians
+			cost = 30e9, -- Watts
 		}
 	},
 	count_for_victory = true,
