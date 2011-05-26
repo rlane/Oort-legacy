@@ -183,7 +183,6 @@ public class Oort.Ship {
 		}
 
 		if (!ai_dead) {
-			global_lua.set_hook(debug_hook, 0, 0);
 			global_lua.get_global("tick_hook");
 			global_lua.call(0, 0);
 		}
@@ -215,16 +214,17 @@ public class Oort.Ship {
 	}
 
 	public bool ai_run(int len) {
+		bool ret;
 		var debug_mask = Lua.EventMask.COUNT;
 		if (game.trace_file != null) debug_mask |= Lua.EventMask.LINE;
 		lua.set_hook(debug_hook, debug_mask, len);
 
 		var result = lua.resume(0);
 		if (result == ThreadStatus.YIELD) {
-			return true;
+			ret = true;
 		} else if (result == 0) {
 			message("ship %u terminated", api_id);
-			return false;
+			ret = false;
 		} else {
 			game.log_lock.lock();
 			message("ship %u error %s", api_id, lua.to_string(-1));
@@ -238,8 +238,11 @@ public class Oort.Ship {
 				}
 			}
 			game.log_lock.unlock();
-			return false;
+			ret = false;
 		}
+
+		lua.set_hook(debug_hook, 0, 0);
+		return ret;
 	}
 
 	public static void *RKEY = (void*)0xAABBCC02;
