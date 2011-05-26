@@ -231,7 +231,7 @@ function turn_away(tx,ty)
 	turn_to(a)
 end
 
-function drive_towards(tx, ty, speed)
+function drive_towards(speed, tx, ty)
 	local x, y = position()
 	local vx, vy = velocity()
 	local a = angle_between(x, y, tx, ty)

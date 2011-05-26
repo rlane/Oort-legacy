@@ -270,19 +270,15 @@ end
 -- Move to a carrier
 function move_to_carrier()
 	local carrier = sensor_contacts{ enemy=false, class="carrier", limit=1 }[1]
-	if carrier then
-		local tx, ty = carrier:position()
-		drive_towards(tx, ty, 50)
-	end
+	if carrier then drive_towards(50, carrier:position()) end
 end
 
 -- Move to the primary target, or if none then the origin
 function move_to_primary_target(speed)
 	if primary_target then
-		local tx, ty = primary_target:position()
-		drive_towards(tx, ty, speed)
+		drive_towards(speed, primary_target:position())
 	else
-		drive_towards(0, 0, speed/2)
+		drive_towards(speed/2, 0, 0)
 	end
 end
 
