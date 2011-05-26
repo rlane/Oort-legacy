@@ -301,6 +301,9 @@ namespace Oort {
 				case "Return":
 					do_single_step();
 					break;
+				case "Escape":
+					shutdown();
+					break;
 				case "y":
 					toggle_render_all_debug_lines();
 					break;

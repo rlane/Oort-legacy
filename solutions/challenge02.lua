@@ -12,7 +12,7 @@ while true do
 		if t ~= nil then
 			local x, y = position()
 			local tx, ty = t:position()
-			drive_towards(tx,ty,100)
+			drive_towards(100, tx, ty)
 			fire("main", angle_between(x,y,tx,ty))
 		end
 	end

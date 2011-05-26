@@ -12,7 +12,7 @@ while true do
 		local tx, ty = target:position()
 		local tvx, tvy = target:velocity()
 		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, my_ship.guns.main.velocity, my_ship.guns.main.ttl)
-		drive_towards(tx, ty, 300)
+		drive_towards(300, tx, ty)
 		if (a) then fire("main", a) end
 	end
 
