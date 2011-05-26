@@ -227,7 +227,7 @@ is empty. Multicast and radio jamming are future development items.
 #### Sensors
 
 The `sensor_contacts()` function returns a table of all the ships detected by
-this ships sensors. Each contact is an object with the methods `id`, `team`,
+this ship's sensors. Each contact is an object with the methods `id`, `team`,
 `class`, `position`, and `velocity`. Most of these are self explanatory. The `id`
 field is an opaque string that can be passed to the `sensor_contact()` function
 to return just the information for the given ship, which is significantly more
