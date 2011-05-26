@@ -38,6 +38,7 @@ public class Oort.Ship {
 	}
 
 	public uint32 api_id;
+	public string hex_id;
 	public unowned ShipClass @class;
 	public unowned Team team;
 	public Physics physics;
@@ -85,6 +86,8 @@ public class Oort.Ship {
 		if (gfx_create_cb != null) {
 			gfx_create_cb(this);
 		}
+
+		hex_id = "%.8x".printf(api_id);
 	}
 
 	public bool create_ai(uint8[]? orders) {
@@ -122,6 +125,9 @@ public class Oort.Ship {
 		uint8 *id = (uint8*) (&api_id);
 		global_lua.push_lstring(id, 4);
 		global_lua.set_global("id");
+
+		global_lua.push_string(hex_id);
+		global_lua.set_global("hex_id");
 
 		global_lua.push_string(@class.name);
 		global_lua.set_global("class");
@@ -200,7 +206,7 @@ public class Oort.Ship {
 			uint64 elapsed = Util.thread_ns() - s.line_start_time;
 			if (!L.get_info("nSl", ref a)) error("debug hook aborted");
 			if (s.line_info != null) {
-				s.game.trace_file.printf("%ld\t%u\t%s\n", (long)elapsed, s.api_id, s.line_info);
+				s.game.trace_file.printf("%ld\t%s\t%s\n", (long)elapsed, s.hex_id, s.line_info);
 			}
 			s.line_info = "%s\t%s:%d".printf(a.name, a.short_src, a.current_line);
 			s.line_start_time = Util.thread_ns();
@@ -223,11 +229,11 @@ public class Oort.Ship {
 		if (result == ThreadStatus.YIELD) {
 			ret = true;
 		} else if (result == 0) {
-			message("ship %u terminated", api_id);
+			message("ship %s terminated", hex_id);
 			ret = false;
 		} else {
 			game.log_lock.lock();
-			message("ship %u error %s", api_id, lua.to_string(-1));
+			message("ship %s error %s", hex_id, lua.to_string(-1));
 			stderr.printf("backtrace:\n");
 			Lua.Debug ar;
 			for (int i = 0; lua.get_stack(i, out ar); i++) {

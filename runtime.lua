@@ -256,7 +256,7 @@ end
 
 function debug_count_hook()
 	if debug_preemption then
-		print("preempted", my_ship_name, ship_id)
+		print("preempted", team, class, hex_id)
 		print(debug.traceback())
 	end
 end
@@ -313,6 +313,7 @@ function sandbox(f)
 		io = { write = io.write },
 
 		id = id,
+		hex_id = hex_id,
 		orders = orders,
 		class = my_class,
 		team = team,

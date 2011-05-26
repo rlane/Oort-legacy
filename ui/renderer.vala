@@ -470,7 +470,7 @@ namespace Oort {
 			int y = 22+11*dy;
 			var rv = s.physics.v.rotate(-s.physics.h);
 			GLUtil.color32((uint32)0xAAFFFFAA);
-			GLUtil.printf(x, y-0*dy, "%s %.8x %s", s.class.name, s.api_id, s.controlled ? "(player controlled)" : "");
+			GLUtil.printf(x, y-0*dy, "%s %s %s", s.class.name, s.hex_id, s.controlled ? "(player controlled)" : "");
 			GLUtil.printf(x, y-1*dy, "hull: %s", fmt(s.hull,"J"));
 			GLUtil.printf(x, y-2*dy, "position: (%s, %s)", fmt(s.physics.p.x,"m"), fmt(s.physics.p.y,"m"));
 			GLUtil.printf(x, y-3*dy, "heading: %s", fmt(s.physics.h,"rad"));
