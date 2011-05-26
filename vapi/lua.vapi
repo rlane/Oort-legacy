@@ -372,7 +372,7 @@ namespace Lua {
 		[CCode (cname = "lua_getstack")]
 		public bool get_stack (int level, out Debug ar);
 		[CCode (cname = "lua_getinfo")]
-		public bool get_info (string what, out Debug ar);
+		public bool get_info (string what, ref Debug ar);
 		[CCode (cname = "lua_getlocal")]
 		public unowned string? get_local (ref Debug ar, int n);
 		[CCode (cname = "lua_setlocal")]

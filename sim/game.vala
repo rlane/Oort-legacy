@@ -41,6 +41,7 @@ public class Oort.Game {
 	public Mutex new_beams_lock;
 	public List<Team> teams;
 	public TaskPool tasks;
+	public Mutex log_lock;
 
 	public const double TICK_LENGTH = 1.0/32;
 
@@ -58,6 +59,7 @@ public class Oort.Game {
 		new_bullets_lock = new Mutex();
 		new_beams_lock = new Mutex();
 		radio_lock = new Mutex();
+		log_lock = new Mutex();
 		runtime_code = load_resource("runtime.lua");
 		ships_code = load_resource("ships.lua");
 		lib_code = load_resource("lib.lua");

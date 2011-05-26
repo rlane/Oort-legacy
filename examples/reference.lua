@@ -56,6 +56,7 @@ priorities = {
 my_priorities = priorities[my_class]
 
 function primary_target_scorer(c)
+foo()
 	local x,y = position()
 	local a = angle_between(x,y,c:position())
 	local class_score = my_priorities[c:class()] or 10.0

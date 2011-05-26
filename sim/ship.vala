@@ -199,7 +199,7 @@ public class Oort.Ship {
 		} else if (a.event == Lua.EventHook.LINE) {
 			unowned Ship s = lua_ship(L);
 			uint64 elapsed = Util.thread_ns() - s.line_start_time;
-			if (!L.get_info("nSl", out a)) error("debug hook aborted");
+			if (!L.get_info("nSl", ref a)) error("debug hook aborted");
 			if (s.line_info != null) {
 				s.game.trace_file.printf("%ld\t%u\t%s\n", (long)elapsed, s.api_id, s.line_info);
 			}
@@ -226,13 +226,18 @@ public class Oort.Ship {
 			message("ship %u terminated", api_id);
 			return false;
 		} else {
+			game.log_lock.lock();
 			message("ship %u error %s", api_id, lua.to_string(-1));
 			stderr.printf("backtrace:\n");
 			Lua.Debug ar;
 			for (int i = 0; lua.get_stack(i, out ar); i++) {
-				if (!lua.get_info("nSl", out ar)) continue;
-				stderr.printf("  %d: %s %s %s @ %s:%d\n", i, ar.what, ar.name_what, ar.name, ar.short_src, ar.current_line);
+				if (!lua.get_info("nSl", ref ar)) {
+					stderr.printf("  %d: error", i);
+				} else {
+					stderr.printf("  %d: %s %s %s @ %s:%d\n", i, ar.what, ar.name_what, ar.name, ar.short_src, ar.current_line);
+				}
 			}
+			game.log_lock.unlock();
 			return false;
 		}
 	}
