@@ -137,22 +137,22 @@ public class Oort.Ship {
 		global_lua.push_number(game.scn.radius);
 		global_lua.set_global("scenario_radius");
 
-		if (global_lua.load_buffer(game.ships_code) != 0) {
+		if (global_lua.load_buffer(game.ships_code, "ships.lua") != 0) {
 			error("Failed to load ships.lua: %s", global_lua.to_string(-1));
 		}
 		global_lua.call(0,0);
 
-		if (global_lua.load_buffer(game.lib_code) != 0) {
+		if (global_lua.load_buffer(game.lib_code, "lib.lua") != 0) {
 			error("Failed to load lib.lua: %s", global_lua.to_string(-1));
 		}
 		global_lua.set_global("lib");
 
-		if (global_lua.load_buffer(game.strict_code) != 0) {
+		if (global_lua.load_buffer(game.strict_code, "struct.lua") != 0) {
 			error("Failed to load strict.lua: %s", global_lua.to_string(-1));
 		}
 		global_lua.set_global("strict");
 
-		if (global_lua.load_buffer(game.runtime_code) != 0) {
+		if (global_lua.load_buffer(game.runtime_code, "runtime.lua") != 0) {
 			error("Failed to load runtime.lua: %s", global_lua.to_string(-1));
 		}
 		global_lua.call(0,0);
