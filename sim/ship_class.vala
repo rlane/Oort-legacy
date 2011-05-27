@@ -8,6 +8,7 @@ public class Oort.ShipClass {
 	public bool count_for_victory;
 	public double mass;
 	public double reaction_mass;
+	public int cpu;
 
 	static HashTable<string,ShipClass> ship_classes;
 
@@ -40,6 +41,7 @@ public class Oort.ShipClass {
 			L.pop(1);
 			c.mass = L.get_field_number(-1, "mass");
 			c.reaction_mass = L.get_field_number(-1, "reaction_mass");
+			c.cpu = (int)L.get_field_number(-1, "cpu");
 			ship_classes.insert(name, (owned)c);
 			L.pop(1);
 		}

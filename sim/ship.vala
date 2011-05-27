@@ -184,7 +184,7 @@ public class Oort.Ship {
 		}
 
 		if (!ai_dead && !controlled) {
-			var ret = ai_run(10000);
+			var ret = ai_run((int)(this.class.cpu*Game.TICK_LENGTH));
 			if (!ret) ai_dead = true;
 		}
 
