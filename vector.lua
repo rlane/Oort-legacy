@@ -3,6 +3,8 @@ local methods = {}
 
 local sqrt, cos, sin = math.sqrt, math.cos, math.sin
 
+vector_metatable = mt -- XXX optimize
+
 function vec(x, y)
 	local u = { x, y }
 	setmetatable(u, mt)

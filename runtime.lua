@@ -31,6 +31,16 @@ function reaction_mass()
 	return _reaction_mass
 end
 
+function position_vec()
+	local x, y = sys_position()
+	return vec(x, y)
+end
+
+function velocity_vec()
+	local vx, vy = sys_velocity()
+	return vec(vx, vy)
+end
+
 function thrust_main(acc,exhaust_velocity)
 	exhaust_velocity = exhaust_velocity or default_exhaust_velocity
 	acc = clamp(acc,-my_ship.max_main_acc,my_ship.max_main_acc);
@@ -221,8 +231,10 @@ sandbox_api = {
 	thrust_lateral = thrust_lateral,
 	thrust_angular = thrust_angular,
 	position = sys_position,
+	position_vec = position_vec,
 	heading = sys_heading,
 	velocity = sys_velocity,
+	velocity_vec = velocity_vec,
 	angular_velocity = sys_angular_velocity,
 	reaction_mass = reaction_mass,
 	energy = energy,
