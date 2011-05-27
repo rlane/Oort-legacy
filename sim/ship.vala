@@ -153,10 +153,15 @@ public class Oort.Ship {
 		}
 		global_lua.set_global("lib");
 
-		if (global_lua.load_buffer(game.strict_code, "struct.lua") != 0) {
+		if (global_lua.load_buffer(game.strict_code, "strict.lua") != 0) {
 			error("Failed to load strict.lua: %s", global_lua.to_string(-1));
 		}
 		global_lua.set_global("strict");
+
+		if (global_lua.load_buffer(game.vector_code, "vector.lua") != 0) {
+			error("Failed to load vector.lua: %s", global_lua.to_string(-1));
+		}
+		global_lua.call(0,0);
 
 		if (global_lua.load_buffer(game.runtime_code, "runtime.lua") != 0) {
 			error("Failed to load runtime.lua: %s", global_lua.to_string(-1));
