@@ -33,6 +33,10 @@ function angle_between(x1, y1, x2, y2)
 	return a
 end
 
+function angle_between_vec(a, b)
+  return angle_between(a.x, a.y, b.x, b.y)
+end
+
 function angle_diff(a, b)
 	local c = normalize_angle(b - a)
 	if c > math.pi then
@@ -252,6 +256,10 @@ function drive_towards(speed, tx, ty)
 	else
 		thrust_main(0)
 	end
+end
+
+function drive_towards_vec(speed, p)
+  return drive_towards(speed, p.x, p.y)
 end
 
 function create_proportional_navigator(k, a, ev)

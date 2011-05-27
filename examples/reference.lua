@@ -56,13 +56,13 @@ priorities = {
 my_priorities = priorities[my_class]
 
 function primary_target_scorer(c)
-	local x,y = position()
-	local a = angle_between(x,y,c:position())
+	local p = position_vec()
+	local a = angle_between_vec(p, c:position_vec())
 	local class_score = my_priorities[c:class()] or 10.0
 	local heading_score = math.abs(angle_diff(heading(), a))/math.pi
-	local distance_score = clamp(0, 1, math.log(distance(x, y, c:position()))/3)
+	local distance_score = clamp(0, 1, math.log(p:distance(c:position_vec()))/3)
 	local rand_score = math.random()
-	if distance(0, 0, c:position()) > scenario_radius then return math.huge end
+	if c:position_vec():length() > scenario_radius then return math.huge end
 	return 0.1*heading_score +
 	       0.2*distance_score +
 	       0.4*class_score +
@@ -74,9 +74,9 @@ function pick_primary_target()
 	if primary_target then
 		primary_target = sensor_contact(primary_target:id())
 		if primary_target and
-		   not (distance(0, 0, primary_target:position()) > scenario_radius) then
-			local tx, ty = primary_target:position()
-			debug_square(tx, ty, 2*my_ship.radius)
+		   not (primary_target:position_vec():length() > scenario_radius) then
+			local p = primary_target:position_vec()
+			debug_square(p.x, p.y, 2*my_ship.radius)
 			return
 		end
 		primary_target_counter = 0
@@ -96,8 +96,8 @@ function secondary_target_scorer(c)
 		return 0
 	end
 
-	local x,y = position()
-	local a = angle_between(x,y,c:position())
+	local p = position_vec()
+	local a = angle_between_vec(p,c:position_vec())
 	local class_score = my_priorities[c:class()] or 10.0
 	local heading_score = math.abs(angle_diff(heading(), a))/math.pi
 	local rand_score = math.random()
@@ -111,8 +111,8 @@ function pick_secondary_target(max_dist)
 	if secondary_target then
 		secondary_target = sensor_contact(secondary_target:id())
 		if secondary_target then
-			local tx, ty = secondary_target:position()
-			debug_diamond(tx, ty, 2*my_ship.radius)
+			local p = secondary_target:position_vec()
+			debug_diamond(p.x, p.y, 2*my_ship.radius)
 			return
 		end
 		secondary_target_counter = 0
@@ -195,11 +195,11 @@ end
 
 function weapons.ion_cannon_frigate()
 	if primary_target then
-		local x, y = position()
-		local tx, ty = primary_target:position()
-		local bearing = angle_between(x, y, tx, ty)
+		local p = position_vec()
+		local tp = primary_target:position_vec()
+		local bearing = angle_between_vec(p, tp)
 		local da = angle_diff(heading(),bearing)
-		local dist = distance(x, y, tx, ty)
+		local dist = p:distance(tp)
 		if dist <= my_ship.guns.main.length and math.abs(da) < 0.1 then
 			fire("main", heading())
 		end
@@ -270,15 +270,15 @@ end
 -- Move to a carrier
 function move_to_carrier()
 	local carrier = sensor_contacts{ enemy=false, class="carrier", limit=1 }[1]
-	if carrier then drive_towards(50, carrier:position()) end
+	if carrier then drive_towards_vec(50, carrier:position_vec()) end
 end
 
 -- Move to the primary target, or if none then the origin
 function move_to_primary_target(speed)
 	if primary_target then
-		drive_towards(speed, primary_target:position())
+		drive_towards_vec(speed, primary_target:position_vec())
 	else
-		drive_towards(speed/2, 0, 0)
+		drive_towards_vec(speed/2, vec(0, 0))
 	end
 end
 
