@@ -331,6 +331,8 @@ function sandbox(f)
 		team = team,
 		scenario_radius = scenario_radius,
 		ships = copy_table(ships, {})
+
+		vec = vec,
 	}
 
 	env._G = env
