@@ -330,7 +330,7 @@ function sandbox(f)
 		class = my_class,
 		team = team,
 		scenario_radius = scenario_radius,
-		ships = copy_table(ships, {})
+		ships = copy_table(ships, {}),
 
 		vec = vec,
 	}
