@@ -304,18 +304,18 @@ function fire_at_contact(gun_name, t)
 	end
 
 	local gun = my_ship.guns[gun_name]
-	local x, y = position()
-	local tx, ty = t:position()
+	local p = position_vec()
+	local tp = t:position_vec()
 	if gun.type == "bullet" then
-		local vx, vy = velocity()
-		local tvx, tvy = t:velocity()
-		local a = lead(x, y, tx, ty, vx, vy, tvx, tvy, gun.velocity, gun.ttl)
+		local v = velocity_vec()
+		local tv = t:velocity_vec()
+		local a = lead_vec(p, tp, v, tv, gun.velocity, gun.ttl)
 		if a then
 			fire(gun_name, a)
 		end
 	elseif gun.type == "beam" then
-		if distance(x, y, tx, ty) < gun.length then
-			local a = angle_between(x, y, tx, ty)
+		if p:distance(tp) < gun.length then
+			local a = angle_between_vec(p, tp)
 			fire(gun_name, a)
 		end
 	end
