@@ -73,29 +73,6 @@ function distance(x1, y1, x2, y2)
 	return math.sqrt((x2 - x1)^2 + (y2-y1)^2)
 end
 
-function pick_close_enemy(x, y, max_dist, prob)
-	local contacts = sensor_contacts({})
-	local t = nil
-	for k, c in pairs(contacts) do
-		local cx, cy = c:position()
-		if c:team() ~= my_team and distance(cx, cy, x, y) < max_dist and c:class() ~= "torpedo" and (not t or (math.random() < prob)) then
-			t = c
-		end
-	end
-
-	if target_debug then
-		if t then
-			local tx, ty = t:position()
-			local tvx, tvy = t:velocity()
-			printf("target %s p=(%0.2g, %0.2g) v=(%0.2g, %0.2g)\n", t.class, tx, ty, tvx, tvy);
-		else
-			printf("no target\n")
-		end
-	end
-
-	return t
-end
-
 function pick(t,fn)
 	local t2 = select(t, fn)
 	local ids = keys(t2)
