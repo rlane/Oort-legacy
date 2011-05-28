@@ -261,10 +261,9 @@ function standard_missile_ai()
 
 		if not t then
 			local ts = sensor_contacts{ enemy = true }
-			local x, y = position()
+			local p = position_vec()
 			local min_fn = function(t)
-				local tx, ty = t:position()
-				return distance(x, y, tx, ty)
+				return p:distance(t:position_vec())
 			end
 			t = min_by(ts, min_fn)
 		end
@@ -273,23 +272,23 @@ function standard_missile_ai()
 			explode()
 		end
 
-		local x, y = position()
-		local vx, vy = velocity()
-		local tx, ty = t:position()
-		local tvx, tvy = t:velocity()
+		local p = position_vec()
+		local v = velocity_vec()
+		local tp = t:position_vec()
+		local tv = t:velocity_vec()
 
 		clear_debug_lines()
-		debug_diamond(tx, ty, 16*my_ship.radius)
+		debug_diamond(tp.x, tp.y, 16*my_ship.radius)
 
 		if i < 16 then
 			i = i + 1
-			turn_towards(tx, ty)
+			turn_towards_vec(tp)
 			thrust_main(i*my_ship.max_main_acc/16)
 		else
-			seek(vec(tx,ty), vec(tvx,tvy))
+			seek(tp, tv)
 		end
 
-		if distance(x,y,tx,ty)/distance(vx,vy,tvx,tvy) < 1/32 then explode() end
+		if p:distance(tp)/v:distance(tv) < 1/32 then explode() end
 		yield()
 	end
 end
