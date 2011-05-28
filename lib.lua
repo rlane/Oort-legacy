@@ -193,16 +193,12 @@ function turn_to(angle)
 	thrust_angular(f*wa)
 end
 
-function turn_towards(tx,ty)
-	local x, y = position()
-	local a = angle_between(x, y, tx, ty)
-	turn_to(a)
+function turn_towards(x, y)
+  turn_towards_vec(vec(x,y))
 end
 
-function turn_away(tx,ty)
-	local x, y = position()
-	local a = angle_between(tx, ty, x, y)
-	turn_to(a)
+function turn_towards_vec(p)
+	turn_to((p - position_vec()):angle())
 end
 
 function drive_towards(speed, tx, ty)
