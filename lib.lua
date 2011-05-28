@@ -12,13 +12,6 @@ function clamp(v,min,max)
 	end
 end
 
-function sleep(ticks)
-	local i
-	for i = 1,ticks do
-		yield()
-	end
-end
-
 function angle_between(x1, y1, x2, y2)
 	return angle_between_vec(vec(x1,y1), vec(x2, y2))
 end
