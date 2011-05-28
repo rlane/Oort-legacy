@@ -62,3 +62,11 @@ function methods:distance(u)
 	local dy = u[2] - self[2]
 	return sqrt(dx^2 + dy^2)
 end
+
+function methods:angle()
+	local a = math.atan2(self[2], self[1])
+	if (a < 0) then
+		a = math.pi*2 + a
+	end
+	return a
+end

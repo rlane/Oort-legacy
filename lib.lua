@@ -23,18 +23,11 @@ function sleep(ticks)
 end
 
 function angle_between(x1, y1, x2, y2)
-	local dx, dy, a
-	dx = x2 - x1
-	dy = y2 - y1
-	a = math.atan2(dy, dx)
-	if (a < 0) then
-		a = two_pi + a
-	end
-	return a
+  return angle_between_vec(vec(x1,y1), vec(x2, y2))
 end
 
-function angle_between_vec(a, b)
-  return angle_between(a.x, a.y, b.x, b.y)
+function angle_between_vec(p1, p2)
+	return (p2-p1):angle()
 end
 
 function angle_diff(a, b)
