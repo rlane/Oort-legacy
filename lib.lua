@@ -5,6 +5,7 @@ function printf(...)
 	io.write(string.format(...))
 end
 
+--- Limit a value to a range
 function clamp(v,min,max)
 	if v < min then return min
 	elseif v > max then return max
@@ -16,10 +17,13 @@ function angle_between(x1, y1, x2, y2)
 	return angle_between_vec(vec(x1,y1), vec(x2, y2))
 end
 
+--- Return the angle between two vectors
 function angle_between_vec(p1, p2)
 	return (p2-p1):angle()
 end
 
+--- Return the difference between two angles
+-- Result may be negative.
 function angle_diff(a, b)
 	local c = normalize_angle(b - a)
 	if c > math.pi then
@@ -28,6 +32,7 @@ function angle_diff(a, b)
 	return c
 end
 
+--- Solve the quadratic equation
 -- a*x^2 + b*x + c
 function smallest_positive_root_of_quadratic_equation(a, b, c)
 	local z = math.sqrt(b^2 - 4*a*c)
@@ -42,6 +47,7 @@ function lead(x1, y1, x2, y2, vx1, vy1, vx2, vy2, w, t_max)
 	return lead_vec(vec(x1,y1), vec(x2,y2), vec(vx1,vy1), vec(vx2,vy2), w, t_max)
 end
 
+--- Return the angle to shoot a constant-velocity projectile to hit a moving target
 function lead_vec(p1, p2, v1, v2, w, t_max)
 	local dp = p2 - p1
 	local dv = v2 - v1
@@ -63,6 +69,7 @@ function distance(x1, y1, x2, y2)
 	return math.sqrt((x2 - x1)^2 + (y2-y1)^2)
 end
 
+--- Choose a random integer-keyed member from a table
 function pick(t,fn)
 	local t2 = select(t, fn)
 	local ids = keys(t2)
@@ -72,6 +79,7 @@ function pick(t,fn)
 	return k, t[k]
 end
 
+--- Return the value from the given table where fn returns the lowest score
 function min_by(t,fn)
 	local best_value = nil
 	local best_score = math.huge
@@ -85,6 +93,7 @@ function min_by(t,fn)
 	return best_value
 end
 
+--- Return a floating point value in the given range
 function R(a,b)
 	d = b - a
 	return a + math.random()*d
