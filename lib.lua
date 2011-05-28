@@ -202,19 +202,23 @@ function turn_towards_vec(p)
 end
 
 function drive_towards(speed, tx, ty)
-	local x, y = position()
-	local vx, vy = velocity()
-	local a = angle_between(x, y, tx, ty)
+  drive_towards_vec(speed, vec(tx,ty))
+end
+
+function drive_towards_vec(speed, tp)
+	local p = position_vec()
+	local v = velocity_vec()
+	local a = (tp - p):angle()
 	local h = heading()
 
-	local rvx, rvy = rotate(vx, vy, -h)
-	thrust_lateral(-1*rvy)
+  local rv = v:rotate(-h)
+	thrust_lateral(-1*rv.y)
 
 	turn_to(a)
 
 	local diff = angle_diff(a,h)
-	if rvx > speed then
-		thrust_main(speed-rvx)
+	if rv.x > speed then
+		thrust_main(speed-rv.x)
 	elseif math.abs(diff) < math.pi/4 then
 		thrust_main(my_ship.max_main_acc)
 	elseif math.abs(diff) > 3*math.pi/4 then
@@ -222,10 +226,6 @@ function drive_towards(speed, tx, ty)
 	else
 		thrust_main(0)
 	end
-end
-
-function drive_towards_vec(speed, p)
-  return drive_towards(speed, p.x, p.y)
 end
 
 function create_proportional_navigator(k, a, ev)
