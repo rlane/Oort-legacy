@@ -230,18 +230,18 @@ end
 
 function create_proportional_navigator(k, a, ev)
 	local last_bearing = nil
-	return function(tx, ty, tvx, tvy)
-		local x, y = position()
-		local bearing = angle_between(x, y, tx, ty)
+	return function(tp, tv)
+		local p = position_vec()
+		local bearing = angle_between_vec(p, tp)
 
 		if last_bearing then
-			local vx, vy = velocity()
+			local v = velocity_vec()
 			local h = heading()
 
 			local bearing_rate = angle_diff(bearing, last_bearing)*32.0
-			local dvx, dvy = vx-tvx, vy-tvy
-			local rvx, rvy = rotate(dvx, dvy, -bearing)
-			local n = -k*rvx*bearing_rate
+			local dv = v-tv
+			local rv = dv:rotate(-bearing)
+			local n = -k*rv.x*bearing_rate
 
 			thrust_main(a, ev)
 			thrust_lateral(n, ev)
@@ -286,7 +286,7 @@ function standard_missile_ai()
 			turn_towards(tx, ty)
 			thrust_main(i*my_ship.max_main_acc/16)
 		else
-			seek(tx, ty, tvx, tvy)
+			seek(vec(tx,ty), vec(tvx,tvy))
 		end
 
 		if distance(x,y,tx,ty)/distance(vx,vy,tvx,tvy) < 1/32 then explode() end
