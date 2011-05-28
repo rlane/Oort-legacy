@@ -1,7 +1,4 @@
-target_debug = false
-local my_team = team
-local my_class = class
-local my_ship = ships[my_class]
+local my_ship = ships[class]
 local two_pi = math.pi * 2
 
 function printf(...)
@@ -23,7 +20,7 @@ function sleep(ticks)
 end
 
 function angle_between(x1, y1, x2, y2)
-  return angle_between_vec(vec(x1,y1), vec(x2, y2))
+	return angle_between_vec(vec(x1,y1), vec(x2, y2))
 end
 
 function angle_between_vec(p1, p2)
@@ -49,19 +46,19 @@ function smallest_positive_root_of_quadratic_equation(a, b, c)
 end
 
 function lead(x1, y1, x2, y2, vx1, vy1, vx2, vy2, w, t_max)
-  return lead_vec(vec(x1,y1), vec(x2,y2), vec(vx1,vy1), vec(vx2,vy2), w, t_max)
+	return lead_vec(vec(x1,y1), vec(x2,y2), vec(vx1,vy1), vec(vx2,vy2), w, t_max)
 end
 
 function lead_vec(p1, p2, v1, v2, w, t_max)
-  local dp = p2 - p1
-  local dv = v2 - v1
+	local dp = p2 - p1
+	local dv = v2 - v1
 	local a = (dv.x^2 + dv.y^2) - w^2
 	local b = 2 * (dp.x*dv.x + dp.y*dv.y)
 	local c = dp.x^2 + dp.y^2
 	local t = smallest_positive_root_of_quadratic_equation(a, b, c)
 	--printf("t=%.03g\n", t)
 	if t >= 0 and t <= t_max then
-    local p3 = p2 + dv*t
+		local p3 = p2 + dv*t
 		--printf("x3=%0.2g y3=%0.2g\n", x3, y3)
 		return angle_between_vec(p1, p3)
 	else
@@ -194,7 +191,7 @@ function turn_to(angle)
 end
 
 function turn_towards(x, y)
-  turn_towards_vec(vec(x,y))
+	turn_towards_vec(vec(x,y))
 end
 
 function turn_towards_vec(p)
@@ -202,7 +199,7 @@ function turn_towards_vec(p)
 end
 
 function drive_towards(speed, tx, ty)
-  drive_towards_vec(speed, vec(tx,ty))
+	drive_towards_vec(speed, vec(tx,ty))
 end
 
 function drive_towards_vec(speed, tp)
@@ -211,7 +208,7 @@ function drive_towards_vec(speed, tp)
 	local a = (tp - p):angle()
 	local h = heading()
 
-  local rv = v:rotate(-h)
+	local rv = v:rotate(-h)
 	thrust_lateral(-1*rv.y)
 
 	turn_to(a)
