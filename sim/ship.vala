@@ -92,6 +92,12 @@ public class Oort.Ship {
 
 	public bool create_ai(uint8[]? orders) {
 		global_lua = new LuaVM();
+
+		if (global_lua == null) {
+			warning("Failed to create Lua VM");
+			return false;
+		}
+
 		mem.cur = 0;
 		mem.limit = 1<<20;
 		mem.allocator = global_lua.get_alloc_func(out mem.allocator_ud);
@@ -144,27 +150,32 @@ public class Oort.Ship {
 		global_lua.set_global("scenario_radius");
 
 		if (global_lua.load_buffer(game.ships_code, "ships.lua") != 0) {
-			error("Failed to load ships.lua: %s", global_lua.to_string(-1));
+			warning("Failed to load ships.lua: %s", global_lua.to_string(-1));
+			return false;
 		}
 		global_lua.call(0,0);
 
 		if (global_lua.load_buffer(game.lib_code, "lib.lua") != 0) {
-			error("Failed to load lib.lua: %s", global_lua.to_string(-1));
+			warning("Failed to load lib.lua: %s", global_lua.to_string(-1));
+			return false;
 		}
 		global_lua.set_global("lib");
 
 		if (global_lua.load_buffer(game.strict_code, "strict.lua") != 0) {
-			error("Failed to load strict.lua: %s", global_lua.to_string(-1));
+			warning("Failed to load strict.lua: %s", global_lua.to_string(-1));
+			return false;
 		}
 		global_lua.set_global("strict");
 
 		if (global_lua.load_buffer(game.vector_code, "vector.lua") != 0) {
-			error("Failed to load vector.lua: %s", global_lua.to_string(-1));
+			warning("Failed to load vector.lua: %s", global_lua.to_string(-1));
+			return false;
 		}
 		global_lua.call(0,0);
 
 		if (global_lua.load_buffer(game.runtime_code, "runtime.lua") != 0) {
-			error("Failed to load runtime.lua: %s", global_lua.to_string(-1));
+			warning("Failed to load runtime.lua: %s", global_lua.to_string(-1));
+			return false;
 		}
 		global_lua.call(0,0);
 
