@@ -19,6 +19,10 @@ function mt:__index(key)
 	end
 end
 
+function mt:__newindex(key,value)
+	error("attempt to access nonexistent field in vector")
+end
+
 function mt:__tostring()
 	return "(" .. self[1] .. ", " .. self[2] .. ")"
 end
