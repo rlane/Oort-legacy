@@ -95,7 +95,7 @@ end
 
 --- Return a floating point value in the given range
 function R(a,b)
-	d = b - a
+	local d = b - a
 	return a + math.random()*d
 end
 
