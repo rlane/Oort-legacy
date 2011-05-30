@@ -149,6 +149,9 @@ public class Oort.Ship {
 		global_lua.push_number(game.scn.radius);
 		global_lua.set_global("scenario_radius");
 
+		global_lua.push_number(game.ticks);
+		global_lua.set_global("start_ticks");
+
 		if (global_lua.load_buffer(game.ships_code, "ships.lua") != 0) {
 			warning("Failed to load ships.lua: %s", global_lua.to_string(-1));
 			return false;

@@ -23,6 +23,10 @@ local engine_lateral_mass_cost = 0
 local engine_angular_power_cost = 0
 local engine_angular_mass_cost = 0
 
+function time()
+	return (start_ticks + ticks)*tick_length
+end
+
 function energy()
 	return _energy
 end
@@ -249,6 +253,7 @@ sandbox_api = {
 	explode = explode,
 	debug_line = sys_debug_line,
 	clear_debug_lines = sys_clear_debug_lines,
+	time = time,
 }
 
 function copy_table(t, t2)

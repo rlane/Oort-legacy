@@ -263,8 +263,12 @@ end
 ---- Utility functions
 
 -- Send a radio message telling all carriers to send us reaction mass
+local last_refuel_time = 0
 function request_refuel()
-	send("refuel\0" .. id)
+  if last_refuel_time + 10 < time() then
+    send("refuel\0" .. id)
+    last_refuel_time = time()
+  end
 end
 
 -- Move to a carrier

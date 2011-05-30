@@ -120,6 +120,8 @@ messages on the queue.
 
 - `clear_debug_lines()` - Erase all debug lines.
 
+- `time()` - returns the time in seconds since the beginning of the simulation.
+
 - `orders` - a string global containing the orders for this ship as set by the
 spawn() function.
 
