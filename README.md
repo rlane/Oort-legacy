@@ -133,6 +133,8 @@ keyed by class name.
 - `scenario_radius` - a global number informing the AI how far it can go from
 the origin before it is ignored when checking for victory.
 
+- `tick_length` - length in seconds of a simulator tick (currently 1/32).
+
 The standard `math`, `table`, and `string` libraries are provided. A library of
 useful utility functions (`lib.lua`) is also included in the global
 environment. The utility functions include a standard missile AI which is

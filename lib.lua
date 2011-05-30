@@ -237,7 +237,7 @@ function create_proportional_navigator(k, a, ev)
 			local v = velocity_vec()
 			local h = heading()
 
-			local bearing_rate = angle_diff(bearing, last_bearing)*32.0
+			local bearing_rate = angle_diff(bearing, last_bearing)/tick_length
 			local dv = v-tv
 			local rv = dv:rotate(-bearing)
 			local n = -k*rv.x*bearing_rate
@@ -287,13 +287,13 @@ function standard_missile_ai()
 			seek(tp, tv)
 		end
 
-		if p:distance(tp)/v:distance(tv) < 1/32 then explode() end
+		if p:distance(tp)/v:distance(tv) < tick_length then explode() end
 		yield()
 	end
 end
 
 function chance(n)
-	return math.random(1,n*32) == 1
+	return math.random(1,n/tick_length) == 1
 end
 
 function fire_at_contact(gun_name, t)
