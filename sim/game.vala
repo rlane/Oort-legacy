@@ -66,7 +66,7 @@ public class Oort.Game {
 		lib_code = load_resource("lib.lua");
 		strict_code = load_resource("strict.lua");
 		vector_code = load_resource("vector.lua");
-		tasks = new TaskPool(Util.envtol("Oort_NUM_THREADS", 8));
+		tasks = new TaskPool(Util.envtol("OORT_NUM_THREADS", 8));
 		Scenario.load(this, scn, ais);
 	}
 
