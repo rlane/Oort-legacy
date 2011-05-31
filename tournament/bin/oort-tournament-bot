@@ -32,12 +32,12 @@ forum.list_messages.each do |msgid|
   begin
     msg = forum.get_message msgid
 
-    puts "wrong site" unless msg.site == 'from: oort.lefora.com'
+    fail "wrong site" unless msg.site == 'from: oort.lefora.com'
 
-    puts "no gist found" unless msg.body =~ SHA1_REGEX
+    fail "no gist found" unless msg.body =~ SHA1_REGEX
     gist = $&
 
-    puts "no name found" unless msg.subject =~ /Message: (\w+)$/
+    fail "no name found" unless msg.subject =~ /Message: (\w+)$/
     name = $1
 
     fail "name conflict" if db.ais.member? name
