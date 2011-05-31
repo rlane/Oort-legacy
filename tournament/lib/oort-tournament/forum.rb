@@ -19,7 +19,7 @@ class OortForum
   end
 
   def list_messages
-    page = @home.link_with(:text => 'messages').click
+    page = @home.link_with(:text => /^messages( \(new\))?/).click
     page.links.map { |l| l.href =~ %r|/mailbox/view/(\d+)| && $1.to_i }.compact
   end
 
