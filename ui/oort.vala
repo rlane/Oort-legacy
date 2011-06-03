@@ -53,6 +53,8 @@ namespace Oort {
 
 		private GameState game_state;
 
+		public signal void ticked();
+
 		public MainWindow() throws ThreadError {
 			this.title = "Oort";
 			this.destroy.connect(shutdown);
@@ -202,14 +204,15 @@ namespace Oort {
 				single_step = false;
 			}
 
-			Timeout.add(0, trigger_redraw);
+			Timeout.add(0, after_tick);
 
 			return true;
 		}
 
-		private bool trigger_redraw() {
+		private bool after_tick() {
 			var window = drawing_area.window;
 			window.invalidate_rect((Rectangle)drawing_area.allocation, false);
+			ticked();
 			return false;
 		}
 
@@ -319,6 +322,9 @@ namespace Oort {
 				case "v":
 					toggle_follow_picked();
 					break;
+				case "e":
+					show_picked_log();
+					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {
 						tick_lock.lock();
@@ -383,6 +389,16 @@ namespace Oort {
 		private void shutdown() {
 			stop_game();
 			Gtk.main_quit();
+		}
+
+		private void show_picked_log() {
+			if (renderer.picked != null) {
+				tick_lock.lock();
+				var w = new LogWindow(this, renderer.picked);
+				w.update();
+				tick_lock.unlock();
+				w.show();
+			}
 		}
 
 		private bool on_button_press_event(Widget widget, EventButton event) {

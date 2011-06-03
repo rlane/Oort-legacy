@@ -230,6 +230,18 @@ function yield()
 	coroutine.yield()
 end
 
+logbuf_head = 0
+logbuf_max = 128
+logbuf_lines = {}
+
+function log(...)
+	local line = string.format(...)
+	logbuf_head = logbuf_head + 1
+	local del = logbuf_head - logbuf_max
+	if logbuf_lines[del] then logbuf_lines[del] = nil end
+	logbuf_lines[logbuf_head] = line
+end
+
 sandbox_api = {
 	thrust_main = thrust_main,
 	thrust_lateral = thrust_lateral,
@@ -254,6 +266,7 @@ sandbox_api = {
 	debug_line = sys_debug_line,
 	clear_debug_lines = sys_clear_debug_lines,
 	time = time,
+	log = log,
 }
 
 function copy_table(t, t2)
@@ -325,9 +338,6 @@ function sandbox(f)
 		tostring = tostring,
 		type = type,
 		unpack = unpack,
-
-		-- dofile = safe_dofile,
-		io = { write = io.write },
 
 		id = id,
 		hex_id = hex_id,

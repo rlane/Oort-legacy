@@ -820,4 +820,15 @@ public class Oort.Ship {
 		L.get_global("vector_metatable"); // XXX optimize
 		L.set_metatable(-2);
 	}
+
+	public int get_logbuf_head() {
+		global_lua.get_global("logbuf_head");
+		return global_lua.to_integer(-1);
+	}
+
+	public string get_logbuf_entry(int i) {
+		global_lua.get_global("logbuf_lines");
+		global_lua.raw_geti(-1, i);
+		return global_lua.to_string(-1);
+	}
 }

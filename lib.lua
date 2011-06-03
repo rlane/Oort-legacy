@@ -1,10 +1,6 @@
 local my_ship = ships[class]
 local two_pi = math.pi * 2
 
-function printf(...)
-	io.write(string.format(...))
-end
-
 --- Limit a value to a range
 function clamp(v,min,max)
 	if v < min then return min

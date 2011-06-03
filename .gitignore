@@ -53,6 +53,7 @@ ui/renderer.c
 ui/textures.c
 ui/oort.c
 sim/paths.c
+ui/log.c
 
 sim/liboort-1.0.a
 luajit_build/luajit-stamp

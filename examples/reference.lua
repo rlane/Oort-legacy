@@ -85,6 +85,9 @@ function pick_primary_target()
 	if primary_target_counter == 0 then
 		primary_target = min_by(sensor_contacts{ enemy = true }, primary_target_scorer)
 		primary_target_counter = 16
+		if primary_target then
+			log("picked primary target class %s", primary_target:class())
+		end
 	else
 		primary_target_counter = primary_target_counter - 1
 	end
@@ -121,6 +124,9 @@ function pick_secondary_target(max_dist)
 	if secondary_target_counter == 0 then
 		secondary_target = min_by(sensor_contacts{ enemy = true, distance_lt = max_dist }, secondary_target_scorer)
 		secondary_target_counter = 16
+		if primary_target then
+			log("picked secondary target class %s", primary_target:class())
+		end
 	else
 		secondary_target_counter = secondary_target_counter - 1
 	end
@@ -210,6 +216,7 @@ function weapons.fighter()
 	pick_secondary_target(my_ship.guns.main.velocity*my_ship.guns.main.ttl*1.2)
 
 	if primary_target and chance(2) then
+		log("firing a missile at primary target")
 		spawn("missile", primary_target:id())
 	end
 
