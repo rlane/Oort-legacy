@@ -37,7 +37,7 @@ forum.list_messages.each do |msgid|
     fail "no gist found" unless msg.body =~ SHA1_REGEX
     gist = $&
 
-    fail "no name found" unless msg.subject =~ /Message: (\w+)$/
+    fail "no name found" unless msg.subject =~ /Message: ([\w-.]+)$/
     name = $1
 
     fail "name conflict" if db.ais.member? name
