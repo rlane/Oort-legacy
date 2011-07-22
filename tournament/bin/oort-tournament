@@ -23,6 +23,15 @@ EOS
   opt :database, "Location of tournament database", :short => 'D', :default => 'oort-tournament.yaml'
 end
 
+$gist_tempfiles = []
+$gist_cache = Hash.new do |h,k|
+  io = Tempfile.new('oort')
+  io.write open("https://raw.github.com/gist/#{k}/").read
+  io.close
+  $gist_tempfiles << io
+  h[k] = io.path
+end
+
 def run_game
   db = OortTournament::DB.new $opts[:database]
 
@@ -36,16 +45,11 @@ def run_game
 
   puts "#{ai1} vs #{ai2}"
 
-  tempfiles = []
   filenames = ai_names.map do |ai_name|
     ai = db.ais[ai_name]
     case ai['location_type']
     when 'gist'
-      io = Tempfile.new('oort')
-      io.write open("https://raw.github.com/gist/#{ai['location']}/").read
-      io.close
-      tempfiles << io
-      io.path
+      $gist_cache[ai['location']]
     when 'file'
       ai['location']
     else
@@ -53,10 +57,8 @@ def run_game
     end
   end
 
-  results_file = Tempfile.new 'oort'
+  results_file = Tempfile.new('oort').tap { |x| x.close }
   system "./dedicated/oort_dedicated --results #{results_file.path} --seed #{seed} #{SCENARIO} #{filenames * ' '}"
-  tempfiles.map(&:unlink)
-  tempfiles = nil
   unless $?.success?
     results_file.unlink
     puts "simulator failed"
