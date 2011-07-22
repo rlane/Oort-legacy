@@ -2,7 +2,7 @@
 require 'saulabs/trueskill'
 require 'oort-tournament/db'
 require 'tempfile'
-require 'gist'
+require 'open-uri'
 require 'trollop'
 
 include Saulabs::TrueSkill
@@ -42,7 +42,7 @@ def run_game
     case ai['location_type']
     when 'gist'
       io = Tempfile.new('oort')
-      io.write Gist.read ai['location']
+      io.write open("https://raw.github.com/gist/#{ai['location']}/").read
       io.close
       tempfiles << io
       io.path
