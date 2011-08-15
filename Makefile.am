@@ -5,12 +5,11 @@ AUTOMAKE_OPTIONS = foreign
 #Build in these directories:
 
 SUBDIRS = \
-	luajit_build \
+	lua_build \
 	cjson \
 	vector \
 	sim \
 	dedicated \
-	ui \
 	vapi \
 	test \
 	$(NULL)
