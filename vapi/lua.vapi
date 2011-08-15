@@ -418,7 +418,7 @@ namespace Lua {
 		public unowned string check_string(int narg);
 		[CCode (cname = "luaL_checklstring")]
 		public uint8 *check_lstring(int narg, out size_t len);
-		[CCode (cname = "luaL_checklstring")]
+		[CCode (cname = "luaL_checklstring", array_length_type = "size_t")]
 		public unowned uint8[] check_data(int narg);
 		[CCode (cname = "luaL_checknumber")]
 		public double check_number(int narg);
