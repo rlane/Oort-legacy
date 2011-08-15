@@ -8,7 +8,6 @@
 #include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #define ldo_c
 #define LUA_CORE
@@ -318,7 +317,7 @@ int luaD_precall (lua_State *L, StkId func, int nresults) {
       n = (*f)(L);  /* do the actual call */
       lua_lock(L);
       api_checknelems(L, n);
-			luaD_poscall(L, L->top - n);
+      luaD_poscall(L, L->top - n);
       return 1;
     }
     case LUA_TLCL: {  /* Lua function: prepare its call */
