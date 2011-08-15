@@ -7,8 +7,8 @@ manifest-dist:
 
 lua-stamp:
 if MINGW32
-	cd $(top_srcdir)/lua && make PLAT=mingw MYCFLAGS="-g -DLUA_USE_APICHECK" clean all
+	cd $(top_srcdir)/lua/src && make PLAT=mingw MYCFLAGS="-g" CC=$(CC) clean liblua.a
 else
-	cd $(top_srcdir)/lua && make PLAT=linux MYCFLAGS="-g -DLUA_USE_APICHECK" clean all
+	cd $(top_srcdir)/lua/src && make PLAT=linux MYCFLAGS="-g" CC=$(CC) clean liblua.a
 endif
 	touch lua-stamp
