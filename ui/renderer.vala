@@ -571,21 +571,21 @@ namespace Oort {
 }
 
 public class Oort.RendererResources {
-	public HashTable<string,Model> models;
+	public HashTable<string,Model> models = new HashTable<string,Model>(str_hash, str_equal);
 
-	public RendererResources() throws ModelParseError, FileError {
-		models = new HashTable<string,Model>(str_hash, str_equal);
+	public RendererResources() throws ModelParseError, FileError, Error {
+		var directory = File.new_for_path(data_path("models"));
+		var enumerator = directory.enumerate_children (FILE_ATTRIBUTE_STANDARD_NAME, 0);
 
-		string[] model_names = {
-			"fighter",
-			"ion_cannon_frigate",
-			"assault_frigate",
-			"missile",
-			"torpedo"
-		};
+		FileInfo file_info;
+		while ((file_info = enumerator.next_file ()) != null) {
+			var filename = file_info.get_name();
+			if (!filename.has_suffix(".json")) {
+				continue;
+			}
+			var name = filename[0:-5];
 
-		foreach (var name in model_names) {
-			var data = Game.load_resource(@"models/$name.json");
+			var data = Game.load_resource(@"models/$filename");
 			try {
 				models.insert(name, new Model(data));
 			} catch (ModelParseError e) {

@@ -56,7 +56,7 @@ namespace Oort {
 
 		public signal void ticked();
 
-		public MainWindow() throws ThreadError, FileError, ModelParseError {
+		public MainWindow() throws Error {
 			this.title = "Oort";
 			this.destroy.connect(shutdown);
 			set_reallocate_redraws(true);
@@ -618,13 +618,7 @@ int main(string[] args) {
 	MainWindow mainwin;
 	try {
 		mainwin = new MainWindow();
-	} catch (ThreadError e) {
-		print("%s\n", e.message);
-		return 1;
-	} catch (ModelParseError e) {
-		print("%s\n", e.message);
-		return 1;
-	} catch (FileError e) {
+	} catch (Error e) {
 		print("%s\n", e.message);
 		return 1;
 	}
