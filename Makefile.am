@@ -26,6 +26,7 @@ nobase_oortlua_DATA = \
 	lib.lua \
 	strict.lua \
 	runtime.lua \
+	vector.lua \
 	examples/target.lua \
 	examples/reference.lua \
 	scenarios/challenge01.json \
@@ -40,6 +41,11 @@ nobase_oortlua_DATA = \
 	solutions/challenge01.lua \
 	solutions/challenge02.lua \
 	solutions/challenge03.lua \
+	models/assault_frigate.json \
+	models/fighter.json \
+	models/ion_cannon_frigate.json \
+	models/missile.json \
+	models/torpedo.json \
 	$(NULL)
 
 EXTRA_DIST = \
