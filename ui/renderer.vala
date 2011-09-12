@@ -90,6 +90,8 @@ namespace Oort {
 			glEnable(GL_LINE_SMOOTH);
 			glEnable(GL_POINT_SMOOTH);
 			glLineWidth(1.2f);
+
+			resources.models.foreach( (k,v) => v.build() );
 		}
 
 		public void render() {
@@ -200,6 +202,7 @@ namespace Oort {
 			} else {
 				var model = resources.models.lookup(s.class.name);
 				GLUtil.color32(s.team.color | model.alpha);
+				model.render();
 				render_model(model);
 			}
 

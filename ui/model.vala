@@ -1,3 +1,5 @@
+using GL;
+using GLEW;
 using Oort;
 using Vector;
 
@@ -7,6 +9,7 @@ public errordomain Oort.ModelParseError {
 }
 
 public class Oort.Model {
+	public GLuint id;
 	public Vec2[] vertices;
 	public uint8 alpha;
 
@@ -53,5 +56,20 @@ public class Oort.Model {
 		}
 
 		vertices = (owned) tmp_vertices;
+	}
+
+	public void build() {
+		glGenBuffers(1, &id);
+		glBindBuffer(GL_ARRAY_BUFFER, id);
+		glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) (vertices.length*sizeof(Vec2)), (void*) (&vertices[0]), GL_STATIC_DRAW);
+		glCheck();
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	public void render() {
+		glBindBuffer(GL_ARRAY_BUFFER, id);
+		glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) vertices.length);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glCheck();
 	}
 }

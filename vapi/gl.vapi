@@ -43,8 +43,12 @@ namespace GL
 	public struct GLushort : ushort { }
 	[CCode (cname="GLuint")]
 	public struct GLuint : uint { }
+	[CCode (cname="GLintptr")]
+	public struct GLintptr : size_t { }
 	[CCode (cname="GLsizei")]
 	public struct GLsizei : int { }
+	[CCode (cname="GLsizeiptr")]
+	public struct GLsizeiptr : size_t { }
 	[CCode (cname="GLfloat")]
 	[FloatingType (rank = 1)]
 	public struct GLfloat : float { }
@@ -1398,5 +1402,102 @@ namespace GL
 	public static void glMultiTexCoord4ivARB (GLenum target, [CCode (array_length = false)] GLint[] v);
 	public static void glMultiTexCoord4sARB (GLenum target, GLshort s, GLshort t, GLshort r, GLshort q);
 	public static void glMultiTexCoord4svARB (GLenum target, [CCode (array_length = false)] GLshort[] v);
+
+/** GL_VERSION_1_4 **/
+	public static void glBlendFuncSeparate (GL.GLenum sfactorRGB, GL.GLenum dfactorRGB, GL.GLenum sfactorAlpha, GL.GLenum dfactorAlpha);
+	public static void glMultiDrawArrays (GL.GLenum mode, GL.GLint* first, GL.GLsizei* count, GL.GLsizei primcount);
+	public static void glMultiDrawElements (GL.GLenum mode, GL.GLsizei* count, GL.GLenum type, GL.GLvoid** indices, GL.GLsizei primcount);
+	public static void glPointParameterf (GL.GLenum pname, GL.GLfloat @param);
+	public static void glPointParameterfv (GL.GLenum pname, GL.GLfloat* params);
+	public static void glPointParameteri (GL.GLenum pname, GL.GLint @param);
+	public static void glPointParameteriv (GL.GLenum pname, GL.GLint* params);
+
+/** GL_VERSION_1_4_DEPRECATED **/
+	public static void glFogCoordf (GL.GLfloat coord);
+	public static void glFogCoordfv (GL.GLfloat* coord);
+	public static void glFogCoordd (GL.GLdouble coord);
+	public static void glFogCoorddv (GL.GLdouble* coord);
+	public static void glFogCoordPointer (GL.GLenum type, GL.GLsizei stride, GL.GLvoid* pointer);
+	public static void glSecondaryColor3b (GL.GLbyte red, GL.GLbyte green, GL.GLbyte blue);
+	public static void glSecondaryColor3bv (GL.GLbyte* v);
+	public static void glSecondaryColor3d (GL.GLdouble red, GL.GLdouble green, GL.GLdouble blue);
+	public static void glSecondaryColor3dv (GL.GLdouble* v);
+	public static void glSecondaryColor3f (GL.GLfloat red, GL.GLfloat green, GL.GLfloat blue);
+	public static void glSecondaryColor3fv (GL.GLfloat* v);
+	public static void glSecondaryColor3i (GL.GLint red, GL.GLint green, GL.GLint blue);
+	public static void glSecondaryColor3iv (GL.GLint* v);
+	public static void glSecondaryColor3s (GL.GLshort red, GL.GLshort green, GL.GLshort blue);
+	public static void glSecondaryColor3sv (GL.GLshort* v);
+	public static void glSecondaryColor3ub (GL.GLubyte red, GL.GLubyte green, GL.GLubyte blue);
+	public static void glSecondaryColor3ubv (GL.GLubyte* v);
+	public static void glSecondaryColor3ui (GL.GLuint red, GL.GLuint green, GL.GLuint blue);
+	public static void glSecondaryColor3uiv (GL.GLuint* v);
+	public static void glSecondaryColor3us (GL.GLushort red, GL.GLushort green, GL.GLushort blue);
+	public static void glSecondaryColor3usv (GL.GLushort* v);
+	public static void glSecondaryColorPointer (GL.GLint size, GL.GLenum type, GL.GLsizei stride, GL.GLvoid* pointer);
+	public static void glWindowPos2d (GL.GLdouble x, GL.GLdouble y);
+	public static void glWindowPos2dv (GL.GLdouble* v);
+	public static void glWindowPos2f (GL.GLfloat x, GL.GLfloat y);
+	public static void glWindowPos2fv (GL.GLfloat* v);
+	public static void glWindowPos2i (GL.GLint x, GL.GLint y);
+	public static void glWindowPos2iv (GL.GLint* v);
+	public static void glWindowPos2s (GL.GLshort x, GL.GLshort y);
+	public static void glWindowPos2sv (GL.GLshort* v);
+	public static void glWindowPos3d (GL.GLdouble x, GL.GLdouble y, GL.GLdouble z);
+	public static void glWindowPos3dv (GL.GLdouble* v);
+	public static void glWindowPos3f (GL.GLfloat x, GL.GLfloat y, GL.GLfloat z);
+	public static void glWindowPos3fv (GL.GLfloat* v);
+	public static void glWindowPos3i (GL.GLint x, GL.GLint y, GL.GLint z);
+	public static void glWindowPos3iv (GL.GLint* v);
+	public static void glWindowPos3s (GL.GLshort x, GL.GLshort y, GL.GLshort z);
+	public static void glWindowPos3sv (GL.GLshort* v);
+
+/** GL_VERSION_1_5 **/
+	public const GL.GLenum GL_BUFFER_SIZE;
+	public const GL.GLenum GL_BUFFER_USAGE;
+	public const GL.GLenum GL_QUERY_COUNTER_BITS;
+	public const GL.GLenum GL_CURRENT_QUERY;
+	public const GL.GLenum GL_QUERY_RESULT;
+	public const GL.GLenum GL_QUERY_RESULT_AVAILABLE;
+	public const GL.GLenum GL_ARRAY_BUFFER;
+	public const GL.GLenum GL_ELEMENT_ARRAY_BUFFER;
+	public const GL.GLenum GL_ARRAY_BUFFER_BINDING;
+	public const GL.GLenum GL_ELEMENT_ARRAY_BUFFER_BINDING;
+	public const GL.GLenum GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING;
+	public const GL.GLenum GL_READ_ONLY;
+	public const GL.GLenum GL_WRITE_ONLY;
+	public const GL.GLenum GL_READ_WRITE;
+	public const GL.GLenum GL_BUFFER_ACCESS;
+	public const GL.GLenum GL_BUFFER_MAPPED;
+	public const GL.GLenum GL_BUFFER_MAP_POINTER;
+	public const GL.GLenum GL_STREAM_DRAW;
+	public const GL.GLenum GL_STREAM_READ;
+	public const GL.GLenum GL_STREAM_COPY;
+	public const GL.GLenum GL_STATIC_DRAW;
+	public const GL.GLenum GL_STATIC_READ;
+	public const GL.GLenum GL_STATIC_COPY;
+	public const GL.GLenum GL_DYNAMIC_DRAW;
+	public const GL.GLenum GL_DYNAMIC_READ;
+	public const GL.GLenum GL_DYNAMIC_COPY;
+	public const GL.GLenum GL_SAMPLES_PASSED;
+	public static void glGenQueries (GL.GLsizei n, GL.GLuint* ids);
+	public static void glDeleteQueries (GL.GLsizei n, GL.GLuint* ids);
+	public static GL.GLboolean glIsQuery (GL.GLuint id);
+	public static void glBeginQuery (GL.GLenum target, GL.GLuint id);
+	public static void glEndQuery (GL.GLenum target);
+	public static void glGetQueryiv (GL.GLenum target, GL.GLenum pname, GL.GLint* params);
+	public static void glGetQueryObjectiv (GL.GLuint id, GL.GLenum pname, GL.GLint* params);
+	public static void glGetQueryObjectuiv (GL.GLuint id, GL.GLenum pname, GL.GLuint* params);
+	public static void glBindBuffer (GL.GLenum target, GL.GLuint buffer);
+	public static void glDeleteBuffers (GL.GLsizei n, GL.GLuint* buffers);
+	public static void glGenBuffers (GL.GLsizei n, GL.GLuint* buffers);
+	public static GL.GLboolean glIsBuffer (GL.GLuint buffer);
+	public static void glBufferData (GL.GLenum target, GLsizeiptr size, GL.GLvoid* data, GL.GLenum usage);
+	public static void glBufferSubData (GL.GLenum target, GLintptr offset, GLsizeiptr size, GL.GLvoid* data);
+	public static void glGetBufferSubData (GL.GLenum target, GLintptr offset, GLsizeiptr size, GL.GLvoid* data);
+	public static GL.GLvoid*  glMapBuffer (GL.GLenum target, GL.GLenum access);
+	public static GL.GLboolean glUnmapBuffer (GL.GLenum target);
+	public static void glGetBufferParameteriv (GL.GLenum target, GL.GLenum pname, GL.GLint* params);
+	public static void glGetBufferPointerv (GL.GLenum target, GL.GLenum pname, GL.GLvoid** params);
 }
 
