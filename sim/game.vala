@@ -46,7 +46,7 @@ public class Oort.Game {
 
 	public const double TICK_LENGTH = 1.0/32;
 
-	static uint8[] load_resource(string name) throws FileError {
+	public static uint8[] load_resource(string name) throws FileError {
 		uint8[] data;
 		FileUtils.get_data(data_path(name), out data);
 		return (owned)data;

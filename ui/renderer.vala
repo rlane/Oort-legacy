@@ -49,6 +49,7 @@ namespace Oort {
 		public bool follow_picked = false;
 
 		Rand prng;
+		RendererResources resources;
 		Texture ion_beam_tex;
 		Texture laser_beam_tex;
 
@@ -68,8 +69,11 @@ namespace Oort {
 			*/
 		}
 
-		public Renderer(Game game, double initial_view_scale) {
+		public Renderer(Game game,
+		                RendererResources resources,
+		                double initial_view_scale) {
 			this.game = game;
+			this.resources = resources;
 			view_scale = initial_view_scale;
 			prng = new Rand();
 			view_pos = vec2(0,0);
@@ -173,63 +177,12 @@ namespace Oort {
 			glPopMatrix();
 		}
 
-		void render_fighter(Ship s) {
-			GLUtil.color32(s.team.color | 0xAA);
+		void render_model(Model model) {
 			glBegin(GL_LINE_LOOP);
-			glVertex3d(-0.70, -0.71, 0);
-			glVertex3d(-0.70, 0.71, 0);
-			glVertex3d(1, 0, 0);
+			foreach (var v in model.vertices) {
+				glVertex3d(v.x, v.y, 0);
+			}
 			glEnd();
-		}
-
-		void render_ion_cannon_frigate(Ship s) {
-			GLUtil.color32(s.team.color | 0xBB);
-			glBegin(GL_LINE_LOOP);
-			glVertex3d(-0.80, -0.3, 0);
-			glVertex3d(-0.80, 0.3, 0);
-			glVertex3d(0.95, 0.2, 0);
-			glVertex3d(0.95, 0.08, 0);
-			glVertex3d(0.7, 0.08, 0);
-			glVertex3d(0.7, -0.08, 0);
-			glVertex3d(0.95, -0.08, 0);
-			glVertex3d(0.95, -0.2, 0);
-			glEnd();
-		}
-
-		void render_assault_frigate(Ship s) {
-			GLUtil.color32(s.team.color | 0xBB);
-			glBegin(GL_LINE_LOOP);
-			glVertex3d(-0.80, -0.4, 0);
-			glVertex3d(-0.80, 0.4, 0);
-			glVertex3d(0.0, 0.2, 0);
-			glVertex3d(0.0, 0.4, 0);
-			glVertex3d(0.95, 0.2, 0);
-			glVertex3d(0.95, -0.2, 0);
-			glVertex3d(0.0, -0.4, 0);
-			glVertex3d(0.0, -0.2, 0);
-			glEnd();
-		}
-
-		void render_torpedo(Ship s) {
-			GLUtil.color32((uint32)0x88888800 | 0x55);
-			GLUtil.render_circle(5);
-		}
-
-		void render_missile(Ship s) {
-			GLUtil.color32((uint32)0x88888800 | 0x55);
-			glBegin(GL_LINES);
-			glVertex3d(-0.70, -0.71, 0);
-			glVertex3d(-0.2, 0, 0);
-			glVertex3d(-0.70, 0.71, 0);
-			glVertex3d(-0.2, 0, 0);
-			glVertex3d(-0.2, 0, 0);
-			glVertex3d(1, 0, 0);
-			glEnd();
-		}
-
-		void render_unknown(Ship s) {
-			GLUtil.color32((uint32)0x88888800 | 0x55);
-			GLUtil.render_circle(8);
 		}
 
 		void render_ship(Ship s) {
@@ -242,21 +195,12 @@ namespace Oort {
 			glScaled(scale, scale, scale);
 			glRotated(Util.rad2deg(angle), 0, 0, 1);
 
-			// XXX move into class
 			if (s.class.name == "carrier") {
 				render_carrier(s);
-			} else if (s.class.name == "fighter") {
-				render_fighter(s);
-			} else if (s.class.name == "ion_cannon_frigate") {
-				render_ion_cannon_frigate(s);
-			} else if (s.class.name == "assault_frigate") {
-				render_assault_frigate(s);
-			} else if (s.class.name == "missile") {
-				render_missile(s);
-			} else if (s.class.name == "torpedo") {
-				render_torpedo(s);
 			} else {
-				render_unknown(s);
+				var model = resources.models.lookup(s.class.name);
+				GLUtil.color32(s.team.color | model.alpha);
+				render_model(model);
 			}
 
 			glPopMatrix();
@@ -623,5 +567,31 @@ namespace Oort {
 		if (a < -PI) a += 2*PI;
 		if (a > PI) a -= 2*PI;
 		return a;
+	}
+}
+
+public class Oort.RendererResources {
+	public HashTable<string,Model> models;
+
+	public RendererResources() throws ModelParseError, FileError {
+		models = new HashTable<string,Model>(str_hash, str_equal);
+
+		string[] model_names = {
+			"fighter",
+			"ion_cannon_frigate",
+			"assault_frigate",
+			"missile",
+			"torpedo"
+		};
+
+		foreach (var name in model_names) {
+			var data = Game.load_resource(@"models/$name.json");
+			try {
+				models.insert(name, new Model(data));
+			} catch (ModelParseError e) {
+				e.message += @" when parsing $name";
+				throw e;
+			}
+		}
 	}
 }

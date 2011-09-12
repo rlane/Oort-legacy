@@ -41,6 +41,7 @@ namespace Oort {
 		private unowned Thread<void*> ticker;
 		private bool shutting_down = false;
 		private Game game;
+		private RendererResources resources;
 
 		private long frame_usecs = 0;
 		private long sample_usecs = 0;
@@ -55,12 +56,13 @@ namespace Oort {
 
 		public signal void ticked();
 
-		public MainWindow() throws ThreadError {
+		public MainWindow() throws ThreadError, FileError, ModelParseError {
 			this.title = "Oort";
 			this.destroy.connect(shutdown);
 			set_reallocate_redraws(true);
 
 			this.tick_lock = new Mutex();
+			this.resources = new RendererResources();
 
 			var vbox = new VBox(false, 0);
 			vbox.pack_start(make_menubar(), false, false, 0);
@@ -459,7 +461,7 @@ namespace Oort {
 		}
 
 		public void start_renderer(Game game, double initial_view_scale) {
-			renderer = new Renderer(game, initial_view_scale);
+			renderer = new Renderer(game, resources, initial_view_scale);
 			GLContext glcontext = WidgetGL.get_gl_context(drawing_area);
 			GLDrawable gldrawable = WidgetGL.get_gl_drawable(drawing_area);
 
@@ -617,6 +619,12 @@ int main(string[] args) {
 	try {
 		mainwin = new MainWindow();
 	} catch (ThreadError e) {
+		print("%s\n", e.message);
+		return 1;
+	} catch (ModelParseError e) {
+		print("%s\n", e.message);
+		return 1;
+	} catch (FileError e) {
 		print("%s\n", e.message);
 		return 1;
 	}
