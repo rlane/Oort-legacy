@@ -130,114 +130,48 @@ namespace Oort {
 			}
 		}
 
-		void triangle_fractal(int depth) {
-			double alt = 0.8660254;
-
-			if (depth > 1) {
-				glBegin(GL_LINES);
-				glVertex3d(alt, 0, 0);
-				glVertex3d(3*alt/4, -0.125, 0);
-				glVertex3d(alt/4, -0.375, 0);
-				glVertex3d(0, -0.5, 0);
-				glVertex3d(alt, 0, 0);
-				glVertex3d(3*alt/4, 0.125, 0);
-				glVertex3d(alt/4, 0.375, 0);
-				glVertex3d(0, 0.5, 0);
-				glEnd();
-
-				glPushMatrix();
-				glScaled(0.5, 0.5, 0.5);
-				glRotated(60, 0, 0, 1);
-				glTranslated(alt, -0.5, 0);
-				triangle_fractal(depth-1);
-				glPopMatrix();
-
-				glPushMatrix();
-				glScaled(0.5, 0.5, 0.5);
-				glRotated(-60, 0, 0, 1);
-				glTranslated(alt, 0.5, 0);
-				triangle_fractal(depth-1);
-				glPopMatrix();
-			} else {
-				glBegin(GL_LINE_STRIP);
-				glVertex3d(0, -0.5, 0);
-				glVertex3d(alt, 0, 0);
-				glVertex3d(0, 0.5, 0);
-				glEnd();
-			}
-		}
-
-		void render_carrier(Ship s) {
-			int depth = int.min(int.max((int)Math.log2(view_scale*100), 2), 8);
-			GLUtil.color32(s.team.color | 0xEE);
-			glPushMatrix();
-			glScaled(1.0, 0.7, 0.3);
-			glPushMatrix();
-			glScaled(0.5, 0.3, 0.5);
-			GLUtil.render_circle(5);
-			glPopMatrix();
-			triangle_fractal(depth);
-			glPushMatrix();
-			glRotated(180, 0, 0, 1);
-			triangle_fractal(depth);
-			glPopMatrix();
-			glPopMatrix();
-		}
-
-		void render_model(Model model) {
-				glBegin(GL_LINE_LOOP);
-				foreach (var v in model.vertices) {
-					glVertex3d(v.x, v.y, 0);
-				}
-				glEnd();
-		}
-
 		void render_ship(Ship s) {
 			var sp = S(s.physics.p);
 			double angle = s.physics.h;
 
-			if (s.class.name == "carrier") {
-				//render_carrier(s);
-			} else {
-				var model = resources.models.lookup(s.class.name);
-				GLUtil.color32(s.team.color | model.alpha);
-				glCheck();
-				program.use();
-				var vertex = program.attribute("vertex");
-				var position = program.uniform("position");
-				var heading = program.uniform("heading");
-				var radius = program.uniform("radius");
-				var view_width = program.uniform("view_width");
-				var view_pos = program.uniform("view_pos");
-				var view_aspect = program.uniform("view_aspect");
-				glCheck();
-				glBindBuffer(GL_ARRAY_BUFFER, model.id);
-				glCheck();
-				glVertexAttribPointer(
-					vertex,
-					2,
-					GL_DOUBLE,
-					false,
-					0,
-					(void*) 0);
-				glCheck();
-				glEnableVertexAttribArray(vertex);
-				glCheck();
-				glUniform2f(position, (float)s.physics.p.x, (float)s.physics.p.y);
-				glUniform1f(heading, (float)s.physics.h);
-				glUniform1f(radius, (float)s.class.radius);
-				glUniform1f(view_width, (float)(10000.0*view_scale));
-				//glUniform2f(view_pos, (float)this.view_pos.x, (float)this.view_pos.y);
-				glUniform1f(view_aspect, (float)0.5625);
-				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
-				glCheck();
-				glDisableVertexAttribArray(vertex);
-				glCheck();
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-				glCheck();
-				glUseProgram(0);
-				glCheck();
-			}
+			var model = resources.models.lookup(s.class.name);
+			GLUtil.color32(s.team.color | model.alpha);
+			glCheck();
+			program.use();
+			var vertex = program.attribute("vertex");
+			var position = program.uniform("position");
+			var heading = program.uniform("heading");
+			var radius = program.uniform("radius");
+			var view_width = program.uniform("view_width");
+			var view_pos = program.uniform("view_pos");
+			var view_aspect = program.uniform("view_aspect");
+			glCheck();
+			glBindBuffer(GL_ARRAY_BUFFER, model.id);
+			glCheck();
+			glVertexAttribPointer(
+				vertex,
+				2,
+				GL_DOUBLE,
+				false,
+				0,
+				(void*) 0);
+			glCheck();
+			glEnableVertexAttribArray(vertex);
+			glCheck();
+			glUniform2f(position, (float)s.physics.p.x, (float)s.physics.p.y);
+			glUniform1f(heading, (float)s.physics.h);
+			glUniform1f(radius, (float)s.class.radius);
+			glUniform1f(view_width, (float)(2000.0/view_scale));
+			//glUniform2f(view_pos, (float)this.view_pos.x, (float)this.view_pos.y);
+			glUniform1f(view_aspect, (float)0.5625);
+			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
+			glCheck();
+			glDisableVertexAttribArray(vertex);
+			glCheck();
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glCheck();
+			glUseProgram(0);
+			glCheck();
 
 /*
 			int tail_alpha_max = (s.class.name.contains("missile") || s.class.name.contains("torpedo")) ? 16 : 64;
