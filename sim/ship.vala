@@ -26,7 +26,11 @@ public class Oort.Ship {
 
 	public struct Debug {
 		public int num_lines;
-		public DebugLine lines[32];
+		public DebugLine[] lines;
+
+		public Debug() {
+			lines = new DebugLine[MAX_DEBUG_LINES];
+		}
 	}
 
 	public class Msg {
