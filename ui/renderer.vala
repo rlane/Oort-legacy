@@ -1,4 +1,5 @@
 using GL;
+using GLEW;
 using Vector;
 using Math;
 
@@ -52,6 +53,7 @@ namespace Oort {
 		RendererResources resources;
 		Texture ion_beam_tex;
 		Texture laser_beam_tex;
+		ShaderProgram program;
 
 		public static void static_init() {
 			if (GLEW.init()) {
@@ -92,6 +94,9 @@ namespace Oort {
 			glLineWidth(1.2f);
 
 			resources.models.foreach( (k,v) => v.build() );
+			program = new ShaderProgram(
+				new VertexShader(resources.vertex_shader_source.data),
+				new FragmentShader(resources.fragment_shader_source.data));
 		}
 
 		public void render() {
@@ -100,7 +105,7 @@ namespace Oort {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
 
-			render_boundary();
+			//render_boundary();
 
 			if (follow_picked && picked != null) {
 				view_pos = picked.physics.p;
@@ -111,17 +116,17 @@ namespace Oort {
 			}
 
 			foreach (unowned Bullet b in game.all_bullets) {
-				render_bullet(b);
+				//render_bullet(b);
 			}
 
 			foreach (unowned Beam b in game.all_beams) {
-				render_beam(b);
+				//render_beam(b);
 			}
 
-			render_particles();
+			//render_particles();
 			
 			if (picked != null) {
-				render_picked_info(picked);
+				//render_picked_info(picked);
 			}
 		}
 
@@ -180,34 +185,61 @@ namespace Oort {
 		}
 
 		void render_model(Model model) {
-			glBegin(GL_LINE_LOOP);
-			foreach (var v in model.vertices) {
-				glVertex3d(v.x, v.y, 0);
-			}
-			glEnd();
+				glBegin(GL_LINE_LOOP);
+				foreach (var v in model.vertices) {
+					glVertex3d(v.x, v.y, 0);
+				}
+				glEnd();
 		}
 
 		void render_ship(Ship s) {
 			var sp = S(s.physics.p);
 			double angle = s.physics.h;
-			double scale = view_scale * s.class.radius;
-
-			glPushMatrix();
-			glTranslated(sp.x, sp.y, 0);
-			glScaled(scale, scale, scale);
-			glRotated(Util.rad2deg(angle), 0, 0, 1);
 
 			if (s.class.name == "carrier") {
-				render_carrier(s);
+				//render_carrier(s);
 			} else {
 				var model = resources.models.lookup(s.class.name);
 				GLUtil.color32(s.team.color | model.alpha);
-				model.render();
-				render_model(model);
+				glCheck();
+				program.use();
+				var vertex = program.attribute("vertex");
+				var position = program.uniform("position");
+				var heading = program.uniform("heading");
+				var radius = program.uniform("radius");
+				var view_width = program.uniform("view_width");
+				var view_pos = program.uniform("view_pos");
+				var view_aspect = program.uniform("view_aspect");
+				glCheck();
+				glBindBuffer(GL_ARRAY_BUFFER, model.id);
+				glCheck();
+				glVertexAttribPointer(
+					vertex,
+					2,
+					GL_DOUBLE,
+					false,
+					0,
+					(void*) 0);
+				glCheck();
+				glEnableVertexAttribArray(vertex);
+				glCheck();
+				glUniform2f(position, (float)s.physics.p.x, (float)s.physics.p.y);
+				glUniform1f(heading, (float)s.physics.h);
+				glUniform1f(radius, (float)s.class.radius);
+				glUniform1f(view_width, (float)(10000.0*view_scale));
+				//glUniform2f(view_pos, (float)this.view_pos.x, (float)this.view_pos.y);
+				glUniform1f(view_aspect, (float)0.5625);
+				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
+				glCheck();
+				glDisableVertexAttribArray(vertex);
+				glCheck();
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glCheck();
+				glUseProgram(0);
+				glCheck();
 			}
 
-			glPopMatrix();
-
+/*
 			int tail_alpha_max = (s.class.name.contains("missile") || s.class.name.contains("torpedo")) ? 16 : 64;
 			glBegin(GL_LINE_STRIP);
 			GLUtil.color32(s.team.color | tail_alpha_max);
@@ -256,6 +288,7 @@ namespace Oort {
 				}
 				glEnd();
 			}
+			*/
 
 			if (s == picked || render_all_debug_lines) {
 				GLUtil.color32((uint32)0x49D5CEAA);
@@ -576,6 +609,74 @@ namespace Oort {
 public class Oort.RendererResources {
 	public HashTable<string,Model> models = new HashTable<string,Model>(str_hash, str_equal);
 
+	public string vertex_shader_source = """
+#version 110
+
+uniform float heading;
+uniform float radius;
+uniform vec2 position;
+uniform vec2 view_pos;
+uniform float view_width;
+uniform float view_aspect;
+attribute vec2 vertex;
+
+mat4 translate(vec3 d)
+{
+	return mat4(1, 0, 0, d.x,
+	            0, 1, 0, d.y,
+	            0, 0, 1, d.z,
+	            0, 0, 0, 1);
+}
+
+mat4 scale(float c)
+{
+	return mat4(c, 0, 0, 0,
+	            0, c, 0, 0,
+	            0, 0, c, 0,
+	            0, 0, 0, 1);
+}
+
+mat4 rotate2d(float a)
+{
+	return mat4(cos(a), -sin(a), 0, 0,
+	            sin(a), cos(a), 0, 0,
+	            0, 0, 1.0, 0,
+	            0, 0, 0, 1.0);
+}
+
+mat4 ortho(float n, float f, float r, float l, float t, float b)
+{
+	return mat4(2.0/(r-l), 0, 0, -(r+l)/(r-l),
+	            0, 2.0/(t-b), 0, -(t+b)/(t-b),
+	            0, 0, -2.0/(f-n), -(f+n)/(f-n),
+	            0, 0, 0, 1);
+	
+}
+
+mat4 orthoX(vec2 pos, float aspect, float w)
+{
+	return ortho(-1.0, 1.0, w/2.0, -w/2.0, w*aspect/2.0, -w*aspect/2.0)*translate(vec3(pos,0));
+}
+
+void main()
+{
+	vec2 scaled_vertex = vertex*radius;
+	mat4 transform = rotate2d(heading) *
+	                 translate(vec3(position,0)) *
+	                 orthoX(view_pos, view_aspect, view_width);
+	gl_Position = vec4(scaled_vertex, 0.0, 1.0) * transform;
+}
+	""";
+
+	public string fragment_shader_source = """
+#version 110
+
+void main()
+{
+    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+}
+	""";
+
 	public RendererResources() throws ModelParseError, FileError, Error {
 		var directory = File.new_for_path(data_path("models"));
 		var enumerator = directory.enumerate_children (FILE_ATTRIBUTE_STANDARD_NAME, 0);
@@ -596,5 +697,8 @@ public class Oort.RendererResources {
 				throw e;
 			}
 		}
+	}
+
+	public void build() {
 	}
 }

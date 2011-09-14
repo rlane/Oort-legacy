@@ -65,11 +65,4 @@ public class Oort.Model {
 		glCheck();
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
-
-	public void render() {
-		glBindBuffer(GL_ARRAY_BUFFER, id);
-		glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) vertices.length);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glCheck();
-	}
 }

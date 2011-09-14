@@ -55,6 +55,7 @@ ui/oort.c
 sim/paths.c
 ui/log.c
 ui/model.c
+ui/shader.c
 
 sim/liboort-1.0.a
 luajit_build/luajit-stamp

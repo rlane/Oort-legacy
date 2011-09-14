@@ -25,8 +25,6 @@ namespace GL
 {
 	[CCode (cname="GLenum")]
 	public struct GLenum : uint { }
-	[CCode (cname="GLboolean")]
-	public struct GLboolean : bool { }
 	[CCode (cname="GLbitfield")]
 	public struct GLbitfield : uint { }
 	[CCode (cname="GLvoid")]
@@ -916,7 +914,7 @@ namespace GL
 	public static void glClearColor (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 	public static void glClear (GLbitfield mask);
 	public static void glIndexMask (GLuint mask);
-	public static void glColorMask (GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
+	public static void glColorMask (bool red, bool green, bool blue, bool alpha);
 	public static void glAlphaFunc (GLenum func, GLclampf @ref);
 	public static void glBlendFunc (GLenum sfactor, GLenum dfactor);
 	public static void glLogicOp (GLenum opcode);
@@ -929,8 +927,8 @@ namespace GL
 	public static void glPolygonOffset (GLfloat factor, GLfloat units);
 	public static void glPolygonStipple ([CCode (array_length = false)] GLubyte[] mask);
 	public static void glGetPolygonStipple (out GLubyte mask);
-	public static void glEdgeFlag (GLboolean flag);
-	public static void glEdgeFlagv ([CCode (array_length = false)] GLboolean[] flag);
+	public static void glEdgeFlag (bool flag);
+	public static void glEdgeFlagv ([CCode (array_length = false)] bool[] flag);
 	public static void glScissor (GLint x, GLint y, GLsizei width, GLsizei height);
 	public static void glClipPlane (GLenum plane, [CCode (array_length = false)] GLdouble[] equation);
 	public static void glGetClipPlane (GLenum plane, [CCode (array_length = false)] GLdouble[] equation);
@@ -938,10 +936,10 @@ namespace GL
 	public static void glReadBuffer (GLenum mode);
 	public static void glEnable (GLenum cap);
 	public static void glDisable (GLenum cap);
-	public static GLboolean glIsEnabled (GLenum cap);
+	public static bool glIsEnabled (GLenum cap);
 	public static void glEnableClientState (GLenum cap);
 	public static void glDisableClientState (GLenum cap);
-	public static void glGetBooleanv (GLenum pname, [CCode (array_length = false)] GLboolean[] params);
+	public static void glGetBooleanv (GLenum pname, [CCode (array_length = false)] bool[] params);
 	public static void glGetDoublev (GLenum pname, [CCode (array_length = false)] GLdouble[] params);
 	public static void glGetFloatv (GLenum pname, [CCode (array_length = false)] GLfloat[] params);
 	public static void glGetIntegerv (GLenum pname, [CCode (array_length = false)] GLint[] params);
@@ -959,7 +957,7 @@ namespace GL
 	// Depth Buffer
 	public static void glClearDepth (GLclampd depth);
 	public static void glDepthFunc (GLenum func);
-	public static void glDepthMask (GLboolean flag);
+	public static void glDepthMask (bool flag);
 	public static void glDepthRange (GLclampd near_val, GLclampd far_val);
 
 	// Accumulation Buffer
@@ -986,7 +984,7 @@ namespace GL
 	public static void glTranslatef (GLfloat x, GLfloat y, GLfloat z);
 
 	// Display Lists
-	public static GLboolean glIsList (GLuint list);
+	public static bool glIsList (GLuint list);
 	public static void glDeleteLists (GLuint list, GLsizei range);
 	public static GLuint glGenLists (GLsizei range);
 	public static void glNewList (GLuint list, GLenum mode);
@@ -1212,7 +1210,7 @@ namespace GL
 	public static void glGetTexEnvfv (GLenum target, GLenum pname, [CCode (array_length = false)] GLfloat[] params);
 	public static void glGetTexEnviv (GLenum target, GLenum pname, [CCode (array_length = false)] GLint[] params);
 	public static void glTexParameterf (GLenum target, GLenum pname, GLfloat param);
-	public static void glTexParameteri (GLenum target, GLenum pname, GLint param);
+	public static void glTexParameteri (GLenum target, GLenum pname, GLenum param);
 	public static void glTexParameterfv (GLenum target, GLenum pname, [CCode (array_length = false)] GLfloat[] params);
 	public static void glTexParameteriv (GLenum target, GLenum pname, [CCode (array_length = false)] GLint[] params);
 	public static void glGetTexParameterfv (GLenum target, GLenum pname, [CCode (array_length = false)] GLfloat[] params);
@@ -1220,7 +1218,7 @@ namespace GL
 	public static void glGetTexLevelParameterfv (GLenum target, GLint level, [CCode (array_length = false)] GLenum pname, GLfloat[] params);
 	public static void glGetTexLevelParameteriv (GLenum target, GLint level, GLenum pname,[CCode (array_length = false)]  GLint[] params);
 	public static void glTexImage1D (GLenum target, GLint level, GLint internalFormat, GLsizei width, GLint border, GLenum format, GLenum type, GLvoid* pixels);
-	public static void glTexImage2D (GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, GLvoid* pixels);
+	public static void glTexImage2D (GLenum target, GLint level, GLenum internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, GLvoid* pixels);
 	public static void glGetTexImage (GLenum target, GLint level, GLenum format, GLenum type, GLvoid* pixels);
 
 	// 1.1 functions
@@ -1228,8 +1226,8 @@ namespace GL
 	public static void glDeleteTextures (GLsizei n, [CCode (array_length = false)] GLuint[] textures);
 	public static void glBindTexture (GLenum target, GLuint texture);
 	public static void glPrioritizeTextures (GLsizei n, [CCode (array_length = false)] GLuint[] textures, [CCode (array_length = false)] GLclampf[] priorities);
-	public static GLboolean glAreTexturesResident (GLsizei n, [CCode (array_length = false)] GLuint[] textures, [CCode (array_length = false)] GLboolean[] residences);
-	public static GLboolean glIsTexture (GLuint texture);
+	public static bool glAreTexturesResident (GLsizei n, [CCode (array_length = false)] GLuint[] textures, [CCode (array_length = false)] bool[] residences);
+	public static bool glIsTexture (GLuint texture);
 	public static void glTexSubImage1D (GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, GLvoid* pixels);
 	public static void glTexSubImage2D (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* pixels);
 	public static void glCopyTexImage1D (GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border);
@@ -1295,14 +1293,14 @@ namespace GL
 	public static void glGetColorTableParameteriv (GLenum target, GLenum pname, out GLint params);
 	public static void glBlendEquation (GLenum mode);
 	public static void glBlendColor (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-	public static void glHistogram (GLenum target, GLsizei width, GLenum internalformat, GLboolean sink);
+	public static void glHistogram (GLenum target, GLsizei width, GLenum internalformat, bool sink);
 	public static void glResetHistogram (GLenum target);
-	public static void glGetHistogram (GLenum target, GLboolean reset, GLenum format, GLenum type, out GLvoid values);
+	public static void glGetHistogram (GLenum target, bool reset, GLenum format, GLenum type, out GLvoid values);
 	public static void glGetHistogramParameterfv (GLenum target, GLenum pname, out GLfloat params);
 	public static void glGetHistogramParameteriv (GLenum target, GLenum pname, out GLint params);
-	public static void glMinmax (GLenum target, GLenum internalformat, GLboolean sink);
+	public static void glMinmax (GLenum target, GLenum internalformat, bool sink);
 	public static void glResetMinmax (GLenum target);
-	public static void glGetMinmax (GLenum target, GLboolean reset, GLenum format, GLenum types, out GLvoid values);
+	public static void glGetMinmax (GLenum target, bool reset, GLenum format, GLenum types, out GLvoid values);
 	public static void glGetMinmaxParameterfv (GLenum target, GLenum pname, [CCode (array_length = false)] GLfloat[] params);
 	public static void glGetMinmaxParameteriv (GLenum target, GLenum pname, [CCode (array_length = false)] GLint[] params);
 	public static void glConvolutionFilter1D (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, GLvoid* image);
@@ -1365,7 +1363,7 @@ namespace GL
 	public static void glLoadTransposeMatrixf ([CCode (array_length = false)] GLfloat[] m);
 	public static void glMultTransposeMatrixd ([CCode (array_length = false)] GLdouble[] m);
 	public static void glMultTransposeMatrixf ([CCode (array_length = false)] GLfloat[] m);
-	public static void glSampleCoverage (GLclampf @value, GLboolean invert);
+	public static void glSampleCoverage (GLclampf @value, bool invert);
 	
 	// GL_ARB_multitexture (ARB extension 1 and OpenGL 1.2.1)
 	public static void glActiveTextureARB (GLenum texture);
@@ -1482,7 +1480,7 @@ namespace GL
 	public const GL.GLenum GL_SAMPLES_PASSED;
 	public static void glGenQueries (GL.GLsizei n, GL.GLuint* ids);
 	public static void glDeleteQueries (GL.GLsizei n, GL.GLuint* ids);
-	public static GL.GLboolean glIsQuery (GL.GLuint id);
+	public static bool glIsQuery (GL.GLuint id);
 	public static void glBeginQuery (GL.GLenum target, GL.GLuint id);
 	public static void glEndQuery (GL.GLenum target);
 	public static void glGetQueryiv (GL.GLenum target, GL.GLenum pname, GL.GLint* params);
@@ -1491,13 +1489,188 @@ namespace GL
 	public static void glBindBuffer (GL.GLenum target, GL.GLuint buffer);
 	public static void glDeleteBuffers (GL.GLsizei n, GL.GLuint* buffers);
 	public static void glGenBuffers (GL.GLsizei n, GL.GLuint* buffers);
-	public static GL.GLboolean glIsBuffer (GL.GLuint buffer);
+	public static bool glIsBuffer (GL.GLuint buffer);
 	public static void glBufferData (GL.GLenum target, GLsizeiptr size, GL.GLvoid* data, GL.GLenum usage);
 	public static void glBufferSubData (GL.GLenum target, GLintptr offset, GLsizeiptr size, GL.GLvoid* data);
 	public static void glGetBufferSubData (GL.GLenum target, GLintptr offset, GLsizeiptr size, GL.GLvoid* data);
 	public static GL.GLvoid*  glMapBuffer (GL.GLenum target, GL.GLenum access);
-	public static GL.GLboolean glUnmapBuffer (GL.GLenum target);
+	public static bool glUnmapBuffer (GL.GLenum target);
 	public static void glGetBufferParameteriv (GL.GLenum target, GL.GLenum pname, GL.GLint* params);
 	public static void glGetBufferPointerv (GL.GLenum target, GL.GLenum pname, GL.GLvoid** params);
+
+/** GL_VERSION_2_0 **/
+	public const GL.GLenum GL_BLEND_EQUATION_RGB;
+	public const GL.GLenum GL_VERTEX_ATTRIB_ARRAY_ENABLED;
+	public const GL.GLenum GL_VERTEX_ATTRIB_ARRAY_SIZE;
+	public const GL.GLenum GL_VERTEX_ATTRIB_ARRAY_STRIDE;
+	public const GL.GLenum GL_VERTEX_ATTRIB_ARRAY_TYPE;
+	public const GL.GLenum GL_CURRENT_VERTEX_ATTRIB;
+	public const GL.GLenum GL_VERTEX_PROGRAM_POINT_SIZE;
+	public const GL.GLenum GL_VERTEX_ATTRIB_ARRAY_POINTER;
+	public const GL.GLenum GL_STENCIL_BACK_FUNC;
+	public const GL.GLenum GL_STENCIL_BACK_FAIL;
+	public const GL.GLenum GL_STENCIL_BACK_PASS_DEPTH_FAIL;
+	public const GL.GLenum GL_STENCIL_BACK_PASS_DEPTH_PASS;
+	public const GL.GLenum GL_MAX_DRAW_BUFFERS;
+	public const GL.GLenum GL_DRAW_BUFFER0;
+	public const GL.GLenum GL_DRAW_BUFFER1;
+	public const GL.GLenum GL_DRAW_BUFFER2;
+	public const GL.GLenum GL_DRAW_BUFFER3;
+	public const GL.GLenum GL_DRAW_BUFFER4;
+	public const GL.GLenum GL_DRAW_BUFFER5;
+	public const GL.GLenum GL_DRAW_BUFFER6;
+	public const GL.GLenum GL_DRAW_BUFFER7;
+	public const GL.GLenum GL_DRAW_BUFFER8;
+	public const GL.GLenum GL_DRAW_BUFFER9;
+	public const GL.GLenum GL_DRAW_BUFFER10;
+	public const GL.GLenum GL_DRAW_BUFFER11;
+	public const GL.GLenum GL_DRAW_BUFFER12;
+	public const GL.GLenum GL_DRAW_BUFFER13;
+	public const GL.GLenum GL_DRAW_BUFFER14;
+	public const GL.GLenum GL_DRAW_BUFFER15;
+	public const GL.GLenum GL_BLEND_EQUATION_ALPHA;
+	public const GL.GLenum GL_MAX_VERTEX_ATTRIBS;
+	public const GL.GLenum GL_VERTEX_ATTRIB_ARRAY_NORMALIZED;
+	public const GL.GLenum GL_MAX_TEXTURE_IMAGE_UNITS;
+	public const GL.GLenum GL_FRAGMENT_SHADER;
+	public const GL.GLenum GL_VERTEX_SHADER;
+	public const GL.GLenum GL_MAX_FRAGMENT_UNIFORM_COMPONENTS;
+	public const GL.GLenum GL_MAX_VERTEX_UNIFORM_COMPONENTS;
+	public const GL.GLenum GL_MAX_VARYING_FLOATS;
+	public const GL.GLenum GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
+	public const GL.GLenum GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS;
+	public const GL.GLenum GL_SHADER_TYPE;
+	public const GL.GLenum GL_FLOAT_VEC2;
+	public const GL.GLenum GL_FLOAT_VEC3;
+	public const GL.GLenum GL_FLOAT_VEC4;
+	public const GL.GLenum GL_INT_VEC2;
+	public const GL.GLenum GL_INT_VEC3;
+	public const GL.GLenum GL_INT_VEC4;
+	public const GL.GLenum GL_BOOL;
+	public const GL.GLenum GL_BOOL_VEC2;
+	public const GL.GLenum GL_BOOL_VEC3;
+	public const GL.GLenum GL_BOOL_VEC4;
+	public const GL.GLenum GL_FLOAT_MAT2;
+	public const GL.GLenum GL_FLOAT_MAT3;
+	public const GL.GLenum GL_FLOAT_MAT4;
+	public const GL.GLenum GL_SAMPLER_1D;
+	public const GL.GLenum GL_SAMPLER_2D;
+	public const GL.GLenum GL_SAMPLER_3D;
+	public const GL.GLenum GL_SAMPLER_CUBE;
+	public const GL.GLenum GL_SAMPLER_1D_SHADOW;
+	public const GL.GLenum GL_SAMPLER_2D_SHADOW;
+	public const GL.GLenum GL_DELETE_STATUS;
+	public const GL.GLenum GL_COMPILE_STATUS;
+	public const GL.GLenum GL_LINK_STATUS;
+	public const GL.GLenum GL_VALIDATE_STATUS;
+	public const GL.GLenum GL_INFO_LOG_LENGTH;
+	public const GL.GLenum GL_ATTACHED_SHADERS;
+	public const GL.GLenum GL_ACTIVE_UNIFORMS;
+	public const GL.GLenum GL_ACTIVE_UNIFORM_MAX_LENGTH;
+	public const GL.GLenum GL_SHADER_SOURCE_LENGTH;
+	public const GL.GLenum GL_ACTIVE_ATTRIBUTES;
+	public const GL.GLenum GL_ACTIVE_ATTRIBUTE_MAX_LENGTH;
+	public const GL.GLenum GL_FRAGMENT_SHADER_DERIVATIVE_HINT;
+	public const GL.GLenum GL_SHADING_LANGUAGE_VERSION;
+	public const GL.GLenum GL_CURRENT_PROGRAM;
+	public const GL.GLenum GL_POINT_SPRITE_COORD_ORIGIN;
+	public const GL.GLenum GL_LOWER_LEFT;
+	public const GL.GLenum GL_UPPER_LEFT;
+	public const GL.GLenum GL_STENCIL_BACK_REF;
+	public const GL.GLenum GL_STENCIL_BACK_VALUE_MASK;
+	public const GL.GLenum GL_STENCIL_BACK_WRITEMASK;
+	public static void glBlendEquationSeparate (GL.GLenum modeRGB, GL.GLenum modeAlpha);
+	public static void glDrawBuffers (GL.GLsizei n, GL.GLenum* bufs);
+	public static void glStencilOpSeparate (GL.GLenum face, GL.GLenum sfail, GL.GLenum dpfail, GL.GLenum dppass);
+	public static void glStencilFuncSeparate (GL.GLenum face, GL.GLenum func, GL.GLint @ref, GL.GLuint mask);
+	public static void glStencilMaskSeparate (GL.GLenum face, GL.GLuint mask);
+	public static void glAttachShader (GL.GLuint program, GL.GLuint shader);
+	public static void glBindAttribLocation (GL.GLuint program, GL.GLuint index, string name);
+	public static void glCompileShader (GL.GLuint shader);
+	public static GL.GLuint glCreateProgram ();
+	public static GL.GLuint glCreateShader (GL.GLenum type);
+	public static void glDeleteProgram (GL.GLuint program);
+	public static void glDeleteShader (GL.GLuint shader);
+	public static void glDetachShader (GL.GLuint program, GL.GLuint shader);
+	public static void glDisableVertexAttribArray (GL.GLuint index);
+	public static void glEnableVertexAttribArray (GL.GLuint index);
+	public static void glGetActiveAttrib (GL.GLuint program, GL.GLuint index, GL.GLsizei bufSize, GL.GLsizei* length, GL.GLint* size, GL.GLenum* type, string name);
+	public static void glGetActiveUniform (GL.GLuint program, GL.GLuint index, GL.GLsizei bufSize, GL.GLsizei* length, GL.GLint* size, GL.GLenum* type, string name);
+	public static void glGetAttachedShaders (GL.GLuint program, GL.GLsizei maxCount, GL.GLsizei* count, GL.GLuint* obj);
+	public static GL.GLint glGetAttribLocation (GL.GLuint program, string name);
+	public static void glGetProgramiv (GL.GLuint program, GL.GLenum pname, out GL.GLint params);
+	public static void glGetProgramInfoLog (GL.GLuint program, GL.GLsizei bufSize, GL.GLsizei* length, string infoLog);
+	public static void glGetShaderiv (GL.GLuint shader, GL.GLenum pname, out GL.GLint params);
+	public static void glGetShaderInfoLog (GL.GLuint shader, GL.GLsizei bufSize, out GL.GLsizei length, [CCode (array_length=false)] uint8[] infoLog);
+	public static void glGetShaderSource (GL.GLuint shader, GL.GLsizei bufSize, GL.GLsizei* length, string source);
+	public static GL.GLint glGetUniformLocation (GL.GLuint program, string name);
+	public static void glGetUniformfv (GL.GLuint program, GL.GLint location, GL.GLfloat* params);
+	public static void glGetUniformiv (GL.GLuint program, GL.GLint location, GL.GLint* params);
+	public static void glGetVertexAttribdv (GL.GLuint index, GL.GLenum pname, GL.GLdouble* params);
+	public static void glGetVertexAttribfv (GL.GLuint index, GL.GLenum pname, GL.GLfloat* params);
+	public static void glGetVertexAttribiv (GL.GLuint index, GL.GLenum pname, GL.GLint* params);
+	public static void glGetVertexAttribPointerv (GL.GLuint index, GL.GLenum pname, GL.GLvoid** pointer);
+	public static bool glIsProgram (GL.GLuint program);
+	public static bool glIsShader (GL.GLuint shader);
+	public static void glLinkProgram (GL.GLuint program);
+	public static void glShaderSource (GL.GLuint shader, GL.GLsizei count, [CCode (array_length = false)] uint8[][] srcs, [CCode (array_length = false)] GL.GLint[]? length);
+	public static void glUseProgram (GL.GLuint program);
+	public static void glUniform1f (GL.GLint location, GL.GLfloat v0);
+	public static void glUniform2f (GL.GLint location, GL.GLfloat v0, GL.GLfloat v1);
+	public static void glUniform3f (GL.GLint location, GL.GLfloat v0, GL.GLfloat v1, GL.GLfloat v2);
+	public static void glUniform4f (GL.GLint location, GL.GLfloat v0, GL.GLfloat v1, GL.GLfloat v2, GL.GLfloat v3);
+	public static void glUniform1i (GL.GLint location, GL.GLint v0);
+	public static void glUniform2i (GL.GLint location, GL.GLint v0, GL.GLint v1);
+	public static void glUniform3i (GL.GLint location, GL.GLint v0, GL.GLint v1, GL.GLint v2);
+	public static void glUniform4i (GL.GLint location, GL.GLint v0, GL.GLint v1, GL.GLint v2, GL.GLint v3);
+	public static void glUniform1fv (GL.GLint location, GL.GLsizei count, GL.GLfloat* value);
+	public static void glUniform2fv (GL.GLint location, GL.GLsizei count, GL.GLfloat* value);
+	public static void glUniform3fv (GL.GLint location, GL.GLsizei count, GL.GLfloat* value);
+	public static void glUniform4fv (GL.GLint location, GL.GLsizei count, GL.GLfloat* value);
+	public static void glUniform1iv (GL.GLint location, GL.GLsizei count, GL.GLint* value);
+	public static void glUniform2iv (GL.GLint location, GL.GLsizei count, GL.GLint* value);
+	public static void glUniform3iv (GL.GLint location, GL.GLsizei count, GL.GLint* value);
+	public static void glUniform4iv (GL.GLint location, GL.GLsizei count, GL.GLint* value);
+	public static void glUniformMatrix2fv (GL.GLint location, GL.GLsizei count, bool transpose, GL.GLfloat* value);
+	public static void glUniformMatrix3fv (GL.GLint location, GL.GLsizei count, bool transpose, GL.GLfloat* value);
+	public static void glUniformMatrix4fv (GL.GLint location, GL.GLsizei count, bool transpose, GL.GLfloat* value);
+	public static void glValidateProgram (GL.GLuint program);
+	public static void glVertexAttrib1d (GL.GLuint index, GL.GLdouble x);
+	public static void glVertexAttrib1dv (GL.GLuint index, GL.GLdouble* v);
+	public static void glVertexAttrib1f (GL.GLuint index, GL.GLfloat x);
+	public static void glVertexAttrib1fv (GL.GLuint index, GL.GLfloat* v);
+	public static void glVertexAttrib1s (GL.GLuint index, GL.GLshort x);
+	public static void glVertexAttrib1sv (GL.GLuint index, GL.GLshort* v);
+	public static void glVertexAttrib2d (GL.GLuint index, GL.GLdouble x, GL.GLdouble y);
+	public static void glVertexAttrib2dv (GL.GLuint index, GL.GLdouble* v);
+	public static void glVertexAttrib2f (GL.GLuint index, GL.GLfloat x, GL.GLfloat y);
+	public static void glVertexAttrib2fv (GL.GLuint index, GL.GLfloat* v);
+	public static void glVertexAttrib2s (GL.GLuint index, GL.GLshort x, GL.GLshort y);
+	public static void glVertexAttrib2sv (GL.GLuint index, GL.GLshort* v);
+	public static void glVertexAttrib3d (GL.GLuint index, GL.GLdouble x, GL.GLdouble y, GL.GLdouble z);
+	public static void glVertexAttrib3dv (GL.GLuint index, GL.GLdouble* v);
+	public static void glVertexAttrib3f (GL.GLuint index, GL.GLfloat x, GL.GLfloat y, GL.GLfloat z);
+	public static void glVertexAttrib3fv (GL.GLuint index, GL.GLfloat* v);
+	public static void glVertexAttrib3s (GL.GLuint index, GL.GLshort x, GL.GLshort y, GL.GLshort z);
+	public static void glVertexAttrib3sv (GL.GLuint index, GL.GLshort* v);
+	public static void glVertexAttrib4Nbv (GL.GLuint index, GL.GLbyte* v);
+	public static void glVertexAttrib4Niv (GL.GLuint index, GL.GLint* v);
+	public static void glVertexAttrib4Nsv (GL.GLuint index, GL.GLshort* v);
+	public static void glVertexAttrib4Nub (GL.GLuint index, GL.GLubyte x, GL.GLubyte y, GL.GLubyte z, GL.GLubyte w);
+	public static void glVertexAttrib4Nubv (GL.GLuint index, GL.GLubyte* v);
+	public static void glVertexAttrib4Nuiv (GL.GLuint index, GL.GLuint* v);
+	public static void glVertexAttrib4Nusv (GL.GLuint index, GL.GLushort* v);
+	public static void glVertexAttrib4bv (GL.GLuint index, GL.GLbyte* v);
+	public static void glVertexAttrib4d (GL.GLuint index, GL.GLdouble x, GL.GLdouble y, GL.GLdouble z, GL.GLdouble w);
+	public static void glVertexAttrib4dv (GL.GLuint index, GL.GLdouble* v);
+	public static void glVertexAttrib4f (GL.GLuint index, GL.GLfloat x, GL.GLfloat y, GL.GLfloat z, GL.GLfloat w);
+	public static void glVertexAttrib4fv (GL.GLuint index, GL.GLfloat* v);
+	public static void glVertexAttrib4iv (GL.GLuint index, GL.GLint* v);
+	public static void glVertexAttrib4s (GL.GLuint index, GL.GLshort x, GL.GLshort y, GL.GLshort z, GL.GLshort w);
+	public static void glVertexAttrib4sv (GL.GLuint index, GL.GLshort* v);
+	public static void glVertexAttrib4ubv (GL.GLuint index, GL.GLubyte* v);
+	public static void glVertexAttrib4uiv (GL.GLuint index, GL.GLuint* v);
+	public static void glVertexAttrib4usv (GL.GLuint index, GL.GLushort* v);
+	public static void glVertexAttribPointer (GL.GLuint index, GL.GLint size, GL.GLenum type, bool normalized, GL.GLsizei stride, GL.GLvoid* pointer);
 }
 

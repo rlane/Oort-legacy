@@ -16,7 +16,7 @@ namespace GLEW {
 		var err = GL.glGetError();
 		if (err != GL.GL_NO_ERROR) {
 			var str = glewGetErrorString(err);
-			GLib.error(str);
+			GLib.error("%s", str);
 		}
 	}
 }
