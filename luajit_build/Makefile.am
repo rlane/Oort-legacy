@@ -9,6 +9,6 @@ luajit-stamp:
 if MINGW32
 	cd $(top_srcdir)/luajit && make BUILDMODE=static Q= HOST_CC="gcc -m32" CROSS=`echo $(CC) | sed -e 's/gcc//'` TARGET_SYS="Windows" clean all
 else
-	cd $(top_srcdir)/luajit && make BUILDMODE=static Q= clean all
+	cd $(top_srcdir)/luajit && make BUILDMODE=static Q= CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" clean all
 endif
 	touch luajit-stamp

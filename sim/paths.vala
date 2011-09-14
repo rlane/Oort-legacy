@@ -3,8 +3,8 @@ namespace Oort.Paths {
 
 	public static void init(string arg0) {
 		if (Util.is_win32()) {
-			string path = GLib.Win32.get_package_installation_directory_of_module(null);
-			resource_dir = File.new_for_path(path);
+			//string path = GLib.Win32.get_package_installation_directory_of_module(null);
+			//resource_dir = File.new_for_path(path);
 		} else {
 			File exec_file = File.new_for_path(Environment.find_program_in_path(arg0));
 			File bin_dir = File.new_for_path(Config.PACKAGE_BINDIR);
