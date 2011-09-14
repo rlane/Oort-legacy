@@ -142,6 +142,7 @@ namespace Oort {
 			var position = program.uniform("position");
 			var heading = program.uniform("heading");
 			var radius = program.uniform("radius");
+			var color = program.uniform("color");
 			var view_width = program.uniform("view_width");
 			var view_pos = program.uniform("view_pos");
 			var view_aspect = program.uniform("view_aspect");
@@ -164,6 +165,7 @@ namespace Oort {
 			glUniform1f(view_width, (float)(2000.0/view_scale));
 			//glUniform2f(view_pos, (float)this.view_pos.x, (float)this.view_pos.y);
 			glUniform1f(view_aspect, (float)0.5625);
+			glUniform4f(color, (float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), 1.0f);
 			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
 			glCheck();
 			glDisableVertexAttribArray(vertex);
@@ -605,9 +607,11 @@ void main()
 	public string fragment_shader_source = """
 #version 110
 
+uniform vec4 color;
+
 void main()
 {
-    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    gl_FragColor = color;
 }
 	""";
 
