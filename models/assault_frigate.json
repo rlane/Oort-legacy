@@ -1,6 +1,6 @@
 {
 	"name": "assault_frigate",
-	"alpha": 187,
+	"alpha": 0.73,
 	"vertices": [
 		{ "x": -0.80, "y": -0.4 },
 		{ "x": -0.80, "y": 0.4 },

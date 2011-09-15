@@ -11,7 +11,7 @@ public errordomain Oort.ModelParseError {
 public class Oort.Model {
 	public GLuint id;
 	public Vec2[] vertices;
-	public uint8 alpha;
+	public double alpha;
 
 	public Model(uint8[] data) throws ModelParseError {
 		Vec2[] tmp_vertices = {};
@@ -27,7 +27,7 @@ public class Oort.Model {
 		if (alpha_node == null || alpha_node.type != cJSON.Type.Number) {
 			throw new ModelParseError.WRONG_TYPE("alpha field must be a number");
 		}
-		alpha = (uint8) alpha_node.int;
+		alpha = alpha_node.double;
 
 		unowned cJSON vertices_node = root.objectItem("vertices");
 		if (vertices_node == null || vertices_node.type != cJSON.Type.Array) {
