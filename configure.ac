@@ -20,7 +20,7 @@ fi
 AC_DEFINE_UNQUOTED(PACKAGE_DATADIR, "${PREFIX}/share/${PACKAGE}",[Package data directory])
 AC_DEFINE_UNQUOTED(PACKAGE_BINDIR, "${PREFIX}/bin",[Package executable directory])
 
-CFLAGS="-O0 -ggdb -m32"
+CFLAGS="-O0 -ggdb -m32 -Wall"
 LDFLAGS="-m32"
 
 AC_SUBST(CFLAGS)

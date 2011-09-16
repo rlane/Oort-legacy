@@ -38,5 +38,5 @@ AM_VALAFLAGS = \
 bin_PROGRAMS = oort
 oort_SOURCES = oort.vala renderer.vala glutil.c particle.c font.c textures.vala log.vala model.vala shader.vala
 noinst_HEADERS = glutil.h particle.h tga.h font.h font.vapi particle.vapi glutil.vapi
-oort_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
+oort_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a $(top_srcdir)/vector/libvector.a
 oort_LDFLAGS = $(OORT_EXTRA_LDFLAGS)
