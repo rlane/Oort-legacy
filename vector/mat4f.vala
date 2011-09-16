@@ -90,6 +90,21 @@ public class Mat4f {
 		this[3,2] = 0.0f;
 		this[3,3] = 1.0f;
 	}
+
+	public Mat4f multiply(Mat4f b) {
+		var a = this;
+		var c = new Mat4f();
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				float sum = 0;
+				for (int k = 0; k < 4; k++) {
+					sum += a[i,k]*b[k,j];
+				}
+				c[i,j] = sum;
+			}
+		}
+		return c;
+	}
 }
 
 }

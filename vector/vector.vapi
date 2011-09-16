@@ -49,5 +49,7 @@ namespace Vector {
 		public Mat4f.scaling(float f);
 		public Mat4f.translation(float x, float y, float z);
 		public Mat4f.rotation(float angle, float x, float y, float z);
+
+		public Mat4f multiply(Mat4f b);
 	}
 }
