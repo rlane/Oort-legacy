@@ -1,6 +1,6 @@
 [CCode (cprefix = "Vector", lower_case_cprefix = "")]
 namespace Vector {
-	[CCode (cname = "Vec2", cheader_filename = "vector.h")]
+	[CCode (cname = "Vec2", cheader_filename = "vec2d.h")]
 	[SimpleType]
 	public struct Vec2 {
 		public double x;
@@ -18,4 +18,24 @@ namespace Vector {
 		}
 	}
 	public static Vector.Vec2 vec2 (double x, double y);
+
+	[CCode (cname = "Vec4f", cheader_filename = "vec4f.h")]
+	[SimpleType]
+	public struct Vec4f {
+		public float x;
+		public float y;
+		public float z;
+		public float w;
+		public float abs ();
+		public Vector.Vec4f add (Vector.Vec4f v);
+		public Vector.Vec4f scale (float f);
+		public Vector.Vec4f sub (Vector.Vec4f v);
+		public float dot (Vector.Vec4f v);
+		public float distance (Vector.Vec4f v);
+
+		public string to_string() {
+			return "(%0.3g, %0.3g)".printf(x, y);
+		}
+	}
+	public static Vector.Vec4f vec4f (float x, float y, float z, float w);
 }
