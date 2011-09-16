@@ -551,8 +551,6 @@ public class Oort.RendererResources {
 #version 110
 
 uniform mat4 mv_matrix;
-uniform float radius;
-uniform vec2 position;
 uniform vec2 view_pos;
 uniform float view_width;
 uniform float view_aspect;
