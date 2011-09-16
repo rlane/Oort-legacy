@@ -27,7 +27,7 @@ public class Mat4f {
 			f, 0, 0, 0,
 			0, f, 0, 0,
 			0, 0, f, 0,
-			0, 0, 0, f };
+			0, 0, 0, 1 };
 	}
 
 	public Mat4f.translation(float x, float y, float z) {

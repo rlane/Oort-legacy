@@ -140,7 +140,7 @@ namespace Oort {
 			var vertex = program.attribute("vertex");
 			var u_rotation_matrix = program.uniform("rotation_matrix");
 			var u_translation_matrix = program.uniform("translation_matrix");
-			var radius = program.uniform("radius");
+			var u_scale_matrix = program.uniform("scale_matrix");
 			var color = program.uniform("color");
 			var view_width = program.uniform("view_width");
 			var view_pos = program.uniform("view_pos");
@@ -161,10 +161,11 @@ namespace Oort {
 
 			var rotation_matrix = new Mat4f.rotation((float)s.physics.h, 0, 0, 1);
 			var translation_matrix = new Mat4f.translation((float)s.physics.p.x, (float)s.physics.p.y, 0);
+			var scale_matrix = new Mat4f.scaling((float)s.class.radius);
 
 			glUniformMatrix4fv(u_rotation_matrix, 1, false, rotation_matrix.data);
 			glUniformMatrix4fv(u_translation_matrix, 1, false, translation_matrix.data);
-			glUniform1f(radius, (float)s.class.radius);
+			glUniformMatrix4fv(u_scale_matrix, 1, false, scale_matrix.data);
 			glUniform1f(view_width, (float)(2000.0/view_scale));
 			//glUniform2f(view_pos, (float)this.view_pos.x, (float)this.view_pos.y);
 			glUniform1f(view_aspect, (float)0.5625);
@@ -554,6 +555,7 @@ public class Oort.RendererResources {
 
 uniform mat4 rotation_matrix;
 uniform mat4 translation_matrix;
+uniform mat4 scale_matrix;
 uniform float radius;
 uniform vec2 position;
 uniform vec2 view_pos;
@@ -601,11 +603,9 @@ mat4 orthoX(vec2 pos, float aspect, float w)
 
 void main()
 {
-	vec2 scaled_vertex = vertex*radius;
-	mat4 transform = orthoX(view_pos, view_aspect, view_width) *
-	                 translation_matrix *
-	                 rotation_matrix;
-	gl_Position = transform * vec4(scaled_vertex, 0.0, 1.0);
+	mat4 mv_matrix = translation_matrix * rotation_matrix * scale_matrix;
+	mat4 p_matrix = orthoX(view_pos, view_aspect, view_width);
+	gl_Position = p_matrix * mv_matrix * vec4(vertex, 0.0, 1.0);
 }
 	""";
 
