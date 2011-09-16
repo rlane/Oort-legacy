@@ -95,7 +95,7 @@ typedef double M3DMatrix44d[16];	// A 4 x 4 matrix, column major (doubles) - Ope
 ///////////////////////////////////////////////////////////////////////////////
 // Useful shortcuts and macros
 // Radians are king... but we need a way to swap back and forth for programmers and presentation.
-// Leaving these as Macros instead of inline functions, causes constants
+// Leaving these as Macros instead of static inline functions, causes constants
 // to be evaluated at compile time instead of run time, e.g. m3dDegToRad(90.0)
 #define m3dDegToRad(x)	((x)*M3D_PI_DIV_180)
 #define m3dRadToDeg(x)	((x)*M3D_INV_PI_DIV_180)
@@ -112,7 +112,7 @@ typedef double M3DMatrix44d[16];	// A 4 x 4 matrix, column major (doubles) - Ope
 // two. Returns a larger integer if it is not a 
 // power of two. The larger integer is the next
 // highest power of two.
-inline unsigned int m3dIsPOW2(unsigned int iValue)
+static inline unsigned int m3dIsPOW2(unsigned int iValue)
     {
     unsigned int nPow2 = 1;
     
@@ -124,7 +124,7 @@ inline unsigned int m3dIsPOW2(unsigned int iValue)
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Inline accessor functions (Macros) for people who just can't count to 3 or 4
+// static inline accessor functions (Macros) for people who just can't count to 3 or 4
 // Really... you should learn to count before you learn to program ;-)
 // 0 = x
 // 1 = y
@@ -141,85 +141,85 @@ inline unsigned int m3dIsPOW2(unsigned int iValue)
 #define m3dSetVectorW(v, w)	((v)[3] = (w))
 
 ///////////////////////////////////////////////////////////////////////////////
-// Inline vector functions
+// static inline vector functions
 // Load Vector with (x, y, z, w).
-inline void m3dLoadVector2(M3DVector2f v, const float x, const float y)
+static inline void m3dLoadVector2(M3DVector2f v, const float x, const float y)
     { v[0] = x; v[1] = y; }
-inline void m3dLoadVector2d(M3DVector2d v, const float x, const float y)
+static inline void m3dLoadVector2d(M3DVector2d v, const float x, const float y)
     { v[0] = x; v[1] = y; }
-inline void m3dLoadVector3(M3DVector3f v, const float x, const float y, const float z) 
+static inline void m3dLoadVector3(M3DVector3f v, const float x, const float y, const float z) 
 	{ v[0] = x; v[1] = y; v[2] = z; }
-inline void m3dLoadVector3d(M3DVector3d v, const double x, const double y, const double z)
+static inline void m3dLoadVector3d(M3DVector3d v, const double x, const double y, const double z)
 	{ v[0] = x; v[1] = y; v[2] = z; }
-inline void m3dLoadVector4(M3DVector4f v, const float x, const float y, const float z, const float w) 
+static inline void m3dLoadVector4(M3DVector4f v, const float x, const float y, const float z, const float w) 
 	{ v[0] = x; v[1] = y; v[2] = z; v[3] = w;}
-inline void m3dLoadVector4d(M3DVector4d v, const double x, const double y, const double z, const double w)
+static inline void m3dLoadVector4d(M3DVector4d v, const double x, const double y, const double z, const double w)
 	{ v[0] = x; v[1] = y; v[2] = z; v[3] = w;}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Copy vector src into vector dst
-inline void	m3dCopyVector2(M3DVector2f dst, const M3DVector2f src) { memcpy(dst, src, sizeof(M3DVector2f)); }
-inline void	m3dCopyVector2d(M3DVector2d dst, const M3DVector2d src) { memcpy(dst, src, sizeof(M3DVector2d)); }
+static inline void	m3dCopyVector2(M3DVector2f dst, const M3DVector2f src) { memcpy(dst, src, sizeof(M3DVector2f)); }
+static inline void	m3dCopyVector2d(M3DVector2d dst, const M3DVector2d src) { memcpy(dst, src, sizeof(M3DVector2d)); }
 
-inline void	m3dCopyVector3(M3DVector3f dst, const M3DVector3f src) { memcpy(dst, src, sizeof(M3DVector3f)); }
-inline void	m3dCopyVector3d(M3DVector3d dst, const M3DVector3d src) { memcpy(dst, src, sizeof(M3DVector3d)); }
+static inline void	m3dCopyVector3(M3DVector3f dst, const M3DVector3f src) { memcpy(dst, src, sizeof(M3DVector3f)); }
+static inline void	m3dCopyVector3d(M3DVector3d dst, const M3DVector3d src) { memcpy(dst, src, sizeof(M3DVector3d)); }
 
-inline void	m3dCopyVector4(M3DVector4f dst, const M3DVector4f src) { memcpy(dst, src, sizeof(M3DVector4f)); }
-inline void	m3dCopyVector4d(M3DVector4d dst, const M3DVector4d src) { memcpy(dst, src, sizeof(M3DVector4d)); }
+static inline void	m3dCopyVector4(M3DVector4f dst, const M3DVector4f src) { memcpy(dst, src, sizeof(M3DVector4f)); }
+static inline void	m3dCopyVector4d(M3DVector4d dst, const M3DVector4d src) { memcpy(dst, src, sizeof(M3DVector4d)); }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Add Vectors (r, a, b) r = a + b
-inline void m3dAddVectors2(M3DVector2f r, const M3DVector2f a, const M3DVector2f b)
+static inline void m3dAddVectors2(M3DVector2f r, const M3DVector2f a, const M3DVector2f b)
 	{ r[0] = a[0] + b[0];	r[1] = a[1] + b[1];  }
-inline void m3dAddVectors2d(M3DVector2d r, const M3DVector2d a, const M3DVector2d b)
+static inline void m3dAddVectors2d(M3DVector2d r, const M3DVector2d a, const M3DVector2d b)
 	{ r[0] = a[0] + b[0];	r[1] = a[1] + b[1];  }
 
-inline void m3dAddVectors3(M3DVector3f r, const M3DVector3f a, const M3DVector3f b)
+static inline void m3dAddVectors3(M3DVector3f r, const M3DVector3f a, const M3DVector3f b)
 	{ r[0] = a[0] + b[0];	r[1] = a[1] + b[1]; r[2] = a[2] + b[2]; }
-inline void m3dAddVectors3d(M3DVector3d r, const M3DVector3d a, const M3DVector3d b)
+static inline void m3dAddVectors3d(M3DVector3d r, const M3DVector3d a, const M3DVector3d b)
 	{ r[0] = a[0] + b[0];	r[1] = a[1] + b[1]; r[2] = a[2] + b[2]; }
 
-inline void m3dAddVectors4(M3DVector4f r, const M3DVector4f a, const M3DVector4f b)
+static inline void m3dAddVectors4(M3DVector4f r, const M3DVector4f a, const M3DVector4f b)
 	{ r[0] = a[0] + b[0];	r[1] = a[1] + b[1]; r[2] = a[2] + b[2]; r[3] = a[3] + b[3]; }
-inline void m3dAddVectors4d(M3DVector4d r, const M3DVector4d a, const M3DVector4d b)
+static inline void m3dAddVectors4d(M3DVector4d r, const M3DVector4d a, const M3DVector4d b)
 	{ r[0] = a[0] + b[0];	r[1] = a[1] + b[1]; r[2] = a[2] + b[2]; r[3] = a[3] + b[3]; }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Subtract Vectors (r, a, b) r = a - b
-inline void m3dSubtractVectors2(M3DVector2f r, const M3DVector2f a, const M3DVector2f b)
+static inline void m3dSubtractVectors2(M3DVector2f r, const M3DVector2f a, const M3DVector2f b)
 	{ r[0] = a[0] - b[0]; r[1] = a[1] - b[1];  }
-inline void m3dSubtractVectors2d(M3DVector2d r, const M3DVector2d a, const M3DVector2d b)
+static inline void m3dSubtractVectors2d(M3DVector2d r, const M3DVector2d a, const M3DVector2d b)
 	{ r[0] = a[0] - b[0]; r[1] = a[1] - b[1]; }
 
-inline void m3dSubtractVectors3(M3DVector3f r, const M3DVector3f a, const M3DVector3f b)
+static inline void m3dSubtractVectors3(M3DVector3f r, const M3DVector3f a, const M3DVector3f b)
 	{ r[0] = a[0] - b[0]; r[1] = a[1] - b[1]; r[2] = a[2] - b[2]; }
-inline void m3dSubtractVectors3d(M3DVector3d r, const M3DVector3d a, const M3DVector3d b)
+static inline void m3dSubtractVectors3d(M3DVector3d r, const M3DVector3d a, const M3DVector3d b)
 	{ r[0] = a[0] - b[0]; r[1] = a[1] - b[1]; r[2] = a[2] - b[2]; }
 
-inline void m3dSubtractVectors4(M3DVector4f r, const M3DVector4f a, const M3DVector4f b)
+static inline void m3dSubtractVectors4(M3DVector4f r, const M3DVector4f a, const M3DVector4f b)
 	{ r[0] = a[0] - b[0]; r[1] = a[1] - b[1]; r[2] = a[2] - b[2]; r[3] = a[3] - b[3]; }
-inline void m3dSubtractVectors4d(M3DVector4d r, const M3DVector4d a, const M3DVector4d b)
+static inline void m3dSubtractVectors4d(M3DVector4d r, const M3DVector4d a, const M3DVector4d b)
 	{ r[0] = a[0] - b[0]; r[1] = a[1] - b[1]; r[2] = a[2] - b[2]; r[3] = a[3] - b[3]; }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // Scale Vectors (in place)
-inline void m3dScaleVector2(M3DVector2f v, const float scale) 
+static inline void m3dScaleVector2(M3DVector2f v, const float scale) 
 	{ v[0] *= scale; v[1] *= scale; }
-inline void m3dScaleVector2d(M3DVector2d v, const double scale) 
+static inline void m3dScaleVector2d(M3DVector2d v, const double scale) 
 	{ v[0] *= scale; v[1] *= scale; }
 
-inline void m3dScaleVector3(M3DVector3f v, const float scale) 
+static inline void m3dScaleVector3(M3DVector3f v, const float scale) 
 	{ v[0] *= scale; v[1] *= scale; v[2] *= scale; }
-inline void m3dScaleVector3d(M3DVector3d v, const double scale) 
+static inline void m3dScaleVector3d(M3DVector3d v, const double scale) 
 	{ v[0] *= scale; v[1] *= scale; v[2] *= scale; }
 
-inline void m3dScaleVector4(M3DVector4f v, const float scale) 
+static inline void m3dScaleVector4(M3DVector4f v, const float scale) 
 	{ v[0] *= scale; v[1] *= scale; v[2] *= scale; v[3] *= scale; }
-inline void m3dScaleVector4d(M3DVector4d v, const double scale) 
+static inline void m3dScaleVector4d(M3DVector4d v, const double scale) 
 	{ v[0] *= scale; v[1] *= scale; v[2] *= scale; v[3] *= scale; }
 
 
@@ -227,14 +227,14 @@ inline void m3dScaleVector4d(M3DVector4d v, const double scale)
 // Cross Product
 // u x v = result
 // 3 component vectors only.
-inline void m3dCrossProduct3(M3DVector3f result, const M3DVector3f u, const M3DVector3f v)
+static inline void m3dCrossProduct3(M3DVector3f result, const M3DVector3f u, const M3DVector3f v)
 	{
 	result[0] = u[1]*v[2] - v[1]*u[2];
 	result[1] = -u[0]*v[2] + v[0]*u[2];
 	result[2] = u[0]*v[1] - v[0]*u[1];
 	}
 
-inline void m3dCrossProduct3d(M3DVector3d result, const M3DVector3d u, const M3DVector3d v)
+static inline void m3dCrossProduct3d(M3DVector3d result, const M3DVector3d u, const M3DVector3d v)
 	{
 	result[0] = u[1]*v[2] - v[1]*u[2];
 	result[1] = -u[0]*v[2] + v[0]*u[2];
@@ -244,21 +244,21 @@ inline void m3dCrossProduct3d(M3DVector3d result, const M3DVector3d u, const M3D
 //////////////////////////////////////////////////////////////////////////////////////
 // Dot Product, only for three component vectors
 // return u dot v
-inline float m3dDotProduct3(const M3DVector3f u, const M3DVector3f v)
+static inline float m3dDotProduct3(const M3DVector3f u, const M3DVector3f v)
 	{ return u[0]*v[0] + u[1]*v[1] + u[2]*v[2]; }
 
-inline double m3dDotProduct3d(const M3DVector3d u, const M3DVector3d v)
+static inline double m3dDotProduct3d(const M3DVector3d u, const M3DVector3d v)
 	{ return u[0]*v[0] + u[1]*v[1] + u[2]*v[2]; }
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Angle between vectors, only for three component vectors. Angle is in radians...
-inline float m3dGetAngleBetweenVectors3(const M3DVector3f u, const M3DVector3f v)
+static inline float m3dGetAngleBetweenVectors3(const M3DVector3f u, const M3DVector3f v)
     {
     float dTemp = m3dDotProduct3(u, v);
     return (float) acos((double)dTemp);	// Double cast just gets rid of compiler warning, no real need
     }
 
-inline double m3dGetAngleBetweenVectors3d(const M3DVector3d u, const M3DVector3d v)
+static inline double m3dGetAngleBetweenVectors3d(const M3DVector3d u, const M3DVector3d v)
     {
     double dTemp = m3dDotProduct3d(u, v);
     return acos(dTemp);
@@ -267,28 +267,28 @@ inline double m3dGetAngleBetweenVectors3d(const M3DVector3d u, const M3DVector3d
 //////////////////////////////////////////////////////////////////////////////////////
 // Get Square of a vectors length
 // Only for three component vectors
-inline float m3dGetVectorLengthSquared3(const M3DVector3f u)
+static inline float m3dGetVectorLengthSquared3(const M3DVector3f u)
 	{ return (u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2]); }
 
-inline double m3dGetVectorLengthSquared3d(const M3DVector3d u)
+static inline double m3dGetVectorLengthSquared3d(const M3DVector3d u)
 	{ return (u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2]); }
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Get lenght of vector
 // Only for three component vectors.
-inline float m3dGetVectorLength3(const M3DVector3f u)
+static inline float m3dGetVectorLength3(const M3DVector3f u)
 	{ return sqrtf(m3dGetVectorLengthSquared3(u)); }
 
-inline double m3dGetVectorLength3d(const M3DVector3d u)
+static inline double m3dGetVectorLength3d(const M3DVector3d u)
 	{ return sqrt(m3dGetVectorLengthSquared3d(u)); }
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Normalize a vector
 // Scale a vector to unit length. Easy, just scale the vector by it's length
-inline void m3dNormalizeVector3(M3DVector3f u)
+static inline void m3dNormalizeVector3(M3DVector3f u)
 	{ m3dScaleVector3(u, 1.0f / m3dGetVectorLength3(u)); }
 
-inline void m3dNormalizeVector3d(M3DVector3d u)
+static inline void m3dNormalizeVector3d(M3DVector3d u)
 	{ m3dScaleVector3d(u, 1.0 / m3dGetVectorLength3d(u)); }
 
 
@@ -299,17 +299,17 @@ inline void m3dNormalizeVector3d(M3DVector3d u)
 float m3dGetDistanceSquared3(const M3DVector3f u, const M3DVector3f v);
 double m3dGetDistanceSquared3d(const M3DVector3d u, const M3DVector3d v);
 
-inline double m3dGetDistance3d(const M3DVector3d u, const M3DVector3d v)
+static inline double m3dGetDistance3d(const M3DVector3d u, const M3DVector3d v)
 { return sqrt(m3dGetDistanceSquared3d(u, v)); }
 
-inline float m3dGetDistance3(const M3DVector3f u, const M3DVector3f v)
+static inline float m3dGetDistance3(const M3DVector3f u, const M3DVector3f v)
 { return sqrtf(m3dGetDistanceSquared3(u, v)); }
 
-inline float m3dGetMagnitudeSquared3(const M3DVector3f u) { return u[0]*u[0] + u[1]*u[1] + u[2]*u[2]; }
-inline double m3dGetMagnitudeSquared3d(const M3DVector3d u) { return u[0]*u[0] + u[1]*u[1] + u[2]*u[2]; }
+static inline float m3dGetMagnitudeSquared3(const M3DVector3f u) { return u[0]*u[0] + u[1]*u[1] + u[2]*u[2]; }
+static inline double m3dGetMagnitudeSquared3d(const M3DVector3d u) { return u[0]*u[0] + u[1]*u[1] + u[2]*u[2]; }
 
-inline float m3dGetMagnitude3(const M3DVector3f u) { return sqrtf(m3dGetMagnitudeSquared3(u)); }
-inline double m3dGetMagnitude3d(const M3DVector3d u) { return sqrt(m3dGetMagnitudeSquared3d(u)); }
+static inline float m3dGetMagnitude3(const M3DVector3f u) { return sqrtf(m3dGetMagnitudeSquared3(u)); }
+static inline double m3dGetMagnitude3d(const M3DVector3d u) { return sqrt(m3dGetMagnitudeSquared3d(u)); }
 
 	
 
@@ -319,21 +319,21 @@ inline double m3dGetMagnitude3d(const M3DVector3d u) { return sqrt(m3dGetMagnitu
 // No support is included for arbitrarily dimensioned matricies on purpose, since
 // the 3x3 and 4x4 matrix routines are the most common for the purposes of this
 // library. Matrices are column major, like OpenGL matrices.
-// Unlike the vector functions, some of these are going to have to not be inlined,
+// Unlike the vector functions, some of these are going to have to not be static inlined,
 // although many will be.
 
 // Copy Matrix
 // Brain-dead memcpy
-inline void m3dCopyMatrix33(M3DMatrix33f dst, const M3DMatrix33f src)
+static inline void m3dCopyMatrix33(M3DMatrix33f dst, const M3DMatrix33f src)
 	{ memcpy(dst, src, sizeof(M3DMatrix33f)); }
 
-inline void m3dCopyMatrix33d(M3DMatrix33d dst, const M3DMatrix33d src)
+static inline void m3dCopyMatrix33d(M3DMatrix33d dst, const M3DMatrix33d src)
 	{ memcpy(dst, src, sizeof(M3DMatrix33d)); }
 
-inline void m3dCopyMatrix44(M3DMatrix44f dst, const M3DMatrix44f src)
+static inline void m3dCopyMatrix44(M3DMatrix44f dst, const M3DMatrix44f src)
 	{ memcpy(dst, src, sizeof(M3DMatrix44f)); }
 
-inline void m3dCopyMatrix44d(M3DMatrix44d dst, const M3DMatrix44d src)
+static inline void m3dCopyMatrix44d(M3DMatrix44d dst, const M3DMatrix44d src)
 	{ memcpy(dst, src, sizeof(M3DMatrix44d)); }
 
 // LoadIdentity
@@ -345,35 +345,35 @@ void m3dLoadIdentity44d(M3DMatrix44d m);
 
 /////////////////////////////////////////////////////////////////////////////
 // Get/Set Column.
-inline void m3dGetMatrixColumn33(M3DVector3f dst, const M3DMatrix33f src, const int column)
+static inline void m3dGetMatrixColumn33(M3DVector3f dst, const M3DMatrix33f src, const int column)
 	{ memcpy(dst, src + (3 * column), sizeof(float) * 3); }
 
-inline void m3dGetMatrixColumn33d(M3DVector3d dst, const M3DMatrix33d src, const int column)
+static inline void m3dGetMatrixColumn33d(M3DVector3d dst, const M3DMatrix33d src, const int column)
 	{ memcpy(dst, src + (3 * column), sizeof(double) * 3); }
 
-inline void m3dSetMatrixColumn33(M3DMatrix33f dst, const M3DVector3f src, const int column)
+static inline void m3dSetMatrixColumn33(M3DMatrix33f dst, const M3DVector3f src, const int column)
 	{ memcpy(dst + (3 * column), src, sizeof(float) * 3); }
 
-inline void m3dSetMatrixColumn33d(M3DMatrix33d dst, const M3DVector3d src, const int column)
+static inline void m3dSetMatrixColumn33d(M3DMatrix33d dst, const M3DVector3d src, const int column)
 	{ memcpy(dst + (3 * column), src, sizeof(double) * 3); }
 
-inline void m3dGetMatrixColumn44(M3DVector4f dst, const M3DMatrix44f src, const int column)
+static inline void m3dGetMatrixColumn44(M3DVector4f dst, const M3DMatrix44f src, const int column)
 	{ memcpy(dst, src + (4 * column), sizeof(float) * 4); }
 
-inline void m3dGetMatrixColumn44d(M3DVector4d dst, const M3DMatrix44d src, const int column)
+static inline void m3dGetMatrixColumn44d(M3DVector4d dst, const M3DMatrix44d src, const int column)
 	{ memcpy(dst, src + (4 * column), sizeof(double) * 4); }
 
-inline void m3dSetMatrixColumn44(M3DMatrix44f dst, const M3DVector4f src, const int column)
+static inline void m3dSetMatrixColumn44(M3DMatrix44f dst, const M3DVector4f src, const int column)
 	{ memcpy(dst + (4 * column), src, sizeof(float) * 4); }
 
-inline void m3dSetMatrixColumn44d(M3DMatrix44d dst, const M3DVector4d src, const int column)
+static inline void m3dSetMatrixColumn44d(M3DMatrix44d dst, const M3DVector4d src, const int column)
 	{ memcpy(dst + (4 * column), src, sizeof(double) * 4); }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // Extract a rotation matrix from a 4x4 matrix
 // Extracts the rotation matrix (3x3) from a 4x4 matrix
-inline void m3dExtractRotationMatrix33(M3DMatrix33f dst, const M3DMatrix44f src)
+static inline void m3dExtractRotationMatrix33(M3DMatrix33f dst, const M3DMatrix44f src)
 	{	
 	memcpy(dst, src, sizeof(float) * 3); // X column
 	memcpy(dst + 3, src + 4, sizeof(float) * 3); // Y column
@@ -381,7 +381,7 @@ inline void m3dExtractRotationMatrix33(M3DMatrix33f dst, const M3DMatrix44f src)
 	}
 
 // Ditto above, but for doubles
-inline void m3dExtractRotationMatrix33d(M3DMatrix33d dst, const M3DMatrix44d src)
+static inline void m3dExtractRotationMatrix33d(M3DMatrix33d dst, const M3DMatrix44d src)
 	{
 	memcpy(dst, src, sizeof(double) * 3); // X column
 	memcpy(dst + 3, src + 4, sizeof(double) * 3); // Y column
@@ -389,7 +389,7 @@ inline void m3dExtractRotationMatrix33d(M3DMatrix33d dst, const M3DMatrix44d src
 	}
 
 // Inject Rotation (3x3) into a full 4x4 matrix...
-inline void m3dInjectRotationMatrix44(M3DMatrix44f dst, const M3DMatrix33f src)
+static inline void m3dInjectRotationMatrix44(M3DMatrix44f dst, const M3DMatrix33f src)
 	{
 	memcpy(dst, src, sizeof(float) * 4);
 	memcpy(dst + 4, src + 4, sizeof(float) * 4);
@@ -397,7 +397,7 @@ inline void m3dInjectRotationMatrix44(M3DMatrix44f dst, const M3DMatrix33f src)
 	}
 
 // Ditto above for doubles
-inline void m3dInjectRotationMatrix44d(M3DMatrix44d dst, const M3DMatrix33d src)
+static inline void m3dInjectRotationMatrix44d(M3DMatrix44d dst, const M3DMatrix33d src)
 	{
 	memcpy(dst, src, sizeof(double) * 4);
 	memcpy(dst + 4, src + 4, sizeof(double) * 4);
@@ -415,11 +415,8 @@ void m3dMatrixMultiply33d(M3DMatrix33d product, const M3DMatrix33d a, const M3DM
 
 // Transform - Does rotation and translation via a 4x4 matrix. Transforms
 // a point or vector.
-// By-the-way __inline means I'm asking the compiler to do a cost/benefit analysis. If 
-// these are used frequently, they may not be inlined to save memory. I'm experimenting
-// with this....
 // Just transform a 3 compoment vector
-__inline void m3dTransformVector3(M3DVector3f vOut, const M3DVector3f v, const M3DMatrix44f m)
+static inline void m3dTransformVector3(M3DVector3f vOut, const M3DVector3f v, const M3DMatrix44f m)
     {
     vOut[0] = m[0] * v[0] + m[4] * v[1] + m[8] *  v[2] + m[12];// * v[3];	// Assuming 1 
     vOut[1] = m[1] * v[0] + m[5] * v[1] + m[9] *  v[2] + m[13];// * v[3];	
@@ -428,7 +425,7 @@ __inline void m3dTransformVector3(M3DVector3f vOut, const M3DVector3f v, const M
     }
 
 // Ditto above, but for doubles
-__inline void m3dTransformVector3d(M3DVector3d vOut, const M3DVector3d v, const M3DMatrix44d m)
+static inline void m3dTransformVector3d(M3DVector3d vOut, const M3DVector3d v, const M3DMatrix44d m)
     {
     vOut[0] = m[0] * v[0] + m[4] * v[1] + m[8] *  v[2] + m[12];// * v[3];	 
     vOut[1] = m[1] * v[0] + m[5] * v[1] + m[9] *  v[2] + m[13];// * v[3];	
@@ -437,7 +434,7 @@ __inline void m3dTransformVector3d(M3DVector3d vOut, const M3DVector3d v, const 
     }
 
 // Full four component transform
-__inline void m3dTransformVector4(M3DVector4f vOut, const M3DVector4f v, const M3DMatrix44f m)
+static inline void m3dTransformVector4(M3DVector4f vOut, const M3DVector4f v, const M3DMatrix44f m)
     {
     vOut[0] = m[0] * v[0] + m[4] * v[1] + m[8] *  v[2] + m[12] * v[3];	 
     vOut[1] = m[1] * v[0] + m[5] * v[1] + m[9] *  v[2] + m[13] * v[3];	
@@ -446,7 +443,7 @@ __inline void m3dTransformVector4(M3DVector4f vOut, const M3DVector4f v, const M
     }
 
 // Ditto above, but for doubles
-__inline void m3dTransformVector4d(M3DVector4d vOut, const M3DVector4d v, const M3DMatrix44d m)
+static inline void m3dTransformVector4d(M3DVector4d vOut, const M3DVector4d v, const M3DMatrix44d m)
     {
     vOut[0] = m[0] * v[0] + m[4] * v[1] + m[8] *  v[2] + m[12] * v[3];	 
     vOut[1] = m[1] * v[0] + m[5] * v[1] + m[9] *  v[2] + m[13] * v[3];	
@@ -458,7 +455,7 @@ __inline void m3dTransformVector4d(M3DVector4d vOut, const M3DVector4d v, const 
 
 // Just do the rotation, not the translation... this is usually done with a 3x3
 // Matrix.
-__inline void m3dRotateVector(M3DVector3f vOut, const M3DVector3f p, const M3DMatrix33f m)
+static inline void m3dRotateVector(M3DVector3f vOut, const M3DVector3f p, const M3DMatrix33f m)
 	{
     vOut[0] = m[0] * p[0] + m[3] * p[1] + m[6] * p[2];	
     vOut[1] = m[1] * p[0] + m[4] * p[1] + m[7] * p[2];	
@@ -466,7 +463,7 @@ __inline void m3dRotateVector(M3DVector3f vOut, const M3DVector3f p, const M3DMa
 	}
 
 // Ditto above, but for doubles
-__inline void m3dRotateVectord(M3DVector3d vOut, const M3DVector3d p, const M3DMatrix33d m)
+static inline void m3dRotateVectord(M3DVector3d vOut, const M3DVector3d p, const M3DMatrix33d m)
 	{
     vOut[0] = m[0] * p[0] + m[3] * p[1] + m[6] * p[2];	
     vOut[1] = m[1] * p[0] + m[4] * p[1] + m[7] * p[2];	
@@ -475,28 +472,28 @@ __inline void m3dRotateVectord(M3DVector3d vOut, const M3DVector3d p, const M3DM
 
 
 // Create a Scaling Matrix
-inline void m3dScaleMatrix33(M3DMatrix33f m, float xScale, float yScale, float zScale)
+static inline void m3dScaleMatrix33(M3DMatrix33f m, float xScale, float yScale, float zScale)
 	{ m3dLoadIdentity33(m); m[0] = xScale; m[4] = yScale; m[8] = zScale; }
 	
-inline void m3dScaleMatrix33v(M3DMatrix33f m, const M3DVector3f vScale)
+static inline void m3dScaleMatrix33v(M3DMatrix33f m, const M3DVector3f vScale)
 	{ m3dLoadIdentity33(m); m[0] = vScale[0]; m[4] = vScale[1]; m[8] = vScale[2]; }
 	
-inline void m3dScaleMatrix33d(M3DMatrix33d m, double xScale, double yScale, double zScale)
+static inline void m3dScaleMatrix33d(M3DMatrix33d m, double xScale, double yScale, double zScale)
 	{ m3dLoadIdentity33d(m); m[0] = xScale; m[4] = yScale; m[8] = zScale; }
 	
-inline void m3dScaleMatrix33dv(M3DMatrix33d m, const M3DVector3d vScale)
+static inline void m3dScaleMatrix33dv(M3DMatrix33d m, const M3DVector3d vScale)
 	{ m3dLoadIdentity33d(m); m[0] = vScale[0]; m[4] = vScale[1]; m[8] = vScale[2]; }
 
-inline void m3dScaleMatrix44(M3DMatrix44f m, float xScale, float yScale, float zScale)
+static inline void m3dScaleMatrix44(M3DMatrix44f m, float xScale, float yScale, float zScale)
 	{ m3dLoadIdentity44(m); m[0] = xScale; m[5] = yScale; m[10] = zScale; }
 	
-inline void m3dScaleMatrix44v(M3DMatrix44f m, const M3DVector3f vScale)
+static inline void m3dScaleMatrix44v(M3DMatrix44f m, const M3DVector3f vScale)
 	{ m3dLoadIdentity44(m); m[0] = vScale[0]; m[5] = vScale[1]; m[10] = vScale[2]; }
 	
-inline void m3dScaleMatrix44d(M3DMatrix44d m, double xScale, double yScale, double zScale)
+static inline void m3dScaleMatrix44d(M3DMatrix44d m, double xScale, double yScale, double zScale)
 	{ m3dLoadIdentity44d(m); m[0] = xScale; m[5] = yScale; m[10] = zScale; }
 	
-inline void m3dScaleMatrix44dv(M3DMatrix44d m, const M3DVector3d vScale)
+static inline void m3dScaleMatrix44dv(M3DMatrix44d m, const M3DVector3d vScale)
 	{ m3dLoadIdentity44d(m); m[0] = vScale[0]; m[5] = vScale[1]; m[10] = vScale[2]; }
 
 	
@@ -512,10 +509,10 @@ void m3dRotationMatrix44(M3DMatrix44f m, float angle, float x, float y, float z)
 void m3dRotationMatrix44d(M3DMatrix44d m, double angle, double x, double y, double z);
 
 // Create a Translation matrix. Only 4x4 matrices have translation components
-inline void m3dTranslationMatrix44(M3DMatrix44f m, float x, float y, float z)
+static inline void m3dTranslationMatrix44(M3DMatrix44f m, float x, float y, float z)
 { m3dLoadIdentity44(m); m[12] = x; m[13] = y; m[14] = z; }
 
-inline void m3dTranslationMatrix44d(M3DMatrix44d m, double x, double y, double z)
+static inline void m3dTranslationMatrix44d(M3DMatrix44d m, double x, double y, double z)
 { m3dLoadIdentity44d(m); m[12] = x; m[13] = y; m[14] = z; }
 
 void m3dInvertMatrix44(M3DMatrix44f mInverse, const M3DMatrix44f m);
@@ -535,10 +532,10 @@ void m3dFindNormald(M3DVector3d result, const M3DVector3d point1, const M3DVecto
 
 
 // Calculates the signed distance of a point to a plane
-inline float m3dGetDistanceToPlane(const M3DVector3f point, const M3DVector4f plane)
+static inline float m3dGetDistanceToPlane(const M3DVector3f point, const M3DVector4f plane)
            { return point[0]*plane[0] + point[1]*plane[1] + point[2]*plane[2] + plane[3]; }
 
-inline double m3dGetDistanceToPlaned(const M3DVector3d point, const M3DVector4d plane)
+static inline double m3dGetDistanceToPlaned(const M3DVector3d point, const M3DVector4d plane)
            { return point[0]*plane[0] + point[1]*plane[1] + point[2]*plane[2] + plane[3]; }
 
 
@@ -567,12 +564,12 @@ void m3dCatmullRomd(M3DVector3d vOut, const M3DVector3d vP0, const M3DVector3d v
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Compare floats and doubles... 
-inline int m3dCloseEnough(const float fCandidate, const float fCompare, const float fEpsilon)
+static inline int m3dCloseEnough(const float fCandidate, const float fCompare, const float fEpsilon)
     {
     return (fabs(fCandidate - fCompare) < fEpsilon);
     }
     
-inline int m3dCloseEnoughd(const double dCandidate, const double dCompare, const double dEpsilon)
+static inline int m3dCloseEnoughd(const double dCandidate, const double dCompare, const double dEpsilon)
     {
     return (fabs(dCandidate - dCompare) < dEpsilon);
     }    
