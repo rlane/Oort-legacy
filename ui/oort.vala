@@ -327,6 +327,18 @@ namespace Oort {
 				case "e":
 					show_picked_log();
 					break;
+				case "Left":
+					renderer.view_pos = renderer.view_pos.add(Vector.vec2(100, 0));
+					break;
+				case "Right":
+					renderer.view_pos = renderer.view_pos.add(Vector.vec2(-100, 0));
+					break;
+				case "Up":
+					renderer.view_pos = renderer.view_pos.add(Vector.vec2(0, -100));
+					break;
+				case "Down":
+					renderer.view_pos = renderer.view_pos.add(Vector.vec2(0, 100));
+					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {
 						tick_lock.lock();
