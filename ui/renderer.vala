@@ -551,44 +551,6 @@ uniform mat4 mv_matrix;
 uniform mat4 p_matrix;
 attribute vec2 vertex;
 
-mat4 translate(vec3 d)
-{
-	return mat4(1, 0, 0, d.x,
-	            0, 1, 0, d.y,
-	            0, 0, 1, d.z,
-	            0, 0, 0, 1);
-}
-
-mat4 scale(float c)
-{
-	return mat4(c, 0, 0, 0,
-	            0, c, 0, 0,
-	            0, 0, c, 0,
-	            0, 0, 0, 1);
-}
-
-mat4 rotate2d(float a)
-{
-	return mat4(cos(a), -sin(a), 0, 0,
-	            sin(a), cos(a), 0, 0,
-	            0, 0, 1.0, 0,
-	            0, 0, 0, 1.0);
-}
-
-mat4 ortho(float n, float f, float r, float l, float t, float b)
-{
-	return mat4(2.0/(r-l), 0, 0, -(r+l)/(r-l),
-	            0, 2.0/(t-b), 0, -(t+b)/(t-b),
-	            0, 0, -2.0/(f-n), -(f+n)/(f-n),
-	            0, 0, 0, 1);
-	
-}
-
-mat4 orthoX(vec2 pos, float aspect, float w)
-{
-	return ortho(-1.0, 1.0, w/2.0, -w/2.0, w*aspect/2.0, -w*aspect/2.0)*translate(vec3(pos,0));
-}
-
 void main()
 {
 	gl_Position = p_matrix * mv_matrix * vec4(vertex, 0.0, 1.0);
