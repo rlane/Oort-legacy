@@ -28,8 +28,15 @@ nobase_oortlua_DATA = \
 	lib.lua \
 	strict.lua \
 	runtime.lua \
+	vector.lua \
 	examples/target.lua \
 	examples/reference.lua \
+	models/assault_frigate.json \
+	models/carrier.json \
+	models/fighter.json \
+	models/ion_cannon_frigate.json \
+	models/missile.json \
+	models/torpedo.json \
 	scenarios/challenge01.json \
 	scenarios/basic.json \
 	scenarios/furball2.json \
