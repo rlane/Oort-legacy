@@ -106,10 +106,11 @@ namespace Oort {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
 
-			p_matrix = Mat4f.simpleOrtho((float)this.view_pos.x,
-			                             (float)this.view_pos.y,
-			                             (float)screen_height/(float)screen_width,
-			                             (float)(2000.0/view_scale));
+			Mat4f.load_simple_ortho(out p_matrix,
+			                        (float)this.view_pos.x,
+			                        (float)this.view_pos.y,
+			                        (float)screen_height/(float)screen_width,
+			                        (float)(2000.0/view_scale));
 
 			//render_boundary();
 
@@ -161,10 +162,18 @@ namespace Oort {
 			glEnableVertexAttribArray(vertex);
 			glCheck();
 
-			var rotation_matrix = new Mat4f.rotation((float)s.physics.h, 0, 0, 1);
-			var translation_matrix = new Mat4f.translation((float)s.physics.p.x, (float)s.physics.p.y, 0);
-			var scale_matrix = new Mat4f.scale((float)s.class.radius, (float)s.class.radius, (float)s.class.radius);
-			var mv_matrix = translation_matrix.multiply(rotation_matrix.multiply(scale_matrix));
+			Mat4f rotation_matrix;
+			Mat4f translation_matrix;
+			Mat4f scale_matrix;
+			Mat4f mv_matrix;
+			Mat4f tmp_matrix;
+
+			Mat4f.load_rotation(out rotation_matrix, (float)s.physics.h, 0, 0, 1);
+			Mat4f.load_translation(out translation_matrix, (float)s.physics.p.x, (float)s.physics.p.y, 0);
+			Mat4f.load_scale(out scale_matrix, (float)s.class.radius, (float)s.class.radius, (float)s.class.radius);
+			Mat4f.multiply(out tmp_matrix, ref rotation_matrix, ref scale_matrix);
+			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref tmp_matrix);
+
 			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 
 			glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
@@ -185,7 +194,9 @@ namespace Oort {
 			glCheck();
 			glEnableVertexAttribArray(vertex);
 			glCheck();
-			glUniformMatrix4fv(u_mv_matrix, 1, false, (new Mat4f.identity()).data);
+			Mat4f identity_matrix;
+			Mat4f.load_identity(out identity_matrix);
+			glUniformMatrix4fv(u_mv_matrix, 1, false, identity_matrix.data);
 			glCheck();
 
 			segments[0] = (float) s.physics.p.x;
@@ -491,6 +502,12 @@ namespace Oort {
 		}
 
 		public Vec2 W(Vec2 o) {
+			Mat4f m;
+			float[3] v = { (float)o.x, (float)o.y, 0 };
+			float[3] v2;
+			Mat4f.invert(out m, ref p_matrix);
+			//Math3D.TransformVector3(v2, v, m.data);
+
 			return o.sub(center()).scale(1/view_scale).add(view_pos);
 		}
 

@@ -1,4 +1,4 @@
-[CCode (cprefix = "Vector", lower_case_cprefix = "")]
+[CCode (cprefix = "Vector", lower_case_cprefix = "", cprefix = "")]
 namespace Vector {
 	[CCode (cname = "Vec2", cheader_filename = "vec2d.h")]
 	[SimpleType]
@@ -33,6 +33,7 @@ namespace Vector {
 		public Vector.Vec4f sub (Vector.Vec4f v);
 		public float dot (Vector.Vec4f v);
 		public float distance (Vector.Vec4f v);
+		public Vector.Vec4f transform(Mat4f m);
 
 		public string to_string() {
 			return "(%0.3g, %0.3g, %0.3g, %0.3g)".printf(x, y, z, w);
@@ -41,17 +42,26 @@ namespace Vector {
 	[CCode (cname = "vec4f", cheader_filename = "vec4f.h")]
 	public static Vector.Vec4f vec4f (float x, float y, float z, float w);
 
-	[CCode (cheader_filename = "vector_gen.h")]
-	public class Mat4f {
+	[CCode (cheader_filename = "mat4f.h")]
+	public struct Mat4f {
 		public float data[];
 
-		public Mat4f.identity();
-		public Mat4f.scale(float x, float y, float z);
-		public Mat4f.translation(float x, float y, float z);
-		public Mat4f.rotation(float angle, float x, float y, float z);
-		public Mat4f.ortho(float n, float f, float r, float l, float t, float b);
-		public static Mat4f simpleOrtho(float x, float y, float aspect, float w);
+		public float get(int row, int col) {
+			return data[col*4+row];
+		}
 
-		public Mat4f multiply(Mat4f b);
+		public void set(int row, int col, float v) {
+			data[col*4+row] = v;
+		}
+
+		public static void load_identity(out Mat4f m);
+		public static void load_scale(out Mat4f m, float x, float y, float z);
+		public static void load_translation(out Mat4f m, float x, float y, float z);
+		public static void load_rotation(out Mat4f m, float angle, float x, float y, float z);
+		public static void load_ortho(out Mat4f m, float n, float f, float r, float l, float t, float b);
+		public static void load_simple_ortho(out Mat4f m, float x, float y, float aspect, float w);
+
+		public static void multiply(out Mat4f dest, ref Mat4f a, ref Mat4f b);
+		public static void invert(out Mat4f dest, ref Mat4f a);
 	}
 }

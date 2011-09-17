@@ -1,4 +1,4 @@
-noinst_HEADERS = math3d.vapi math3d.h
+noinst_HEADERS = math3d.h
 
 AM_CFLAGS = \
 	$(OORT_CFLAGS) \

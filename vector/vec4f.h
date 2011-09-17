@@ -1,14 +1,9 @@
 #include <math.h>
+#include <math3d.h>
+#include "vector_types.h"
 
 #ifndef VEC4F_H
 #define VEC4F_H
-
-typedef struct Vec4f {
-	float x;
-	float y;
-	float z;
-	float w;
-} Vec4f;
 
 static inline Vec4f vec4f_scale(Vec4f a, float f)
 {
@@ -47,6 +42,13 @@ static inline float vec4f_distance(Vec4f a, Vec4f b)
 static inline float vec4f_dot(Vec4f a, Vec4f b)
 {
 	return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w;
+}
+
+static inline Vec4f vec4f_transform(Vec4f v, Mat4f *m)
+{
+	Vec4f r;
+	m3dTransformVector4(&r, &v, m->data);
+	return r;
 }
 
 #endif
