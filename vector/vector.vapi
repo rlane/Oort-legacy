@@ -33,7 +33,8 @@ namespace Vector {
 		public Vector.Vec4f sub (Vector.Vec4f v);
 		public float dot (Vector.Vec4f v);
 		public float distance (Vector.Vec4f v);
-		public Vector.Vec4f transform(Mat4f m);
+		public Vector.Vec4f transform(ref Mat4f m);
+		public Vector.Vec4f projectXY(ref Mat4f mModelView, ref Mat4f mProjection, [CCode (array_length=false)] int viewport[4]);
 
 		public string to_string() {
 			return "(%0.3g, %0.3g, %0.3g, %0.3g)".printf(x, y, z, w);

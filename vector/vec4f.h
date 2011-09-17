@@ -51,4 +51,11 @@ static inline Vec4f vec4f_transform(Vec4f v, Mat4f *m)
 	return r;
 }
 
+static inline Vec4f vec4f_projectXY(Vec4f v, Mat4f *mModelView, Mat4f *mProjection, int viewport[4])
+{
+	Vec4f r = { 0, 0, 0, 0 };
+	m3dProjectXY(&r, mModelView, mProjection, viewport, &v);
+	return r;
+}
+
 #endif
