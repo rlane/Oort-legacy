@@ -49,6 +49,8 @@ namespace Vector {
 		public Mat4f.scaling(float f);
 		public Mat4f.translation(float x, float y, float z);
 		public Mat4f.rotation(float angle, float x, float y, float z);
+		public Mat4f.ortho(float n, float f, float r, float l, float t, float b);
+		public static Mat4f simpleOrtho(float x, float y, float aspect, float w);
 
 		public Mat4f multiply(Mat4f b);
 	}

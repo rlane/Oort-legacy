@@ -91,6 +91,20 @@ public class Mat4f {
 		this[3,3] = 1.0f;
 	}
 
+	public Mat4f.ortho(float n, float f, float r, float l, float t, float b) {
+		data = { 2.0f/(r-l), 0, 0, -(r+l)/(r-l),
+		         0, 2.0f/(t-b), 0, -(t+b)/(t-b),
+		         0, 0, -2.0f/(f-n), -(f+n)/(f-n),
+		         0, 0, 0, 1 };
+	}
+
+	public static Mat4f simpleOrtho(float x, float y, float aspect, float w)
+	{
+		var mt = new translation(x, y, 0);
+		var proj = new ortho(-1.0f, 1.0f, w/2.0f, -w/2.0f, w*aspect/2.0f, -w*aspect/2.0f);
+		return proj.multiply(mt);
+	}
+
 	public Mat4f multiply(Mat4f b) {
 		var a = this;
 		var c = new Mat4f();

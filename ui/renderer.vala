@@ -139,10 +139,8 @@ namespace Oort {
 			program.use();
 			var vertex = program.attribute("vertex");
 			var u_mv_matrix = program.uniform("mv_matrix");
+			var u_p_matrix = program.uniform("p_matrix");
 			var color = program.uniform("color");
-			var view_width = program.uniform("view_width");
-			var view_pos = program.uniform("view_pos");
-			var view_aspect = program.uniform("view_aspect");
 			glCheck();
 			glBindBuffer(GL_ARRAY_BUFFER, model.id);
 			glCheck();
@@ -161,11 +159,10 @@ namespace Oort {
 			var translation_matrix = new Mat4f.translation((float)s.physics.p.x, (float)s.physics.p.y, 0);
 			var scale_matrix = new Mat4f.scaling((float)s.class.radius);
 			var mv_matrix = translation_matrix.multiply(rotation_matrix.multiply(scale_matrix));
+			var p_matrix = Mat4f.simpleOrtho((float)this.view_pos.x, (float)this.view_pos.y, (float)0.5625, (float)(2000.0/view_scale));
 
 			glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
-			glUniform1f(view_width, (float)(2000.0/view_scale));
-			//glUniform2f(view_pos, (float)this.view_pos.x, (float)this.view_pos.y);
-			glUniform1f(view_aspect, (float)0.5625);
+			glUniformMatrix4fv(u_p_matrix, 1, false, p_matrix.data);
 			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 			glUniform4f(color, colorv.x, colorv.y, colorv.z, colorv.w);
 			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
@@ -551,9 +548,7 @@ public class Oort.RendererResources {
 #version 110
 
 uniform mat4 mv_matrix;
-uniform vec2 view_pos;
-uniform float view_width;
-uniform float view_aspect;
+uniform mat4 p_matrix;
 attribute vec2 vertex;
 
 mat4 translate(vec3 d)
@@ -596,7 +591,6 @@ mat4 orthoX(vec2 pos, float aspect, float w)
 
 void main()
 {
-	mat4 p_matrix = orthoX(view_pos, view_aspect, view_width);
 	gl_Position = p_matrix * mv_matrix * vec4(vertex, 0.0, 1.0);
 }
 	""";
