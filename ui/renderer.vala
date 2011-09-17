@@ -201,18 +201,33 @@ namespace Oort {
 			glCheck();
 			glDisableVertexAttribArray(vertex);
 			glCheck();
-			glUseProgram(0);
-			glCheck();
 
-			/*
 			if (s == picked) {
-				GLUtil.color32((uint32)0xCCCCCCAA);
-				glPushMatrix();
-				glTranslated(sp.x, sp.y, 0);
-				glScaled(scale, scale, scale);
-				GLUtil.render_circle(64);
-				glPopMatrix();
+				var circle = resources.models.lookup("circle");
 
+				glBindBuffer(GL_ARRAY_BUFFER, circle.id);
+				glCheck();
+				glVertexAttribPointer(
+					vertex,
+					2,
+					GL_DOUBLE,
+					false,
+					0,
+					(void*) 0);
+				glCheck();
+				glEnableVertexAttribArray(vertex);
+
+				glUniform4f(color, 0.8f, 0.8f, 0.8f, 0.67f);
+				glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
+
+				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle.vertices.length);
+				glCheck();
+				glDisableVertexAttribArray(vertex);
+				glCheck();
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glCheck();
+
+/*
 				GLUtil.color32((uint32)0xCCCCCC77);
 				glPushMatrix();
 				glTranslated(sp.x, sp.y, 0);
@@ -234,9 +249,13 @@ namespace Oort {
 					glVertex3d(sp2.x, sp2.y, 0);
 				}
 				glEnd();
+*/
 			}
-			*/
 
+			glUseProgram(0);
+			glCheck();
+
+/*
 			if (s == picked || render_all_debug_lines) {
 				GLUtil.color32((uint32)0x49D5CEAA);
 				glBegin(GL_LINES);
@@ -248,6 +267,7 @@ namespace Oort {
 				}
 				glEnd();
 			}
+*/
 
 			// XXX move
 			if (s == picked && s.dead) {

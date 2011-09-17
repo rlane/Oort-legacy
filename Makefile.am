@@ -33,6 +33,7 @@ nobase_oortlua_DATA = \
 	examples/reference.lua \
 	models/assault_frigate.json \
 	models/carrier.json \
+	models/circle.json \
 	models/fighter.json \
 	models/ion_cannon_frigate.json \
 	models/missile.json \
