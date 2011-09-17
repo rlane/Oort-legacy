@@ -63,6 +63,7 @@ AC_CONFIG_FILES([
 	sim/Makefile
 	dedicated/Makefile
 	ui/Makefile
+	math3d/Makefile
 	vector/Makefile
 	vapi/Makefile
 	test/Makefile

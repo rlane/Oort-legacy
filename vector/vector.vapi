@@ -46,7 +46,7 @@ namespace Vector {
 		public float data[];
 
 		public Mat4f.identity();
-		public Mat4f.scaling(float f);
+		public Mat4f.scale(float x, float y, float z);
 		public Mat4f.translation(float x, float y, float z);
 		public Mat4f.rotation(float angle, float x, float y, float z);
 		public Mat4f.ortho(float n, float f, float r, float l, float t, float b);

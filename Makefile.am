@@ -7,6 +7,7 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = \
 	luajit_build \
 	cjson \
+	math3d \
 	vector \
 	sim \
 	dedicated \
@@ -18,6 +19,7 @@ SUBDIRS = \
 oortdocdir = $(docdir)
 oortdoc_DATA = \
 	README.md \
+	COPYING.math3d \
 	$(NULL)
 
 oortluadir = $(datadir)/oort

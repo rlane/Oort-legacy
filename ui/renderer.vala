@@ -157,7 +157,7 @@ namespace Oort {
 
 			var rotation_matrix = new Mat4f.rotation((float)s.physics.h, 0, 0, 1);
 			var translation_matrix = new Mat4f.translation((float)s.physics.p.x, (float)s.physics.p.y, 0);
-			var scale_matrix = new Mat4f.scaling((float)s.class.radius);
+			var scale_matrix = new Mat4f.scale((float)s.class.radius, (float)s.class.radius, (float)s.class.radius);
 			var mv_matrix = translation_matrix.multiply(rotation_matrix.multiply(scale_matrix));
 			var p_matrix = Mat4f.simpleOrtho((float)this.view_pos.x, (float)this.view_pos.y, (float)0.5625, (float)(2000.0/view_scale));
 			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
