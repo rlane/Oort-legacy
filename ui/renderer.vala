@@ -501,14 +501,20 @@ namespace Oort {
 			return p.sub(view_pos).scale(view_scale).add(center());
 		}
 
+		public Vec2 pixel2screen(Vec2 p) {
+			return vec2((float) (2*p.x/screen_width-1),
+			            (float) (-2*p.y/screen_height+1));
+		}
+
 		public Vec2 W(Vec2 o) {
 			Mat4f m;
-			float[3] v = { (float)o.x, (float)o.y, 0 };
-			float[3] v2;
+			Vec2 screen_coord = pixel2screen(o);
+			Vec4f v = vec4f((float)screen_coord.x, (float)screen_coord.y, 0, 0);
 			Mat4f.invert(out m, ref p_matrix);
-			//Math3D.TransformVector3(v2, v, m.data);
-
-			return o.sub(center()).scale(1/view_scale).add(view_pos);
+			var v2 = v.transform(ref m);
+			v2.x += (float)view_pos.x;
+			v2.y += (float)view_pos.y;
+			return vec2(v2.x, v2.y);
 		}
 
 		// XXX find ship with minimum distance, allow 5 px error
