@@ -160,10 +160,10 @@ namespace Oort {
 			var scale_matrix = new Mat4f.scaling((float)s.class.radius);
 			var mv_matrix = translation_matrix.multiply(rotation_matrix.multiply(scale_matrix));
 			var p_matrix = Mat4f.simpleOrtho((float)this.view_pos.x, (float)this.view_pos.y, (float)0.5625, (float)(2000.0/view_scale));
+			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 
 			glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
 			glUniformMatrix4fv(u_p_matrix, 1, false, p_matrix.data);
-			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 			glUniform4f(color, colorv.x, colorv.y, colorv.z, colorv.w);
 			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
 			glCheck();
@@ -171,28 +171,40 @@ namespace Oort {
 			glCheck();
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glCheck();
-			glUseProgram(0);
+
+			float tail_alpha = colorv.w/3.0f;
+			var segments = new float[Ship.TAIL_SEGMENTS*2];
+			glUniform4f(color, colorv.x, colorv.y, colorv.z, tail_alpha);
+
+			glVertexAttribPointer(vertex, 2, GL_FLOAT, false, 0, segments);
+			glCheck();
+			glEnableVertexAttribArray(vertex);
+			glCheck();
+			glUniformMatrix4fv(u_mv_matrix, 1, false, (new Mat4f.identity()).data);
 			glCheck();
 
-/*
-			int tail_alpha_max = (s.class.name.contains("missile") || s.class.name.contains("torpedo")) ? 16 : 64;
-			glBegin(GL_LINE_STRIP);
-			GLUtil.color32(s.team.color | tail_alpha_max);
-			glVertex3d(sp.x, sp.y, 0);
+			segments[0] = (float) s.physics.p.x;
+			segments[1] = (float) s.physics.p.y;
 			int i;
 			for (i = 0; i < Ship.TAIL_SEGMENTS-1; i++) {
 				int j = s.tail_head - i - 1;
 				if (j < 0) j += Ship.TAIL_SEGMENTS;
-				Vec2 sp2 = S(s.tail[j]);
-				if (isnan(sp2.x) != 0)
+				Vec2 v = s.tail[j];
+				if (isnan(v.x) != 0)
 					break;
-				uint32 color = s.team.color | (tail_alpha_max-(tail_alpha_max/Ship.TAIL_SEGMENTS)*i);
-
-				GLUtil.color32(color);
-				glVertex3d(sp2.x, sp2.y, 0);
+				//uint32 color = s.team.color | (tail_alpha_max-(tail_alpha_max/Ship.TAIL_SEGMENTS)*i);
+				segments[2+i*2] = (float) v.x;
+				segments[2+i*2+1] = (float) v.y;
 			}
-			glEnd();
 
+			glDrawArrays(GL_LINE_STRIP, 0, (GLsizei) i);
+			glCheck();
+			glDisableVertexAttribArray(vertex);
+			glCheck();
+			glUseProgram(0);
+			glCheck();
+
+			/*
 			if (s == picked) {
 				GLUtil.color32((uint32)0xCCCCCCAA);
 				glPushMatrix();

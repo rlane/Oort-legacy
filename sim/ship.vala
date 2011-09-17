@@ -53,7 +53,7 @@ public class Oort.Ship {
 	public GLib.Rand prng;
 	public bool dead;
 	public bool ai_dead;
-	public Vector.Vec2 tail[16];
+	public Vector.Vec2[] tail;
 	public int tail_head;
 	public int last_shot_tick;
 	public Queue<Msg> mq;
@@ -85,7 +85,8 @@ public class Oort.Ship {
 		controlled = false;
 		hull = klass.hull;
 		tail_head = 0;
-		for (int i = 0; i < 16 /*XXX*/; i++) { tail[i] = vec2(double.NAN, double.NAN); }
+		tail = new Vector.Vec2[16];
+		for (int i = 0; i < tail.length; i++) { tail[i] = vec2(double.NAN, double.NAN); }
 
 		if (gfx_create_cb != null) {
 			gfx_create_cb(this);
