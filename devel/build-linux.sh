@@ -1,7 +1,7 @@
 #/bin/sh
 set -e
 git clean -f -X -d
-(cd luajit && git clean -f -X -d)
+#(cd luajit && git clean -f -X -d)
 ./autogen.sh
 ./configure --with-valgrind VALAC="/data/pkg/vala-0.13.4/bin/valac -g"
 make all dist check
