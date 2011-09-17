@@ -54,6 +54,7 @@ namespace Oort {
 		Texture ion_beam_tex;
 		Texture laser_beam_tex;
 		ShaderProgram program;
+		Mat4f p_matrix;
 
 		public static void static_init() {
 			if (GLEW.init()) {
@@ -104,6 +105,11 @@ namespace Oort {
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
+
+			p_matrix = Mat4f.simpleOrtho((float)this.view_pos.x,
+			                             (float)this.view_pos.y,
+			                             (float)screen_height/(float)screen_width,
+			                             (float)(2000.0/view_scale));
 
 			//render_boundary();
 
@@ -159,7 +165,6 @@ namespace Oort {
 			var translation_matrix = new Mat4f.translation((float)s.physics.p.x, (float)s.physics.p.y, 0);
 			var scale_matrix = new Mat4f.scale((float)s.class.radius, (float)s.class.radius, (float)s.class.radius);
 			var mv_matrix = translation_matrix.multiply(rotation_matrix.multiply(scale_matrix));
-			var p_matrix = Mat4f.simpleOrtho((float)this.view_pos.x, (float)this.view_pos.y, (float)0.5625, (float)(2000.0/view_scale));
 			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 
 			glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
