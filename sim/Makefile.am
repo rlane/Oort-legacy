@@ -24,7 +24,7 @@ AM_VALAFLAGS = \
 	--thread \
 	$(NULL)
 
-lib_LIBRARIES = libsim.a
+noinst_LIBRARIES = libsim.a
 
 libsim_a_SOURCES = \
 	bullet.vala \

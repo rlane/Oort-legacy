@@ -14,7 +14,7 @@ AM_VALAFLAGS = \
 	--pkg math3d \
 	$(NULL)
 
-lib_LIBRARIES = libvector.a
+noinst_LIBRARIES = libvector.a
 
 libvector_a_SOURCES = \
 	mat4f.vala \

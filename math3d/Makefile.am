@@ -7,7 +7,7 @@ AM_CFLAGS = \
 	-I $(top_srcdir)/math3d \
 	$(NULL)
 
-lib_LIBRARIES = libmath3d.a
+noinst_LIBRARIES = libmath3d.a
 
 libmath3d_a_SOURCES = \
 	math3d.c \
