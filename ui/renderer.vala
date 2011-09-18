@@ -54,6 +54,7 @@ namespace Oort {
 		Texture ion_beam_tex;
 		Texture laser_beam_tex;
 		ShipProgram ship_program;
+		TailProgram tail_program;
 		ParticleProgram particle_program;
 		BeamProgram beam_program;
 		Mat4f p_matrix;
@@ -105,6 +106,7 @@ namespace Oort {
 
 		public void load_shaders() throws ShaderError{
 			ship_program = new ShipProgram();
+			tail_program = new TailProgram();
 			particle_program = new ParticleProgram();
 			beam_program = new BeamProgram();
 		}
@@ -191,22 +193,24 @@ namespace Oort {
 		}
 
 		void render_ship_tail(Ship s) {
-			var prog = ship_program;
+			var prog = tail_program;
 			prog.use();
 			var model = resources.models.lookup(s.class.name);
 			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
-			float tail_alpha = colorv.w/3.0f;
 			var segments = new float[Ship.TAIL_SEGMENTS*2];
-			glUniform4f(prog.u_color, colorv.x, colorv.y, colorv.z, tail_alpha);
+			var alphas = new float[Ship.TAIL_SEGMENTS];
+			glUniform4f(prog.u_color, colorv.x, colorv.y, colorv.z, colorv.w/3.0f);
+			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
 			glVertexAttribPointer(prog.a_vertex, 2, GL_FLOAT, false, 0, segments);
+			glVertexAttribPointer(prog.a_alpha, 1, GL_FLOAT, false, 0, alphas);
 			glEnableVertexAttribArray(prog.a_vertex);
-			Mat4f identity_matrix;
-			Mat4f.load_identity(out identity_matrix);
-			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, identity_matrix.data);
+			glEnableVertexAttribArray(prog.a_alpha);
 			glCheck();
 
 			segments[0] = (float) s.physics.p.x;
 			segments[1] = (float) s.physics.p.y;
+			alphas[0] = 1.0f;
+
 			int i;
 			for (i = 0; i < Ship.TAIL_SEGMENTS-1; i++) {
 				int j = s.tail_head - i - 1;
@@ -214,13 +218,14 @@ namespace Oort {
 				Vec2 v = s.tail[j];
 				if (isnan(v.x) != 0)
 					break;
-				//uint32 color = s.team.color | (tail_alpha_max-(tail_alpha_max/Ship.TAIL_SEGMENTS)*i);
 				segments[2+i*2] = (float) v.x;
 				segments[2+i*2+1] = (float) v.y;
+				alphas[1+i] = 1.0f -((float)i)/Ship.TAIL_SEGMENTS;
 			}
 
 			glDrawArrays(GL_LINE_STRIP, 0, (GLsizei) i);
 			glDisableVertexAttribArray(prog.a_vertex);
+			glDisableVertexAttribArray(prog.a_alpha);
 			glUseProgram(0);
 			glCheck();
 		}
