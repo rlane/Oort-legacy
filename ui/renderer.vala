@@ -53,9 +53,10 @@ namespace Oort {
 		RendererResources resources;
 		Texture ion_beam_tex;
 		Texture laser_beam_tex;
-		ShaderProgram program;
+		ShipProgram ship_program;
 		ParticleProgram particle_program;
 		Mat4f p_matrix;
+		Model circle_model;
 
 		public static void static_init() {
 			if (GLEW.init()) {
@@ -84,6 +85,7 @@ namespace Oort {
 
 			ion_beam_tex = new IonBeamTexture();
 			laser_beam_tex = new LaserBeamTexture();
+			circle_model = resources.models.lookup("circle");
 		}
 
 		public void init() {
@@ -96,9 +98,8 @@ namespace Oort {
 			glLineWidth(1.2f);
 
 			resources.models.foreach( (k,v) => v.build() );
-			program = new ShaderProgram(
-				new VertexShader(resources.vertex_shader_source.data),
-				new FragmentShader(resources.fragment_shader_source.data));
+
+			ship_program = new ShipProgram();
 			particle_program = new ParticleProgram();
 		}
 
@@ -122,6 +123,7 @@ namespace Oort {
 
 			foreach (unowned Ship s in game.all_ships) {
 				render_ship(s);
+				render_ship_tail(s);
 			}
 
 			foreach (unowned Bullet b in game.all_bullets) {
@@ -135,33 +137,22 @@ namespace Oort {
 			render_particles();
 			
 			if (picked != null) {
-				//render_picked_info(picked);
+				if (picked.dead) {
+					picked = null;
+				} else {
+					render_picked_stuff(picked);
+					//render_picked_info(picked);
+				}
 			}
 		}
 
 		void render_ship(Ship s) {
-			var sp = S(s.physics.p);
-			double angle = s.physics.h;
-
+			var prog = ship_program;
 			var model = resources.models.lookup(s.class.name);
-			glCheck();
-			program.use();
-			var vertex = program.attribute("vertex");
-			var u_mv_matrix = program.uniform("mv_matrix");
-			var u_p_matrix = program.uniform("p_matrix");
-			var color = program.uniform("color");
-			glCheck();
+			prog.use();
 			glBindBuffer(GL_ARRAY_BUFFER, model.id);
-			glCheck();
-			glVertexAttribPointer(
-				vertex,
-				2,
-				GL_DOUBLE,
-				false,
-				0,
-				(void*) 0);
-			glCheck();
-			glEnableVertexAttribArray(vertex);
+			glVertexAttribPointer(prog.a_vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
+			glEnableVertexAttribArray(prog.a_vertex);
 			glCheck();
 
 			Mat4f rotation_matrix;
@@ -178,27 +169,29 @@ namespace Oort {
 
 			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 
-			glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
-			glUniformMatrix4fv(u_p_matrix, 1, false, p_matrix.data);
-			glUniform4f(color, colorv.x, colorv.y, colorv.z, colorv.w);
+			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
+			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
+			glUniform4f(prog.u_color, colorv.x, colorv.y, colorv.z, colorv.w);
 			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
-			glCheck();
-			glDisableVertexAttribArray(vertex);
-			glCheck();
+			glDisableVertexAttribArray(prog.a_vertex);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glUseProgram(0);
 			glCheck();
+		}
 
+		void render_ship_tail(Ship s) {
+			var prog = ship_program;
+			prog.use();
+			var model = resources.models.lookup(s.class.name);
+			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 			float tail_alpha = colorv.w/3.0f;
 			var segments = new float[Ship.TAIL_SEGMENTS*2];
-			glUniform4f(color, colorv.x, colorv.y, colorv.z, tail_alpha);
-
-			glVertexAttribPointer(vertex, 2, GL_FLOAT, false, 0, segments);
-			glCheck();
-			glEnableVertexAttribArray(vertex);
-			glCheck();
+			glUniform4f(prog.u_color, colorv.x, colorv.y, colorv.z, tail_alpha);
+			glVertexAttribPointer(prog.a_vertex, 2, GL_FLOAT, false, 0, segments);
+			glEnableVertexAttribArray(prog.a_vertex);
 			Mat4f identity_matrix;
 			Mat4f.load_identity(out identity_matrix);
-			glUniformMatrix4fv(u_mv_matrix, 1, false, identity_matrix.data);
+			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, identity_matrix.data);
 			glCheck();
 
 			segments[0] = (float) s.physics.p.x;
@@ -216,63 +209,12 @@ namespace Oort {
 			}
 
 			glDrawArrays(GL_LINE_STRIP, 0, (GLsizei) i);
-			glCheck();
-			glDisableVertexAttribArray(vertex);
-			glCheck();
-
-			if (s == picked) {
-				var circle = resources.models.lookup("circle");
-
-				glBindBuffer(GL_ARRAY_BUFFER, circle.id);
-				glCheck();
-				glVertexAttribPointer(
-					vertex,
-					2,
-					GL_DOUBLE,
-					false,
-					0,
-					(void*) 0);
-				glCheck();
-				glEnableVertexAttribArray(vertex);
-
-				glUniform4f(color, 0.8f, 0.8f, 0.8f, 0.67f);
-				glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
-
-				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle.vertices.length);
-				glCheck();
-				glDisableVertexAttribArray(vertex);
-				glCheck();
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-				glCheck();
-
-/*
-				GLUtil.color32((uint32)0xCCCCCC77);
-				glPushMatrix();
-				glTranslated(sp.x, sp.y, 0);
-				glScaled(view_scale, view_scale, view_scale);
-				glRotated(Util.rad2deg(s.physics.h), 0, 0, 1);
-				glBegin(GL_LINES);
-				glVertex3d(0, 0, 0);
-				glVertex3d(s.physics.acc.x, s.physics.acc.y, 0);
-				glEnd();
-				glPopMatrix();
-
-				GLUtil.color32((uint32)0x49D5CEAA);
-				glBegin(GL_LINE_STRIP);
-				glVertex3d(sp.x, sp.y, 0);
-				Physics q = s.physics.copy();
-				for (double j = 0; j < 1/Game.TICK_LENGTH; j++) {
-					q.tick_one();
-					Vec2 sp2 = S(q.p);
-					glVertex3d(sp2.x, sp2.y, 0);
-				}
-				glEnd();
-*/
-			}
-
+			glDisableVertexAttribArray(prog.a_vertex);
 			glUseProgram(0);
 			glCheck();
+		}
 
+		void render_debug_lines(Ship s) {
 /*
 			if (s == picked || render_all_debug_lines) {
 				GLUtil.color32((uint32)0x49D5CEAA);
@@ -286,22 +228,63 @@ namespace Oort {
 				glEnd();
 			}
 */
+		}
 
-			// XXX move
-			if (s == picked && s.dead) {
-				picked = null;
+		void render_picked_stuff(Ship s) {
+			var prog = ship_program;
+			prog.use();
+			Mat4f rotation_matrix;
+			Mat4f translation_matrix;
+			Mat4f scale_matrix;
+			Mat4f mv_matrix;
+			Mat4f tmp_matrix;
+			Mat4f.load_rotation(out rotation_matrix, (float)s.physics.h, 0, 0, 1);
+			Mat4f.load_translation(out translation_matrix, (float)s.physics.p.x, (float)s.physics.p.y, 0);
+			Mat4f.load_scale(out scale_matrix, (float)s.class.radius, (float)s.class.radius, (float)s.class.radius);
+			Mat4f.multiply(out tmp_matrix, ref rotation_matrix, ref scale_matrix);
+			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref tmp_matrix);
+			glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
+			glVertexAttribPointer(prog.a_vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
+			glEnableVertexAttribArray(prog.a_vertex);
+			glUniform4f(prog.u_color, 0.8f, 0.8f, 0.8f, 0.67f);
+			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
+			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
+			glDisableVertexAttribArray(prog.a_vertex);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glUseProgram(0);
+			glCheck();
+
+/*
+			GLUtil.color32((uint32)0xCCCCCC77);
+			glPushMatrix();
+			glTranslated(sp.x, sp.y, 0);
+			glScaled(view_scale, view_scale, view_scale);
+			glRotated(Util.rad2deg(s.physics.h), 0, 0, 1);
+			glBegin(GL_LINES);
+			glVertex3d(0, 0, 0);
+			glVertex3d(s.physics.acc.x, s.physics.acc.y, 0);
+			glEnd();
+			glPopMatrix();
+
+			GLUtil.color32((uint32)0x49D5CEAA);
+			glBegin(GL_LINE_STRIP);
+			glVertex3d(sp.x, sp.y, 0);
+			Physics q = s.physics.copy();
+			for (double j = 0; j < 1/Game.TICK_LENGTH; j++) {
+				q.tick_one();
+				Vec2 sp2 = S(q.p);
+				glVertex3d(sp2.x, sp2.y, 0);
 			}
+			glEnd();
+*/
 		}
 
 		private void render_bullet(Bullet b) {
 			if (b.dead) return;
 
-			program.use();
-			var vertex = program.attribute("vertex");
-			var u_mv_matrix = program.uniform("mv_matrix");
-			var u_p_matrix = program.uniform("p_matrix");
-			var color = program.uniform("color");
-			glUniformMatrix4fv(u_p_matrix, 1, false, p_matrix.data);
+			var prog = ship_program;
+			prog.use();
+			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
 			glCheck();
 
 			if (b.type == Oort.BulletType.SLUG) {
@@ -312,8 +295,8 @@ namespace Oort {
 
 				Mat4f mv_matrix;
 				Mat4f.load_identity(out mv_matrix);
-				glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
-				glUniform4f(color, 0.27f, 0.27f, 0.27f, 1.0f); // XXX fade to alpha 0.33
+				glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
+				glUniform4f(prog.u_color, 0.27f, 0.27f, 0.27f, 1.0f); // XXX fade to alpha 0.33
 				glCheck();
 
 				//Oort.GLUtil.color32(0x44444455);
@@ -324,14 +307,13 @@ namespace Oort {
 					(float) p2.x, (float) p2.y
 				};
 
-				glVertexAttribPointer(vertex, 2, GL_FLOAT, false, 0, line);
-				glEnableVertexAttribArray(vertex);
+				glVertexAttribPointer(prog.a_vertex, 2, GL_FLOAT, false, 0, line);
+				glEnableVertexAttribArray(prog.a_vertex);
 				glDrawArrays(GL_LINES, 0, 2);
 				glCheck();
 
-				glDisableVertexAttribArray(vertex);
+				glDisableVertexAttribArray(prog.a_vertex);
 			} else if (b.type == Oort.BulletType.REFUEL) {
-				var circle = resources.models.lookup("circle");
 				Mat4f scale_matrix;
 				Mat4f translation_matrix;
 				Mat4f mv_matrix;
@@ -339,13 +321,13 @@ namespace Oort {
 				Mat4f.load_scale(out scale_matrix, scale, scale, scale); 
 				Mat4f.load_translation(out translation_matrix, (float)b.physics.p.x, (float)b.physics.p.y, 0); 
 				Mat4f.multiply(out mv_matrix, ref translation_matrix, ref scale_matrix);
-				glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
-				glUniform4f(color, 0.47f, 0.47f, 0.47f, 0.66f);
-				glBindBuffer(GL_ARRAY_BUFFER, circle.id);
-				glVertexAttribPointer(vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
-				glEnableVertexAttribArray(vertex);
-				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle.vertices.length);
-				glDisableVertexAttribArray(vertex);
+				glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
+				glUniform4f(prog.u_color, 0.47f, 0.47f, 0.47f, 0.66f);
+				glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
+				glVertexAttribPointer(prog.a_vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
+				glEnableVertexAttribArray(prog.a_vertex);
+				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
+				glDisableVertexAttribArray(prog.a_vertex);
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				glCheck();
 			}
@@ -435,26 +417,20 @@ namespace Oort {
 		}
 
 		private void render_boundary() {
-			program.use();
-			var vertex = program.attribute("vertex");
-			var u_mv_matrix = program.uniform("mv_matrix");
-			var u_p_matrix = program.uniform("p_matrix");
-			var color = program.uniform("color");
-			glUniformMatrix4fv(u_p_matrix, 1, false, p_matrix.data);
-			glCheck();
-			var circle = resources.models.lookup("circle");
+			var prog = ship_program;
+			prog.use();
+			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
 			Mat4f mv_matrix;
 			float scale = (float)game.scn.radius;
 			Mat4f.load_scale(out mv_matrix, scale, scale, scale); 
-			glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
-			glUniform4f(color, 0.2f, 0.2f, 0.2f, 0.39f);
-			glBindBuffer(GL_ARRAY_BUFFER, circle.id);
-			glVertexAttribPointer(vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
-			glEnableVertexAttribArray(vertex);
-			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle.vertices.length);
-			glDisableVertexAttribArray(vertex);
+			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
+			glUniform4f(prog.u_color, 0.2f, 0.2f, 0.2f, 0.39f);
+			glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
+			glVertexAttribPointer(prog.a_vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
+			glEnableVertexAttribArray(prog.a_vertex);
+			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
+			glDisableVertexAttribArray(prog.a_vertex);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glCheck();
 			glUseProgram(0);
 			glCheck();
 		}
@@ -649,30 +625,6 @@ namespace Oort {
 
 public class Oort.RendererResources {
 	public HashTable<string,Model> models = new HashTable<string,Model>(str_hash, str_equal);
-
-	public string vertex_shader_source = """
-#version 110
-
-uniform mat4 mv_matrix;
-uniform mat4 p_matrix;
-attribute vec2 vertex;
-
-void main()
-{
-	gl_Position = p_matrix * mv_matrix * vec4(vertex, 0.0, 1.0);
-}
-	""";
-
-	public string fragment_shader_source = """
-#version 110
-
-uniform vec4 color;
-
-void main()
-{
-    gl_FragColor = color;
-}
-	""";
 
 	public RendererResources() throws ModelParseError, FileError, Error {
 		var directory = File.new_for_path(data_path("models"));
