@@ -353,7 +353,7 @@ namespace Oort {
 
 			Vec4f color;
 			float offset = 0.0f;
-			float length = (float)b.length;
+			float length = (float)b.length*1.1f;
 			float width = (float)b.width/2.0f;
 
 			if (b.graphics == Oort.BeamGraphics.ION) {
