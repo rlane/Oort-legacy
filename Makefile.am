@@ -47,6 +47,8 @@ nobase_oortlua_DATA = \
 	scenarios/challenge02.json \
 	scenarios/demo1.json \
 	scenarios/challenge03.json \
+	shaders/beam.v.glsl \
+	shaders/beam.f.glsl \
 	shaders/ship.v.glsl \
 	shaders/ship.f.glsl \
 	shaders/particle.v.glsl \

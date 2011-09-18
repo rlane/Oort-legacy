@@ -55,6 +55,7 @@ namespace Oort {
 		Texture laser_beam_tex;
 		ShipProgram ship_program;
 		ParticleProgram particle_program;
+		BeamProgram beam_program;
 		Mat4f p_matrix;
 		Model circle_model;
 
@@ -83,8 +84,6 @@ namespace Oort {
 			prng = new Rand();
 			view_pos = vec2(0,0);
 
-			ion_beam_tex = new IonBeamTexture();
-			laser_beam_tex = new LaserBeamTexture();
 			circle_model = resources.models.lookup("circle");
 		}
 
@@ -99,6 +98,7 @@ namespace Oort {
 
 			ship_program = new ShipProgram();
 			particle_program = new ParticleProgram();
+			beam_program = new BeamProgram();
 		}
 
 		public void render() {
@@ -136,7 +136,7 @@ namespace Oort {
 			}
 
 			foreach (unowned Beam b in game.all_beams) {
-				//render_beam(b);
+				render_beam(b);
 			}
 			
 			if (picked != null) {
@@ -340,43 +340,58 @@ namespace Oort {
 		}
 
 		private void render_beam(Beam b) {
-			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
-			Texture tex = null;
-			var offset = 0.0;
-			var sp = S(b.p);
-			var angle = b.a;
-			var length = b.length;
-			var width = b.width/2;
+			var prog = beam_program;
+			prog.use();
+
+			Vec4f color;
+			float offset = 0.0f;
+			float length = (float)b.length;
+			float width = (float)b.width/2.0f;
 
 			if (b.graphics == Oort.BeamGraphics.ION) {
-				tex = ion_beam_tex;
-				offset = 0.7*40;
+				color = vec4f(0.5f, 0.5f, 1.0f, 0);
+				offset = 0.7f*40;
 			} else if (b.graphics == Oort.BeamGraphics.LASER) {
-				tex = laser_beam_tex;
+				color = vec4f(1.0f, 0.1f, 0.1f, 0);
+			} else {
+				error("unknown beam");
 			}
 
-			glPushMatrix();
-			glTranslated(sp.x, sp.y, 0);
-			glRotated(Util.rad2deg(angle), 0, 0, 1);
-			glScaled(view_scale, view_scale, view_scale);
-			glEnable(GL_TEXTURE_2D);
-			glBlendFunc(GL_ONE, GL_ONE);
-			tex.bind();
-			glBegin(GL_QUADS);
-			Oort.GLUtil.color32(0x6464FFAA);
-			glTexCoord2f(0, 0);
-			glVertex3d(offset, width, 0);
-			glTexCoord2f(1.0f, 0);
-			glVertex3d(offset, -width, 0);
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex3d(length, -width, 0);
-			glTexCoord2f(0, 1.0f);
-			glVertex3d(length, width, 0);
-			glEnd();
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glDisable(GL_TEXTURE_2D);
-			glPopMatrix();
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			Mat4f rotation_matrix;
+			Mat4f translation_matrix;
+			Mat4f scale_matrix;
+			Mat4f mv_matrix;
+			Mat4f tmp_matrix;
+			Mat4f.load_rotation(out rotation_matrix, (float)b.a, 0, 0, 1);
+			Mat4f.load_translation(out translation_matrix, (float)b.p.x, (float)b.p.y, 0);
+			Mat4f.load_identity(out scale_matrix);
+			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref rotation_matrix);
+
+			float vertices[8] = {
+				offset, width,
+				offset, -width,
+				length, width,
+				length, -width
+			};
+
+			float texcoords[8] = {
+				0, 1,
+				0, 0,
+				1, 1,
+				1, 0
+			};
+
+			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
+			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
+			glUniform4f(prog.u_color, color.x, color.y, color.z, 1);
+
+			glVertexAttribPointer(prog.a_vertex, 2, GL_FLOAT, false, 0, vertices);
+			glVertexAttribPointer(prog.a_texcoord, 2, GL_FLOAT, false, 0, texcoords);
+			glEnableVertexAttribArray(prog.a_vertex);
+			glEnableVertexAttribArray(prog.a_texcoord);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			glDisableVertexAttribArray(prog.a_vertex);
+			glDisableVertexAttribArray(prog.a_texcoord);
 		}
 
 		private void render_particles() {
