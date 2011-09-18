@@ -91,10 +91,8 @@ namespace Oort {
 		public void init() {
 			glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
 			glShadeModel(GL_SMOOTH);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glEnable(GL_BLEND);
 			glEnable(GL_LINE_SMOOTH);
-			glEnable(GL_POINT_SMOOTH);
+			glEnable(GL_POINT_SPRITE);
 			glLineWidth(1.2f);
 
 			resources.models.foreach( (k,v) => v.build() );
@@ -106,6 +104,7 @@ namespace Oort {
 		public void render() {
 			prng.set_seed(0); // XXX tick seed
 
+			glEnable(GL_BLEND);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
 
@@ -114,6 +113,12 @@ namespace Oort {
 			                        (float)this.view_pos.y,
 			                        (float)screen_height/(float)screen_width,
 			                        (float)(2000.0/view_scale));
+
+			glBlendFunc(GL_ONE, GL_ONE);
+
+			render_particles();
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			render_boundary();
 
@@ -133,8 +138,6 @@ namespace Oort {
 			foreach (unowned Beam b in game.all_beams) {
 				//render_beam(b);
 			}
-
-			render_particles();
 			
 			if (picked != null) {
 				if (picked.dead) {
@@ -377,31 +380,35 @@ namespace Oort {
 		}
 
 		private void render_particles() {
-			Vec4f color = vec4f(0,0,0,0);
 			var prog = particle_program;
 			prog.use();
 			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
 			glCheck();
 
 			for (int i = 0; i < Particle.MAX; i++) {
+				float size;
+				Vec4f color;
 				unowned Particle c = Particle.get(i);
 				if (c.ticks_left == 0) continue;
 				if (c.type == ParticleType.HIT) {
-					glPointSize((float)(0.3*c.ticks_left*view_scale/32));
+					size = (float)(0.3*c.ticks_left);
 					color = vec4f(1.0f, 0.78f, 0.78f, c.ticks_left*0.03125f);
 				} else if (c.type == ParticleType.PLASMA) {
-					glPointSize((float)(0.15*c.ticks_left*view_scale/32));
-					color = vec4f(1.0f, 0, 0, c.ticks_left*0.125f);
+					size = (float)(0.4*c.ticks_left);
+					color = vec4f(1.0f, 0.1f, 0.1f, c.ticks_left*0.125f);
 				} else if (c.type == ParticleType.ENGINE) {
-					glPointSize((float)(0.1*c.ticks_left*view_scale/32));
+					size = (float)(0.1*c.ticks_left);
 					color = vec4f(1.0f, 0.8f, 0.17f, 0.039f + c.ticks_left*0.02f);
 				} else if (c.type == ParticleType.EXPLOSION) {
 					var s = c.v.abs();
-					glPointSize((float)((0.05 + 0.05*c.ticks_left)*view_scale/32));
+					size = (float)(0.05 + 0.05*c.ticks_left);
 					float g = (float) (255*double.min(1.0, 0.0625*s+c.ticks_left*0.1))/256;
 					color = vec4f(1.0f, g, 0.2f, 0.04f + c.ticks_left*0.078f);
+				} else {
+					error("unknown particle");
 				}
 
+				glPointSize(size*(float)view_scale*10);
 				float position[2] = { (float)c.p.x, (float)c.p.y };
 
 				glUniform4f(prog.u_color, color.x, color.y, color.z, color.w);
@@ -487,7 +494,7 @@ namespace Oort {
 				if (b.dead) continue;
 				if (b.type == BulletType.PLASMA) {
 					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
-							            double.min(b.physics.m/5,0.1)*80, 3, 4, 6);
+					                double.min(b.physics.m/5,0.1)*80, 3, 4, 9);
 				} else if (b.type == BulletType.EXPLOSION) {
 					if (prng.next_double() < 0.1) {
 						Particle.shower(ParticleType.EXPLOSION, b.physics.p, vec2(0,0), b.physics.v.scale(Game.TICK_LENGTH).scale(0.001), 8, 5, 17, 6);

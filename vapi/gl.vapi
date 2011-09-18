@@ -1579,6 +1579,8 @@ namespace GL
 	public const GL.GLenum GL_STENCIL_BACK_REF;
 	public const GL.GLenum GL_STENCIL_BACK_VALUE_MASK;
 	public const GL.GLenum GL_STENCIL_BACK_WRITEMASK;
+	public const GL.GLenum GL_POINT_SPRITE;
+	public const GL.GLenum GL_COORD_REPLACE;
 	public static void glBlendEquationSeparate (GL.GLenum modeRGB, GL.GLenum modeAlpha);
 	public static void glDrawBuffers (GL.GLsizei n, GL.GLenum* bufs);
 	public static void glStencilOpSeparate (GL.GLenum face, GL.GLenum sfail, GL.GLenum dpfail, GL.GLenum dppass);
