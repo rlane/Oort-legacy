@@ -112,7 +112,7 @@ namespace Oort {
 			                        (float)screen_height/(float)screen_width,
 			                        (float)(2000.0/view_scale));
 
-			//render_boundary();
+			render_boundary();
 
 			if (follow_picked && picked != null) {
 				view_pos = picked.physics.p;
@@ -422,14 +422,28 @@ namespace Oort {
 		}
 
 		private void render_boundary() {
-			glColor4ub(50, 50, 50, 100);
-			glPushMatrix();
-			double scale = view_scale*game.scn.radius;
-			Vec2 sp = S(vec2(0,0));
-			glTranslated(sp.x, sp.y, 0);
-			glScaled(scale, scale, scale);
-			GLUtil.render_circle(64);
-			glPopMatrix();
+			program.use();
+			var vertex = program.attribute("vertex");
+			var u_mv_matrix = program.uniform("mv_matrix");
+			var u_p_matrix = program.uniform("p_matrix");
+			var color = program.uniform("color");
+			glUniformMatrix4fv(u_p_matrix, 1, false, p_matrix.data);
+			glCheck();
+			var circle = resources.models.lookup("circle");
+			Mat4f mv_matrix;
+			float scale = (float)game.scn.radius;
+			Mat4f.load_scale(out mv_matrix, scale, scale, scale); 
+			glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
+			glUniform4f(color, 0.2f, 0.2f, 0.2f, 0.39f);
+			glBindBuffer(GL_ARRAY_BUFFER, circle.id);
+			glVertexAttribPointer(vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
+			glEnableVertexAttribArray(vertex);
+			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle.vertices.length);
+			glDisableVertexAttribArray(vertex);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glCheck();
+			glUseProgram(0);
+			glCheck();
 		}
 
 		private string fmt(double v, string unit) {
