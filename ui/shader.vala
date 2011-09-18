@@ -80,6 +80,12 @@ class Oort.ShaderProgram {
 		}
 	}
 
+	public ShaderProgram.from_resources(string name) throws ShaderError {
+		var vs = new VertexShader.from_resource(@"$(name).v.glsl");
+		var fs = new FragmentShader.from_resource(@"$(name).f.glsl");
+		this(name, vs, fs);
+	}
+
 	public void use() {
 		glUseProgram(id);
 	}
@@ -93,6 +99,10 @@ class Oort.ShaderProgram {
 		return x;
 	}
 
+	public GLint u(string name) {
+		return uniform(name);
+	}
+
 	public GLint attribute(string name) {
 		var x = glGetAttribLocation(id, name);
 		glCheck();
@@ -100,5 +110,9 @@ class Oort.ShaderProgram {
 			GLib.error("bad attribute %s", name);
 		}
 		return x;
+	}
+
+	public GLint a(string name) {
+		return attribute(name);
 	}
 }

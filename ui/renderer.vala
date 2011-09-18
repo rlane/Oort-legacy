@@ -53,10 +53,10 @@ namespace Oort {
 		RendererResources resources;
 		Texture ion_beam_tex;
 		Texture laser_beam_tex;
-		ShipProgram ship_program;
-		TailProgram tail_program;
-		ParticleProgram particle_program;
-		BeamProgram beam_program;
+		ShaderProgram ship_program;
+		ShaderProgram tail_program;
+		ShaderProgram particle_program;
+		ShaderProgram beam_program;
 		Mat4f p_matrix;
 		Model circle_model;
 
@@ -105,10 +105,10 @@ namespace Oort {
 		}
 
 		public void load_shaders() throws ShaderError{
-			ship_program = new ShipProgram();
-			tail_program = new TailProgram();
-			particle_program = new ParticleProgram();
-			beam_program = new BeamProgram();
+			ship_program = new ShaderProgram.from_resources("ship");
+			tail_program = new ShaderProgram.from_resources("tail");
+			beam_program = new ShaderProgram.from_resources("beam");
+			particle_program = new ShaderProgram.from_resources("particle");
 		}
 
 		public void render() {
@@ -164,8 +164,8 @@ namespace Oort {
 			var model = resources.models.lookup(s.class.name);
 			prog.use();
 			glBindBuffer(GL_ARRAY_BUFFER, model.id);
-			glVertexAttribPointer(prog.a_vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
-			glEnableVertexAttribArray(prog.a_vertex);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+			glEnableVertexAttribArray(prog.a("vertex"));
 			glCheck();
 
 			Mat4f rotation_matrix;
@@ -182,11 +182,11 @@ namespace Oort {
 
 			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 
-			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
-			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
-			glUniform4f(prog.u_color, colorv.x, colorv.y, colorv.z, colorv.w);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
+			glUniform4f(prog.u("color"), colorv.x, colorv.y, colorv.z, colorv.w);
 			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
-			glDisableVertexAttribArray(prog.a_vertex);
+			glDisableVertexAttribArray(prog.a("vertex"));
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glUseProgram(0);
 			glCheck();
@@ -199,12 +199,12 @@ namespace Oort {
 			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
 			var segments = new float[Ship.TAIL_SEGMENTS*2];
 			var alphas = new float[Ship.TAIL_SEGMENTS];
-			glUniform4f(prog.u_color, colorv.x, colorv.y, colorv.z, colorv.w/3.0f);
-			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
-			glVertexAttribPointer(prog.a_vertex, 2, GL_FLOAT, false, 0, segments);
-			glVertexAttribPointer(prog.a_alpha, 1, GL_FLOAT, false, 0, alphas);
-			glEnableVertexAttribArray(prog.a_vertex);
-			glEnableVertexAttribArray(prog.a_alpha);
+			glUniform4f(prog.u("color"), colorv.x, colorv.y, colorv.z, colorv.w/3.0f);
+			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, segments);
+			glVertexAttribPointer(prog.a("alpha"), 1, GL_FLOAT, false, 0, alphas);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glEnableVertexAttribArray(prog.a("alpha"));
 			glCheck();
 
 			segments[0] = (float) s.physics.p.x;
@@ -224,8 +224,8 @@ namespace Oort {
 			}
 
 			glDrawArrays(GL_LINE_STRIP, 0, (GLsizei) i);
-			glDisableVertexAttribArray(prog.a_vertex);
-			glDisableVertexAttribArray(prog.a_alpha);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glDisableVertexAttribArray(prog.a("alpha"));
 			glUseProgram(0);
 			glCheck();
 		}
@@ -260,12 +260,12 @@ namespace Oort {
 			Mat4f.multiply(out tmp_matrix, ref rotation_matrix, ref scale_matrix);
 			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref tmp_matrix);
 			glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
-			glVertexAttribPointer(prog.a_vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
-			glEnableVertexAttribArray(prog.a_vertex);
-			glUniform4f(prog.u_color, 0.8f, 0.8f, 0.8f, 0.67f);
-			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glUniform4f(prog.u("color"), 0.8f, 0.8f, 0.8f, 0.67f);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
 			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
-			glDisableVertexAttribArray(prog.a_vertex);
+			glDisableVertexAttribArray(prog.a("vertex"));
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glUseProgram(0);
 			glCheck();
@@ -300,7 +300,7 @@ namespace Oort {
 
 			var prog = ship_program;
 			prog.use();
-			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
+			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
 			glCheck();
 
 			if (b.type == Oort.BulletType.SLUG) {
@@ -311,8 +311,8 @@ namespace Oort {
 
 				Mat4f mv_matrix;
 				Mat4f.load_identity(out mv_matrix);
-				glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
-				glUniform4f(prog.u_color, 0.27f, 0.27f, 0.27f, 1.0f); // XXX fade to alpha 0.33
+				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+				glUniform4f(prog.u("color"), 0.27f, 0.27f, 0.27f, 1.0f); // XXX fade to alpha 0.33
 				glCheck();
 
 				//Oort.GLUtil.color32(0x44444455);
@@ -323,12 +323,12 @@ namespace Oort {
 					(float) p2.x, (float) p2.y
 				};
 
-				glVertexAttribPointer(prog.a_vertex, 2, GL_FLOAT, false, 0, line);
-				glEnableVertexAttribArray(prog.a_vertex);
+				glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, line);
+				glEnableVertexAttribArray(prog.a("vertex"));
 				glDrawArrays(GL_LINES, 0, 2);
 				glCheck();
 
-				glDisableVertexAttribArray(prog.a_vertex);
+				glDisableVertexAttribArray(prog.a("vertex"));
 			} else if (b.type == Oort.BulletType.REFUEL) {
 				Mat4f scale_matrix;
 				Mat4f translation_matrix;
@@ -337,13 +337,13 @@ namespace Oort {
 				Mat4f.load_scale(out scale_matrix, scale, scale, scale); 
 				Mat4f.load_translation(out translation_matrix, (float)b.physics.p.x, (float)b.physics.p.y, 0); 
 				Mat4f.multiply(out mv_matrix, ref translation_matrix, ref scale_matrix);
-				glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
-				glUniform4f(prog.u_color, 0.47f, 0.47f, 0.47f, 0.66f);
+				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+				glUniform4f(prog.u("color"), 0.47f, 0.47f, 0.47f, 0.66f);
 				glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
-				glVertexAttribPointer(prog.a_vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
-				glEnableVertexAttribArray(prog.a_vertex);
+				glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+				glEnableVertexAttribArray(prog.a("vertex"));
 				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
-				glDisableVertexAttribArray(prog.a_vertex);
+				glDisableVertexAttribArray(prog.a("vertex"));
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				glCheck();
 			}
@@ -394,23 +394,23 @@ namespace Oort {
 				1, 0
 			};
 
-			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
-			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
-			glUniform4f(prog.u_color, color.x, color.y, color.z, 1);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
+			glUniform4f(prog.u("color"), color.x, color.y, color.z, 1);
 
-			glVertexAttribPointer(prog.a_vertex, 2, GL_FLOAT, false, 0, vertices);
-			glVertexAttribPointer(prog.a_texcoord, 2, GL_FLOAT, false, 0, texcoords);
-			glEnableVertexAttribArray(prog.a_vertex);
-			glEnableVertexAttribArray(prog.a_texcoord);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
+			glVertexAttribPointer(prog.a("texcoord"), 2, GL_FLOAT, false, 0, texcoords);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glEnableVertexAttribArray(prog.a("texcoord"));
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			glDisableVertexAttribArray(prog.a_vertex);
-			glDisableVertexAttribArray(prog.a_texcoord);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glDisableVertexAttribArray(prog.a("texcoord"));
 		}
 
 		private void render_particles() {
 			var prog = particle_program;
 			prog.use();
-			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
+			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
 			glCheck();
 
 			for (int i = 0; i < Particle.MAX; i++) {
@@ -439,11 +439,11 @@ namespace Oort {
 				glPointSize(size*(float)view_scale*10);
 				float position[2] = { (float)c.p.x, (float)c.p.y };
 
-				glUniform4f(prog.u_color, color.x, color.y, color.z, color.w);
-				glVertexAttribPointer(prog.a_position, 2, GL_FLOAT, false, 0, position);
-				glEnableVertexAttribArray(prog.a_position);
+				glUniform4f(prog.u("color"), color.x, color.y, color.z, color.w);
+				glVertexAttribPointer(prog.a("position"), 2, GL_FLOAT, false, 0, position);
+				glEnableVertexAttribArray(prog.a("position"));
 				glDrawArrays(GL_POINTS, 0, 1);
-				glDisableVertexAttribArray(prog.a_position);
+				glDisableVertexAttribArray(prog.a("position"));
 				glCheck();
 			}
 
@@ -454,17 +454,17 @@ namespace Oort {
 		private void render_boundary() {
 			var prog = ship_program;
 			prog.use();
-			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
+			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
 			Mat4f mv_matrix;
 			float scale = (float)game.scn.radius;
 			Mat4f.load_scale(out mv_matrix, scale, scale, scale); 
-			glUniformMatrix4fv(prog.u_mv_matrix, 1, false, mv_matrix.data);
-			glUniform4f(prog.u_color, 0.2f, 0.2f, 0.2f, 0.39f);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glUniform4f(prog.u("color"), 0.2f, 0.2f, 0.2f, 0.39f);
 			glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
-			glVertexAttribPointer(prog.a_vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
-			glEnableVertexAttribArray(prog.a_vertex);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+			glEnableVertexAttribArray(prog.a("vertex"));
 			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
-			glDisableVertexAttribArray(prog.a_vertex);
+			glDisableVertexAttribArray(prog.a("vertex"));
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glUseProgram(0);
 			glCheck();
