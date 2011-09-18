@@ -123,7 +123,7 @@ namespace Oort {
 			}
 
 			foreach (unowned Bullet b in game.all_bullets) {
-				//render_bullet(b);
+				render_bullet(b);
 			}
 
 			foreach (unowned Beam b in game.all_beams) {
@@ -292,45 +292,64 @@ namespace Oort {
 		}
 
 		private void render_bullet(Bullet b) {
-			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
-
 			if (b.dead) return;
+
+			program.use();
+			var vertex = program.attribute("vertex");
+			var u_mv_matrix = program.uniform("mv_matrix");
+			var u_p_matrix = program.uniform("p_matrix");
+			var color = program.uniform("color");
+			glUniformMatrix4fv(u_p_matrix, 1, false, p_matrix.data);
+			glCheck();
 
 			if (b.type == Oort.BulletType.SLUG) {
 				var dp = b.physics.v.scale(1.0/64);
 				var offset = b.physics.v.scale(prng.next_double()/64);
 				var p1 = b.physics.p.add(offset);
 				var p2 = b.physics.p.add(offset).add(dp);
-				var sp1 = S(p1);
-				var sp2 = S(p2);
 
-				glBegin(GL_LINE_STRIP);
-				Oort.GLUtil.color32(0x44444455);
-				glVertex3d(sp1.x, sp1.y, 0);
-				Oort.GLUtil.color32(0x444444FF);
-				glVertex3d(sp2.x, sp2.y, 0);
-				glEnd();
+				Mat4f mv_matrix;
+				Mat4f.load_identity(out mv_matrix);
+				glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
+				glUniform4f(color, 0.27f, 0.27f, 0.27f, 1.0f); // XXX fade to alpha 0.33
+				glCheck();
+
+				//Oort.GLUtil.color32(0x44444455);
+				//Oort.GLUtil.color32(0x444444FF);
+
+				float line[4] = {
+					(float) p1.x, (float) p1.y,
+					(float) p2.x, (float) p2.y
+				};
+
+				glVertexAttribPointer(vertex, 2, GL_FLOAT, false, 0, line);
+				glEnableVertexAttribArray(vertex);
+				glDrawArrays(GL_LINES, 0, 2);
+				glCheck();
+
+				glDisableVertexAttribArray(vertex);
 			} else if (b.type == Oort.BulletType.REFUEL) {
-				double scale = view_scale * b.physics.r;
-				var sp = S(b.physics.p);
-				GLUtil.color32((uint32)0x777777AA);
-				glPushMatrix();
-				glTranslated(sp.x, sp.y, 0);
-				glScaled(scale, scale, scale);
-				GLUtil.render_circle(20);
-				glPopMatrix();
-			} else if (render_explosion_rays && b.type == Oort.BulletType.EXPLOSION) {
-				var dp = b.physics.v.scale(Game.TICK_LENGTH);
-				var sp1 = S(b.physics.p);
-				var sp2 = S(b.physics.p.add(dp));
-
-				glBegin(GL_LINE_STRIP);
-				Oort.GLUtil.color32(0xFFFFFF33u);
-				glVertex3d(sp1.x, sp1.y, 0);
-				Oort.GLUtil.color32(0xFFFFFF22u);
-				glVertex3d(sp2.x, sp2.y, 0);
-				glEnd();
+				var circle = resources.models.lookup("circle");
+				Mat4f scale_matrix;
+				Mat4f translation_matrix;
+				Mat4f mv_matrix;
+				float scale = (float)b.physics.r;
+				Mat4f.load_scale(out scale_matrix, scale, scale, scale); 
+				Mat4f.load_translation(out translation_matrix, (float)b.physics.p.x, (float)b.physics.p.y, 0); 
+				Mat4f.multiply(out mv_matrix, ref translation_matrix, ref scale_matrix);
+				glUniformMatrix4fv(u_mv_matrix, 1, false, mv_matrix.data);
+				glUniform4f(color, 0.47f, 0.47f, 0.47f, 0.66f);
+				glBindBuffer(GL_ARRAY_BUFFER, circle.id);
+				glVertexAttribPointer(vertex, 2, GL_DOUBLE, false, 0, (void*) 0);
+				glEnableVertexAttribArray(vertex);
+				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle.vertices.length);
+				glDisableVertexAttribArray(vertex);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glCheck();
 			}
+
+			glUseProgram(0);
+			glCheck();
 		}
 
 		private void render_beam(Beam b) {
