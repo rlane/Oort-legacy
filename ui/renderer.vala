@@ -54,6 +54,7 @@ namespace Oort {
 		Texture ion_beam_tex;
 		Texture laser_beam_tex;
 		ShaderProgram program;
+		ParticleProgram particle_program;
 		Mat4f p_matrix;
 
 		public static void static_init() {
@@ -98,6 +99,7 @@ namespace Oort {
 			program = new ShaderProgram(
 				new VertexShader(resources.vertex_shader_source.data),
 				new FragmentShader(resources.fragment_shader_source.data));
+			particle_program = new ParticleProgram();
 		}
 
 		public void render() {
@@ -130,7 +132,7 @@ namespace Oort {
 				//render_beam(b);
 			}
 
-			//render_particles();
+			render_particles();
 			
 			if (picked != null) {
 				//render_picked_info(picked);
@@ -393,32 +395,43 @@ namespace Oort {
 		}
 
 		private void render_particles() {
+			Vec4f color = vec4f(0,0,0,0);
+			var prog = particle_program;
+			prog.use();
+			glUniformMatrix4fv(prog.u_p_matrix, 1, false, p_matrix.data);
+			glCheck();
+
 			for (int i = 0; i < Particle.MAX; i++) {
 				unowned Particle c = Particle.get(i);
 				if (c.ticks_left == 0) continue;
-				Vec2 p = S(c.p);
 				if (c.type == ParticleType.HIT) {
 					glPointSize((float)(0.3*c.ticks_left*view_scale/32));
-					glColor4ub(255, 200, 200, c.ticks_left*8);
+					color = vec4f(1.0f, 0.78f, 0.78f, c.ticks_left*0.03125f);
 				} else if (c.type == ParticleType.PLASMA) {
 					glPointSize((float)(0.15*c.ticks_left*view_scale/32));
-					glColor4ub(255, 0, 0, c.ticks_left*32);
+					color = vec4f(1.0f, 0, 0, c.ticks_left*0.125f);
 				} else if (c.type == ParticleType.ENGINE) {
 					glPointSize((float)(0.1*c.ticks_left*view_scale/32));
-					glColor4ub(255, 217, 43, 10 + c.ticks_left*5);
+					color = vec4f(1.0f, 0.8f, 0.17f, 0.039f + c.ticks_left*0.02f);
 				} else if (c.type == ParticleType.EXPLOSION) {
 					var s = c.v.abs();
 					glPointSize((float)((0.05 + 0.05*c.ticks_left)*view_scale/32));
-					GLubyte r = 255;
-					GLubyte g = (GLubyte)(255*double.min(1.0, 0.0625*s+c.ticks_left*0.1));
-					GLubyte b = 50;
-					GLubyte a = 10 + c.ticks_left*20;
-					glColor4ub(r, g, b, a);
+					float g = (float) (255*double.min(1.0, 0.0625*s+c.ticks_left*0.1))/256;
+					color = vec4f(1.0f, g, 0.2f, 0.04f + c.ticks_left*0.078f);
 				}
-				glBegin(GL_POINTS);
-				glVertex3d(p.x, p.y, 0);
-				glEnd();
+
+				float position[2] = { (float)c.p.x, (float)c.p.y };
+
+				glUniform4f(prog.u_color, color.x, color.y, color.z, color.w);
+				glVertexAttribPointer(prog.a_position, 2, GL_FLOAT, false, 0, position);
+				glEnableVertexAttribArray(prog.a_position);
+				glDrawArrays(GL_POINTS, 0, 1);
+				glDisableVertexAttribArray(prog.a_position);
+				glCheck();
 			}
+
+			glUseProgram(0);
+			glCheck();
 		}
 
 		private void render_boundary() {
