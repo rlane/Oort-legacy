@@ -43,6 +43,7 @@ nobase_oortlua_DATA = \
 	scenarios/furball2.json \
 	scenarios/furball3.json \
 	scenarios/furball4.json \
+	scenarios/knife.json \
 	scenarios/benchmark.json \
 	scenarios/challenge02.json \
 	scenarios/demo1.json \
