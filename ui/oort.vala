@@ -339,6 +339,13 @@ namespace Oort {
 				case "Down":
 					renderer.view_pos = renderer.view_pos.add(Vector.vec2(0, -100));
 					break;
+				case "S":
+					try {
+						renderer.load_shaders();
+					} catch (ShaderError e) {
+						GLib.warning("reloading shaders failed:\n%s", e.message);
+					}
+					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {
 						tick_lock.lock();

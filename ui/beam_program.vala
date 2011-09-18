@@ -8,12 +8,10 @@ class BeamProgram : ShaderProgram {
 	public GLint a_vertex;
 	public GLint a_texcoord;
 
-	public BeamProgram() {
-		var vs_src = Game.load_resource("shaders/beam.v.glsl");
-		var fs_src = Game.load_resource("shaders/beam.f.glsl");
-		var vs = new VertexShader(vs_src);
-		var fs = new FragmentShader(fs_src);
-		base(vs, fs);
+	public BeamProgram() throws ShaderError {
+		var vs = new VertexShader.from_resource("beam.v.glsl");
+		var fs = new FragmentShader.from_resource("beam.f.glsl");
+		base("beam", vs, fs);
 		u_mv_matrix = uniform("mv_matrix");
 		u_p_matrix = uniform("p_matrix");
 		u_color = uniform("color");

@@ -96,6 +96,14 @@ namespace Oort {
 
 			resources.models.foreach( (k,v) => v.build() );
 
+			try {
+				load_shaders();
+			} catch (ShaderError e) {
+				GLib.error("loading shaders failed:\n%s", e.message);
+			}
+		}
+
+		public void load_shaders() throws ShaderError{
 			ship_program = new ShipProgram();
 			particle_program = new ParticleProgram();
 			beam_program = new BeamProgram();

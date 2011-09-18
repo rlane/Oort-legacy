@@ -1,14 +1,19 @@
 using GL;
 using GLEW;
 
+errordomain Oort.ShaderError {
+	COMPILE_FAILED,
+	LINK_FAILED
+}
+
 class Oort.Shader {
 	public GLuint id;
+	public string name = "unknown";
 
-	public Shader(GLenum type, uint8[] src) {
+	public Shader(GLenum type, string name, uint8[] src) throws ShaderError {
 		id = glCreateShader(type);
-		glCheck();
+		this.name = name;
 		glShaderSource(id, 1, { src }, { (GLint)src.length });
-		glCheck();
 		glCompileShader(id);
 		glCheck();
 
@@ -19,30 +24,43 @@ class Oort.Shader {
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, out log_length);
 			var log = new uint8[log_length];
 			glGetShaderInfoLog(id, log_length, out log_length, log);
-			error("Failed to compile shader:\n%s", (string)log);
+			throw new ShaderError.COMPILE_FAILED(@"Failed to compile shader %s:\n$((string)log)", name);
 		}
+	}
+
+	public Shader.from_resource(GLenum type, string resource) throws ShaderError {
+		this(type, resource, Game.load_resource(@"shaders/$(resource)"));
 	}
 }
 
 class Oort.VertexShader : Oort.Shader {
-	public VertexShader(uint8[] src) {
-		base(GL_VERTEX_SHADER, src);
+	public VertexShader(string name, uint8[] src) throws ShaderError {
+		base(GL_VERTEX_SHADER, name, src);
+	}
+
+	public VertexShader.from_resource(string resource) throws ShaderError {
+		base.from_resource(GL_VERTEX_SHADER, resource);
 	}
 }
 
 class Oort.FragmentShader : Oort.Shader {
-	public FragmentShader(uint8[] src) {
-		base(GL_FRAGMENT_SHADER, src);
+	public FragmentShader(string name, uint8[] src) throws ShaderError {
+		base(GL_FRAGMENT_SHADER, name, src);
+	}
+
+	public FragmentShader.from_resource(string resource) throws ShaderError {
+		base.from_resource(GL_FRAGMENT_SHADER, resource);
 	}
 }
 
 class Oort.ShaderProgram {
 	public GLuint id;
+	public string name;
 
 	VertexShader vertex_shader;
 	FragmentShader fragment_shader;
 
-	public ShaderProgram(VertexShader vs, FragmentShader fs) {
+	public ShaderProgram(string name, VertexShader vs, FragmentShader fs) throws ShaderError {
 		id = glCreateProgram();
 		vertex_shader = vs;
 		fragment_shader = fs;
@@ -54,8 +72,11 @@ class Oort.ShaderProgram {
 		GLint program_ok;
 		glGetProgramiv(id, GL_LINK_STATUS, out program_ok);
 		if (program_ok == 0) {
-			warning("Failed to link shader program:\n");
-			//show_info_log(program, glGetProgramiv, glGetProgramInfoLog);
+			GLsizei log_length;
+			glGetProgramiv(id, GL_INFO_LOG_LENGTH, out log_length);
+			var log = new uint8[log_length];
+			glGetProgramInfoLog(id, log_length, &log_length, (string)log);
+			throw new ShaderError.LINK_FAILED("Failed to link shader program %s:\n%s", name, log);
 		}
 	}
 
