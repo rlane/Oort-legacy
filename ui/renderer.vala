@@ -144,7 +144,7 @@ namespace Oort {
 					picked = null;
 				} else {
 					render_picked_stuff(picked);
-					//render_picked_info(picked);
+					render_picked_info(picked);
 				}
 			}
 		}
