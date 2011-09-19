@@ -56,6 +56,8 @@ nobase_oortlua_DATA = \
 	shaders/particle.f.glsl \
 	shaders/tail.v.glsl \
 	shaders/tail.f.glsl \
+	shaders/text.v.glsl \
+	shaders/text.f.glsl \
 	solutions/challenge01.lua \
 	solutions/challenge02.lua \
 	solutions/challenge03.lua \

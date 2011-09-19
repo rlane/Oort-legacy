@@ -51,12 +51,12 @@ namespace Oort {
 
 		Rand prng;
 		RendererResources resources;
-		Texture ion_beam_tex;
-		Texture laser_beam_tex;
+		Texture font_tex;
 		ShaderProgram ship_program;
 		ShaderProgram tail_program;
 		ShaderProgram particle_program;
 		ShaderProgram beam_program;
+		ShaderProgram text_program;
 		Mat4f p_matrix;
 		Model circle_model;
 
@@ -102,6 +102,38 @@ namespace Oort {
 			} catch (ShaderError e) {
 				GLib.error("loading shaders failed:\n%s", e.message);
 			}
+
+			load_font();
+		}
+
+		public void load_font() {
+			var tex = new Texture();
+			tex.bind();
+			glCheck();
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+			glCheck();
+			glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glCheck();
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glCheck();
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glCheck();
+			var n = 256;
+			var data = new uint8[64*n];
+			for (int i = 0; i < n; i++) {
+				for (int x = 0; x < 8; x++) {
+					for (int y = 0; y < 8; y++) {
+						uint8 row = font[8*i+y];
+						bool on = ((row >> x) & 1) == 1;
+						data[n*8*y + 8*i + x] = on ? 255 : 0;
+					}
+				}
+			}
+			glTexImage2D(GL_TEXTURE_2D, 0, 1, n*8, 8, 0, GL_RED, GL_UNSIGNED_BYTE, data);
+			glCheck();
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glCheck();
+			font_tex = tex;
 		}
 
 		public void load_shaders() throws ShaderError{
@@ -109,6 +141,7 @@ namespace Oort {
 			tail_program = new ShaderProgram.from_resources("tail");
 			beam_program = new ShaderProgram.from_resources("beam");
 			particle_program = new ShaderProgram.from_resources("particle");
+			text_program = new ShaderProgram.from_resources("text");
 		}
 
 		public void render() {
@@ -157,6 +190,35 @@ namespace Oort {
 					render_picked_info(picked);
 				}
 			}
+		}
+
+		void render_text(int x, int y, string text) {
+			var prog = text_program;
+			var pos = pixel2screen(vec2(x,y));
+			var spacing = 9.0f;
+
+			var chars = new float[text.length];
+			var indices = new float[text.length];
+			for (int i = 0; i < text.length; i++) {
+				chars[i] = (float) text[i];
+				indices[i] = (float) i;
+			}
+
+			glPointSize(8);
+			prog.use();
+			font_tex.bind();
+			glUniform1i(prog.u("tex"), 0);
+			glUniform1f(prog.u("dist"), 2.0f*spacing/screen_width);
+			glUniform2f(prog.u("position"), (float)pos.x, (float)pos.y);
+			glVertexAttribPointer(prog.a("character"), 1, GL_FLOAT, false, 0, chars);
+			glVertexAttribPointer(prog.a("index"), 1, GL_FLOAT, false, 0, indices);
+			glEnableVertexAttribArray(prog.a("character"));
+			glEnableVertexAttribArray(prog.a("index"));
+			glDrawArrays(GL_POINTS, 0, (GLsizei) text.length);
+			glDisableVertexAttribArray(prog.a("character"));
+			glDisableVertexAttribArray(prog.a("index"));
+			glUseProgram(0);
+			glCheck();
 		}
 
 		void render_ship(Ship s) {
@@ -487,23 +549,22 @@ namespace Oort {
 		private void render_picked_info(Ship s) {
 			int x = 15;
 			int dy = 12;
-			int y = 22+11*dy;
+			int y = screen_height - 22 - 11*dy;
 			var rv = s.physics.v.rotate(-s.physics.h);
-			GLUtil.color32((uint32)0xAAFFFFAA);
-			GLUtil.printf(x, y-0*dy, "%s %s %s", s.class.name, s.hex_id, s.controlled ? "(player controlled)" : "");
-			GLUtil.printf(x, y-1*dy, "hull: %s", fmt(s.hull,"J"));
-			GLUtil.printf(x, y-2*dy, "position: (%s, %s)", fmt(s.physics.p.x,"m"), fmt(s.physics.p.y,"m"));
-			GLUtil.printf(x, y-3*dy, "heading: %s", fmt(s.physics.h,"rad"));
-			GLUtil.printf(x, y-4*dy, "velocity: (%s, %s) rel=(%s, %s)",
-			                         fmt(s.physics.v.x,"m/s"), fmt(s.physics.v.y,"m/s"),
-			                         fmt(rv.x,"m/s"), fmt(rv.y,"m/s"));
-			GLUtil.printf(x, y-5*dy, "angular velocity: %s", fmt(s.physics.w,"rad/s"));
-			GLUtil.printf(x, y-6*dy, "acceleration:");
-			GLUtil.printf(x, y-7*dy, " main: %s", fmt(s.physics.acc.x,"m/s\xFD"));
-			GLUtil.printf(x, y-8*dy, " lateral: %s", fmt(s.physics.acc.y,"m/s\xFD"));
-			GLUtil.printf(x, y-9*dy, " angular: %s", fmt(s.physics.wa,"rad/s\xFD"));
-			GLUtil.printf(x, y-10*dy, "energy: %s", fmt(s.get_energy(),"J"));
-			GLUtil.printf(x, y-11*dy, "reaction mass: %s", fmt(s.get_reaction_mass()*1000,"g"));
+			textf(x, y+0*dy, "%s %s %s", s.class.name, s.hex_id, s.controlled ? "(player controlled)" : "");
+			textf(x, y+1*dy, "hull: %s", fmt(s.hull,"J"));
+			textf(x, y+2*dy, "position: (%s, %s)", fmt(s.physics.p.x,"m"), fmt(s.physics.p.y,"m"));
+			textf(x, y+3*dy, "heading: %s", fmt(s.physics.h,"rad"));
+			textf(x, y+4*dy, "velocity: (%s, %s) rel=(%s, %s)",
+			                 fmt(s.physics.v.x,"m/s"), fmt(s.physics.v.y,"m/s"),
+			                 fmt(rv.x,"m/s"), fmt(rv.y,"m/s"));
+			textf(x, y+5*dy, "angular velocity: %s", fmt(s.physics.w,"rad/s"));
+			textf(x, y+6*dy, "acceleration:");
+			textf(x, y+7*dy, " main: %s", fmt(s.physics.acc.x,"m/s\xFD"));
+			textf(x, y+8*dy, " lateral: %s", fmt(s.physics.acc.y,"m/s\xFD"));
+			textf(x, y+9*dy, " angular: %s", fmt(s.physics.wa,"rad/s\xFD"));
+			textf(x, y+10*dy, "energy: %s", fmt(s.get_energy(),"J"));
+			textf(x, y+11*dy, "reaction mass: %s", fmt(s.get_reaction_mass()*1000,"g"));
 		}
 
 		public void reshape(int width, int height) {
@@ -605,56 +666,12 @@ namespace Oort {
 		{
 			s.gfx.class = ShipGfxClass.lookup(s.class.name);
 		}
-	}
 
-	namespace GLUtil {
-		public void printf(int x, int y, string fmt, ...) {
+		public void textf(int x, int y, string fmt, ...) {
 			va_list ap = va_list();
 			var str = fmt.vprintf(ap);
-			write(x, y, str);
+			render_text(x, y, str);
 		}
-
-		public void write(int x, int y, string str)
-		{
-			assert(font != null);
-			if (GLEW.ARB_window_pos) {
-				GLEW.glWindowPos2i(x, y);
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
-				unowned uint8 *data = str.data;
-
-				for (int i = 0; data[i] != 0; i++) {
-					glBitmap(8, 8, 4, 4, 9, 0, (GLubyte*)font + 8*data[i]);
-				}
-			}
-		}
-
-		public void color32(uint32 c) {
-			GLubyte r = (GLubyte) ((c >> 24) & 0xFF);
-			GLubyte g = (GLubyte) ((c >> 16) & 0xFF);
-			GLubyte b = (GLubyte) ((c >> 8) & 0xFF);
-			GLubyte a = (GLubyte) (c & 0xFF);
-			glColor4ub(r, g, b, a);
-		}
-
-		public void render_circle(int n)
-		{
-			double da = 2*Math.PI/n, a = 0;
-			int i;
-
-			glBegin(GL_LINE_LOOP);
-			for (i = 0; i < n; i++) {
-				a += da;
-				glVertex3d(cos(a), sin(a), 0);
-			}
-			glEnd();
-		}
-	}
-
-	public double normalize_angle(double a)
-	{
-		if (a < -PI) a += 2*PI;
-		if (a > PI) a -= 2*PI;
-		return a;
 	}
 }
 

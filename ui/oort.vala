@@ -250,21 +250,19 @@ namespace Oort {
 
 			renderer.render();
 			
-			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
-
 			if (show_fps && frame_usecs != 0 && sample_usecs != 0) {
-				Oort.GLUtil.printf(rect.width-9*9, rect.height-15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
-				Oort.GLUtil.printf(rect.width-15*9, rect.height-25, "Max FPS: %.1f", (1000*1000.0)/frame_usecs);
+				renderer.textf(rect.width-9*9, 15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
+				renderer.textf(rect.width-15*9, 25, "Max FPS: %.1f", (1000*1000.0)/frame_usecs);
 			}
 
 			switch (game_state) {
 			case GameState.DEMO:
-				Oort.GLUtil.printf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
+				renderer.textf(rect.width/2-12*9, 50, "Click Game/New to begin");
 				break;
 			case GameState.RUNNING:
 				break;
 			case GameState.FINISHED:
-				Oort.GLUtil.printf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
+				renderer.textf(rect.width/2-4*20, 50, "%s is victorious", winner.name);
 				break;
 			}
 
