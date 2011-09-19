@@ -152,7 +152,9 @@ namespace Oort {
 				if (picked.dead) {
 					picked = null;
 				} else {
-					render_picked_stuff(picked);
+					render_picked_circle(picked);
+					render_picked_acceleration(picked);
+					render_picked_path(picked);
 					render_picked_info(picked);
 				}
 			}
@@ -288,7 +290,7 @@ namespace Oort {
 			glCheck();
 		}
 
-		void render_picked_stuff(Ship s) {
+		void render_picked_circle(Ship s) {
 			var prog = ship_program;
 			prog.use();
 			Mat4f rotation_matrix;
@@ -311,30 +313,52 @@ namespace Oort {
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glUseProgram(0);
 			glCheck();
+		}
 
-/*
-			GLUtil.color32((uint32)0xCCCCCC77);
-			glPushMatrix();
-			glTranslated(sp.x, sp.y, 0);
-			glScaled(view_scale, view_scale, view_scale);
-			glRotated(Util.rad2deg(s.physics.h), 0, 0, 1);
-			glBegin(GL_LINES);
-			glVertex3d(0, 0, 0);
-			glVertex3d(s.physics.acc.x, s.physics.acc.y, 0);
-			glEnd();
-			glPopMatrix();
+		void render_picked_acceleration(Ship s) {
+			float vertices[4] = { 0, 0, (float)s.physics.acc.x, (float)s.physics.acc.y };
+			var prog = ship_program;
+			prog.use();
+			Mat4f rotation_matrix;
+			Mat4f translation_matrix;
+			Mat4f scale_matrix;
+			Mat4f mv_matrix;
+			Mat4f tmp_matrix;
+			Mat4f.load_rotation(out rotation_matrix, (float)s.physics.h, 0, 0, 1);
+			Mat4f.load_translation(out translation_matrix, (float)s.physics.p.x, (float)s.physics.p.y, 0);
+			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref rotation_matrix);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glUniform4f(prog.u("color"), 0.8f, 0.8f, 0.8f, 0.46f);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glDrawArrays(GL_LINE_LOOP, 0, 2);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glUseProgram(0);
+			glCheck();
+		}
 
-			GLUtil.color32((uint32)0x49D5CEAA);
-			glBegin(GL_LINE_STRIP);
-			glVertex3d(sp.x, sp.y, 0);
+		void render_picked_path(Ship s) {
+			int n = (int) (1/Game.TICK_LENGTH);
+			float[] vertices = new float[n*2];
 			Physics q = s.physics.copy();
-			for (double j = 0; j < 1/Game.TICK_LENGTH; j++) {
+			for (int j = 0; j < n; j++) {
+				vertices[j*2+0] = (float) q.p.x;
+				vertices[j*2+1] = (float) q.p.y;
 				q.tick_one();
-				Vec2 sp2 = S(q.p);
-				glVertex3d(sp2.x, sp2.y, 0);
 			}
-			glEnd();
-*/
+
+			var prog = ship_program;
+			prog.use();
+			Mat4f mv_matrix;
+			Mat4f.load_identity(out mv_matrix);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glUniform4f(prog.u("color"), 0.29f, 0.83f, 0.8f, 0.66f);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glDrawArrays(GL_LINE_STRIP, 0, (GLsizei) n);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glUseProgram(0);
+			glCheck();
 		}
 
 		private void render_bullet(Bullet b) {
