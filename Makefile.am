@@ -110,12 +110,16 @@ oort-win32: all
 	rm -rf oort-win32
 	mkdir oort-win32
 	cp ui/oort.exe dedicated/oort_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) oort-win32/
-	cp ships.lua runtime.lua lib.lua oort-win32/
+	cp ships.lua runtime.lua lib.lua strict.lua vector.lua oort-win32/
 	dos2unix --u2d < README.md > oort-win32/README.txt
 	mkdir oort-win32/scenarios
 	cp scenarios/*.json oort-win32/scenarios
 	mkdir oort-win32/examples
 	cp examples/*.lua oort-win32/examples
+	mkdir oort-win32/models
+	cp models/*.json oort-win32/models
+	mkdir oort-win32/shaders
+	cp shaders/*.glsl oort-win32/shaders
 
 oort-installer-win32.exe: oort-win32 installer.nsi
 	makensis installer.nsi
