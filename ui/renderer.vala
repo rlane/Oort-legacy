@@ -382,17 +382,14 @@ namespace Oort {
 				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
 				glCheck();
 
-				float line[4] = {
-					(float) p1.x, (float) p1.y,
-					(float) p2.x, (float) p2.y
+				Vec2f vertices[2] = { p1.to_vec2f(), p2.to_vec2f() };
+
+				Vec4f colors[2] = {
+					vec4f(0.27f, 0.27f, 0.27f, 0.33f),
+					vec4f(0.27f, 0.27f, 0.27f, 1.0f)
 				};
 
-				float colors[8] = {
-					0.27f, 0.27f, 0.27f, 0.33f,
-					0.27f, 0.27f, 0.27f, 1.0f
-				};
-
-				glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, line);
+				glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
 				glVertexAttribPointer(prog.a("color"), 4, GL_FLOAT, false, 0, colors);
 				glEnableVertexAttribArray(prog.a("vertex"));
 				glEnableVertexAttribArray(prog.a("color"));
@@ -405,11 +402,12 @@ namespace Oort {
 				Mat4f translation_matrix;
 				Mat4f mv_matrix;
 				float scale = (float)b.physics.r;
+				var color = vec4f(0.47f, 0.47f, 0.47f, 0.66f);
 				Mat4f.load_scale(out scale_matrix, scale, scale, scale); 
 				Mat4f.load_translation(out translation_matrix, (float)b.physics.p.x, (float)b.physics.p.y, 0); 
 				Mat4f.multiply(out mv_matrix, ref translation_matrix, ref scale_matrix);
 				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-				glVertexAttrib4f(prog.a("color"), 0.47f, 0.47f, 0.47f, 0.66f);
+				glVertexAttrib4fv(prog.a("color"), color.data);
 				glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
 				glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
 				glEnableVertexAttribArray(prog.a("vertex"));

@@ -5,6 +5,8 @@ namespace Vector {
 	public struct Vec2 {
 		public double x;
 		public double y;
+		public double *data;
+		public Vector.Vec2f to_vec2f();
 		public double abs ();
 		public Vector.Vec2 add (Vector.Vec2 v);
 		public Vector.Vec2 scale (double f);
@@ -20,6 +22,21 @@ namespace Vector {
 	[CCode (cname = "vec2", cheader_filename = "vec2d.h")]
 	public static Vector.Vec2 vec2 (double x, double y);
 
+	[CCode (cname = "Vec2f", cheader_filename = "vec2f.h")]
+	[SimpleType]
+	public struct Vec2f {
+		public float x;
+		public float y;
+		public float *data;
+		public Vector.Vec4f projectXY(ref Mat4f mModelView, ref Mat4f mProjection, [CCode (array_length=false)] int viewport[4]);
+
+		public string to_string() {
+			return "(%0.3g, %0.3g)".printf(x, y);
+		}
+	}
+	[CCode (cname = "vec2f", cheader_filename = "vec2f.h")]
+	public static Vector.Vec2f vec2f (float x, float y);
+
 	[CCode (cname = "Vec4f", cheader_filename = "vec4f.h")]
 	[SimpleType]
 	public struct Vec4f {
@@ -27,6 +44,7 @@ namespace Vector {
 		public float y;
 		public float z;
 		public float w;
+		public float *data;
 		public float abs ();
 		public Vector.Vec4f add (Vector.Vec4f v);
 		public Vector.Vec4f scale (float f);

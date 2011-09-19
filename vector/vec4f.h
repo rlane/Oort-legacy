@@ -5,33 +5,30 @@
 #ifndef VEC4F_H
 #define VEC4F_H
 
+static inline Vec4f vec4f(float x, float y, float z, float w)
+{
+	Vec4f r = {{ x, y, z, w }};
+	return r;
+}
+
 static inline Vec4f vec4f_scale(Vec4f a, float f)
 {
-	Vec4f r = { a.x*f, a.y*f, a.z*f, a.w*f };
-	return r;
+	return vec4f(a.x*f, a.y*f, a.z*f, a.w*f);
 }
 
 static inline Vec4f vec4f_add(Vec4f a, Vec4f b)
 {
-	Vec4f r = { a.x+b.x, a.y+b.y, a.z+b.z, a.w+b.w };
-	return r;
+	return vec4f(a.x+b.x, a.y+b.y, a.z+b.z, a.w+b.w);
 }
 
 static inline Vec4f vec4f_sub(Vec4f a, Vec4f b)
 {
-	Vec4f r = { a.x-b.x, a.y-b.y, a.z-b.z, a.w-b.w };
-	return r;
+	return vec4f(a.x-b.x, a.y-b.y, a.z-b.z, a.w-b.w);
 }
 
 static inline float vec4f_abs(Vec4f a)
 {
 	return sqrt(a.x*a.x + a.y*a.y + a.z*a.z + a.w*a.w);
-}
-
-static inline Vec4f vec4f(float x, float y, float z, float w)
-{
-	Vec4f r = { x, y, z, w };
-	return r;
 }
 
 static inline float vec4f_distance(Vec4f a, Vec4f b)
@@ -53,7 +50,7 @@ static inline Vec4f vec4f_transform(Vec4f v, Mat4f *m)
 
 static inline Vec4f vec4f_projectXY(Vec4f v, Mat4f *mModelView, Mat4f *mProjection, int viewport[4])
 {
-	Vec4f r = { 0, 0, 0, 0 };
+	Vec4f r = vec4f(0, 0, 0, 0);
 	m3dProjectXY(&r, mModelView, mProjection, viewport, &v);
 	return r;
 }
