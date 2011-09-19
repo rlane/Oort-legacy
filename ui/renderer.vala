@@ -22,6 +22,7 @@ namespace Oort {
 		ShaderProgram tail_program;
 		ShaderProgram particle_program;
 		ShaderProgram beam_program;
+		ShaderProgram bullet_program;
 		ShaderProgram text_program;
 		Mat4f p_matrix;
 		Model circle_model;
@@ -105,6 +106,7 @@ namespace Oort {
 			ship_program = new ShaderProgram.from_resources("ship");
 			tail_program = new ShaderProgram.from_resources("tail");
 			beam_program = new ShaderProgram.from_resources("beam");
+			bullet_program = new ShaderProgram.from_resources("bullet");
 			particle_program = new ShaderProgram.from_resources("particle");
 			text_program = new ShaderProgram.from_resources("text");
 		}
@@ -364,7 +366,7 @@ namespace Oort {
 		private void render_bullet(Bullet b) {
 			if (b.dead) return;
 
-			var prog = ship_program;
+			var prog = bullet_program;
 			prog.use();
 			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
 			glCheck();
@@ -378,23 +380,26 @@ namespace Oort {
 				Mat4f mv_matrix;
 				Mat4f.load_identity(out mv_matrix);
 				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-				glUniform4f(prog.u("color"), 0.27f, 0.27f, 0.27f, 1.0f); // XXX fade to alpha 0.33
 				glCheck();
-
-				//Oort.GLUtil.color32(0x44444455);
-				//Oort.GLUtil.color32(0x444444FF);
 
 				float line[4] = {
 					(float) p1.x, (float) p1.y,
 					(float) p2.x, (float) p2.y
 				};
 
+				float colors[8] = {
+					0.27f, 0.27f, 0.27f, 0.33f,
+					0.27f, 0.27f, 0.27f, 1.0f
+				};
+
 				glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, line);
+				glVertexAttribPointer(prog.a("color"), 4, GL_FLOAT, false, 0, colors);
 				glEnableVertexAttribArray(prog.a("vertex"));
+				glEnableVertexAttribArray(prog.a("color"));
 				glDrawArrays(GL_LINES, 0, 2);
 				glCheck();
-
 				glDisableVertexAttribArray(prog.a("vertex"));
+				glDisableVertexAttribArray(prog.a("color"));
 			} else if (b.type == Oort.BulletType.REFUEL) {
 				Mat4f scale_matrix;
 				Mat4f translation_matrix;
@@ -404,7 +409,7 @@ namespace Oort {
 				Mat4f.load_translation(out translation_matrix, (float)b.physics.p.x, (float)b.physics.p.y, 0); 
 				Mat4f.multiply(out mv_matrix, ref translation_matrix, ref scale_matrix);
 				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-				glUniform4f(prog.u("color"), 0.47f, 0.47f, 0.47f, 0.66f);
+				glVertexAttrib4f(prog.a("color"), 0.47f, 0.47f, 0.47f, 0.66f);
 				glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
 				glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
 				glEnableVertexAttribArray(prog.a("vertex"));
