@@ -8,11 +8,9 @@ errordomain Oort.ShaderError {
 
 class Oort.Shader {
 	public GLuint id;
-	public string name = "unknown";
 
 	public Shader(GLenum type, string name, uint8[] src) throws ShaderError {
 		id = glCreateShader(type);
-		this.name = name;
 		glShaderSource(id, 1, { src }, { (GLint)src.length });
 		glCompileShader(id);
 		glCheck();
@@ -55,7 +53,6 @@ class Oort.FragmentShader : Oort.Shader {
 
 class Oort.ShaderProgram {
 	public GLuint id;
-	public string name;
 
 	VertexShader vertex_shader;
 	FragmentShader fragment_shader;

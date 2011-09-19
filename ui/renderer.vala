@@ -12,7 +12,6 @@ namespace Oort {
 		public Vec2 view_pos;
 		public unowned Ship picked = null;
 		public Game game;
-		public bool render_explosion_rays = false;
 		public bool follow_picked = false;
 
 		Rand prng;
@@ -323,9 +322,7 @@ namespace Oort {
 			prog.use();
 			Mat4f rotation_matrix;
 			Mat4f translation_matrix;
-			Mat4f scale_matrix;
 			Mat4f mv_matrix;
-			Mat4f tmp_matrix;
 			Mat4f.load_rotation(out rotation_matrix, (float)s.physics.h, 0, 0, 1);
 			Mat4f.load_translation(out translation_matrix, (float)s.physics.p.x, (float)s.physics.p.y, 0);
 			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref rotation_matrix);
@@ -443,7 +440,6 @@ namespace Oort {
 			Mat4f translation_matrix;
 			Mat4f scale_matrix;
 			Mat4f mv_matrix;
-			Mat4f tmp_matrix;
 			Mat4f.load_rotation(out rotation_matrix, (float)b.a, 0, 0, 1);
 			Mat4f.load_translation(out translation_matrix, (float)b.p.x, (float)b.p.y, 0);
 			Mat4f.load_identity(out scale_matrix);
@@ -616,14 +612,6 @@ namespace Oort {
 					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_lateral.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
 				}
 			}
-		}
-
-		public Vec2 center() {
-			return vec2(screen_width/2, screen_height/2);
-		}
-
-		public Vec2 S(Vec2 p) {
-			return p.sub(view_pos).scale(view_scale).add(center());
 		}
 
 		public Vec2 pixel2screen(Vec2 p) {

@@ -44,14 +44,14 @@ static inline float vec4f_dot(Vec4f a, Vec4f b)
 static inline Vec4f vec4f_transform(Vec4f v, Mat4f *m)
 {
 	Vec4f r;
-	m3dTransformVector4(&r, &v, m->data);
+	m3dTransformVector4(r.data, v.data, m->data);
 	return r;
 }
 
 static inline Vec4f vec4f_projectXY(Vec4f v, Mat4f *mModelView, Mat4f *mProjection, int viewport[4])
 {
 	Vec4f r = vec4f(0, 0, 0, 0);
-	m3dProjectXY(&r, mModelView, mProjection, viewport, &v);
+	m3dProjectXY(r.data, mModelView->data, mProjection->data, viewport, v.data);
 	return r;
 }
 
