@@ -29,6 +29,7 @@ public class Oort.Ship {
 		public DebugLine[] lines;
 
 		public Debug() {
+			num_lines = 0;
 			lines = new DebugLine[MAX_DEBUG_LINES];
 		}
 	}
@@ -87,6 +88,7 @@ public class Oort.Ship {
 		tail_head = 0;
 		tail = new Vector.Vec2[16];
 		for (int i = 0; i < tail.length; i++) { tail[i] = vec2(double.NAN, double.NAN); }
+		debug = Debug();
 
 		if (gfx_create_cb != null) {
 			gfx_create_cb(this);

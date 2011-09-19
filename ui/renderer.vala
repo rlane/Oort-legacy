@@ -137,6 +137,7 @@ namespace Oort {
 			foreach (unowned Ship s in game.all_ships) {
 				render_ship(s);
 				render_ship_tail(s);
+				render_debug_lines(s);
 			}
 
 			foreach (unowned Bullet b in game.all_bullets) {
@@ -258,19 +259,33 @@ namespace Oort {
 		}
 
 		void render_debug_lines(Ship s) {
-/*
-			if (s == picked || render_all_debug_lines) {
-				GLUtil.color32((uint32)0x49D5CEAA);
-				glBegin(GL_LINES);
-				for (int j = 0; j < s.debug.num_lines; j++) {
-					Vec2 sa = S(s.debug.lines[j].a);
-					Vec2 sb = S(s.debug.lines[j].b);
-					glVertex3d(sa.x, sa.y, 0);
-					glVertex3d(sb.x, sb.y, 0);
-				}
-				glEnd();
+			if (s != picked && !render_all_debug_lines) {
+				return;
 			}
-*/
+
+			var prog = ship_program;
+			prog.use();
+			glCheck();
+			Mat4f mv_matrix;
+			Mat4f.load_identity(out mv_matrix);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
+			glUniform4f(prog.u("color"), 0.29f, 0.83f, 0.8f, 0.66f);
+			var vertices = new float[s.debug.num_lines*4];
+			for (int j = 0; j < s.debug.num_lines; j++) {
+				var a = s.debug.lines[j].a;
+				var b = s.debug.lines[j].b;
+				vertices[4*j+0] = (float)a.x;
+				vertices[4*j+1] = (float)a.y;
+				vertices[4*j+2] = (float)b.x;
+				vertices[4*j+3] = (float)b.y;
+			}
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glDrawArrays(GL_LINES, 0, (GLsizei) s.debug.num_lines*2);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glUseProgram(0);
+			glCheck();
 		}
 
 		void render_picked_stuff(Ship s) {
