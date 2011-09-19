@@ -4,7 +4,7 @@ uniform vec2 position;
 uniform float dist;
 attribute float index;
 attribute float character;
-varying out float v_character;
+varying float v_character;
 
 void main(void) {
 	v_character = character;
