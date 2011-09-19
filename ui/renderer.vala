@@ -3,40 +3,6 @@ using GLEW;
 using Vector;
 using Math;
 
-[Compact]
-public class Oort.ShipGfxClass {
-	public static ShipGfxClass fighter;
-	public static ShipGfxClass ion_cannon_frigate;
-	public static ShipGfxClass assault_frigate;
-	public static ShipGfxClass carrier;
-	public static ShipGfxClass missile;
-	public static ShipGfxClass torpedo;
-	public static ShipGfxClass unknown;
-	
-	public static void init() {
-		fighter = new ShipGfxClass();
-		ion_cannon_frigate = new ShipGfxClass();
-		assault_frigate = new ShipGfxClass();
-		carrier = new ShipGfxClass();
-		missile = new ShipGfxClass();
-		torpedo = new ShipGfxClass();
-		unknown = new ShipGfxClass();
-	}
-
-	public static unowned ShipGfxClass lookup(string name)
-	{
-		switch (name) {
-			case "fighter": return fighter;
-			case "ion_cannon_frigate": return ion_cannon_frigate;
-			case "assault_frigate": return assault_frigate;
-			case "carrier": return carrier;
-			case "missile": return missile;
-			case "torpedo": return torpedo;
-			default: return unknown;
-		}
-	}
-}
-
 namespace Oort {
 	class Renderer {
 		public bool render_all_debug_lines = false;
@@ -64,7 +30,6 @@ namespace Oort {
 			if (GLEW.init()) {
 				error("GLEW initialization failed");
 			}
-			ShipGfxClass.init();
 			Oort.Ship.gfx_create_cb = on_ship_created;
 
 			/*
@@ -664,7 +629,6 @@ namespace Oort {
 
 		static void on_ship_created(Ship s)
 		{
-			s.gfx.class = ShipGfxClass.lookup(s.class.name);
 		}
 
 		public void textf(int x, int y, string fmt, ...) {
