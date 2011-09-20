@@ -58,6 +58,7 @@ namespace Oort {
 			glShadeModel(GL_SMOOTH);
 			glEnable(GL_LINE_SMOOTH);
 			glEnable(GL_POINT_SPRITE);
+			glEnable(GL_PROGRAM_POINT_SIZE);
 			glLineWidth(1.2f);
 
 			resources.models.foreach( (k,v) => v.build() );
@@ -502,31 +503,33 @@ namespace Oort {
 					error("unknown particle");
 				}
 
-				glPointSize(size*(float)view_scale*10);
-
 				Vec4f colors[1] = { color };
 				float initial_time[1] = { 0 };
 				float lifetime[1] = { (float)(c.ticks_left*Game.TICK_LENGTH) };
 				Vec2f initial_position[1] = { c.p.to_vec2f() };
 				Vec2f velocity[1] = { c.v.to_vec2f() };
+				float sizes[1] = { size*(float)view_scale*10 };
 
 				glVertexAttribPointer(prog.a("initial_time"), 1, GL_FLOAT, false, 0, initial_time);
 				glVertexAttribPointer(prog.a("lifetime"), 1, GL_FLOAT, false, 0, lifetime);
 				glVertexAttribPointer(prog.a("initial_position"), 2, GL_FLOAT, false, 0, initial_position);
 				glVertexAttribPointer(prog.a("velocity"), 2, GL_FLOAT, false, 0, velocity);
 				glVertexAttribPointer(prog.a("color"), 4, GL_FLOAT, false, 0, colors);
+				glVertexAttribPointer(prog.a("size"), 1, GL_FLOAT, false, 0, sizes);
 
 				glEnableVertexAttribArray(prog.a("initial_time"));
 				glEnableVertexAttribArray(prog.a("lifetime"));
 				glEnableVertexAttribArray(prog.a("initial_position"));
 				glEnableVertexAttribArray(prog.a("velocity"));
 				glEnableVertexAttribArray(prog.a("color"));
+				glEnableVertexAttribArray(prog.a("size"));
 				glDrawArrays(GL_POINTS, 0, 1);
 				glDisableVertexAttribArray(prog.a("initial_time"));
 				glDisableVertexAttribArray(prog.a("lifetime"));
 				glDisableVertexAttribArray(prog.a("initial_position"));
 				glDisableVertexAttribArray(prog.a("velocity"));
 				glDisableVertexAttribArray(prog.a("color"));
+				glDisableVertexAttribArray(prog.a("size"));
 			}
 
 			glUseProgram(0);
