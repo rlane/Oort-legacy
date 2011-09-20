@@ -476,6 +476,7 @@ namespace Oort {
 			var prog = particle_program;
 			prog.use();
 			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
+			glUniform1f(prog.u("current_time"), 0);
 			glCheck();
 
 			for (int i = 0; i < Particle.MAX; i++) {
@@ -502,14 +503,30 @@ namespace Oort {
 				}
 
 				glPointSize(size*(float)view_scale*10);
-				float position[2] = { (float)c.p.x, (float)c.p.y };
 
-				glUniform4f(prog.u("color"), color.x, color.y, color.z, color.w);
-				glVertexAttribPointer(prog.a("position"), 2, GL_FLOAT, false, 0, position);
-				glEnableVertexAttribArray(prog.a("position"));
+				Vec4f colors[1] = { color };
+				float initial_time[1] = { 0 };
+				float lifetime[1] = { (float)(c.ticks_left*Game.TICK_LENGTH) };
+				Vec2f initial_position[1] = { c.p.to_vec2f() };
+				Vec2f velocity[1] = { c.v.to_vec2f() };
+
+				glVertexAttribPointer(prog.a("initial_time"), 1, GL_FLOAT, false, 0, initial_time);
+				glVertexAttribPointer(prog.a("lifetime"), 1, GL_FLOAT, false, 0, lifetime);
+				glVertexAttribPointer(prog.a("initial_position"), 2, GL_FLOAT, false, 0, initial_position);
+				glVertexAttribPointer(prog.a("velocity"), 2, GL_FLOAT, false, 0, velocity);
+				glVertexAttribPointer(prog.a("color"), 4, GL_FLOAT, false, 0, colors);
+
+				glEnableVertexAttribArray(prog.a("initial_time"));
+				glEnableVertexAttribArray(prog.a("lifetime"));
+				glEnableVertexAttribArray(prog.a("initial_position"));
+				glEnableVertexAttribArray(prog.a("velocity"));
+				glEnableVertexAttribArray(prog.a("color"));
 				glDrawArrays(GL_POINTS, 0, 1);
-				glDisableVertexAttribArray(prog.a("position"));
-				glCheck();
+				glDisableVertexAttribArray(prog.a("initial_time"));
+				glDisableVertexAttribArray(prog.a("lifetime"));
+				glDisableVertexAttribArray(prog.a("initial_position"));
+				glDisableVertexAttribArray(prog.a("velocity"));
+				glDisableVertexAttribArray(prog.a("color"));
 			}
 
 			glUseProgram(0);
