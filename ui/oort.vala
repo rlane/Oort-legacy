@@ -42,6 +42,7 @@ namespace Oort {
 		private bool shutting_down = false;
 		private Game game;
 		private RendererResources resources;
+		private RenderPerf perf;
 
 		private long frame_usecs = 0;
 		private long sample_usecs = 0;
@@ -63,6 +64,7 @@ namespace Oort {
 
 			this.tick_lock = new Mutex();
 			this.resources = new RendererResources();
+			this.perf = new RenderPerf();
 
 			var vbox = new VBox(false, 0);
 			vbox.pack_start(make_menubar(), false, false, 0);
@@ -252,8 +254,10 @@ namespace Oort {
 			
 			if (show_fps && frame_usecs != 0 && sample_usecs != 0) {
 				renderer.textf(rect.width-9*9, 15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
-				renderer.textf(rect.width-15*9, 25, "Max FPS: %.1f", (1000*1000.0)/frame_usecs);
+				renderer.textf(rect.width-15*9, 35, "ms/frame: %.1f", renderer.frame_msecs);
 			}
+
+			perf.update(renderer.frame_msecs);
 
 			switch (game_state) {
 			case GameState.DEMO:
@@ -343,6 +347,12 @@ namespace Oort {
 					} catch (ShaderError e) {
 						GLib.warning("reloading shaders failed:\n%s", e.message);
 					}
+					break;
+				case "D":
+					perf.dump();
+					break;
+				case "C":
+					perf = new RenderPerf();
 					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {

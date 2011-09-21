@@ -13,6 +13,7 @@ namespace Oort {
 		public unowned Ship picked = null;
 		public Game game;
 		public bool follow_picked = false;
+		public double frame_msecs;
 
 		Rand prng;
 		RendererResources resources;
@@ -113,6 +114,7 @@ namespace Oort {
 
 		public void render() {
 			prng.set_seed(0); // XXX tick seed
+			TimeVal start_time = TimeVal();
 
 			glEnable(GL_BLEND);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -160,6 +162,12 @@ namespace Oort {
 					render_picked_info(picked);
 				}
 			}
+
+			glFinish();
+			const int million = 1000*1000;
+			TimeVal end_time = TimeVal();
+			long usecs = (end_time.tv_sec-start_time.tv_sec)*million + (end_time.tv_usec - start_time.tv_usec);
+			frame_msecs = usecs/1000.0;
 		}
 
 		void render_text(int x, int y, string text) {
