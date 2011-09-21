@@ -1673,7 +1673,7 @@ namespace GL
 	public static void glVertexAttrib4ubv (GL.GLuint index, GL.GLubyte* v);
 	public static void glVertexAttrib4uiv (GL.GLuint index, GL.GLuint* v);
 	public static void glVertexAttrib4usv (GL.GLuint index, GL.GLushort* v);
-	public static void glVertexAttribPointer (GL.GLuint index, GL.GLint size, GL.GLenum type, bool normalized, GL.GLsizei stride, GL.GLvoid* pointer);
+	public static void glVertexAttribPointer (GL.GLuint index, GL.GLint size, GL.GLenum type, bool normalized, GL.GLsizei stride, void *pointer);
 
 	public const GL.GLenum GL_PROGRAM_POINT_SIZE;
 }

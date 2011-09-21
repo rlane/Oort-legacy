@@ -481,6 +481,15 @@ namespace Oort {
 			glDisableVertexAttribArray(prog.a("texcoord"));
 		}
 
+		private struct ParticleData {
+			public Vec4f color;
+			public Vec2f initial_position;
+			public Vec2f velocity;
+			public float initial_time;
+			public float lifetime;
+			public float size;
+		}
+
 		private void render_particles() {
 			var prog = particle_program;
 			prog.use();
@@ -488,12 +497,7 @@ namespace Oort {
 			glUniform1f(prog.u("current_time"), 0);
 			glCheck();
 
-			Vec4f[] colors = {};
-			float[] initial_times = {};
-			float[] lifetimes = {};
-			Vec2f[] initial_positions = {};
-			Vec2f[] velocities = {};
-			float[] sizes = {};
+			ParticleData[] data = {};
 
 			for (int i = 0; i < Particle.MAX; i++) {
 				float size;
@@ -518,20 +522,23 @@ namespace Oort {
 					error("unknown particle");
 				}
 
-				colors += color;
-				initial_times += 0;
-				lifetimes += (float)(c.ticks_left*Game.TICK_LENGTH);
-				initial_positions += c.p.to_vec2f();
-				velocities += c.v.to_vec2f();
-				sizes += size*(float)view_scale*10;
+				data += ParticleData() {
+					color = color,
+					initial_position = c.p.to_vec2f(),
+					velocity = c.v.to_vec2f(),
+					initial_time = 0,
+					lifetime = (float)(c.ticks_left*Game.TICK_LENGTH),
+					size = size*(float)view_scale*10
+				};
 			}
 
-			glVertexAttribPointer(prog.a("initial_time"), 1, GL_FLOAT, false, 0, initial_times);
-			glVertexAttribPointer(prog.a("lifetime"), 1, GL_FLOAT, false, 0, lifetimes);
-			glVertexAttribPointer(prog.a("initial_position"), 2, GL_FLOAT, false, 0, initial_positions);
-			glVertexAttribPointer(prog.a("velocity"), 2, GL_FLOAT, false, 0, velocities);
-			glVertexAttribPointer(prog.a("color"), 4, GL_FLOAT, false, 0, colors);
-			glVertexAttribPointer(prog.a("size"), 1, GL_FLOAT, false, 0, sizes);
+			GLsizei stride = (GLsizei) sizeof(ParticleData);
+			glVertexAttribPointer(prog.a("initial_time"), 1, GL_FLOAT, false, stride, &data[0].initial_time);
+			glVertexAttribPointer(prog.a("lifetime"), 1, GL_FLOAT, false, stride, &data[0].lifetime);
+			glVertexAttribPointer(prog.a("initial_position"), 2, GL_FLOAT, false, stride, &data[0].initial_position);
+			glVertexAttribPointer(prog.a("velocity"), 2, GL_FLOAT, false, stride, &data[0].velocity);
+			glVertexAttribPointer(prog.a("color"), 4, GL_FLOAT, false, stride, &data[0].color);
+			glVertexAttribPointer(prog.a("size"), 1, GL_FLOAT, false, stride, &data[0].size);
 
 			glEnableVertexAttribArray(prog.a("initial_time"));
 			glEnableVertexAttribArray(prog.a("lifetime"));
@@ -539,7 +546,7 @@ namespace Oort {
 			glEnableVertexAttribArray(prog.a("velocity"));
 			glEnableVertexAttribArray(prog.a("color"));
 			glEnableVertexAttribArray(prog.a("size"));
-			glDrawArrays(GL_POINTS, 0, initial_positions.length);
+			glDrawArrays(GL_POINTS, 0, data.length);
 			glDisableVertexAttribArray(prog.a("initial_time"));
 			glDisableVertexAttribArray(prog.a("lifetime"));
 			glDisableVertexAttribArray(prog.a("initial_position"));
