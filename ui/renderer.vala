@@ -18,6 +18,7 @@ namespace Oort {
 		Rand prng;
 		RendererResources resources;
 		Texture font_tex;
+		Texture particle_tex;
 		ShaderProgram ship_program;
 		ShaderProgram tail_program;
 		ShaderProgram particle_program;
@@ -71,6 +72,8 @@ namespace Oort {
 			}
 
 			load_font();
+
+			particle_tex = new ParticleTexture();
 		}
 
 		public void load_font() {
@@ -495,6 +498,7 @@ namespace Oort {
 			prog.use();
 			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
 			glUniform1f(prog.u("current_time"), 0);
+			glUniform1i(prog.u("tex"), 0);
 			glCheck();
 
 			ParticleData[] data = {};
@@ -546,7 +550,9 @@ namespace Oort {
 			glEnableVertexAttribArray(prog.a("velocity"));
 			glEnableVertexAttribArray(prog.a("color"));
 			glEnableVertexAttribArray(prog.a("size"));
+			particle_tex.bind();
 			glDrawArrays(GL_POINTS, 0, data.length);
+			glBindTexture(GL_TEXTURE_2D, 0);
 			glDisableVertexAttribArray(prog.a("initial_time"));
 			glDisableVertexAttribArray(prog.a("lifetime"));
 			glDisableVertexAttribArray(prog.a("initial_position"));

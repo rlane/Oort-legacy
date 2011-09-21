@@ -1,9 +1,10 @@
 #version 120
 
 varying vec4 v_color;
+uniform sampler2D tex;
 
 void main()
 {
-	float alpha = pow(1-clamp(2*distance(gl_PointCoord, vec2(0.5, 0.5)), 0, 1), 2);
+	float alpha = texture2D(tex, gl_PointCoord).a;
 	gl_FragColor = vec4(v_color.xyz, 0) * alpha * v_color.w;
 }
