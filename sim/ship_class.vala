@@ -10,7 +10,7 @@ public class Oort.ShipClass {
 	public double reaction_mass;
 	public int cpu;
 
-	static HashTable<string,ShipClass> ship_classes;
+	public static HashTable<string,ShipClass> ship_classes;
 
 	public static bool load(string filename) {
 		var L = new LuaVM();

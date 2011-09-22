@@ -63,6 +63,8 @@ ui/ship_program.c
 ui/beam_program.c
 ui/tail_program.c
 ui/perf.c
+ui/batch.c
+ui/batches/ship.c
 
 sim/liboort-1.0.a
 luajit_build/luajit-stamp

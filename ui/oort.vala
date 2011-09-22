@@ -41,7 +41,6 @@ namespace Oort {
 		private unowned Thread<void*> ticker;
 		private bool shutting_down = false;
 		private Game game;
-		private RendererResources resources;
 		private RenderPerf perf;
 
 		private long frame_usecs = 0;
@@ -63,7 +62,6 @@ namespace Oort {
 			set_reallocate_redraws(true);
 
 			this.tick_lock = new Mutex();
-			this.resources = new RendererResources();
 			this.perf = new RenderPerf();
 
 			var vbox = new VBox(false, 0);
@@ -488,7 +486,7 @@ namespace Oort {
 		}
 
 		public void start_renderer(Game game, double initial_view_scale) {
-			renderer = new Renderer(game, resources, initial_view_scale);
+			renderer = new Renderer(game, initial_view_scale);
 			GLContext glcontext = WidgetGL.get_gl_context(drawing_area);
 			GLDrawable gldrawable = WidgetGL.get_gl_drawable(drawing_area);
 

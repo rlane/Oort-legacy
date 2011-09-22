@@ -37,6 +37,7 @@ nobase_oortlua_DATA = \
 	models/fighter.json \
 	models/ion_cannon_frigate.json \
 	models/missile.json \
+	models/small_target.json \
 	models/torpedo.json \
 	scenarios/challenge01.json \
 	scenarios/basic.json \

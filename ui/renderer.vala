@@ -15,8 +15,9 @@ namespace Oort {
 		public bool follow_picked = false;
 		public double frame_msecs;
 
+		public Mat4f p_matrix;
+
 		Rand prng;
-		RendererResources resources;
 		Texture font_tex;
 		Texture particle_tex;
 		ShaderProgram ship_program;
@@ -25,8 +26,8 @@ namespace Oort {
 		ShaderProgram beam_program;
 		ShaderProgram bullet_program;
 		ShaderProgram text_program;
-		Mat4f p_matrix;
 		Model circle_model;
+		RenderBatch[] batches;
 
 		public static void static_init() {
 			if (GLEW.init()) {
@@ -44,15 +45,17 @@ namespace Oort {
 		}
 
 		public Renderer(Game game,
-		                RendererResources resources,
 		                double initial_view_scale) {
 			this.game = game;
-			this.resources = resources;
 			view_scale = initial_view_scale;
 			prng = new Rand();
 			view_pos = vec2(0,0);
 
-			circle_model = resources.models.lookup("circle");
+			circle_model = Model.load("circle");
+
+			batches = {
+				new ShipBatch()
+			};
 		}
 
 		public void init() {
@@ -63,8 +66,6 @@ namespace Oort {
 			glEnable(GL_PROGRAM_POINT_SIZE);
 			glLineWidth(1.2f);
 
-			resources.models.foreach( (k,v) => v.build() );
-
 			try {
 				load_shaders();
 			} catch (ShaderError e) {
@@ -74,6 +75,16 @@ namespace Oort {
 			load_font();
 
 			particle_tex = new ParticleTexture();
+
+			foreach (RenderBatch batch in batches) {
+				batch.game = game;
+				batch.renderer = this;
+				try {
+					batch.init();
+				} catch (Error e) {
+					GLib.error("loading batch failed:\n%s", e.message);
+				}
+			}
 		}
 
 		public void load_font() {
@@ -141,8 +152,11 @@ namespace Oort {
 				view_pos = picked.physics.p;
 			}
 
+			foreach (RenderBatch batch in batches) {
+				batch.render();
+			}
+
 			foreach (unowned Ship s in game.all_ships) {
-				render_ship(s);
 				render_ship_tail(s);
 				render_debug_lines(s);
 			}
@@ -202,44 +216,11 @@ namespace Oort {
 			glCheck();
 		}
 
-		void render_ship(Ship s) {
-			var prog = ship_program;
-			var model = resources.models.lookup(s.class.name);
-			prog.use();
-			glBindBuffer(GL_ARRAY_BUFFER, model.id);
-			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
-			glEnableVertexAttribArray(prog.a("vertex"));
-			glCheck();
-
-			Mat4f rotation_matrix;
-			Mat4f translation_matrix;
-			Mat4f scale_matrix;
-			Mat4f mv_matrix;
-			Mat4f tmp_matrix;
-
-			Mat4f.load_rotation(out rotation_matrix, (float)s.physics.h, 0, 0, 1);
-			Mat4f.load_translation(out translation_matrix, (float)s.physics.p.x, (float)s.physics.p.y, 0);
-			Mat4f.load_scale(out scale_matrix, (float)s.class.radius, (float)s.class.radius, (float)s.class.radius);
-			Mat4f.multiply(out tmp_matrix, ref rotation_matrix, ref scale_matrix);
-			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref tmp_matrix);
-
-			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
-
-			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
-			glUniform4f(prog.u("color"), colorv.x, colorv.y, colorv.z, colorv.w);
-			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
-			glDisableVertexAttribArray(prog.a("vertex"));
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glUseProgram(0);
-			glCheck();
-		}
-
 		void render_ship_tail(Ship s) {
 			var prog = tail_program;
 			prog.use();
-			var model = resources.models.lookup(s.class.name);
-			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), (float)model.alpha);
+			var alpha = s.class.radius < 5 ? 0.4f : 0.67f;
+			var colorv = vec4f((float)(((s.team.color>>24)&0xFF)/255.0), (float)(((s.team.color>>16)&0xFF)/255.0), (float)(((s.team.color>>8)&0xFF)/255.0), alpha);
 			var segments = new float[Ship.TAIL_SEGMENTS*2];
 			var alphas = new float[Ship.TAIL_SEGMENTS];
 			glUniform4f(prog.u("color"), colorv.x, colorv.y, colorv.z, colorv.w/3.0f);
@@ -714,34 +695,5 @@ namespace Oort {
 			var str = fmt.vprintf(ap);
 			render_text(x, y, str);
 		}
-	}
-}
-
-public class Oort.RendererResources {
-	public HashTable<string,Model> models = new HashTable<string,Model>(str_hash, str_equal);
-
-	public RendererResources() throws ModelParseError, FileError, Error {
-		var directory = File.new_for_path(data_path("models"));
-		var enumerator = directory.enumerate_children (FILE_ATTRIBUTE_STANDARD_NAME, 0);
-
-		FileInfo file_info;
-		while ((file_info = enumerator.next_file ()) != null) {
-			var filename = file_info.get_name();
-			if (!filename.has_suffix(".json")) {
-				continue;
-			}
-			var name = filename[0:-5];
-
-			var data = Game.load_resource(@"models/$filename");
-			try {
-				models.insert(name, new Model(data));
-			} catch (ModelParseError e) {
-				e.message += @" when parsing $name";
-				throw e;
-			}
-		}
-	}
-
-	public void build() {
 	}
 }
