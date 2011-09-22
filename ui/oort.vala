@@ -41,7 +41,6 @@ namespace Oort {
 		private unowned Thread<void*> ticker;
 		private bool shutting_down = false;
 		private Game game;
-		private RenderPerf perf;
 
 		private long frame_usecs = 0;
 		private long sample_usecs = 0;
@@ -62,7 +61,6 @@ namespace Oort {
 			set_reallocate_redraws(true);
 
 			this.tick_lock = new Mutex();
-			this.perf = new RenderPerf();
 
 			var vbox = new VBox(false, 0);
 			vbox.pack_start(make_menubar(), false, false, 0);
@@ -252,10 +250,8 @@ namespace Oort {
 			
 			if (show_fps && frame_usecs != 0 && sample_usecs != 0) {
 				renderer.textf(rect.width-9*9, 15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
-				renderer.textf(rect.width-15*9, 35, "ms/frame: %.1f", renderer.frame_msecs);
+				renderer.textf(rect.width-14*9, 25, "ms/frame: %.1f", renderer.perf.last_frame_time);
 			}
-
-			perf.update(renderer.frame_msecs);
 
 			switch (game_state) {
 			case GameState.DEMO:
@@ -347,10 +343,10 @@ namespace Oort {
 					}
 					break;
 				case "D":
-					perf.dump();
+					renderer.dump_perf();
 					break;
 				case "C":
-					perf = new RenderPerf();
+					renderer.perf = new RenderPerf();
 					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {

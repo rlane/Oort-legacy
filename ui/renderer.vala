@@ -13,7 +13,7 @@ namespace Oort {
 		public unowned Ship picked = null;
 		public Game game;
 		public bool follow_picked = false;
-		public double frame_msecs;
+		public RenderPerf perf;
 
 		public Mat4f p_matrix;
 
@@ -50,6 +50,7 @@ namespace Oort {
 			view_scale = initial_view_scale;
 			prng = new Rand();
 			view_pos = vec2(0,0);
+			perf = new RenderPerf();
 
 			circle_model = Model.load("circle");
 
@@ -153,7 +154,7 @@ namespace Oort {
 			}
 
 			foreach (RenderBatch batch in batches) {
-				batch.render();
+				batch.do_render();
 			}
 
 			foreach (unowned Ship s in game.all_ships) {
@@ -181,10 +182,7 @@ namespace Oort {
 			}
 
 			glFinish();
-			const int million = 1000*1000;
-			TimeVal end_time = TimeVal();
-			long usecs = (end_time.tv_sec-start_time.tv_sec)*million + (end_time.tv_usec - start_time.tv_usec);
-			frame_msecs = usecs/1000.0;
+			perf.update_from_time(start_time);
 		}
 
 		void render_text(int x, int y, string text) {
@@ -694,6 +692,21 @@ namespace Oort {
 			va_list ap = va_list();
 			var str = fmt.vprintf(ap);
 			render_text(x, y, str);
+		}
+
+		public void dump_perf() {
+			print("== Renderer performance dump:\n");
+			foreach (RenderBatch batch in batches) {
+				print("Batch %s:\n", batch.get_type().name());
+				batch.perf.dump();
+			}
+			print("== Overall:\n");
+			perf.dump();
+			print("== Batch summaries:\n");
+			foreach (RenderBatch batch in batches) {
+				print("%s: %s\n", batch.get_type().name(), batch.perf.summary());
+			}
+			print("\n");
 		}
 	}
 }
