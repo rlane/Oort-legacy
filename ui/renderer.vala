@@ -16,12 +16,11 @@ namespace Oort {
 		public RenderPerf perf;
 
 		public Mat4f p_matrix;
+		public Rand prng;
 
-		Rand prng;
 		Texture font_tex;
 		ShaderProgram ship_program;
 		ShaderProgram beam_program;
-		ShaderProgram bullet_program;
 		ShaderProgram text_program;
 		Model circle_model;
 		RenderBatch[] batches;
@@ -55,7 +54,8 @@ namespace Oort {
 				new ParticleBatch(),
 				new BoundaryBatch(),
 				new ShipBatch(),
-				new TailBatch()
+				new TailBatch(),
+				new BulletBatch()
 			};
 		}
 
@@ -119,7 +119,6 @@ namespace Oort {
 		public void load_shaders() throws ShaderError{
 			ship_program = new ShaderProgram.from_resources("ship");
 			beam_program = new ShaderProgram.from_resources("beam");
-			bullet_program = new ShaderProgram.from_resources("bullet");
 			text_program = new ShaderProgram.from_resources("text");
 		}
 
@@ -148,10 +147,6 @@ namespace Oort {
 
 			foreach (unowned Ship s in game.all_ships) {
 				render_debug_lines(s);
-			}
-
-			foreach (unowned Bullet b in game.all_bullets) {
-				render_bullet(b);
 			}
 
 			foreach (unowned Beam b in game.all_beams) {
@@ -297,64 +292,6 @@ namespace Oort {
 			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
 			glDrawArrays(GL_LINE_STRIP, 0, (GLsizei) n);
 			glDisableVertexAttribArray(prog.a("vertex"));
-			glUseProgram(0);
-			glCheck();
-		}
-
-		private void render_bullet(Bullet b) {
-			if (b.dead) return;
-
-			var prog = bullet_program;
-			prog.use();
-			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
-			glCheck();
-
-			if (b.type == Oort.BulletType.SLUG) {
-				var dp = b.physics.v.scale(1.0/64);
-				var offset = b.physics.v.scale(prng.next_double()/64);
-				var p1 = b.physics.p.add(offset);
-				var p2 = b.physics.p.add(offset).add(dp);
-
-				Mat4f mv_matrix;
-				Mat4f.load_identity(out mv_matrix);
-				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-				glCheck();
-
-				Vec2f vertices[2] = { p1.to_vec2f(), p2.to_vec2f() };
-
-				Vec4f colors[2] = {
-					vec4f(0.27f, 0.27f, 0.27f, 0.33f),
-					vec4f(0.27f, 0.27f, 0.27f, 1.0f)
-				};
-
-				glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
-				glVertexAttribPointer(prog.a("color"), 4, GL_FLOAT, false, 0, colors);
-				glEnableVertexAttribArray(prog.a("vertex"));
-				glEnableVertexAttribArray(prog.a("color"));
-				glDrawArrays(GL_LINES, 0, 2);
-				glCheck();
-				glDisableVertexAttribArray(prog.a("vertex"));
-				glDisableVertexAttribArray(prog.a("color"));
-			} else if (b.type == Oort.BulletType.REFUEL) {
-				Mat4f scale_matrix;
-				Mat4f translation_matrix;
-				Mat4f mv_matrix;
-				float scale = (float)b.physics.r;
-				var color = vec4f(0.47f, 0.47f, 0.47f, 0.66f);
-				Mat4f.load_scale(out scale_matrix, scale, scale, scale); 
-				Mat4f.load_translation(out translation_matrix, (float)b.physics.p.x, (float)b.physics.p.y, 0); 
-				Mat4f.multiply(out mv_matrix, ref translation_matrix, ref scale_matrix);
-				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-				glVertexAttrib4fv(prog.a("color"), color.data);
-				glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
-				glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
-				glEnableVertexAttribArray(prog.a("vertex"));
-				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
-				glDisableVertexAttribArray(prog.a("vertex"));
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-				glCheck();
-			}
-
 			glUseProgram(0);
 			glCheck();
 		}
