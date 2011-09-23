@@ -53,6 +53,7 @@ namespace Oort {
 
 			batches = {
 				new ParticleBatch(),
+				new BoundaryBatch(),
 				new ShipBatch(),
 				new TailBatch()
 			};
@@ -136,8 +137,6 @@ namespace Oort {
 			                        (float)screen_height/(float)screen_width,
 			                        (float)(2000.0/view_scale));
 
-
-			render_boundary();
 
 			if (follow_picked && picked != null) {
 				view_pos = picked.physics.p;
@@ -412,25 +411,6 @@ namespace Oort {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			glDisableVertexAttribArray(prog.a("vertex"));
 			glDisableVertexAttribArray(prog.a("texcoord"));
-		}
-
-		private void render_boundary() {
-			var prog = ship_program;
-			prog.use();
-			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
-			Mat4f mv_matrix;
-			float scale = (float)game.scn.radius;
-			Mat4f.load_scale(out mv_matrix, scale, scale, scale); 
-			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-			glUniform4f(prog.u("color"), 0.2f, 0.2f, 0.2f, 0.39f);
-			glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
-			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
-			glEnableVertexAttribArray(prog.a("vertex"));
-			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
-			glDisableVertexAttribArray(prog.a("vertex"));
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glUseProgram(0);
-			glCheck();
 		}
 
 		private string fmt(double v, string unit) {

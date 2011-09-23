@@ -67,6 +67,7 @@ ui/batch.c
 ui/batches/ship.c
 ui/batches/particle_batch.c
 ui/batches/tail.c
+ui/batches/boundary.c
 
 sim/liboort-1.0.a
 luajit_build/luajit-stamp
