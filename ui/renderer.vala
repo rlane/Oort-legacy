@@ -55,7 +55,8 @@ namespace Oort {
 				new BoundaryBatch(),
 				new ShipBatch(),
 				new TailBatch(),
-				new BulletBatch()
+				new BulletBatch(),
+				new BeamBatch()
 			};
 		}
 
@@ -147,10 +148,6 @@ namespace Oort {
 
 			foreach (unowned Ship s in game.all_ships) {
 				render_debug_lines(s);
-			}
-
-			foreach (unowned Beam b in game.all_beams) {
-				render_beam(b);
 			}
 			
 			if (picked != null) {
@@ -294,60 +291,6 @@ namespace Oort {
 			glDisableVertexAttribArray(prog.a("vertex"));
 			glUseProgram(0);
 			glCheck();
-		}
-
-		private void render_beam(Beam b) {
-			var prog = beam_program;
-			prog.use();
-
-			Vec4f color;
-			float offset = 0.0f;
-			float length = (float)b.length*1.1f;
-			float width = (float)b.width/2.0f;
-
-			if (b.graphics == Oort.BeamGraphics.ION) {
-				color = vec4f(0.5f, 0.5f, 1.0f, 0);
-				offset = 0.7f*40;
-			} else if (b.graphics == Oort.BeamGraphics.LASER) {
-				color = vec4f(1.0f, 0.1f, 0.1f, 0);
-			} else {
-				error("unknown beam");
-			}
-
-			Mat4f rotation_matrix;
-			Mat4f translation_matrix;
-			Mat4f scale_matrix;
-			Mat4f mv_matrix;
-			Mat4f.load_rotation(out rotation_matrix, (float)b.a, 0, 0, 1);
-			Mat4f.load_translation(out translation_matrix, (float)b.p.x, (float)b.p.y, 0);
-			Mat4f.load_identity(out scale_matrix);
-			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref rotation_matrix);
-
-			float vertices[8] = {
-				offset, width,
-				offset, -width,
-				length, width,
-				length, -width
-			};
-
-			float texcoords[8] = {
-				0, 1,
-				0, 0,
-				1, 1,
-				1, 0
-			};
-
-			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
-			glUniform4f(prog.u("color"), color.x, color.y, color.z, 1);
-
-			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
-			glVertexAttribPointer(prog.a("texcoord"), 2, GL_FLOAT, false, 0, texcoords);
-			glEnableVertexAttribArray(prog.a("vertex"));
-			glEnableVertexAttribArray(prog.a("texcoord"));
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			glDisableVertexAttribArray(prog.a("vertex"));
-			glDisableVertexAttribArray(prog.a("texcoord"));
 		}
 
 		private string fmt(double v, string unit) {
