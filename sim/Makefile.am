@@ -44,7 +44,7 @@ libsim_a_SOURCES = \
 	task.vala \
 	team.vala \
 	util.c \
-	paths.vala \
+	resources.vala \
 	$(NULL)
 
 noinst_HEADERS = util.h oort.h oort.vapi util.vapi

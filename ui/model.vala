@@ -24,7 +24,7 @@ public class Oort.Model {
 	public double alpha;
 
 	public static Model load(string name) {
-		var data = Game.load_resource(@"models/$name.json");
+		var data = Resources.load(@"models/$name.json");
 		try {
 			var model = new Model(data);
 			model.build();

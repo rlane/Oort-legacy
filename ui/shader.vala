@@ -27,7 +27,7 @@ class Oort.Shader {
 	}
 
 	public Shader.from_resource(GLenum type, string resource) throws ShaderError {
-		this(type, resource, Game.load_resource(@"shaders/$(resource)"));
+		this(type, resource, Resources.load(@"shaders/$(resource)"));
 	}
 }
 

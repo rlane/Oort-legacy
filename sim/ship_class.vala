@@ -12,18 +12,20 @@ public class Oort.ShipClass {
 
 	public static HashTable<string,ShipClass> ship_classes;
 
-	public static bool load(string filename) {
+	public static bool load() {
 		var L = new LuaVM();
+		var src = Resources.load("ships.lua");
 
-		if (L.do_file(filename)) {
-			warning("Failed to load ships from %s: %s\n", filename, L.to_string(-1));
+		if (L.load_buffer(src) != 0) {
+			warning("Failed to load ships.lua: %s\n", L.to_string(-1));
 			return false;
 		}
 
+		L.call(0,0);
 		L.get_global("ships");
 
 		if (L.is_nil(1)) {
-			warning("Failed to load ships from %s: 'ships' table not defined\n", filename);
+			warning("Failed to load ships from ships.lua: 'ships' table not defined\n");
 			return false;
 		}
 

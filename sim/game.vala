@@ -46,16 +46,6 @@ public class Oort.Game {
 
 	public const double TICK_LENGTH = 1.0/32;
 
-	public static uint8[] load_resource(string name) {
-		uint8[] data;
-		try {
-			FileUtils.get_data(data_path(name), out data);
-		} catch (FileError e) {
-			GLib.error("Failed to load file %s", name);
-		}
-		return (owned)data;
-	}
-
 	public Game(uint32 seed, ParsedScenario scn, string[] ais) throws FileError, ThreadError, ScenarioLoadError {
 		prng = new Rand.with_seed(seed);
 		this.scn = scn;
@@ -65,11 +55,11 @@ public class Oort.Game {
 		new_beams_lock = new Mutex();
 		radio_lock = new Mutex();
 		log_lock = new Mutex();
-		runtime_code = load_resource("runtime.lua");
-		ships_code = load_resource("ships.lua");
-		lib_code = load_resource("lib.lua");
-		strict_code = load_resource("strict.lua");
-		vector_code = load_resource("vector.lua");
+		runtime_code = Resources.load("runtime.lua");
+		ships_code = Resources.load("ships.lua");
+		lib_code = Resources.load("lib.lua");
+		strict_code = Resources.load("strict.lua");
+		vector_code = Resources.load("vector.lua");
 		tasks = new TaskPool(Util.envtol("OORT_NUM_THREADS", 8));
 		Scenario.load(this, scn, ais);
 	}

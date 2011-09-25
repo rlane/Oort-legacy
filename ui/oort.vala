@@ -121,9 +121,9 @@ namespace Oort {
 			var scenario_chooser = new FileChooserDialog("Select scenario", this, Gtk.FileChooserAction.OPEN,
 			                                             Gtk.Stock.OK, Gtk.ResponseType.ACCEPT,
 			                                             Gtk.Stock.CANCEL, Gtk.ResponseType.REJECT);
-			scenario_chooser.set_current_folder(data_path("scenarios"));
+			scenario_chooser.set_current_folder(Resources.path("scenarios"));
 			try {
-				scenario_chooser.add_shortcut_folder(data_path("scenarios"));
+				scenario_chooser.add_shortcut_folder(Resources.path("scenarios"));
 			} catch (GLib.Error e) {}
 			scenario_chooser.response.connect( (response_id) => {
 				if (response_id == Gtk.ResponseType.ACCEPT) {
@@ -497,7 +497,7 @@ namespace Oort {
 
 		public void start_demo_game() {
 			try {
-				var scn = Scenario.parse(data_path("scenarios/demo1.json"));
+				var scn = Scenario.parse(Resources.path("scenarios/demo1.json"));
 				start_game_int(42, scn, { });
 				game_state = GameState.DEMO;
 			} catch (Error e) {
@@ -553,9 +553,9 @@ namespace Oort {
 				chooser_hbox.pack_start(new Label(pteam.name + ":"), false, false, 0);
 				var chooser = new FileChooserButton("AI", Gtk.FileChooserAction.OPEN);
 				chooser.file_set.connect(on_ai_change);
-				chooser.set_current_folder(data_path("examples"));
+				chooser.set_current_folder(Resources.path("examples"));
 				try {
-					chooser.add_shortcut_folder(data_path("examples"));
+					chooser.add_shortcut_folder(Resources.path("examples"));
 				} catch (GLib.Error e) {}
 				this.ai_choosers[i++] = chooser;
 				chooser_hbox.pack_start(chooser, true, true, 3);
@@ -614,8 +614,7 @@ int main(string[] args) {
 	GLib.Intl.setlocale(LocaleCategory.ALL, "C");
 	GLib.Environment.set_application_name(Config.PACKAGE_NAME);
 
-	Paths.init(args[0]);
-	print("using data from %s\n", Paths.resource_dir.get_path());
+	Resources.init(args[0]);
 
 	try {
 		Gtk.init_with_args(ref args, "[scenario [ai...]]", options, null);
@@ -631,7 +630,7 @@ int main(string[] args) {
 		return 1;
 	}
 
-	if (!ShipClass.load(data_path("ships.lua"))) {
+	if (!ShipClass.load()) {
 		print("Failed to load ship classes.\n");
 		return 1;
 	}
