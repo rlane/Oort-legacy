@@ -43,8 +43,11 @@ namespace Oort.Resources {
 	public static void init(string arg0) {
 	}
 
+	[CCode (cname = "oortfs_lookup")]
+	extern string oortfs_lookup(string name);
+
 	public static uint8[] load(string name) {
-		return new uint8[1];
+		return oortfs_lookup(name).data;
 	}
 #endif
 }
