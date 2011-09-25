@@ -9,6 +9,6 @@ lua-stamp:
 if MINGW32
 	cd $(top_srcdir)/lua/src && make PLAT=mingw MYCFLAGS="-g" CC=$(CC) clean liblua.a
 else
-	cd $(top_srcdir)/lua/src && make PLAT=generic MYCFLAGS="-g -m32" CC=$(CC) clean liblua.a
+	cd $(top_srcdir)/lua/src && make PLAT=generic MYCFLAGS="-g" CC=$(CC) clean liblua.a
 endif
 	touch lua-stamp
