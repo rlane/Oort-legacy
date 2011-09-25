@@ -58,6 +58,7 @@ AC_SUBST(VALGRIND_CFLAGS)
 AC_SUBST(VALGRIND_LIBS)
 
 AM_CONDITIONAL([MINGW32], [test x"${with_mingw32}" = "xyes"])
+AM_CONDITIONAL([NACL], [true])
 
 AC_CONFIG_FILES([
 	Makefile

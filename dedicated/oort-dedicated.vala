@@ -15,8 +15,7 @@ int main(string[] args) {
 	GLib.Intl.setlocale(LocaleCategory.ALL, "C");
 	GLib.Environment.set_application_name(Config.PACKAGE_NAME);
 
-	Paths.init(args[0]);
-	print("using data from %s\n", Oort.Paths.resource_dir.get_path());
+	Resources.init(args[0]);
 
 	opt_seed = 0;
 	opt_max_ticks = -1;
@@ -35,7 +34,7 @@ int main(string[] args) {
 		return 1;
 	}
 
-	if (!ShipClass.load(data_path("ships.lua"))) {
+	if (!ShipClass.load()) {
 		print("Failed to load ship classes.\n");
 		return 1;
 	}

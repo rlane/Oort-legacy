@@ -1,4 +1,5 @@
-namespace Oort.Paths {
+namespace Oort.Resources {
+#if !NACL
 	public File resource_dir;
 
 	public static void init(string arg0) {
@@ -22,11 +23,28 @@ namespace Oort.Paths {
 			error("Could not find resource directory, tried %s", resource_dir.get_path());
 		}
 #endif
+		print("using data from %s\n", resource_dir.get_path());
 	}
-}
 
-namespace Oort {
-	public static string data_path(string rel) {
-		return "%s/%s".printf(Paths.resource_dir.get_path(), rel);
+	public static uint8[] load(string name) {
+		uint8[] data;
+		try {
+			FileUtils.get_data(data_path(name), out data);
+		} catch (FileError e) {
+			GLib.error("Failed to load file %s", name);
+		}
+		return (owned)data;
 	}
+
+	public static string data_path(string rel) {
+		return "%s/%s".printf(resource_dir.get_path(), rel);
+	}
+#else
+	public static void init(string arg0) {
+	}
+
+	public static uint8[] load(string name) {
+		return new uint8[1];
+	}
+#endif
 }
