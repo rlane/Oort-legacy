@@ -73,3 +73,4 @@ ui/batches/beam.c
 
 sim/liboort-1.0.a
 luajit_build/luajit-stamp
+lua_build/lua-stamp

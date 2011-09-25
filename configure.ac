@@ -34,7 +34,7 @@ GTKGLEXT_REQUIRED=1.2
 GLEW_REQUIRED=1.5.2
 
 PKG_CHECK_MODULES(OORT, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gio-2.0 >= $GLIB_REQUIRED)
-PKG_CHECK_MODULES(OORT_UI, gtk+-2.0 >= $GTK_REQUIRED gtkglext-1.0 >= $GTKGLEXT_REQUIRED glew >= $GLEW_REQUIRED)
+#PKG_CHECK_MODULES(OORT_UI, gtk+-2.0 >= $GTK_REQUIRED gtkglext-1.0 >= $GTKGLEXT_REQUIRED glew >= $GLEW_REQUIRED)
 AC_SUBST(OORT_CFLAGS)
 AC_SUBST(OORT_LIBS)
 AC_SUBST(OORT_UI_CFLAGS)
@@ -62,13 +62,12 @@ AC_CONFIG_FILES([
 	Makefile
 	sim/Makefile
 	dedicated/Makefile
-	ui/Makefile
 	math3d/Makefile
 	vector/Makefile
 	vapi/Makefile
 	test/Makefile
 	cjson/Makefile
-	luajit_build/Makefile
+	lua_build/Makefile
 ])
 
 AC_OUTPUT

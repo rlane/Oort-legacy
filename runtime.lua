@@ -361,12 +361,12 @@ function sandbox(f)
 
 	copy_table(sandbox_api, env)
 
-	setfenv(lib, env)
+	debug.setupvalue(lib, 1, env)
 	lib()
 
 	strict(env._G)
 
-	setfenv(f, env)
+	debug.setupvalue(f, 1, env)
 	return f
 end
 
