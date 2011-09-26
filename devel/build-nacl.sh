@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 NACL_SDK_ROOT=$HOME/src/nacl-sdk-update/pepper_15
-NACL_TOOLCHAIN_ROOT=$NACL_SDK_ROOT/toolchain/linux_x86
+NACL_TOOLCHAIN_ROOT=$NACL_SDK_ROOT/toolchain/linux_x86_newlib
 NACLPORTS=$HOME/src/naclports
 NACL_PACKAGES_BITSIZE=64
 
@@ -24,6 +24,5 @@ export PATH=${NACL_BIN_PATH}:${PATH};
 	--prefix=${NACL_SDK_USR} \
 	--exec-prefix=${NACL_SDK_USR} \
 	--libdir=${NACL_SDK_USR}/lib \
-	--oldincludedir=${NACL_SDK_USR}/include \
-	--with-nacl
-#make all dist check
+	--oldincludedir=${NACL_SDK_USR}/include
+make all

@@ -1,3 +1,6 @@
 [submodule "luajit"]
 	path = luajit
 	url = http://luajit.org/git/luajit-2.0.git
+[submodule "nacl-vala"]
+	path = nacl-vala
+	url = git://gitorious.org/ideas/nacl-vala.git

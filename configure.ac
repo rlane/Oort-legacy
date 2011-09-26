@@ -63,7 +63,7 @@ AM_CONDITIONAL([NACL], [true])
 AC_CONFIG_FILES([
 	Makefile
 	sim/Makefile
-	dedicated/Makefile
+	nacl/Makefile
 	math3d/Makefile
 	vector/Makefile
 	vapi/Makefile

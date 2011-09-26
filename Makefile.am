@@ -10,7 +10,7 @@ SUBDIRS = \
 	math3d \
 	vector \
 	sim \
-	dedicated \
+	nacl \
 	vapi \
 	test \
 	$(NULL)

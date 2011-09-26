@@ -1,0 +1,6 @@
+{
+  "program": {
+    "x86-64": {"url": "oort_nacl"},
+    "x86-32": {"url": "oort_nacl"}
+  }
+}
