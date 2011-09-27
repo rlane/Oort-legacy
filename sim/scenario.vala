@@ -56,7 +56,7 @@ namespace Oort.Scenario {
 			} else {
 				assert(ai_index < ais.length);
 				ai_filename = ais[ai_index++];
-				FileUtils.get_data(ai_filename, out code);
+				code = Resources.load(ai_filename); // XXX
 			}
 
 			uint32 color = pteam.color_red << 24 | pteam.color_green << 16 | pteam.color_blue << 8;
@@ -86,10 +86,9 @@ namespace Oort.Scenario {
 		scn.teams = null;
 		scn.user_teams = null;
 
-		string data;
-		FileUtils.get_contents(filename, out data);
+		uint8[] data = Resources.load(filename); // XXX
 
-		var root = cJSON.parse(data);
+		var root = cJSON.parse((string)data);
 		if (root == null) {
 			throw new ScenarioParseError.JSON_SYNTAX("JSON syntax incorrect");
 		} else if (root.type != cJSON.Type.Object) {

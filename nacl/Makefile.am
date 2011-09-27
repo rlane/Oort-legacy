@@ -24,6 +24,6 @@ AM_VALAFLAGS = \
 LIBS=$(OORT_LIBS) -lm -lppapi
 
 bin_PROGRAMS = oort_nacl
-oort_nacl_SOURCES = main.c
+oort_nacl_SOURCES = nacl.c main.vala
 oort_nacl_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/lua/src/liblua.a
 oort_nacl_LDFLAGS = $(OORT_EXTRA_LDFLAGS)

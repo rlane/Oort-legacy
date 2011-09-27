@@ -26,12 +26,15 @@ static struct PPB_Messaging* ppb_messaging_interface = NULL;
 static struct PPB_Var* ppb_var_interface = NULL;
 static PP_Module module_id = 0;
 
+void oort_start(void);
+
 static PP_Bool Instance_DidCreate(PP_Instance instance,
                                   uint32_t argc,
                                   const char* argn[],
                                   const char* argv[]) {
 
 	printf("Instance_DidCreate\n");
+  oort_start();
   return PP_TRUE;
 }
 
@@ -62,6 +65,7 @@ void Messaging_HandleMessage(PP_Instance instance, struct PP_Var var_message) {
 PP_EXPORT int32_t PPP_InitializeModule(PP_Module a_module_id,
                                        PPB_GetInterface get_browser) {
 	printf("PPP_InitializeModule\n");
+  g_type_init();
   module_id = a_module_id;
   ppb_messaging_interface = (struct PPB_Messaging*)(get_browser(PPB_MESSAGING_INTERFACE));
   ppb_var_interface = (struct PPB_Var*)(get_browser(PPB_VAR_INTERFACE));

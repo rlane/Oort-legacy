@@ -44,9 +44,10 @@ namespace Oort.Resources {
 	}
 
 	[CCode (cname = "oortfs_lookup")]
-	extern string oortfs_lookup(string name);
+	extern unowned string oortfs_lookup(string name);
 
 	public static uint8[] load(string name) {
+		print("loading resource %s\n", name);
 		return oortfs_lookup(name).data;
 	}
 #endif

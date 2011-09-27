@@ -35,6 +35,7 @@ stamp-h1
 
 dedicated/oort_dedicated*
 ui/oort*
+nacl/oort_nacl
 sim/oort.vapi
 README
 
@@ -70,6 +71,7 @@ ui/batches/tail.c
 ui/batches/boundary.c
 ui/batches/bullet.c
 ui/batches/beam.c
+nacl/main.c
 
 sim/liboort-1.0.a
 luajit_build/luajit-stamp
