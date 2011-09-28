@@ -226,6 +226,7 @@ namespace Oort {
 
 		void render_picked_circle(Ship s) {
 			var prog = ship_program;
+			var shape = circle_model.shapes[0];
 			prog.use();
 			Mat4f rotation_matrix;
 			Mat4f translation_matrix;
@@ -237,12 +238,12 @@ namespace Oort {
 			Mat4f.load_scale(out scale_matrix, (float)s.class.radius, (float)s.class.radius, (float)s.class.radius);
 			Mat4f.multiply(out tmp_matrix, ref rotation_matrix, ref scale_matrix);
 			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref tmp_matrix);
-			glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
+			glBindBuffer(GL_ARRAY_BUFFER, shape.buffer);
 			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
 			glEnableVertexAttribArray(prog.a("vertex"));
 			glUniform4f(prog.u("color"), 0.8f, 0.8f, 0.8f, 0.67f);
 			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
-			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
+			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) shape.vertices.length);
 			glDisableVertexAttribArray(prog.a("vertex"));
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glUseProgram(0);

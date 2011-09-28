@@ -18,10 +18,6 @@ class Oort.ShipBatch : Oort.RenderBatch {
 		foreach (unowned Ship s in game.all_ships) {
 			var model = models.lookup(s.class.name);
 			prog.use();
-			glBindBuffer(GL_ARRAY_BUFFER, model.id);
-			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
-			glEnableVertexAttribArray(prog.a("vertex"));
-			glCheck();
 
 			Mat4f rotation_matrix;
 			Mat4f translation_matrix;
@@ -40,7 +36,14 @@ class Oort.ShipBatch : Oort.RenderBatch {
 			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
 			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, renderer.p_matrix.data);
 			glUniform4f(prog.u("color"), colorv.x, colorv.y, colorv.z, colorv.w);
-			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) model.vertices.length);
+			glEnableVertexAttribArray(prog.a("vertex"));
+
+			foreach (var shape in model.shapes) {
+				glBindBuffer(GL_ARRAY_BUFFER, shape.buffer);
+				glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) shape.vertices.length);
+			}
+
 			glDisableVertexAttribArray(prog.a("vertex"));
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glUseProgram(0);
