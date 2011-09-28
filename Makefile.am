@@ -7,6 +7,7 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = \
 	luajit_build \
 	cjson \
+	math3d \
 	vector \
 	sim \
 	dedicated \
@@ -18,6 +19,7 @@ SUBDIRS = \
 oortdocdir = $(docdir)
 oortdoc_DATA = \
 	README.md \
+	COPYING.math3d \
 	$(NULL)
 
 oortluadir = $(datadir)/oort
@@ -29,15 +31,36 @@ nobase_oortlua_DATA = \
 	vector.lua \
 	examples/target.lua \
 	examples/reference.lua \
+	models/assault_frigate.json \
+	models/carrier.json \
+	models/circle.json \
+	models/fighter.json \
+	models/ion_cannon_frigate.json \
+	models/missile.json \
+	models/small_target.json \
+	models/torpedo.json \
 	scenarios/challenge01.json \
 	scenarios/basic.json \
 	scenarios/furball2.json \
 	scenarios/furball3.json \
 	scenarios/furball4.json \
+	scenarios/knife.json \
 	scenarios/benchmark.json \
 	scenarios/challenge02.json \
 	scenarios/demo1.json \
 	scenarios/challenge03.json \
+	shaders/beam.v.glsl \
+	shaders/beam.f.glsl \
+	shaders/bullet.v.glsl \
+	shaders/bullet.f.glsl \
+	shaders/ship.v.glsl \
+	shaders/ship.f.glsl \
+	shaders/particle.v.glsl \
+	shaders/particle.f.glsl \
+	shaders/tail.v.glsl \
+	shaders/tail.f.glsl \
+	shaders/text.v.glsl \
+	shaders/text.f.glsl \
 	solutions/challenge01.lua \
 	solutions/challenge02.lua \
 	solutions/challenge03.lua \
@@ -93,12 +116,16 @@ oort-win32: all
 	rm -rf oort-win32
 	mkdir oort-win32
 	cp ui/oort.exe dedicated/oort_dedicated.exe $(addprefix $(DLL_DIR)/,$(DLLS)) oort-win32/
-	cp ships.lua runtime.lua lib.lua oort-win32/
+	cp ships.lua runtime.lua lib.lua strict.lua vector.lua oort-win32/
 	dos2unix --u2d < README.md > oort-win32/README.txt
 	mkdir oort-win32/scenarios
 	cp scenarios/*.json oort-win32/scenarios
 	mkdir oort-win32/examples
 	cp examples/*.lua oort-win32/examples
+	mkdir oort-win32/models
+	cp models/*.json oort-win32/models
+	mkdir oort-win32/shaders
+	cp shaders/*.glsl oort-win32/shaders
 
 oort-installer-win32.exe: oort-win32 installer.nsi
 	makensis installer.nsi

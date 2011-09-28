@@ -1,0 +1,23 @@
+{
+	"name":"Knife",
+	"author":"Rich Lane",
+	"description":"Close range frigate combat",
+	"radius":1000,
+	"teams":[
+		{
+			"name":"green",
+			"color":{"r":0,"g":255,"b":0},
+			"ships":[
+				{"class":"ion_cannon_frigate","x":-150,"y":-50,"h":0},
+				{"class":"assault_frigate","x":-150,"y":50,"h":0}
+			]
+		}, {
+			"name":"blue",
+			"color":{"r":0,"g":0,"b":255},
+			"ships":[
+				{"class":"ion_cannon_frigate","x":150,"y":50,"h":3.1416},
+				{"class":"assault_frigate","x":150,"y":-50,"h":3.1416}
+			]
+		}
+	]
+}

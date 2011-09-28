@@ -41,7 +41,6 @@ namespace Oort {
 		private unowned Thread<void*> ticker;
 		private bool shutting_down = false;
 		private Game game;
-		private RendererResources resources;
 
 		private long frame_usecs = 0;
 		private long sample_usecs = 0;
@@ -62,7 +61,6 @@ namespace Oort {
 			set_reallocate_redraws(true);
 
 			this.tick_lock = new Mutex();
-			this.resources = new RendererResources();
 
 			var vbox = new VBox(false, 0);
 			vbox.pack_start(make_menubar(), false, false, 0);
@@ -250,21 +248,19 @@ namespace Oort {
 
 			renderer.render();
 			
-			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
-
 			if (show_fps && frame_usecs != 0 && sample_usecs != 0) {
-				Oort.GLUtil.printf(rect.width-9*9, rect.height-15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
-				Oort.GLUtil.printf(rect.width-15*9, rect.height-25, "Max FPS: %.1f", (1000*1000.0)/frame_usecs);
+				renderer.textf(rect.width-9*9, 15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
+				renderer.textf(rect.width-14*9, 25, "ms/frame: %.1f", renderer.perf.last_frame_time);
 			}
 
 			switch (game_state) {
 			case GameState.DEMO:
-				Oort.GLUtil.printf(rect.width/2-12*9, rect.height-50, "Click Game/New to begin");
+				renderer.textf(rect.width/2-12*9, 50, "Click Game/New to begin");
 				break;
 			case GameState.RUNNING:
 				break;
 			case GameState.FINISHED:
-				Oort.GLUtil.printf(rect.width/2-4*20, rect.height-50, "%s is victorious", winner.name);
+				renderer.textf(rect.width/2-4*20, 50, "%s is victorious", winner.name);
 				break;
 			}
 
@@ -326,6 +322,31 @@ namespace Oort {
 					break;
 				case "e":
 					show_picked_log();
+					break;
+				case "Left":
+					renderer.view_pos = renderer.view_pos.add(Vector.vec2(-100, 0));
+					break;
+				case "Right":
+					renderer.view_pos = renderer.view_pos.add(Vector.vec2(100, 0));
+					break;
+				case "Up":
+					renderer.view_pos = renderer.view_pos.add(Vector.vec2(0, 100));
+					break;
+				case "Down":
+					renderer.view_pos = renderer.view_pos.add(Vector.vec2(0, -100));
+					break;
+				case "S":
+					try {
+						renderer.load_shaders();
+					} catch (ShaderError e) {
+						GLib.warning("reloading shaders failed:\n%s", e.message);
+					}
+					break;
+				case "D":
+					renderer.dump_perf();
+					break;
+				case "C":
+					renderer.perf = new RenderPerf();
 					break;
 				default:
 					if (renderer.picked != null && renderer.picked.controlled) {
@@ -461,7 +482,7 @@ namespace Oort {
 		}
 
 		public void start_renderer(Game game, double initial_view_scale) {
-			renderer = new Renderer(game, resources, initial_view_scale);
+			renderer = new Renderer(game, initial_view_scale);
 			GLContext glcontext = WidgetGL.get_gl_context(drawing_area);
 			GLDrawable gldrawable = WidgetGL.get_gl_drawable(drawing_area);
 

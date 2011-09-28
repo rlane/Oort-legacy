@@ -1,5 +1,5 @@
 namespace Oort {
-	[CCode (cheader_filename = "particle.h")]
+	[CCode (cheader_filename = "particle.h", cname = "enum particle_type")]
 	public enum ParticleType {
 		[CCode (cname = "PARTICLE_HIT")]
 		HIT,

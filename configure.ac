@@ -20,6 +20,9 @@ fi
 AC_DEFINE_UNQUOTED(PACKAGE_DATADIR, "${PREFIX}/share/${PACKAGE}",[Package data directory])
 AC_DEFINE_UNQUOTED(PACKAGE_BINDIR, "${PREFIX}/bin",[Package executable directory])
 
+CFLAGS="-ggdb -m32 -Wall -Wno-unused-but-set-variable -Wno-pointer-sign -Wno-missing-braces -Wno-unused-function"
+LDFLAGS="-m32"
+
 AC_SUBST(CFLAGS)
 AC_SUBST(LDFLAGS)
 
@@ -60,6 +63,7 @@ AC_CONFIG_FILES([
 	sim/Makefile
 	dedicated/Makefile
 	ui/Makefile
+	math3d/Makefile
 	vector/Makefile
 	vapi/Makefile
 	test/Makefile

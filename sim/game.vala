@@ -46,9 +46,13 @@ public class Oort.Game {
 
 	public const double TICK_LENGTH = 1.0/32;
 
-	public static uint8[] load_resource(string name) throws FileError {
+	public static uint8[] load_resource(string name) {
 		uint8[] data;
-		FileUtils.get_data(data_path(name), out data);
+		try {
+			FileUtils.get_data(data_path(name), out data);
+		} catch (FileError e) {
+			GLib.error("Failed to load file %s", name);
+		}
 		return (owned)data;
 	}
 

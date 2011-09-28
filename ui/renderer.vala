@@ -1,40 +1,7 @@
 using GL;
+using GLEW;
 using Vector;
 using Math;
-
-[Compact]
-public class Oort.ShipGfxClass {
-	public static ShipGfxClass fighter;
-	public static ShipGfxClass ion_cannon_frigate;
-	public static ShipGfxClass assault_frigate;
-	public static ShipGfxClass carrier;
-	public static ShipGfxClass missile;
-	public static ShipGfxClass torpedo;
-	public static ShipGfxClass unknown;
-	
-	public static void init() {
-		fighter = new ShipGfxClass();
-		ion_cannon_frigate = new ShipGfxClass();
-		assault_frigate = new ShipGfxClass();
-		carrier = new ShipGfxClass();
-		missile = new ShipGfxClass();
-		torpedo = new ShipGfxClass();
-		unknown = new ShipGfxClass();
-	}
-
-	public static unowned ShipGfxClass lookup(string name)
-	{
-		switch (name) {
-			case "fighter": return fighter;
-			case "ion_cannon_frigate": return ion_cannon_frigate;
-			case "assault_frigate": return assault_frigate;
-			case "carrier": return carrier;
-			case "missile": return missile;
-			case "torpedo": return torpedo;
-			default: return unknown;
-		}
-	}
-}
 
 namespace Oort {
 	class Renderer {
@@ -45,19 +12,23 @@ namespace Oort {
 		public Vec2 view_pos;
 		public unowned Ship picked = null;
 		public Game game;
-		public bool render_explosion_rays = false;
 		public bool follow_picked = false;
+		public RenderPerf perf;
 
-		Rand prng;
-		RendererResources resources;
-		Texture ion_beam_tex;
-		Texture laser_beam_tex;
+		public Mat4f p_matrix;
+		public Rand prng;
+
+		Texture font_tex;
+		ShaderProgram ship_program;
+		ShaderProgram beam_program;
+		ShaderProgram text_program;
+		Model circle_model;
+		RenderBatch[] batches;
 
 		public static void static_init() {
 			if (GLEW.init()) {
 				error("GLEW initialization failed");
 			}
-			ShipGfxClass.init();
 			Oort.Ship.gfx_create_cb = on_ship_created;
 
 			/*
@@ -70,328 +41,257 @@ namespace Oort {
 		}
 
 		public Renderer(Game game,
-		                RendererResources resources,
 		                double initial_view_scale) {
 			this.game = game;
-			this.resources = resources;
 			view_scale = initial_view_scale;
 			prng = new Rand();
 			view_pos = vec2(0,0);
+			perf = new RenderPerf();
 
-			ion_beam_tex = new IonBeamTexture();
-			laser_beam_tex = new LaserBeamTexture();
+			circle_model = Model.load("circle");
+
+			batches = {
+				new ParticleBatch(),
+				new BoundaryBatch(),
+				new ShipBatch(),
+				new TailBatch(),
+				new BulletBatch(),
+				new BeamBatch()
+			};
 		}
 
 		public void init() {
 			glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
 			glShadeModel(GL_SMOOTH);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glEnable(GL_BLEND);
 			glEnable(GL_LINE_SMOOTH);
-			glEnable(GL_POINT_SMOOTH);
+			glEnable(GL_POINT_SPRITE);
+			glEnable(GL_PROGRAM_POINT_SIZE);
 			glLineWidth(1.2f);
+
+			try {
+				load_shaders();
+			} catch (ShaderError e) {
+				GLib.error("loading shaders failed:\n%s", e.message);
+			}
+
+			load_font();
+
+			foreach (RenderBatch batch in batches) {
+				batch.game = game;
+				batch.renderer = this;
+				try {
+					batch.init();
+				} catch (Error e) {
+					GLib.error("loading batch failed:\n%s", e.message);
+				}
+			}
+		}
+
+		public void load_font() {
+			var tex = new Texture();
+			tex.bind();
+			glCheck();
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+			glCheck();
+			glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glCheck();
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glCheck();
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glCheck();
+			var n = 256;
+			var data = new uint8[64*n];
+			for (int i = 0; i < n; i++) {
+				for (int x = 0; x < 8; x++) {
+					for (int y = 0; y < 8; y++) {
+						uint8 row = font[8*i+y];
+						bool on = ((row >> x) & 1) == 1;
+						data[n*8*y + 8*i + x] = on ? 255 : 0;
+					}
+				}
+			}
+			glTexImage2D(GL_TEXTURE_2D, 0, 1, n*8, 8, 0, GL_RED, GL_UNSIGNED_BYTE, data);
+			glCheck();
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glCheck();
+			font_tex = tex;
+		}
+
+		public void load_shaders() throws ShaderError{
+			ship_program = new ShaderProgram.from_resources("ship");
+			beam_program = new ShaderProgram.from_resources("beam");
+			text_program = new ShaderProgram.from_resources("text");
 		}
 
 		public void render() {
 			prng.set_seed(0); // XXX tick seed
+			TimeVal start_time = TimeVal();
 
+			glEnable(GL_BLEND);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
 
-			render_boundary();
+			Mat4f.load_simple_ortho(out p_matrix,
+			                        (float)this.view_pos.x,
+			                        (float)this.view_pos.y,
+			                        (float)screen_height/(float)screen_width,
+			                        (float)(2000.0/view_scale));
+
 
 			if (follow_picked && picked != null) {
 				view_pos = picked.physics.p;
 			}
 
+			foreach (RenderBatch batch in batches) {
+				batch.do_render();
+			}
+
 			foreach (unowned Ship s in game.all_ships) {
-				render_ship(s);
+				render_debug_lines(s);
 			}
-
-			foreach (unowned Bullet b in game.all_bullets) {
-				render_bullet(b);
-			}
-
-			foreach (unowned Beam b in game.all_beams) {
-				render_beam(b);
-			}
-
-			render_particles();
 			
 			if (picked != null) {
-				render_picked_info(picked);
-			}
-		}
-
-		void triangle_fractal(int depth) {
-			double alt = 0.8660254;
-
-			if (depth > 1) {
-				glBegin(GL_LINES);
-				glVertex3d(alt, 0, 0);
-				glVertex3d(3*alt/4, -0.125, 0);
-				glVertex3d(alt/4, -0.375, 0);
-				glVertex3d(0, -0.5, 0);
-				glVertex3d(alt, 0, 0);
-				glVertex3d(3*alt/4, 0.125, 0);
-				glVertex3d(alt/4, 0.375, 0);
-				glVertex3d(0, 0.5, 0);
-				glEnd();
-
-				glPushMatrix();
-				glScaled(0.5, 0.5, 0.5);
-				glRotated(60, 0, 0, 1);
-				glTranslated(alt, -0.5, 0);
-				triangle_fractal(depth-1);
-				glPopMatrix();
-
-				glPushMatrix();
-				glScaled(0.5, 0.5, 0.5);
-				glRotated(-60, 0, 0, 1);
-				glTranslated(alt, 0.5, 0);
-				triangle_fractal(depth-1);
-				glPopMatrix();
-			} else {
-				glBegin(GL_LINE_STRIP);
-				glVertex3d(0, -0.5, 0);
-				glVertex3d(alt, 0, 0);
-				glVertex3d(0, 0.5, 0);
-				glEnd();
-			}
-		}
-
-		void render_carrier(Ship s) {
-			int depth = int.min(int.max((int)Math.log2(view_scale*100), 2), 8);
-			GLUtil.color32(s.team.color | 0xEE);
-			glPushMatrix();
-			glScaled(1.0, 0.7, 0.3);
-			glPushMatrix();
-			glScaled(0.5, 0.3, 0.5);
-			GLUtil.render_circle(5);
-			glPopMatrix();
-			triangle_fractal(depth);
-			glPushMatrix();
-			glRotated(180, 0, 0, 1);
-			triangle_fractal(depth);
-			glPopMatrix();
-			glPopMatrix();
-		}
-
-		void render_model(Model model) {
-			glBegin(GL_LINE_LOOP);
-			foreach (var v in model.vertices) {
-				glVertex3d(v.x, v.y, 0);
-			}
-			glEnd();
-		}
-
-		void render_ship(Ship s) {
-			var sp = S(s.physics.p);
-			double angle = s.physics.h;
-			double scale = view_scale * s.class.radius;
-
-			glPushMatrix();
-			glTranslated(sp.x, sp.y, 0);
-			glScaled(scale, scale, scale);
-			glRotated(Util.rad2deg(angle), 0, 0, 1);
-
-			if (s.class.name == "carrier") {
-				render_carrier(s);
-			} else {
-				var model = resources.models.lookup(s.class.name);
-				GLUtil.color32(s.team.color | model.alpha);
-				render_model(model);
-			}
-
-			glPopMatrix();
-
-			int tail_alpha_max = (s.class.name.contains("missile") || s.class.name.contains("torpedo")) ? 16 : 64;
-			glBegin(GL_LINE_STRIP);
-			GLUtil.color32(s.team.color | tail_alpha_max);
-			glVertex3d(sp.x, sp.y, 0);
-			int i;
-			for (i = 0; i < Ship.TAIL_SEGMENTS-1; i++) {
-				int j = s.tail_head - i - 1;
-				if (j < 0) j += Ship.TAIL_SEGMENTS;
-				Vec2 sp2 = S(s.tail[j]);
-				if (isnan(sp2.x) != 0)
-					break;
-				uint32 color = s.team.color | (tail_alpha_max-(tail_alpha_max/Ship.TAIL_SEGMENTS)*i);
-
-				GLUtil.color32(color);
-				glVertex3d(sp2.x, sp2.y, 0);
-			}
-			glEnd();
-
-			if (s == picked) {
-				GLUtil.color32((uint32)0xCCCCCCAA);
-				glPushMatrix();
-				glTranslated(sp.x, sp.y, 0);
-				glScaled(scale, scale, scale);
-				GLUtil.render_circle(64);
-				glPopMatrix();
-
-				GLUtil.color32((uint32)0xCCCCCC77);
-				glPushMatrix();
-				glTranslated(sp.x, sp.y, 0);
-				glScaled(view_scale, view_scale, view_scale);
-				glRotated(Util.rad2deg(s.physics.h), 0, 0, 1);
-				glBegin(GL_LINES);
-				glVertex3d(0, 0, 0);
-				glVertex3d(s.physics.acc.x, s.physics.acc.y, 0);
-				glEnd();
-				glPopMatrix();
-
-				GLUtil.color32((uint32)0x49D5CEAA);
-				glBegin(GL_LINE_STRIP);
-				glVertex3d(sp.x, sp.y, 0);
-				Physics q = s.physics.copy();
-				for (double j = 0; j < 1/Game.TICK_LENGTH; j++) {
-					q.tick_one();
-					Vec2 sp2 = S(q.p);
-					glVertex3d(sp2.x, sp2.y, 0);
+				if (picked.dead) {
+					picked = null;
+				} else {
+					render_picked_circle(picked);
+					render_picked_acceleration(picked);
+					render_picked_path(picked);
+					render_picked_info(picked);
 				}
-				glEnd();
 			}
 
-			if (s == picked || render_all_debug_lines) {
-				GLUtil.color32((uint32)0x49D5CEAA);
-				glBegin(GL_LINES);
-				for (int j = 0; j < s.debug.num_lines; j++) {
-					Vec2 sa = S(s.debug.lines[j].a);
-					Vec2 sb = S(s.debug.lines[j].b);
-					glVertex3d(sa.x, sa.y, 0);
-					glVertex3d(sb.x, sb.y, 0);
-				}
-				glEnd();
-			}
-
-			// XXX move
-			if (s == picked && s.dead) {
-				picked = null;
-			}
+			glFinish();
+			perf.update_from_time(start_time);
 		}
 
-		private void render_bullet(Bullet b) {
-			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
+		void render_text(int x, int y, string text) {
+			var prog = text_program;
+			var pos = pixel2screen(vec2(x,y));
+			var spacing = 9.0f;
 
-			if (b.dead) return;
-
-			if (b.type == Oort.BulletType.SLUG) {
-				var dp = b.physics.v.scale(1.0/64);
-				var offset = b.physics.v.scale(prng.next_double()/64);
-				var p1 = b.physics.p.add(offset);
-				var p2 = b.physics.p.add(offset).add(dp);
-				var sp1 = S(p1);
-				var sp2 = S(p2);
-
-				glBegin(GL_LINE_STRIP);
-				Oort.GLUtil.color32(0x44444455);
-				glVertex3d(sp1.x, sp1.y, 0);
-				Oort.GLUtil.color32(0x444444FF);
-				glVertex3d(sp2.x, sp2.y, 0);
-				glEnd();
-			} else if (b.type == Oort.BulletType.REFUEL) {
-				double scale = view_scale * b.physics.r;
-				var sp = S(b.physics.p);
-				GLUtil.color32((uint32)0x777777AA);
-				glPushMatrix();
-				glTranslated(sp.x, sp.y, 0);
-				glScaled(scale, scale, scale);
-				GLUtil.render_circle(20);
-				glPopMatrix();
-			} else if (render_explosion_rays && b.type == Oort.BulletType.EXPLOSION) {
-				var dp = b.physics.v.scale(Game.TICK_LENGTH);
-				var sp1 = S(b.physics.p);
-				var sp2 = S(b.physics.p.add(dp));
-
-				glBegin(GL_LINE_STRIP);
-				Oort.GLUtil.color32(0xFFFFFF33u);
-				glVertex3d(sp1.x, sp1.y, 0);
-				Oort.GLUtil.color32(0xFFFFFF22u);
-				glVertex3d(sp2.x, sp2.y, 0);
-				glEnd();
-			}
-		}
-
-		private void render_beam(Beam b) {
-			Oort.GLUtil.color32((uint32)0xFFFFFFAA);
-			Texture tex = null;
-			var offset = 0.0;
-			var sp = S(b.p);
-			var angle = b.a;
-			var length = b.length;
-			var width = b.width/2;
-
-			if (b.graphics == Oort.BeamGraphics.ION) {
-				tex = ion_beam_tex;
-				offset = 0.7*40;
-			} else if (b.graphics == Oort.BeamGraphics.LASER) {
-				tex = laser_beam_tex;
+			var chars = new float[text.length];
+			var indices = new float[text.length];
+			for (int i = 0; i < text.length; i++) {
+				chars[i] = (float) text[i];
+				indices[i] = (float) i;
 			}
 
-			glPushMatrix();
-			glTranslated(sp.x, sp.y, 0);
-			glRotated(Util.rad2deg(angle), 0, 0, 1);
-			glScaled(view_scale, view_scale, view_scale);
-			glEnable(GL_TEXTURE_2D);
-			glBlendFunc(GL_ONE, GL_ONE);
-			tex.bind();
-			glBegin(GL_QUADS);
-			Oort.GLUtil.color32(0x6464FFAA);
-			glTexCoord2f(0, 0);
-			glVertex3d(offset, width, 0);
-			glTexCoord2f(1.0f, 0);
-			glVertex3d(offset, -width, 0);
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex3d(length, -width, 0);
-			glTexCoord2f(0, 1.0f);
-			glVertex3d(length, width, 0);
-			glEnd();
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glDisable(GL_TEXTURE_2D);
-			glPopMatrix();
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glPointSize(8);
+			prog.use();
+			font_tex.bind();
+			glUniform1i(prog.u("tex"), 0);
+			glUniform1f(prog.u("dist"), 2.0f*spacing/screen_width);
+			glUniform2f(prog.u("position"), (float)pos.x, (float)pos.y);
+			glVertexAttribPointer(prog.a("character"), 1, GL_FLOAT, false, 0, chars);
+			glVertexAttribPointer(prog.a("index"), 1, GL_FLOAT, false, 0, indices);
+			glEnableVertexAttribArray(prog.a("character"));
+			glEnableVertexAttribArray(prog.a("index"));
+			glDrawArrays(GL_POINTS, 0, (GLsizei) text.length);
+			glDisableVertexAttribArray(prog.a("character"));
+			glDisableVertexAttribArray(prog.a("index"));
+			glUseProgram(0);
+			glCheck();
 		}
 
-		private void render_particles() {
-			for (int i = 0; i < Particle.MAX; i++) {
-				unowned Particle c = Particle.get(i);
-				if (c.ticks_left == 0) continue;
-				Vec2 p = S(c.p);
-				if (c.type == ParticleType.HIT) {
-					glPointSize((float)(0.3*c.ticks_left*view_scale/32));
-					glColor4ub(255, 200, 200, c.ticks_left*8);
-				} else if (c.type == ParticleType.PLASMA) {
-					glPointSize((float)(0.15*c.ticks_left*view_scale/32));
-					glColor4ub(255, 0, 0, c.ticks_left*32);
-				} else if (c.type == ParticleType.ENGINE) {
-					glPointSize((float)(0.1*c.ticks_left*view_scale/32));
-					glColor4ub(255, 217, 43, 10 + c.ticks_left*5);
-				} else if (c.type == ParticleType.EXPLOSION) {
-					var s = c.v.abs();
-					glPointSize((float)((0.05 + 0.05*c.ticks_left)*view_scale/32));
-					GLubyte r = 255;
-					GLubyte g = (GLubyte)(255*double.min(1.0, 0.0625*s+c.ticks_left*0.1));
-					GLubyte b = 50;
-					GLubyte a = 10 + c.ticks_left*20;
-					glColor4ub(r, g, b, a);
-				}
-				glBegin(GL_POINTS);
-				glVertex3d(p.x, p.y, 0);
-				glEnd();
+		void render_debug_lines(Ship s) {
+			if (s != picked && !render_all_debug_lines) {
+				return;
 			}
+
+			var prog = ship_program;
+			prog.use();
+			glCheck();
+			Mat4f mv_matrix;
+			Mat4f.load_identity(out mv_matrix);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glUniformMatrix4fv(prog.u("p_matrix"), 1, false, p_matrix.data);
+			glUniform4f(prog.u("color"), 0.29f, 0.83f, 0.8f, 0.66f);
+			var vertices = new float[s.debug.num_lines*4];
+			for (int j = 0; j < s.debug.num_lines; j++) {
+				var a = s.debug.lines[j].a;
+				var b = s.debug.lines[j].b;
+				vertices[4*j+0] = (float)a.x;
+				vertices[4*j+1] = (float)a.y;
+				vertices[4*j+2] = (float)b.x;
+				vertices[4*j+3] = (float)b.y;
+			}
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glDrawArrays(GL_LINES, 0, (GLsizei) s.debug.num_lines*2);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glUseProgram(0);
+			glCheck();
 		}
 
-		private void render_boundary() {
-			glColor4ub(50, 50, 50, 100);
-			glPushMatrix();
-			double scale = view_scale*game.scn.radius;
-			Vec2 sp = S(vec2(0,0));
-			glTranslated(sp.x, sp.y, 0);
-			glScaled(scale, scale, scale);
-			GLUtil.render_circle(64);
-			glPopMatrix();
+		void render_picked_circle(Ship s) {
+			var prog = ship_program;
+			var shape = circle_model.shapes[0];
+			prog.use();
+			Mat4f rotation_matrix;
+			Mat4f translation_matrix;
+			Mat4f scale_matrix;
+			Mat4f mv_matrix;
+			Mat4f tmp_matrix;
+			Mat4f.load_rotation(out rotation_matrix, (float)s.physics.h, 0, 0, 1);
+			Mat4f.load_translation(out translation_matrix, (float)s.physics.p.x, (float)s.physics.p.y, 0);
+			Mat4f.load_scale(out scale_matrix, (float)s.class.radius, (float)s.class.radius, (float)s.class.radius);
+			Mat4f.multiply(out tmp_matrix, ref rotation_matrix, ref scale_matrix);
+			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref tmp_matrix);
+			glBindBuffer(GL_ARRAY_BUFFER, shape.buffer);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glUniform4f(prog.u("color"), 0.8f, 0.8f, 0.8f, 0.67f);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) shape.vertices.length);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glUseProgram(0);
+			glCheck();
+		}
+
+		void render_picked_acceleration(Ship s) {
+			float vertices[4] = { 0, 0, (float)s.physics.acc.x, (float)s.physics.acc.y };
+			var prog = ship_program;
+			prog.use();
+			Mat4f rotation_matrix;
+			Mat4f translation_matrix;
+			Mat4f mv_matrix;
+			Mat4f.load_rotation(out rotation_matrix, (float)s.physics.h, 0, 0, 1);
+			Mat4f.load_translation(out translation_matrix, (float)s.physics.p.x, (float)s.physics.p.y, 0);
+			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref rotation_matrix);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glUniform4f(prog.u("color"), 0.8f, 0.8f, 0.8f, 0.46f);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glDrawArrays(GL_LINE_LOOP, 0, 2);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glUseProgram(0);
+			glCheck();
+		}
+
+		void render_picked_path(Ship s) {
+			int n = (int) (1/Game.TICK_LENGTH);
+			float[] vertices = new float[n*2];
+			Physics q = s.physics.copy();
+			for (int j = 0; j < n; j++) {
+				vertices[j*2+0] = (float) q.p.x;
+				vertices[j*2+1] = (float) q.p.y;
+				q.tick_one();
+			}
+
+			var prog = ship_program;
+			prog.use();
+			Mat4f mv_matrix;
+			Mat4f.load_identity(out mv_matrix);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
+			glEnableVertexAttribArray(prog.a("vertex"));
+			glUniform4f(prog.u("color"), 0.29f, 0.83f, 0.8f, 0.66f);
+			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
+			glDrawArrays(GL_LINE_STRIP, 0, (GLsizei) n);
+			glDisableVertexAttribArray(prog.a("vertex"));
+			glUseProgram(0);
+			glCheck();
 		}
 
 		private string fmt(double v, string unit) {
@@ -411,23 +311,22 @@ namespace Oort {
 		private void render_picked_info(Ship s) {
 			int x = 15;
 			int dy = 12;
-			int y = 22+11*dy;
+			int y = screen_height - 22 - 11*dy;
 			var rv = s.physics.v.rotate(-s.physics.h);
-			GLUtil.color32((uint32)0xAAFFFFAA);
-			GLUtil.printf(x, y-0*dy, "%s %s %s", s.class.name, s.hex_id, s.controlled ? "(player controlled)" : "");
-			GLUtil.printf(x, y-1*dy, "hull: %s", fmt(s.hull,"J"));
-			GLUtil.printf(x, y-2*dy, "position: (%s, %s)", fmt(s.physics.p.x,"m"), fmt(s.physics.p.y,"m"));
-			GLUtil.printf(x, y-3*dy, "heading: %s", fmt(s.physics.h,"rad"));
-			GLUtil.printf(x, y-4*dy, "velocity: (%s, %s) rel=(%s, %s)",
-			                         fmt(s.physics.v.x,"m/s"), fmt(s.physics.v.y,"m/s"),
-			                         fmt(rv.x,"m/s"), fmt(rv.y,"m/s"));
-			GLUtil.printf(x, y-5*dy, "angular velocity: %s", fmt(s.physics.w,"rad/s"));
-			GLUtil.printf(x, y-6*dy, "acceleration:");
-			GLUtil.printf(x, y-7*dy, " main: %s", fmt(s.physics.acc.x,"m/s\xFD"));
-			GLUtil.printf(x, y-8*dy, " lateral: %s", fmt(s.physics.acc.y,"m/s\xFD"));
-			GLUtil.printf(x, y-9*dy, " angular: %s", fmt(s.physics.wa,"rad/s\xFD"));
-			GLUtil.printf(x, y-10*dy, "energy: %s", fmt(s.get_energy(),"J"));
-			GLUtil.printf(x, y-11*dy, "reaction mass: %s", fmt(s.get_reaction_mass()*1000,"g"));
+			textf(x, y+0*dy, "%s %s %s", s.class.name, s.hex_id, s.controlled ? "(player controlled)" : "");
+			textf(x, y+1*dy, "hull: %s", fmt(s.hull,"J"));
+			textf(x, y+2*dy, "position: (%s, %s)", fmt(s.physics.p.x,"m"), fmt(s.physics.p.y,"m"));
+			textf(x, y+3*dy, "heading: %s", fmt(s.physics.h,"rad"));
+			textf(x, y+4*dy, "velocity: (%s, %s) rel=(%s, %s)",
+			                 fmt(s.physics.v.x,"m/s"), fmt(s.physics.v.y,"m/s"),
+			                 fmt(rv.x,"m/s"), fmt(rv.y,"m/s"));
+			textf(x, y+5*dy, "angular velocity: %s", fmt(s.physics.w,"rad/s"));
+			textf(x, y+6*dy, "acceleration:");
+			textf(x, y+7*dy, " main: %s", fmt(s.physics.acc.x,"m/s\xFD"));
+			textf(x, y+8*dy, " lateral: %s", fmt(s.physics.acc.y,"m/s\xFD"));
+			textf(x, y+9*dy, " angular: %s", fmt(s.physics.wa,"rad/s\xFD"));
+			textf(x, y+10*dy, "energy: %s", fmt(s.get_energy(),"J"));
+			textf(x, y+11*dy, "reaction mass: %s", fmt(s.get_reaction_mass()*1000,"g"));
 		}
 
 		public void reshape(int width, int height) {
@@ -446,7 +345,7 @@ namespace Oort {
 				if (b.dead) continue;
 				if (b.type == BulletType.PLASMA) {
 					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
-							            double.min(b.physics.m/5,0.1)*80, 3, 4, 6);
+					                double.min(b.physics.m/5,0.1)*80, 3, 4, 9);
 				} else if (b.type == BulletType.EXPLOSION) {
 					if (prng.next_double() < 0.1) {
 						Particle.shower(ParticleType.EXPLOSION, b.physics.p, vec2(0,0), b.physics.v.scale(Game.TICK_LENGTH).scale(0.001), 8, 5, 17, 6);
@@ -474,16 +373,20 @@ namespace Oort {
 			}
 		}
 
-		public Vec2 center() {
-			return vec2(screen_width/2, screen_height/2);
-		}
-
-		public Vec2 S(Vec2 p) {
-			return p.sub(view_pos).scale(view_scale).add(center());
+		public Vec2 pixel2screen(Vec2 p) {
+			return vec2((float) (2*p.x/screen_width-1),
+			            (float) (-2*p.y/screen_height+1));
 		}
 
 		public Vec2 W(Vec2 o) {
-			return o.sub(center()).scale(1/view_scale).add(view_pos);
+			Mat4f m;
+			Vec2 screen_coord = pixel2screen(o);
+			Vec4f v = vec4f((float)screen_coord.x, (float)screen_coord.y, 0, 0);
+			Mat4f.invert(out m, ref p_matrix);
+			var v2 = v.transform(ref m);
+			v2.x += (float)view_pos.x;
+			v2.y += (float)view_pos.y;
+			return vec2(v2.x, v2.y);
 		}
 
 		// XXX find ship with minimum distance, allow 5 px error
@@ -515,83 +418,27 @@ namespace Oort {
 
 		static void on_ship_created(Ship s)
 		{
-			s.gfx.class = ShipGfxClass.lookup(s.class.name);
 		}
-	}
 
-	namespace GLUtil {
-		public void printf(int x, int y, string fmt, ...) {
+		public void textf(int x, int y, string fmt, ...) {
 			va_list ap = va_list();
 			var str = fmt.vprintf(ap);
-			write(x, y, str);
+			render_text(x, y, str);
 		}
 
-		public void write(int x, int y, string str)
-		{
-			assert(font != null);
-			if (GLEW.ARB_window_pos) {
-				GLEW.glWindowPos2i(x, y);
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
-				unowned uint8 *data = str.data;
-
-				for (int i = 0; data[i] != 0; i++) {
-					glBitmap(8, 8, 4, 4, 9, 0, (GLubyte*)font + 8*data[i]);
-				}
+		public void dump_perf() {
+			print("== Renderer performance dump:\n");
+			foreach (RenderBatch batch in batches) {
+				print("Batch %s:\n", batch.get_type().name());
+				batch.perf.dump();
 			}
-		}
-
-		public void color32(uint32 c) {
-			GLubyte r = (GLubyte) ((c >> 24) & 0xFF);
-			GLubyte g = (GLubyte) ((c >> 16) & 0xFF);
-			GLubyte b = (GLubyte) ((c >> 8) & 0xFF);
-			GLubyte a = (GLubyte) (c & 0xFF);
-			glColor4ub(r, g, b, a);
-		}
-
-		public void render_circle(int n)
-		{
-			double da = 2*Math.PI/n, a = 0;
-			int i;
-
-			glBegin(GL_LINE_LOOP);
-			for (i = 0; i < n; i++) {
-				a += da;
-				glVertex3d(cos(a), sin(a), 0);
+			print("== Overall:\n");
+			perf.dump();
+			print("== Batch summaries:\n");
+			foreach (RenderBatch batch in batches) {
+				print("%s: %s\n", batch.get_type().name(), batch.perf.summary());
 			}
-			glEnd();
-		}
-	}
-
-	public double normalize_angle(double a)
-	{
-		if (a < -PI) a += 2*PI;
-		if (a > PI) a -= 2*PI;
-		return a;
-	}
-}
-
-public class Oort.RendererResources {
-	public HashTable<string,Model> models = new HashTable<string,Model>(str_hash, str_equal);
-
-	public RendererResources() throws ModelParseError, FileError, Error {
-		var directory = File.new_for_path(data_path("models"));
-		var enumerator = directory.enumerate_children (FILE_ATTRIBUTE_STANDARD_NAME, 0);
-
-		FileInfo file_info;
-		while ((file_info = enumerator.next_file ()) != null) {
-			var filename = file_info.get_name();
-			if (!filename.has_suffix(".json")) {
-				continue;
-			}
-			var name = filename[0:-5];
-
-			var data = Game.load_resource(@"models/$filename");
-			try {
-				models.insert(name, new Model(data));
-			} catch (ModelParseError e) {
-				e.message += @" when parsing $name";
-				throw e;
-			}
+			print("\n");
 		}
 	}
 }

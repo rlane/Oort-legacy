@@ -1,4 +1,4 @@
-#include "vector.h"
+#include "vec2d.h"
 
 #ifndef PARTICLE_H
 #define PARTICLE_H

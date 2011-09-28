@@ -9,6 +9,12 @@ AM_CFLAGS = \
 	-I $(top_srcdir)/luajit/src \
 	$(NULL)
 
+if MINGW32
+AM_MINGW32_VALAFLAGS = -D WIN32
+else
+AM_MINGW32_VALAFLAGS = $(NULL)
+endif
+
 AM_VALAFLAGS = \
 	--library oort -H oort.h \
 	--vapidir $(top_srcdir)/vapi \
@@ -22,9 +28,10 @@ AM_VALAFLAGS = \
 	--pkg cjson \
 	--pkg config \
 	--thread \
+	$(AM_MINGW32_VALAFLAGS) \
 	$(NULL)
 
-lib_LIBRARIES = libsim.a
+noinst_LIBRARIES = libsim.a
 
 libsim_a_SOURCES = \
 	bullet.vala \
