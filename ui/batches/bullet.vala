@@ -47,16 +47,17 @@ class Oort.BulletBatch : Oort.RenderBatch {
 				Mat4f translation_matrix;
 				Mat4f mv_matrix;
 				float scale = (float)b.physics.r;
+				var shape = circle_model.shapes[0];
 				var color = vec4f(0.47f, 0.47f, 0.47f, 0.66f);
 				Mat4f.load_scale(out scale_matrix, scale, scale, scale); 
 				Mat4f.load_translation(out translation_matrix, (float)b.physics.p.x, (float)b.physics.p.y, 0); 
 				Mat4f.multiply(out mv_matrix, ref translation_matrix, ref scale_matrix);
 				glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
 				glVertexAttrib4fv(prog.a("color"), color.data);
-				glBindBuffer(GL_ARRAY_BUFFER, circle_model.id);
+				glBindBuffer(GL_ARRAY_BUFFER, shape.buffer);
 				glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
 				glEnableVertexAttribArray(prog.a("vertex"));
-				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) circle_model.vertices.length);
+				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) shape.vertices.length);
 				glDisableVertexAttribArray(prog.a("vertex"));
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
