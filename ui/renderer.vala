@@ -239,7 +239,7 @@ namespace Oort {
 			Mat4f.multiply(out tmp_matrix, ref rotation_matrix, ref scale_matrix);
 			Mat4f.multiply(out mv_matrix, ref translation_matrix, ref tmp_matrix);
 			glBindBuffer(GL_ARRAY_BUFFER, shape.buffer);
-			glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, (void*) 0);
 			glEnableVertexAttribArray(prog.a("vertex"));
 			glUniform4f(prog.u("color"), 0.8f, 0.8f, 0.8f, 0.67f);
 			glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);

@@ -21,7 +21,7 @@ class Oort.BoundaryBatch : Oort.RenderBatch {
 		glUniformMatrix4fv(prog.u("mv_matrix"), 1, false, mv_matrix.data);
 		glUniform4f(prog.u("color"), 0.2f, 0.2f, 0.2f, 0.39f);
 		glBindBuffer(GL_ARRAY_BUFFER, shape.buffer);
-		glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+		glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, (void*) 0);
 		glEnableVertexAttribArray(prog.a("vertex"));
 		glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) shape.vertices.length);
 		glDisableVertexAttribArray(prog.a("vertex"));
