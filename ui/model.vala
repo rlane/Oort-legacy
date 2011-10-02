@@ -11,9 +11,9 @@ public errordomain Oort.ModelParseError {
 [SimpleType]
 public class Oort.Shape {
 	public GLuint buffer;
-	public Vec2[] vertices;
+	public Vec2f[] vertices;
 
-	public Shape(Vec2[] vs) {
+	public Shape(Vec2f[] vs) {
 		vertices = vs;
 		buffer = 0;
 	}
@@ -24,7 +24,7 @@ public class Oort.Model {
 	public double alpha;
 
 	public static Model load(string name) {
-		var data = Game.load_resource(@"models/$name.json");
+		var data = Resources.load(@"models/$name.json");
 		try {
 			var model = new Model(data);
 			model.build();
@@ -57,7 +57,7 @@ public class Oort.Model {
 
 		unowned cJSON shape_node = shapes_node.child;
 		while (shape_node != null) {
-			Vec2[] tmp_vertices = {};
+			Vec2f[] tmp_vertices = {};
 
 			if (shape_node.type != cJSON.Type.Array) {
 				throw new ModelParseError.WRONG_TYPE("shape field must be an array");
@@ -79,7 +79,7 @@ public class Oort.Model {
 					throw new ModelParseError.WRONG_TYPE("field vertex.y must be a number");
 				}
 
-				tmp_vertices += vec2(x_node.double, y_node.double);
+				tmp_vertices += vec2f((float)x_node.double, (float)y_node.double);
 
 				vertex_node = vertex_node.next;
 			}
@@ -99,7 +99,7 @@ public class Oort.Model {
 			var vertices = shape.vertices;
 			glGenBuffers(1, &shape.buffer);
 			glBindBuffer(GL_ARRAY_BUFFER, shape.buffer);
-			glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) (vertices.length*sizeof(Vec2)), (void*) (&vertices[0]), GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) (vertices.length*sizeof(Vec2f)), (void*) (&vertices[0]), GL_STATIC_DRAW);
 			glCheck();
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

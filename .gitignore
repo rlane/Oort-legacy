@@ -53,7 +53,7 @@ sim/team.c
 ui/renderer.c
 ui/textures.c
 ui/oort.c
-sim/paths.c
+sim/resources.c
 ui/log.c
 ui/model.c
 ui/shader.c

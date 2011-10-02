@@ -27,17 +27,18 @@ namespace Oort.Resources {
 	}
 
 	public static uint8[] load(string name) {
+		var filename = path(name);
 		uint8[] data;
 		try {
-			FileUtils.get_data(data_path(name), out data);
+			FileUtils.get_data(filename, out data);
 		} catch (FileError e) {
-			GLib.error("Failed to load file %s", name);
+			GLib.error("Failed to load resource %s from %s", name, filename);
 		}
 		return (owned)data;
 	}
 
-	public static string data_path(string rel) {
-		return "%s/%s".printf(resource_dir.get_path(), rel);
+	public static string path(string name) {
+		return "%s/%s".printf(resource_dir.get_path(), name);
 	}
 #else
 	public static void init(string arg0) {

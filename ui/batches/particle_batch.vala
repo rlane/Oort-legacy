@@ -78,7 +78,7 @@ class Oort.ParticleBatch : Oort.RenderBatch {
 		glEnableVertexAttribArray(prog.a("color"));
 		glEnableVertexAttribArray(prog.a("size"));
 		particle_tex.bind();
-		glDrawArrays(GL_POINTS, 0, data.length);
+		glDrawArrays(GL_POINTS, 0, (GLsizei) data.length);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisableVertexAttribArray(prog.a("initial_time"));
 		glDisableVertexAttribArray(prog.a("lifetime"));

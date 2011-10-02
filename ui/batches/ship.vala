@@ -40,7 +40,7 @@ class Oort.ShipBatch : Oort.RenderBatch {
 
 			foreach (var shape in model.shapes) {
 				glBindBuffer(GL_ARRAY_BUFFER, shape.buffer);
-				glVertexAttribPointer(prog.a("vertex"), 2, GL_DOUBLE, false, 0, (void*) 0);
+				glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, (void*) 0);
 				glDrawArrays(GL_LINE_LOOP, 0, (GLsizei) shape.vertices.length);
 			}
 
