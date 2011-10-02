@@ -72,5 +72,5 @@ ui/batches/bullet.c
 ui/batches/beam.c
 
 sim/liboort-1.0.a
-luajit_build/luajit-stamp
+third_party/luajit_build/luajit-stamp
 third_party/lua_build/lua-stamp
