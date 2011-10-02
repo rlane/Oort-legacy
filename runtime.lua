@@ -361,12 +361,20 @@ function sandbox(f)
 
 	copy_table(sandbox_api, env)
 
-	setfenv(lib, env)
+	if setfenv then
+		setfenv(lib, env)
+	else
+		debug.setupvalue(lib, 1, env)
+	end
 	lib()
 
 	strict(env._G)
 
-	setfenv(f, env)
+	if setfenv then
+		setfenv(f, env)
+	else
+		debug.setupvalue(f, 1, env)
+	end
 	return f
 end
 
