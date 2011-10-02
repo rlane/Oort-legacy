@@ -5,7 +5,7 @@ AM_CFLAGS = \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
-	-I $(top_srcdir)/luajit/src \
+	$(LUA_CFLAGS) \
 	-include oort.h \
 	$(NULL)
 
@@ -25,5 +25,5 @@ LIBS=$(OORT_LIBS) -lm
 
 bin_PROGRAMS = oort_dedicated
 oort_dedicated_SOURCES = oort-dedicated.vala
-oort_dedicated_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
+oort_dedicated_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(LUA_LDADD)
 oort_dedicated_LDFLAGS = $(OORT_EXTRA_LDFLAGS)

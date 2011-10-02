@@ -11,6 +11,13 @@ AC_PROG_RANLIB
 
 AM_PROG_VALAC([0.12.0])
 
+LUA_DIR='$(top_srcdir)/third_party/luajit'
+AC_SUBST(LUA_DIR)
+LUA_LDADD='$(LUA_DIR)/src/libluajit.a'
+AC_SUBST(LUA_LDADD)
+LUA_CFLAGS='-I $(LUA_DIR)/src'
+AC_SUBST(LUA_CFLAGS)
+
 # Set up prefix-relative directories
 if test "x${prefix}" = "xNONE"; then
   PREFIX="${ac_default_prefix}"
@@ -68,7 +75,7 @@ AC_CONFIG_FILES([
 	vapi/Makefile
 	test/Makefile
 	cjson/Makefile
-	luajit_build/Makefile
+	third_party/luajit_build/Makefile
 ])
 
 AC_OUTPUT

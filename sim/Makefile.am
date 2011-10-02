@@ -6,7 +6,7 @@ AM_CFLAGS = \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/cjson \
-	-I $(top_srcdir)/luajit/src \
+	$(LUA_CFLAGS) \
 	$(NULL)
 
 if MINGW32
@@ -50,7 +50,7 @@ libsim_a_SOURCES = \
 noinst_HEADERS = util.h oort.h oort.vapi util.vapi
 
 libsim_a_LDFLAGS = $(OORT_LIBS)
-libsim_a_LIBADD = $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/luajit/src/libluajit.a
+libsim_a_LIBADD = $(top_srcdir)/cjson/libcjson.a $(LUA_LDADD)
 
 oort.h: libsim_a_vala.stamp
 

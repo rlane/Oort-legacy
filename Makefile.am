@@ -5,7 +5,7 @@ AUTOMAKE_OPTIONS = foreign
 #Build in these directories:
 
 SUBDIRS = \
-	luajit_build \
+	third_party/luajit_build \
 	cjson \
 	math3d \
 	vector \
