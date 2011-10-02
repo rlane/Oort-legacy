@@ -7,7 +7,6 @@ callgrind.out*
 
 Makefile
 aclocal.m4
-config.guess
 config.log
 config.status
 configure
