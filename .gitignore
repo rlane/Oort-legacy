@@ -70,6 +70,7 @@ ui/batches/tail.c
 ui/batches/boundary.c
 ui/batches/bullet.c
 ui/batches/beam.c
+nacl/main.c
 
 sim/liboort-1.0.a
 third_party/luajit_build/luajit-stamp
