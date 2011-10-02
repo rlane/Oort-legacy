@@ -9,14 +9,13 @@ int main(string[] args) {
 
 	Log.set_always_fatal(0);
 
-	Paths.init(args[0]);
-	print("using data from %s\n", Oort.Paths.resource_dir.get_path());
+	Resources.init(args[0]);
 
-	assert(ShipClass.load(data_path("ships.lua")));
+	assert(ShipClass.load());
 
 	Test.add_func ("/scenario/syntax_error", () => {
 		try {
-			Scenario.parse(data_path("test/scenarios/syntax_error.json"));
+			Scenario.parse(Resources.path("test/scenarios/syntax_error.json"));
 			assert(false);
 		} catch (ScenarioParseError e) {
 		} catch (Error e) {
@@ -26,8 +25,8 @@ int main(string[] args) {
 
 	Test.add_func ("/ai/syntax_error", () => {
 		try {
-			var scn_single = Scenario.parse(data_path("test/scenarios/simple.json"));
-			new Game(0, scn_single, { data_path("test/ai/syntax_error.lua"), data_path("test/ai/syntax_error.lua") });
+			var scn_single = Scenario.parse(Resources.path("test/scenarios/simple.json"));
+			new Game(0, scn_single, { Resources.path("test/ai/syntax_error.lua"), Resources.path("test/ai/syntax_error.lua") });
 		} catch (ScenarioLoadError e) {
 		} catch (Error e) {
 			error("init failed: %s", e.message);
@@ -36,8 +35,8 @@ int main(string[] args) {
 
 	Test.add_func ("/ai/missing", () => {
 		try {
-			var scn_single = Scenario.parse(data_path("test/scenarios/simple.json"));
-			new Game(0, scn_single, { data_path("test/ai/missing.lua"), data_path("test/ai/missing.lua") });
+			var scn_single = Scenario.parse(Resources.path("test/scenarios/simple.json"));
+			new Game(0, scn_single, { Resources.path("test/ai/missing.lua"), Resources.path("test/ai/missing.lua") });
 		} catch (FileError e) {
 		} catch (Error e) {
 			error("init failed: %s", e.message);
