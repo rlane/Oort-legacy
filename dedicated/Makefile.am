@@ -25,5 +25,5 @@ LIBS=$(OORT_LIBS) -lm
 
 bin_PROGRAMS = oort_dedicated
 oort_dedicated_SOURCES = oort-dedicated.vala
-oort_dedicated_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(LUA_LDADD)
+oort_dedicated_LDADD = $(top_srcdir)/sim/libsim.a $(CJSON_LDADD) $(LUA_LDADD)
 oort_dedicated_LDFLAGS = $(OORT_EXTRA_LDFLAGS)

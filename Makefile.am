@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = \
 	third_party/luajit_build \
-	cjson \
+	third_party/cjson \
 	math3d \
 	vector \
 	sim \

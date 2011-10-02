@@ -5,7 +5,7 @@ AM_CFLAGS = \
 	$(VALGRIND_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
-	-I $(top_srcdir)/cjson \
+	$(CJSON_CFLAGS)
 	$(LUA_CFLAGS) \
 	$(NULL)
 
@@ -19,7 +19,7 @@ AM_VALAFLAGS = \
 	--library oort -H oort.h \
 	--vapidir $(top_srcdir)/vapi \
 	--vapidir $(top_srcdir)/vector \
-	--vapidir $(top_srcdir)/cjson \
+	--vapidir $(CJSON_DIR) \
 	--vapidir $(top_srcdir)/sim \
 	--pkg lua \
 	--pkg util \
@@ -50,7 +50,7 @@ libsim_a_SOURCES = \
 noinst_HEADERS = util.h oort.h oort.vapi util.vapi
 
 libsim_a_LDFLAGS = $(OORT_LIBS)
-libsim_a_LIBADD = $(top_srcdir)/cjson/libcjson.a $(LUA_LDADD)
+libsim_a_LIBADD = $(CJSON_LDADD) $(LUA_LDADD)
 
 oort.h: libsim_a_vala.stamp
 

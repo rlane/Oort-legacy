@@ -25,7 +25,7 @@ LIBS=$(OORT_LIBS) -lm
 TESTS = test_syntax_errors
 check_PROGRAMS = test_syntax_errors
 test_syntax_errors_SOURCES = test_syntax_errors.vala
-test_syntax_errors_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(LUA_LDADD)
+test_syntax_errors_LDADD = $(top_srcdir)/sim/libsim.a $(CJSON_LDADD) $(LUA_LDADD)
 test_syntax_errors_LDFLAGS = $(OORT_EXTRA_LDFLAGS)
 
 EXTRA_DIST = \

@@ -18,6 +18,13 @@ AC_SUBST(LUA_LDADD)
 LUA_CFLAGS='-I $(LUA_DIR)/src'
 AC_SUBST(LUA_CFLAGS)
 
+CJSON_DIR='$(top_srcdir)/third_party/cjson'
+AC_SUBST(CJSON_DIR)
+CJSON_LDADD='$(CJSON_DIR)/libcjson.a'
+AC_SUBST(CJSON_LDADD)
+CJSON_CFLAGS='-I $(CJSON_DIR)'
+AC_SUBST(CJSON_CFLAGS)
+
 # Set up prefix-relative directories
 if test "x${prefix}" = "xNONE"; then
   PREFIX="${ac_default_prefix}"
@@ -74,7 +81,7 @@ AC_CONFIG_FILES([
 	vector/Makefile
 	vapi/Makefile
 	test/Makefile
-	cjson/Makefile
+	third_party/cjson/Makefile
 	third_party/luajit_build/Makefile
 ])
 
