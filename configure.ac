@@ -83,6 +83,7 @@ AC_CONFIG_FILES([
 	test/Makefile
 	third_party/cjson/Makefile
 	third_party/luajit_build/Makefile
+	third_party/lua_build/Makefile
 ])
 
 AC_OUTPUT

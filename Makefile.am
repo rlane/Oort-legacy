@@ -6,6 +6,7 @@ AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = \
 	third_party/luajit_build \
+	third_party/lua_build \
 	third_party/cjson \
 	math3d \
 	vector \
