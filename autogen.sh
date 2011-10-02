@@ -278,7 +278,7 @@ if [ "x$DOWNLOAD" = "x" ] ; then
     DOWNLOAD=no
 fi
 if [ "x$AUTORECONF_OPTIONS" = "x" ] ; then
-    AUTORECONF_OPTIONS="-i -f"
+    AUTORECONF_OPTIONS="-i"
 fi
 if [ "x$AUTOCONF_OPTIONS" = "x" ] ; then
     AUTOCONF_OPTIONS="-f"
@@ -1033,7 +1033,7 @@ initialize ( ) {
     ##################################################
     # make sure certain generated files do not exist #
     ##################################################
-    for file in config.guess config.sub ltmain.sh ; do
+    for file in config.guess ltmain.sh ; do
 	if test -f "${_aux_dir}/${file}" ; then
 	    $VERBOSE_ECHO "mv -f \"${_aux_dir}/${file}\" \"${_aux_dir}/${file}.backup\""
 	    mv -f "${_aux_dir}/${file}" "${_aux_dir}/${file}.backup"
