@@ -11,11 +11,25 @@ AC_PROG_RANLIB
 
 AM_PROG_VALAC([0.12.0])
 
-LUA_DIR='$(top_srcdir)/third_party/luajit'
+AC_ARG_ENABLE(luajit,
+              AC_HELP_STRING([--enable-luajit=@<:@no/yes@:>@],
+                             [use luajit @<:@default=yes@:>@]),,
+              enable_luajit=yes)
+if test "x${enable_luajit}" = "xyes"; then
+	LUA_SUBDIR='third_party/luajit'
+	LUA_LDADD='$(LUA_DIR)/src/libluajit.a'
+	LUA_CFLAGS='-I $(LUA_DIR)/src'
+else
+	LUA_SUBDIR='third_party/lua'
+	LUA_LDADD='$(LUA_DIR)/src/liblua.a'
+	LUA_CFLAGS='-I $(LUA_DIR)/src'
+fi
+LUA_DIR='$(top_srcdir)/$(LUA_SUBDIR)'
+LUA_BUILD_SUBDIR='$(LUA_SUBDIR)_build'
+AC_SUBST(LUA_SUBDIR)
+AC_SUBST(LUA_BUILD_SUBDIR)
 AC_SUBST(LUA_DIR)
-LUA_LDADD='$(LUA_DIR)/src/libluajit.a'
 AC_SUBST(LUA_LDADD)
-LUA_CFLAGS='-I $(LUA_DIR)/src'
 AC_SUBST(LUA_CFLAGS)
 
 CJSON_DIR='$(top_srcdir)/third_party/cjson'

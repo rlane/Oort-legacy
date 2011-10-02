@@ -5,8 +5,7 @@ AUTOMAKE_OPTIONS = foreign
 #Build in these directories:
 
 SUBDIRS = \
-	third_party/luajit_build \
-	third_party/lua_build \
+	$(LUA_BUILD_SUBDIR) \
 	third_party/cjson \
 	math3d \
 	vector \
