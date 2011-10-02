@@ -5,7 +5,7 @@ AM_CFLAGS = \
 	$(VALGRIND_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
-	$(CJSON_CFLAGS)
+	$(CJSON_CFLAGS) \
 	$(LUA_CFLAGS) \
 	$(NULL)
 
