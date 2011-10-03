@@ -49,7 +49,9 @@ int main(string[] args) {
 
 	ParsedScenario scn;
 	try {
-		scn = Scenario.parse(scenario_filename);
+		string data;
+		FileUtils.get_contents(scenario_filename, out data);
+		scn = Scenario.parse(data.data);
 	} catch (Error e) {
 		error("Failed to parse scenario: %s", e.message);
 	}

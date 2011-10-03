@@ -15,7 +15,7 @@ int main(string[] args) {
 
 	Test.add_func ("/scenario/syntax_error", () => {
 		try {
-			Scenario.parse(Resources.path("test/scenarios/syntax_error.json"));
+			Scenario.parse(Resources.load("test/scenarios/syntax_error.json"));
 			assert(false);
 		} catch (ScenarioParseError e) {
 		} catch (Error e) {
@@ -25,7 +25,7 @@ int main(string[] args) {
 
 	Test.add_func ("/ai/syntax_error", () => {
 		try {
-			var scn_single = Scenario.parse(Resources.path("test/scenarios/simple.json"));
+			var scn_single = Scenario.parse(Resources.load("test/scenarios/simple.json"));
 			new Game(0, scn_single, { Resources.path("test/ai/syntax_error.lua"), Resources.path("test/ai/syntax_error.lua") });
 		} catch (ScenarioLoadError e) {
 		} catch (Error e) {
@@ -35,7 +35,7 @@ int main(string[] args) {
 
 	Test.add_func ("/ai/missing", () => {
 		try {
-			var scn_single = Scenario.parse(Resources.path("test/scenarios/simple.json"));
+			var scn_single = Scenario.parse(Resources.load("test/scenarios/simple.json"));
 			new Game(0, scn_single, { Resources.path("test/ai/missing.lua"), Resources.path("test/ai/missing.lua") });
 		} catch (FileError e) {
 		} catch (Error e) {

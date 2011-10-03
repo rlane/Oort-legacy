@@ -81,15 +81,12 @@ namespace Oort.Scenario {
 		}
 	}
 
-	public ParsedScenario? parse(string filename) throws FileError, ScenarioParseError {
+	public ParsedScenario? parse(uint8[] data) throws FileError, ScenarioParseError {
 		var scn = new ParsedScenario();
 		scn.teams = null;
 		scn.user_teams = null;
 
-		string data;
-		FileUtils.get_contents(filename, out data);
-
-		var root = cJSON.parse(data);
+		var root = cJSON.parse((string)data);
 		if (root == null) {
 			throw new ScenarioParseError.JSON_SYNTAX("JSON syntax incorrect");
 		} else if (root.type != cJSON.Type.Object) {

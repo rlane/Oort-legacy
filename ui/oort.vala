@@ -497,7 +497,7 @@ namespace Oort {
 
 		public void start_demo_game() {
 			try {
-				var scn = Scenario.parse(Resources.path("scenarios/demo1.json"));
+				var scn = Scenario.parse(Resources.load("scenarios/demo1.json"));
 				start_game_int(42, scn, { });
 				game_state = GameState.DEMO;
 			} catch (Error e) {
@@ -507,7 +507,9 @@ namespace Oort {
 
 		public void configure_scenario(string scenario_filename) {
 			try {
-				var scn = Scenario.parse(scenario_filename);
+				string data;
+				FileUtils.get_contents(scenario_filename, out data);
+				var scn = Scenario.parse(data.data);
 				var w = new NewGameWindow(scn);
 				w.transient_for = this;
 				w.start_game.connect(start_game);
@@ -651,7 +653,9 @@ int main(string[] args) {
 
 		ParsedScenario scn;
 		try {
-			scn = Scenario.parse(scenario_filename);
+			string data;
+			FileUtils.get_contents(scenario_filename, out data);
+			scn = Scenario.parse(data.data);
 		} catch (Error e) {
 			print("Failed to parse scenario: %s\n", e.message);
 			return 1;

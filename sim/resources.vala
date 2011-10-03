@@ -44,7 +44,7 @@ namespace Oort.Resources {
 	public static void init(string arg0) {
 	}
 
-	public static uint8[] load(string name) {
+	public static unowned uint8[] load(string name) {
 		return "".data;
 	}
 #endif

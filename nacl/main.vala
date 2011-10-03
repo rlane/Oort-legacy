@@ -8,7 +8,7 @@ namespace Oort {
 		}
 
 		print("Parsing scenario\n");
-		var scn = Scenario.parse("scenarios/basic.json");
+		var scn = Scenario.parse(Resources.load("scenarios/basic.json"));
 		string[] ai_filenames = { "examples/reference.lua", "examples/reference.lua" };
 		print("Creating game\n");
 		var game = new Game(0, scn, ai_filenames);
