@@ -1,8 +1,7 @@
 #!/bin/sh
 set -e
-#./build-linux.sh
 git clean -f -X -d
-(cd luajit && git clean -f -X -d)
+(cd third_party/luajit && git clean -f -X -d)
 ./autogen.sh
 ./configure
 make dist

@@ -8,7 +8,7 @@ manifest-dist:
 
 luajit-stamp:
 if MINGW32
-	make -C $(luajit_dir) BUILDMODE=static CC=$(CC) Q= HOST_CC="gcc -m32" CROSS=`echo $(CC) | sed -e 's/gcc//'` TARGET_SYS="Windows" all
+	make -C $(luajit_dir) BUILDMODE=static Q= HOST_CC="gcc -m32" CROSS=`echo $(CC) | sed -e 's/gcc//'` TARGET_SYS="Windows" all
 else
 	make -C $(luajit_dir) BUILDMODE=static CC=$(CC) Q= CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" all
 endif

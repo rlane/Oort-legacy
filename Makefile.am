@@ -14,6 +14,20 @@ SUBDIRS = \
 	$(FRONTENDS) \
 	$(NULL)
 
+DIST_SUBDIRS = \
+	third_party/lua_build \
+	third_party/luajit_build \
+	third_party/cjson \
+	math3d \
+	vector \
+	sim \
+	vapi \
+	ui \
+	dedicated \
+	test \
+	nacl \
+	$(NULL)
+
 oortdocdir = $(docdir)
 oortdoc_DATA = \
 	README.md \

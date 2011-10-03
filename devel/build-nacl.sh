@@ -1,14 +1,17 @@
-#!/bin/sh
-set -e
-NACL_SDK_ROOT=$HOME/src/nacl-sdk-update/pepper_15
-NACL_TOOLCHAIN_ROOT=$NACL_SDK_ROOT/toolchain/linux_x86
-NACLPORTS=$HOME/src/naclports
-NACL_PACKAGES_BITSIZE=64
+#!/bin/bash
+set -e -u
+# The following environment variables must be set when running this script:
+#  NACL_SDK_ROOT
+#  NACLPORTS
+
+NACL_GLIBC=${NACL_GLIBC:-1}
+NACL_PACKAGES_BITSIZE=${NACL_PACKAGES_BITSIZE:-64}
 
 source $NACLPORTS/src/build_tools/common.sh
 
 git clean -f -X -d
 (cd third_party/lua && git clean -f -X -d)
+(cd third_party/luajit && git clean -f -X -d)
 
 export CC=${NACLCC}
 export CXX=${NACLCXX}
