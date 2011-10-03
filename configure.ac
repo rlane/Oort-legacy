@@ -103,7 +103,6 @@ AC_SUBST(VALGRIND_LIBS)
 
 if test "x${nacl}" = "xyes"; then
 	FRONTENDS="nacl"
-	LDFLAGS="$LDFLAGS -lnosys"
 else
 	FRONTENDS="dedicated ui test"
 fi
