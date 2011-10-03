@@ -5,7 +5,7 @@ AM_CFLAGS = \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/sim \
-	-I $(top_srcdir)/lua/src \
+	$(LUA_CFLAGS) \
 	-include oort.h \
 	$(NULL)
 
@@ -25,5 +25,5 @@ LIBS=$(OORT_LIBS) -lm -lppapi
 
 bin_PROGRAMS = oort_nacl
 oort_nacl_SOURCES = nacl.c main.vala
-oort_nacl_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/cjson/libcjson.a $(top_srcdir)/lua/src/liblua.a
+oort_nacl_LDADD = $(top_srcdir)/sim/libsim.a $(CJSON_LDADD) $(LUA_LDADD)
 oort_nacl_LDFLAGS = $(OORT_EXTRA_LDFLAGS)

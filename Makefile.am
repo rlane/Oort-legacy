@@ -10,10 +10,8 @@ SUBDIRS = \
 	math3d \
 	vector \
 	sim \
-	dedicated \
-	ui \
 	vapi \
-	test \
+	$(FRONTENDS) \
 	$(NULL)
 
 oortdocdir = $(docdir)

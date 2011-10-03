@@ -15,6 +15,12 @@ else
 AM_MINGW32_VALAFLAGS = $(NULL)
 endif
 
+if NACL
+AM_NACL_VALAFLAGS = -D NACL
+else
+AM_NACL_VALAFLAGS = $(NULL)
+endif
+
 AM_VALAFLAGS = \
 	--library oort -H oort.h \
 	--vapidir $(top_srcdir)/vapi \
@@ -29,6 +35,7 @@ AM_VALAFLAGS = \
 	--pkg config \
 	--thread \
 	$(AM_MINGW32_VALAFLAGS) \
+	$(AM_NACL_VALAFLAGS) \
 	$(NULL)
 
 noinst_LIBRARIES = libsim.a

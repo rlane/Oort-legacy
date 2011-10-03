@@ -1,4 +1,5 @@
 namespace Oort.Resources {
+#if !NACL
 	public File resource_dir;
 
 	public static void init(string arg0) {
@@ -39,4 +40,12 @@ namespace Oort.Resources {
 	public static string path(string name) {
 		return "%s/%s".printf(resource_dir.get_path(), name);
 	}
+#else
+	public static void init(string arg0) {
+	}
+
+	public static uint8[] load(string name) {
+		return "".data;
+	}
+#endif
 }

@@ -5,6 +5,19 @@ AM_INIT_AUTOMAKE([no-dist-gzip dist-bzip2])
 #m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 AM_MAINTAINER_MODE
 
+AC_CANONICAL_HOST
+
+AC_MSG_CHECKING([for NaCl])
+case $host in
+  *-*-nacl*)
+    nacl="yes"
+    ;;
+  *)
+    nacl="no"
+    ;;
+esac
+AC_MSG_RESULT([$nacl])
+
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_RANLIB
@@ -48,8 +61,8 @@ fi
 AC_DEFINE_UNQUOTED(PACKAGE_DATADIR, "${PREFIX}/share/${PACKAGE}",[Package data directory])
 AC_DEFINE_UNQUOTED(PACKAGE_BINDIR, "${PREFIX}/bin",[Package executable directory])
 
-CFLAGS="-ggdb -m32 -Wall -Wno-unused-but-set-variable -Wno-pointer-sign -Wno-missing-braces -Wno-unused-function"
-LDFLAGS="-m32"
+CFLAGS="-std=gnu99 -ggdb -Wall -Wno-unused-but-set-variable -Wno-pointer-sign -Wno-missing-braces -Wno-unused-function"
+LDFLAGS=""
 
 AC_SUBST(CFLAGS)
 AC_SUBST(LDFLAGS)
@@ -61,8 +74,12 @@ GTK_REQUIRED=2.10.0
 GTKGLEXT_REQUIRED=1.2
 GLEW_REQUIRED=1.5.2
 
-PKG_CHECK_MODULES(OORT, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gio-2.0 >= $GLIB_REQUIRED)
-PKG_CHECK_MODULES(OORT_UI, gtk+-2.0 >= $GTK_REQUIRED gtkglext-1.0 >= $GTKGLEXT_REQUIRED glew >= $GLEW_REQUIRED)
+if test "x${nacl}" = "xyes"; then
+	PKG_CHECK_MODULES(OORT, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED)
+else
+	PKG_CHECK_MODULES(OORT, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gio-2.0 >= $GLIB_REQUIRED)
+	PKG_CHECK_MODULES(OORT_UI, gtk+-2.0 >= $GTK_REQUIRED gtkglext-1.0 >= $GTKGLEXT_REQUIRED glew >= $GLEW_REQUIRED)
+fi
 AC_SUBST(OORT_CFLAGS)
 AC_SUBST(OORT_LIBS)
 AC_SUBST(OORT_UI_CFLAGS)
@@ -84,13 +101,23 @@ fi
 AC_SUBST(VALGRIND_CFLAGS)
 AC_SUBST(VALGRIND_LIBS)
 
+if test "x${nacl}" = "xyes"; then
+	FRONTENDS="nacl"
+	LDFLAGS="$LDFLAGS -lnosys"
+else
+	FRONTENDS="dedicated ui test"
+fi
+AC_SUBST(FRONTENDS)
+
 AM_CONDITIONAL([MINGW32], [test x"${with_mingw32}" = "xyes"])
+AM_CONDITIONAL([NACL], [test x"${nacl}" = "xyes"])
 
 AC_CONFIG_FILES([
 	Makefile
 	sim/Makefile
 	dedicated/Makefile
 	ui/Makefile
+	nacl/Makefile
 	math3d/Makefile
 	vector/Makefile
 	vapi/Makefile
