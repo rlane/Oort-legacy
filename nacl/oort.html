@@ -30,6 +30,10 @@
 			updateStatus();
     }
 
+    function run() {
+      oort.postMessage('run');
+    }
+
     // Set the global status message.  If the element with id 'statusField'
     // exists, then set its HTML to the status message as well.
     // opt_message The message test.  If this is null or undefined, then
@@ -49,6 +53,9 @@
 
 <h1>Oort</h1>
 <p>
+  <form name="form" action="" method="get" onsubmit="false">
+    <input type="button" value="Run2" onclick="run()" />
+  </form>
   <!-- Load the published .nexe.  This includes the 'src' attribute which
   shows how to load multi-architecture modules.  Each entry in the "nexes"
   object in the  .nmf manifest file is a key-value pair: the key is the runtime

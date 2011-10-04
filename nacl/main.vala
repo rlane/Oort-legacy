@@ -1,4 +1,6 @@
 namespace Oort {
+	private unowned Thread<void*> ticker;
+
 	public static void start() {
 		print("Oort starting\n");
 
@@ -6,7 +8,21 @@ namespace Oort {
 		if (!ShipClass.load()) {
 			print("Failed to load ship classes.\n");
 		}
+	}
 
+	public static void handle_message(string msg) {
+		print("Received message: %s\n", msg);
+		if (msg == "run") {
+			ticker = Thread.create<void*>(ticker_func, true);
+		}
+	}
+
+	public static void *ticker_func() {
+		run();
+		return null;
+	}
+
+	public static void run() {
 		print("Parsing scenario\n");
 		var scn = Scenario.parse(Resources.load("scenarios/basic.json"));
 		var ai = new AI() { filename="examples/reference.lua", code=Resources.load("examples/reference.lua") };
