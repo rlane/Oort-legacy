@@ -464,8 +464,15 @@ namespace Oort {
 			}
 		}
 
-		public void start_game_int(uint32 seed, ParsedScenario scn, string[] ais) throws FileError, ScenarioLoadError, ThreadError {
+		public void start_game_int(uint32 seed, ParsedScenario scn, string[] ai_filenames) throws FileError, ScenarioLoadError, ThreadError {
 			if (game != null) stop_game();
+			AI[] ais = {};
+			foreach (var filename in ai_filenames) {
+				uint8[] code;
+				FileUtils.get_data(filename, out code);
+				var ai = new AI() { code = code, filename = filename };
+				ais += ai;
+			}
 			game = new Game(seed, scn, ais);
 			start_renderer(game, scn.initial_view_scale);
 			game_state = GameState.RUNNING;

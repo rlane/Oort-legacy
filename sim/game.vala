@@ -26,7 +26,7 @@ public class Oort.Game {
 	public uint8[] strict_code;
 	public uint8[] vector_code;
 	public ParsedScenario scn;
-	public string[] ais;
+	public AI[] ais;
 	public List<BulletHit> bullet_hits = null;
 	public List<BeamHit> beam_hits = null;
 	public List<Ship> all_ships = null;
@@ -46,7 +46,7 @@ public class Oort.Game {
 
 	public const double TICK_LENGTH = 1.0/32;
 
-	public Game(uint32 seed, ParsedScenario scn, string[] ais) throws FileError, ThreadError, ScenarioLoadError {
+	public Game(uint32 seed, ParsedScenario scn, AI[] ais) throws FileError, ThreadError, ScenarioLoadError {
 		prng = new Rand.with_seed(seed);
 		this.scn = scn;
 		this.ais = ais;

@@ -61,9 +61,17 @@ int main(string[] args) {
 		return 1;
 	}
 
+	AI[] ais = {};
+	foreach (var filename in ai_filenames) {
+		uint8[] code;
+		FileUtils.get_data(filename, out code);
+		var ai = new AI() { code = code, filename = filename };
+		ais += ai;
+	}
+
 	Game game;
 	try {
-		game = new Game(opt_seed, scn, ai_filenames);
+		game = new Game(opt_seed, scn, ais);
 	} catch (Error e) {
 		error("Game initialization failed: %s", e.message);
 	}
@@ -103,7 +111,7 @@ int main(string[] args) {
 
 		unowned Team winner = game.check_victory();
 		if (winner != null) {
-			print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.filename, game.ticks*Game.TICK_LENGTH);
+			print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.ai.filename, game.ticks*Game.TICK_LENGTH);
 
 			if (opt_results != null) {
 				var results = @"$(winner.id)\t$(winner.name)\t$(game.ticks*Game.TICK_LENGTH)\n";

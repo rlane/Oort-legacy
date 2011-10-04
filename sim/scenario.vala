@@ -40,27 +40,29 @@ public class Oort.ParsedShip {
 	public double h;
 }
 
+public class Oort.AI {
+	public string filename;
+	public uint8[] code;
+}
+
 namespace Oort.Scenario {
-	public void load(Game game, ParsedScenario scn, string[] ais) throws ScenarioLoadError, FileError {
+	public void load(Game game, ParsedScenario scn, AI[] ais) throws ScenarioLoadError, FileError {
 		if (scn.user_teams.length() != ais.length) {
 			throw new ScenarioLoadError.NUM_USER_AI("Expected %u user AIs, got %d", scn.user_teams.length(), ais.length);
 		}
 
 		int ai_index = 0;
 		foreach (ParsedTeam pteam in scn.teams) {
-			uint8[] code;
-			string ai_filename;
+			AI ai;
 			if (pteam.code != null) {
-				code = pteam.code;
-				ai_filename = "inline";
+				ai = new AI() { code = pteam.code, filename = "inline" };
 			} else {
 				assert(ai_index < ais.length);
-				ai_filename = ais[ai_index++];
-				FileUtils.get_data(ai_filename, out code);
+				ai = ais[ai_index++];
 			}
 
 			uint32 color = pteam.color_red << 24 | pteam.color_green << 16 | pteam.color_blue << 8;
-			var team = new Team() { id=pteam.id, name=pteam.name, color=color, code=(owned)code, filename=ai_filename };
+			var team = new Team() { id=pteam.id, name=pteam.name, color=color, ai=ai };
 
 			foreach (ParsedShip pship in pteam.ships) {
 				unowned ShipClass klass = ShipClass.lookup(pship.class_name);

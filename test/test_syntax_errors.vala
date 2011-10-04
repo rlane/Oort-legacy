@@ -26,18 +26,9 @@ int main(string[] args) {
 	Test.add_func ("/ai/syntax_error", () => {
 		try {
 			var scn_single = Scenario.parse(Resources.load("test/scenarios/simple.json"));
-			new Game(0, scn_single, { Resources.path("test/ai/syntax_error.lua"), Resources.path("test/ai/syntax_error.lua") });
+			var ai = new AI() { filename="", code=Resources.load("test/ai/syntax_error.lua") };
+			new Game(0, scn_single, {ai , ai });
 		} catch (ScenarioLoadError e) {
-		} catch (Error e) {
-			error("init failed: %s", e.message);
-		}
-	});
-
-	Test.add_func ("/ai/missing", () => {
-		try {
-			var scn_single = Scenario.parse(Resources.load("test/scenarios/simple.json"));
-			new Game(0, scn_single, { Resources.path("test/ai/missing.lua"), Resources.path("test/ai/missing.lua") });
-		} catch (FileError e) {
 		} catch (Error e) {
 			error("init failed: %s", e.message);
 		}

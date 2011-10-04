@@ -9,9 +9,9 @@ namespace Oort {
 
 		print("Parsing scenario\n");
 		var scn = Scenario.parse(Resources.load("scenarios/basic.json"));
-		string[] ai_filenames = { "examples/reference.lua", "examples/reference.lua" };
+		var ai = new AI() { filename="examples/reference.lua", code=Resources.load("examples/reference.lua") };
 		print("Creating game\n");
-		var game = new Game(0, scn, ai_filenames);
+		var game = new Game(0, scn, { ai, ai });
 		print("Running game\n");
 
 		TimeVal last_sample_time = TimeVal();
@@ -30,7 +30,7 @@ namespace Oort {
 
 			unowned Team winner = game.check_victory();
 			if (winner != null) {
-				print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.filename, game.ticks*Game.TICK_LENGTH);
+				print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.ai.filename, game.ticks*Game.TICK_LENGTH);
 				break;
 			}
 

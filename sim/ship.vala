@@ -193,7 +193,7 @@ public class Oort.Ship {
 
 		lua.get_global("sandbox");
 
-		if (lua.load_buffer(team.code, team.filename) != 0) {
+		if (lua.load_buffer(team.ai.code, team.ai.filename) != 0) {
 			warning("Couldn't load AI: %s", lua.to_string(-1));
 			return false;
 		}
