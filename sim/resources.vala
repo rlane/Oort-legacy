@@ -44,8 +44,11 @@ namespace Oort.Resources {
 	public static void init(string arg0) {
 	}
 
+	[CCode (cname = "insrc_lookup")]
+	extern unowned string insrc_lookup(string name);
+
 	public static unowned uint8[] load(string name) {
-		return "".data;
+		return insrc_lookup(name).data;
 	}
 #endif
 }

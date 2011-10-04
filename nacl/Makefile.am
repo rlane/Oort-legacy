@@ -24,6 +24,9 @@ AM_VALAFLAGS = \
 LIBS=$(OORT_LIBS) -lm -lppapi -lnosys
 
 bin_PROGRAMS = oort_nacl
-oort_nacl_SOURCES = nacl.c main.vala
+oort_nacl_SOURCES = nacl.c main.vala embedded_resources.c
 oort_nacl_LDADD = $(top_srcdir)/sim/libsim.a $(CJSON_LDADD) $(LUA_LDADD)
 oort_nacl_LDFLAGS = $(OORT_EXTRA_LDFLAGS)
+
+embedded_resources.c: $(top_srcdir)/resources-manifest
+	cd .. && $(RUBY) third_party/insrc/insrc.rb resources-manifest > nacl/embedded_resources.c

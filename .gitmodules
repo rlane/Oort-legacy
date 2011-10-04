@@ -4,3 +4,6 @@
 [submodule "third_party/lua"]
 	path = third_party/lua
 	url = https://github.com/jsnyder/lua.git
+[submodule "third_party/insrc"]
+	path = third_party/insrc
+	url = git://github.com/rlane/insrc.git

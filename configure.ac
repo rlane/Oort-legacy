@@ -75,6 +75,7 @@ GTKGLEXT_REQUIRED=1.2
 GLEW_REQUIRED=1.5.2
 
 if test "x${nacl}" = "xyes"; then
+	AC_PATH_PROG([RUBY],[ruby])
 	PKG_CHECK_MODULES(OORT, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED)
 else
 	PKG_CHECK_MODULES(OORT, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gio-2.0 >= $GLIB_REQUIRED)
