@@ -129,7 +129,6 @@ namespace Oort {
 
 			glEnable(GL_BLEND);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glLoadIdentity();
 
 			Mat4f.load_simple_ortho(out p_matrix,
 			                        (float)this.view_pos.x,
@@ -333,11 +332,6 @@ namespace Oort {
 			screen_width = width;
 			screen_height = height;
 			glViewport (0, 0, (GLsizei)width, (GLsizei)height);
-			glMatrixMode (GL_PROJECTION);
-			glLoadIdentity ();
-			glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
-			glMatrixMode (GL_MODELVIEW);
-			glLoadIdentity ();
 		}
 
 		public void tick() {
