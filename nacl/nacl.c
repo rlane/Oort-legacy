@@ -16,6 +16,10 @@
 #include "ppapi/c/ppp.h"
 #include "ppapi/c/ppp_instance.h"
 #include "ppapi/c/ppp_messaging.h"
+#include "ppapi/c/pp_completion_callback.h"
+#include "ppapi/c/ppb_graphics_3d.h"
+#include "ppapi/gles2/gl2ext_ppapi.h"
+#include "GLES2/gl2.h"
 
 struct MessageInfo {
   PP_Instance instance;
@@ -24,6 +28,8 @@ struct MessageInfo {
 
 static struct PPB_Messaging* messaging_interface = NULL;
 static struct PPB_Var* var_interface = NULL;
+static struct PPB_Graphics3D* graphics3d_interface = NULL;
+static struct PPB_Instance* instance_interface = NULL;
 static PP_Module module_id = 0;
 
 void oort_start(void);
@@ -71,6 +77,11 @@ static struct PP_Var AllocateVarFromCStr(const char* str) {
 }
 #endif
 
+void swap_callback(void* user_data, int32_t result)
+{
+  printf("swap result: %d\n", result);
+}
+
 static PP_Bool Instance_DidCreate(PP_Instance instance,
                                   uint32_t argc,
                                   const char* argn[],
@@ -78,6 +89,34 @@ static PP_Bool Instance_DidCreate(PP_Instance instance,
 
 	printf("Instance_DidCreate\n");
   oort_start();
+
+  PP_Resource context;
+  int32_t attribs[] = {PP_GRAPHICS3DATTRIB_WIDTH, 800,
+                       PP_GRAPHICS3DATTRIB_HEIGHT, 600,
+                       PP_GRAPHICS3DATTRIB_NONE};
+  context = graphics3d_interface->Create(instance, 0, attribs);
+  if (context == 0) {
+    printf("failed to create graphics3d context\n");
+    return PP_FALSE;
+  }
+
+  glSetCurrentContextPPAPI(context);
+
+  if (!instance_interface->BindGraphics(instance, context)) {
+    printf("failed to bind graphics3d context\n");
+    return PP_FALSE;
+  }
+
+  glClearColor(0.1f, 0.9f, 0.4f, 0.9f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  struct PP_CompletionCallback callback = { swap_callback, NULL, PP_COMPLETIONCALLBACK_FLAG_NONE };
+  int32_t ret = graphics3d_interface->SwapBuffers(context, callback);
+  if (ret != PP_OK && ret != PP_OK_COMPLETIONPENDING) {
+    printf("SwapBuffers failed with code %d\n", ret);
+    return PP_FALSE;
+  }
+
   return PP_TRUE;
 }
 
@@ -115,6 +154,13 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module a_module_id,
   module_id = a_module_id;
   messaging_interface = (struct PPB_Messaging*)(get_browser(PPB_MESSAGING_INTERFACE));
   var_interface = (struct PPB_Var*)(get_browser(PPB_VAR_INTERFACE));
+  graphics3d_interface = (struct PPB_Graphics3D*)(get_browser(PPB_GRAPHICS_3D_INTERFACE));
+  instance_interface = (struct PPB_Instance*)(get_browser(PPB_INSTANCE_INTERFACE));
+
+  if (!glInitializePPAPI(get_browser)) {
+    printf("glInitializePPAPI failed\n");
+    return PP_ERROR_FAILED;
+  }
 
   return PP_OK;
 }

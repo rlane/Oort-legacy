@@ -21,7 +21,7 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/sim \
 	$(NULL)
 
-LIBS=$(OORT_LIBS) -lm -lppapi -lnosys
+LIBS=$(OORT_LIBS) -lm -lppapi -lppapi_gles2 -lnosys
 
 bin_PROGRAMS = oort_nacl
 oort_nacl_SOURCES = nacl.c main.vala embedded_resources.c
