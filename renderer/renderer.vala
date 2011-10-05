@@ -109,7 +109,7 @@ namespace Oort {
 					}
 				}
 			}
-			glTexImage2D(GL_TEXTURE_2D, 0, 1, n*8, 8, 0, GL_RED, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, 1, n*8, 8, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
 			glCheck();
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glCheck();
