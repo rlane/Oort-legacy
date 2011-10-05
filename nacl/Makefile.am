@@ -25,7 +25,7 @@ LIBS=$(OORT_LIBS) -lm -lppapi -lppapi_gles2 -lnosys
 
 bin_PROGRAMS = oort_nacl
 oort_nacl_SOURCES = nacl.c main.vala embedded_resources.c
-oort_nacl_LDADD = $(top_srcdir)/sim/libsim.a $(CJSON_LDADD) $(LUA_LDADD)
+oort_nacl_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/renderer/librenderer.a $(CJSON_LDADD) $(LUA_LDADD)
 oort_nacl_LDFLAGS = $(OORT_EXTRA_LDFLAGS)
 
 embedded_resources.c: $(top_srcdir)/resources-manifest
