@@ -172,7 +172,6 @@ namespace Oort {
 				indices[i] = (float) i;
 			}
 
-			glPointSize(8);
 			prog.use();
 			font_tex.bind();
 			glUniform1i(prog.u("tex"), 0);
