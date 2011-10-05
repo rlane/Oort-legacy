@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <GL/glew.h>
+#include "glutil.h"
 
 #include "tga.h"
 
@@ -40,4 +40,16 @@ void screenshot(const char *filename)
 	g_free(buf);
 
 	close(fd);
+}
+
+void glCheck(void)
+{
+	int err = glGetError();
+	if (err != GL_NO_ERROR) {
+#ifdef __native_client__
+		g_error("%s", "GL error");
+#else
+		g_error("%s", glewGetErrorString(err));
+#endif
+	}
 }

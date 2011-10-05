@@ -23,7 +23,6 @@ AM_VALAFLAGS = \
 	--pkg util \
 	--pkg gtk+-2.0 \
 	--pkg gtkglext-1.0 \
-	--pkg glew \
 	--pkg gl \
 	--pkg particle \
 	--pkg glutil \

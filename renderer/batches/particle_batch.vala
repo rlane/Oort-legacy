@@ -1,5 +1,4 @@
 using GL;
-using GLEW;
 using Vector;
 
 class Oort.ParticleBatch : Oort.RenderBatch {

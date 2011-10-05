@@ -1,5 +1,4 @@
 using GL;
-using GLEW;
 
 public errordomain Oort.ShaderError {
 	COMPILE_FAILED,

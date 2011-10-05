@@ -20,7 +20,7 @@
  * 	Matias De la Puente <mfpuente.ar@gmail.com>
  */
  
-[CCode (lower_case_cprefix ="", cheader_filename="GL/glew.h")]
+[CCode (lower_case_cprefix ="", cheader_filename="glutil.h")]
 namespace GL
 {
 	[CCode (cname="GLenum")]
