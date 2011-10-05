@@ -2,6 +2,7 @@ using Gtk;
 using Gdk;
 using Lua;
 using Oort;
+using GLEW;
 
 uint32 opt_seed;
 
@@ -278,6 +279,10 @@ namespace Oort {
 
 			if (!gldrawable.gl_begin(glcontext))
 				return;
+
+			if (GLEW.init()) {
+				error("GLEW initialization failed");
+			}
 
 			Renderer.static_init();
 

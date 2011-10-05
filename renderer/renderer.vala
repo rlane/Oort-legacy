@@ -25,9 +25,6 @@ namespace Oort {
 		RenderBatch[] batches;
 
 		public static void static_init() {
-			if (GLEW.init()) {
-				error("GLEW initialization failed");
-			}
 			Oort.Ship.gfx_create_cb = on_ship_created;
 
 			/*
