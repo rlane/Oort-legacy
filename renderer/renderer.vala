@@ -4,7 +4,7 @@ using Vector;
 using Math;
 
 namespace Oort {
-	class Renderer {
+	public class Renderer {
 		public bool render_all_debug_lines = false;
 		public int screen_width = 640;
 		public int screen_height = 480;

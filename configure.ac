@@ -115,6 +115,7 @@ AM_CONDITIONAL([NACL], [test x"${nacl}" = "xyes"])
 AC_CONFIG_FILES([
 	Makefile
 	sim/Makefile
+	renderer/Makefile
 	dedicated/Makefile
 	ui/Makefile
 	nacl/Makefile

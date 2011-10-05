@@ -1,4 +1,4 @@
-class Oort.RenderPerf {
+public class Oort.RenderPerf {
 	const int BUCKETS = 20;
 	const int BUCKET_SIZE = 5; // ms
 

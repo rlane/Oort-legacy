@@ -7,8 +7,9 @@ AM_CFLAGS = \
 	-include oort.h \
 	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/math3d \
-	$(CJSON_CFLAGS) \
 	-I $(top_srcdir)/sim \
+	-I $(top_srcdir)/renderer \
+	$(CJSON_CFLAGS) \
 	$(LUA_CFLAGS) \
 	$(NULL)
 
@@ -16,6 +17,7 @@ LIBS = $(OORT_LIBS) $(OORT_UI_LIBS) -lm
 
 AM_VALAFLAGS = \
 	--pkg oort \
+	--pkg oort_renderer \
 	--pkg lua \
 	--pkg vector \
 	--pkg util \
@@ -32,14 +34,12 @@ AM_VALAFLAGS = \
 	--vapidir $(top_srcdir)/vapi \
 	--vapidir $(top_srcdir)/vector \
 	--vapidir $(top_srcdir)/sim \
+	--vapidir $(top_srcdir)/renderer \
 	--vapidir $(top_srcdir)/ui \
 	--vapidir $(CJSON_DIR) \
 	$(NULL)
 
 bin_PROGRAMS = oort
-oort_SOURCES = oort.vala log.vala \
-               renderer.vala glutil.c particle.c font.c textures.vala model.vala shader.vala perf.vala batch.vala \
-               batches/ship.vala batches/particle_batch.vala batches/tail.vala batches/boundary.vala batches/bullet.vala batches/beam.vala
-noinst_HEADERS = glutil.h particle.h tga.h font.h font.vapi particle.vapi glutil.vapi
-oort_LDADD = $(top_srcdir)/sim/libsim.a $(CJSON_LDADD) $(LUA_LDADD) $(top_srcdir)/math3d/libmath3d.a
+oort_SOURCES = oort.vala log.vala
+oort_LDADD = $(top_srcdir)/sim/libsim.a $(top_srcdir)/renderer/librenderer.a $(CJSON_LDADD) $(LUA_LDADD) $(top_srcdir)/math3d/libmath3d.a
 oort_LDFLAGS = $(OORT_EXTRA_LDFLAGS)

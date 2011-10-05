@@ -1,7 +1,7 @@
 using GL;
 using GLEW;
 
-errordomain Oort.ShaderError {
+public errordomain Oort.ShaderError {
 	COMPILE_FAILED,
 	LINK_FAILED
 }

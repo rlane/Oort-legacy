@@ -10,6 +10,7 @@ SUBDIRS = \
 	math3d \
 	vector \
 	sim \
+	renderer \
 	vapi \
 	$(FRONTENDS) \
 	$(NULL)
@@ -22,6 +23,7 @@ DIST_SUBDIRS = \
 	vector \
 	sim \
 	vapi \
+	renderer \
 	ui \
 	dedicated \
 	test \
