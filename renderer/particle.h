@@ -24,7 +24,6 @@ void particle_shower(enum particle_type type,
 		                 Vec2 p0, Vec2 v0, Vec2 v, double s_max,
 										 unsigned short life_min, unsigned short life_max,
 										 unsigned short count);
-void particle_tick(void);
 
 static inline struct particle *particle_get(int i) { return particles + i; }
 

@@ -34,14 +34,3 @@ void particle_shower(enum particle_type type,
 		particle_create(type, vec2_add(vec2_add(p0,dp),dv), vec2_add(vec2_add(v0,v),dv), life);
 	}
 }
-
-void particle_tick(void)
-{
-	int i;
-	for (i = 0; i < MAX_PARTICLES; i++) {
-		struct particle *c = &particles[i];
-		if (c->ticks_left == 0) continue;
-		c->ticks_left--;
-		c->p = vec2_add(c->p, c->v);
-	}
-}

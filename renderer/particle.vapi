@@ -35,7 +35,5 @@ namespace Oort {
 		                          Vector.Vec2 p0, Vector.Vec2 v0, Vector.Vec2 v,
 		                          double s_max, uint16 life_min, uint16 life_max,
 		                          uint16 count);
-		[CCode (cname = "particle_tick")]
-		public static void tick();
 	}
 }
