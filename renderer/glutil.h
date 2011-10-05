@@ -10,7 +10,7 @@
 #endif
 
 void screenshot(const char *filename);
-
 void glCheck(void);
+void gl_platform_init(void);
 
 #endif

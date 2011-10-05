@@ -58,10 +58,7 @@ namespace Oort {
 
 		public void init() {
 			glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
-			glShadeModel(GL_SMOOTH);
-			glEnable(GL_LINE_SMOOTH);
-			glEnable(GL_POINT_SPRITE);
-			glEnable(GL_PROGRAM_POINT_SIZE);
+			gl_platform_init();
 			glLineWidth(1.2f);
 
 			try {

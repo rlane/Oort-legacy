@@ -57,3 +57,13 @@ void glCheck(void)
 #endif
 	}
 }
+
+void gl_platform_init(void)
+{
+#ifndef __native_client__
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POINT_SPRITE);
+	glEnable(GL_PROGRAM_POINT_SIZE);
+#endif
+}
