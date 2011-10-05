@@ -19,7 +19,6 @@ void screenshot(const char *filename)
 
 	int fd;
 	struct tga_header tga;
-	size_t data_size = 3 * viewport.width * viewport.height;
 	
 	if ((fd = open(filename, O_CREAT|O_TRUNC|O_RDWR, S_IRUSR|S_IWUSR)) < 0) {
 		perror("open");
@@ -31,10 +30,15 @@ void screenshot(const char *filename)
 	tga.height = viewport.height;
 	write(fd, &tga, sizeof(tga));
 
-	int i;
+	int i, j;
 	unsigned char *buf = g_malloc(viewport.width*3);
 	for (i = 0; i < viewport.height; i++) {
-		glReadPixels(0, i, viewport.width, 1, GL_BGR, GL_UNSIGNED_BYTE, buf);
+		glReadPixels(0, i, viewport.width, 1, GL_RGB, GL_UNSIGNED_BYTE, buf);
+		for (j = 0; j < viewport.width; j++) {
+			unsigned char tmp = buf[3*j];
+			buf[3*j] = buf[3*j+2];
+			buf[3*j+2] = tmp;
+		}
 		write(fd, buf, viewport.width*3);
 	}
 	g_free(buf);
