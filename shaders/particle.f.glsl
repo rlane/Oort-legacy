@@ -1,4 +1,6 @@
-#if !GL_ES
+#if GL_ES
+precision mediump float;
+#else
 #version 120
 #endif
 
