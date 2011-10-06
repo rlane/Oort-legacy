@@ -16,7 +16,7 @@ void main(void) {
 	} else {
 		gl_PointSize = size;
 		float t = current_time - initial_time;
-		vec2 position = initial_position + t*velocity*32;
+		vec2 position = initial_position + t*velocity*32.0;
 		gl_Position = p_matrix * vec4(position, 0.0, 1.0);
 	}
 }
