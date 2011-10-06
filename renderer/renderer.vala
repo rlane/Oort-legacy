@@ -325,34 +325,35 @@ namespace Oort {
 		}
 
 		public void tick() {
+			float current_time = game.ticks * (float)Game.TICK_LENGTH;
 			foreach (unowned Bullet b in game.all_bullets) {
 				if (b.dead) continue;
 				if (b.type == BulletType.PLASMA) {
-					Particle.shower(ParticleType.PLASMA, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
+					Particle.shower(ParticleType.PLASMA, current_time, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
 					                double.min(b.physics.m/5,0.1)*80, 3, 4, 9);
 				} else if (b.type == BulletType.EXPLOSION) {
 					if (prng.next_double() < 0.1) {
-						Particle.shower(ParticleType.EXPLOSION, b.physics.p, vec2(0,0), b.physics.v.scale(Game.TICK_LENGTH).scale(0.001), 8, 5, 17, 6);
+						Particle.shower(ParticleType.EXPLOSION, current_time, b.physics.p, vec2(0,0), b.physics.v.scale(Game.TICK_LENGTH).scale(0.001), 8, 5, 17, 6);
 					}
 				}
 			}
 
 			foreach (unowned BulletHit hit in game.bullet_hits) {
 				var n = uint16.max((uint16)(hit.e/10000),1);
-				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
+				Particle.shower(ParticleType.HIT, current_time, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
 			}
 
 			foreach (unowned BeamHit hit in game.beam_hits) {
 				var n = uint16.max((uint16)(hit.e/500),1);
-				Particle.shower(ParticleType.HIT, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
+				Particle.shower(ParticleType.HIT, current_time, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
 			}
 
 			foreach (unowned Ship s in game.all_ships) {
 				if (s.physics.acc.abs() != 0) {
 					var vec_main = vec2(-s.physics.acc.x, 0).rotate(s.physics.h).scale(s.physics.m/1000);
 					var vec_lateral = vec2(0, -s.physics.acc.y).rotate(s.physics.h).scale(s.physics.m/1000);
-					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_main.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
-					Particle.shower(ParticleType.ENGINE, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_lateral.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
+					Particle.shower(ParticleType.ENGINE, current_time, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_main.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
+					Particle.shower(ParticleType.ENGINE, current_time, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_lateral.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
 				}
 			}
 		}

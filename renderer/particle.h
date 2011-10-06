@@ -12,15 +12,16 @@ enum particle_type {
 
 struct particle {
 	Vec2 p, v;
-	unsigned short ticks_left;
+	float initial_time;
+	float lifetime;
 	unsigned char type;
 };
 
 #define MAX_PARTICLES 65536
 extern struct particle particles[MAX_PARTICLES];
 
-void particle_create(enum particle_type type, Vec2 p, Vec2 v, unsigned short lifetime);
-void particle_shower(enum particle_type type,
+void particle_create(enum particle_type type, Vec2 p, Vec2 v, float initial_time, float lifetime);
+void particle_shower(enum particle_type type, float initial_time,
 		                 Vec2 p0, Vec2 v0, Vec2 v, double s_max,
 										 unsigned short life_min, unsigned short life_max,
 										 unsigned short count);

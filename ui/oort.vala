@@ -186,7 +186,6 @@ namespace Oort {
 			if (game != null && !paused) {
 				game.purge();
 				game.tick();
-				Particle.tick();
 
 				if (renderer != null) {
 					renderer.tick();

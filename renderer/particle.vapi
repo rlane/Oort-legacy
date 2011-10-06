@@ -16,7 +16,8 @@ namespace Oort {
 	public class Particle {
 		public Vector.Vec2 p;
 		public Vector.Vec2 v;
-		public uint16 ticks_left;
+		public float initial_time;
+		public float lifetime;
 		public ParticleType type;
 
 		[CCode (cname = "MAX_PARTICLES")]
@@ -29,9 +30,9 @@ namespace Oort {
 		public static unowned Particle get(int i);
 
 		[CCode (cname = "particle_create")]
-		public static void create(ParticleType type, Vector.Vec2 p, Vector.Vec2 v, uint16 lifetime);
+		public static void create(ParticleType type, Vector.Vec2 p, Vector.Vec2 v, float initial_time, float lifetime);
 		[CCode (cname = "particle_shower")]
-		public static void shower(ParticleType type,
+		public static void shower(ParticleType type, float initial_time,
 		                          Vector.Vec2 p0, Vector.Vec2 v0, Vector.Vec2 v,
 		                          double s_max, uint16 life_min, uint16 life_max,
 		                          uint16 count);
