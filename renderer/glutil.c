@@ -48,14 +48,13 @@ void screenshot(const char *filename)
 
 void glCheck(void)
 {
+#ifdef __native_client__
+#else
 	int err = glGetError();
 	if (err != GL_NO_ERROR) {
-#ifdef __native_client__
-		g_error("%s", "GL error");
-#else
 		g_error("%s", glewGetErrorString(err));
-#endif
 	}
+#endif
 }
 
 void gl_platform_init(void)
