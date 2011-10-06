@@ -1,4 +1,6 @@
+#if !GL_ES
 #version 120
+#endif
 
 uniform sampler2D tex;
 varying float v_character;

@@ -1,5 +1,3 @@
-#version 110
-
 uniform mat4 p_matrix;
 uniform float current_time;
 attribute float initial_time;

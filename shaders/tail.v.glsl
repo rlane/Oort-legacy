@@ -1,5 +1,3 @@
-#version 110
-
 uniform mat4 p_matrix;
 uniform vec4 color;
 attribute vec2 vertex;

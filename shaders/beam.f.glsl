@@ -1,4 +1,6 @@
+#if !GL_ES
 #version 120
+#endif
 
 uniform vec4 color;
 varying vec2 v_texcoord;

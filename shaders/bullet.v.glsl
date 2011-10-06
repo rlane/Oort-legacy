@@ -1,5 +1,3 @@
-#version 110
-
 uniform mat4 mv_matrix;
 uniform mat4 p_matrix;
 attribute vec2 vertex;
