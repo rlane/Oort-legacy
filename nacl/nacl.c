@@ -6,12 +6,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "oort.h"
+#include "oort_renderer.h"
+
 #include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppb.h"
 #include "ppapi/c/ppb_instance.h"
 #include "ppapi/c/ppb_messaging.h"
+#include "ppapi/c/ppb_core.h"
 #include "ppapi/c/ppb_var.h"
 #include "ppapi/c/ppp.h"
 #include "ppapi/c/ppp_instance.h"
@@ -30,9 +34,13 @@ static struct PPB_Messaging* messaging_interface = NULL;
 static struct PPB_Var* var_interface = NULL;
 static struct PPB_Graphics3D* graphics3d_interface = NULL;
 static struct PPB_Instance* instance_interface = NULL;
+static struct PPB_Core* core_interface = NULL;
 static PP_Module module_id = 0;
+static PP_Resource context;
 
+void oort_init(void);
 void oort_start(void);
+void oort_tick(void);
 void oort_handle_message(char *msg);
 
 /**
@@ -77,20 +85,14 @@ static struct PP_Var AllocateVarFromCStr(const char* str) {
 }
 #endif
 
-void swap_callback(void* user_data, int32_t result)
-{
-  printf("swap result: %d\n", result);
-}
-
 static PP_Bool Instance_DidCreate(PP_Instance instance,
                                   uint32_t argc,
                                   const char* argn[],
                                   const char* argv[]) {
 
 	printf("Instance_DidCreate\n");
-  oort_start();
+  oort_init();
 
-  PP_Resource context;
   int32_t attribs[] = {PP_GRAPHICS3DATTRIB_WIDTH, 800,
                        PP_GRAPHICS3DATTRIB_HEIGHT, 600,
                        PP_GRAPHICS3DATTRIB_NONE};
@@ -104,16 +106,6 @@ static PP_Bool Instance_DidCreate(PP_Instance instance,
 
   if (!instance_interface->BindGraphics(instance, context)) {
     printf("failed to bind graphics3d context\n");
-    return PP_FALSE;
-  }
-
-  glClearColor(0.1f, 0.9f, 0.4f, 0.9f);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  struct PP_CompletionCallback callback = { swap_callback, NULL, PP_COMPLETIONCALLBACK_FLAG_NONE };
-  int32_t ret = graphics3d_interface->SwapBuffers(context, callback);
-  if (ret != PP_OK && ret != PP_OK_COMPLETIONPENDING) {
-    printf("SwapBuffers failed with code %d\n", ret);
     return PP_FALSE;
   }
 
@@ -140,10 +132,31 @@ static PP_Bool Instance_HandleDocumentLoad(PP_Instance instance,
   return PP_FALSE;
 }
 
+void tick_callback(void* user_data, int32_t result);
+
+void swap_callback(void* user_data, int32_t result)
+{
+	struct PP_CompletionCallback cb = { tick_callback, NULL, PP_COMPLETIONCALLBACK_FLAG_NONE };
+	core_interface->CallOnMainThread(0, cb, 0);
+}
+
+void tick_callback(void* user_data, int32_t result)
+{
+	oort_tick();
+  struct PP_CompletionCallback callback = { swap_callback, NULL, PP_COMPLETIONCALLBACK_FLAG_NONE };
+  int32_t ret = graphics3d_interface->SwapBuffers(context, callback);
+  if (ret != PP_OK && ret != PP_OK_COMPLETIONPENDING) {
+    printf("SwapBuffers failed with code %d\n", ret);
+  }
+}
+
 void Messaging_HandleMessage(PP_Instance instance, struct PP_Var var_message) {
 	printf("Messaging_HandleMessage\n");
 	char *msg = AllocateCStrFromVar(var_message);
-	oort_handle_message(msg);
+	if (!strcmp(msg, "run")) {
+		oort_start();
+		tick_callback(NULL, 0);
+	}
 	free(msg);
 }
 
@@ -156,6 +169,7 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module a_module_id,
   var_interface = (struct PPB_Var*)(get_browser(PPB_VAR_INTERFACE));
   graphics3d_interface = (struct PPB_Graphics3D*)(get_browser(PPB_GRAPHICS_3D_INTERFACE));
   instance_interface = (struct PPB_Instance*)(get_browser(PPB_INSTANCE_INTERFACE));
+  core_interface = (struct PPB_Core*)(get_browser(PPB_CORE_INTERFACE));
 
   if (!glInitializePPAPI(get_browser)) {
     printf("glInitializePPAPI failed\n");

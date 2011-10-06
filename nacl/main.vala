@@ -1,8 +1,10 @@
 namespace Oort {
-	private unowned Thread<void*> ticker;
+	Game game;
+	Renderer renderer;
 
-	public static void start() {
+	public static void init() {
 		print("Oort starting\n");
+		Renderer.static_init();
 
 		print("Loading ship classes\n");
 		if (!ShipClass.load()) {
@@ -12,46 +14,25 @@ namespace Oort {
 
 	public static void handle_message(string msg) {
 		print("Received message: %s\n", msg);
-		if (msg == "run") {
-			ticker = Thread.create<void*>(ticker_func, true);
-		}
 	}
 
-	public static void *ticker_func() {
-		run();
-		return null;
-	}
-
-	public static void run() {
+	public static void start() {
 		print("Parsing scenario\n");
 		var scn = Scenario.parse(Resources.load("scenarios/basic.json"));
 		var ai = new AI() { filename="examples/reference.lua", code=Resources.load("examples/reference.lua") };
 		print("Creating game\n");
-		var game = new Game(0, scn, { ai, ai });
-		print("Running game\n");
+		game = new Game(0, scn, { ai, ai });
+		print("Initializing renderer\n");
+		renderer = new Renderer(game, scn.initial_view_scale);
+		renderer.init();
+		renderer.reshape(800, 600);
+		print("Initialization complete");
+	}
 
-		TimeVal last_sample_time = TimeVal();
-		int sample_ticks = 0;
-		while (true) {
-			TimeVal now = TimeVal();
-			long usecs = (now.tv_sec-last_sample_time.tv_sec)*(1000*1000) + (now.tv_usec - last_sample_time.tv_usec);
-			if (usecs > 1000*1000) {
-				print("%g FPS\n", (1000.0*1000*sample_ticks/usecs));
-				sample_ticks = 0;
-				last_sample_time = now;
-			}
-
-			game.tick();
-			game.purge();
-
-			unowned Team winner = game.check_victory();
-			if (winner != null) {
-				print("Team '%s' (%s) is victorious in %0.2f seconds\n", winner.name, winner.ai.filename, game.ticks*Game.TICK_LENGTH);
-				break;
-			}
-
-			sample_ticks++;
-		}
-		print("Done\n");
+	public static void tick() {
+		game.tick();
+		renderer.tick();
+		renderer.render();
+		game.purge();
 	}
 }
