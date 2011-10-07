@@ -6,88 +6,45 @@
   found in the LICENSE file.
   -->
 <head>
-  <title>Hello, World!</title>
+  <title>Oort</title>
+
+  <style TYPE="text/css">
+#oort {
+  display:block;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color:black
+}
+  </style>
 
   <script type="text/javascript">
     oort = null;  // Global application object.
-    statusText = 'NO-STATUS';
 
     // Indicate success when the NaCl module has loaded.
     function moduleDidLoad() {
       oort = document.getElementById('oort');
-      updateStatus('SUCCESS');
+      oort.postMessage('run');
     }
 
     // Handle a message coming from the NaCl module.
     function handleMessage(message_event) {
       alert(message_event.data);
     }
-
-    // If the page loads before the Native Client module loads, then set the
-    // status message indicating that the module is still loading.  Otherwise,
-    // do not change the status message.
-    function pageDidLoad() {
-			updateStatus();
-    }
-
-    function run() {
-      oort.postMessage('run');
-    }
-
-    // Set the global status message.  If the element with id 'statusField'
-    // exists, then set its HTML to the status message as well.
-    // opt_message The message test.  If this is null or undefined, then
-    //     attempt to set the element with id 'statusField' to the value of
-    //     |statusText|.
-    function updateStatus(opt_message) {
-      if (opt_message)
-        statusText = opt_message;
-      var statusField = document.getElementById('statusField');
-      if (statusField) {
-        statusField.innerHTML = statusText;
-      }
-    }
   </script>
 </head>
-<body onload="pageDidLoad()">
+<body>
 
-<h1>Oort</h1>
-<p>
-  <form name="form" action="" method="get" onsubmit="false">
-    <input type="button" value="Run2" onclick="run()" />
-  </form>
-  <!-- Load the published .nexe.  This includes the 'src' attribute which
-  shows how to load multi-architecture modules.  Each entry in the "nexes"
-  object in the  .nmf manifest file is a key-value pair: the key is the runtime
-  ('x86-32', 'x86-64', etc.); the value is a URL for the desired NaCl module.
-  To load the debug versions of your .nexes, set the 'src' attribute to the
-  _dbg.nmf version of the manifest file.
+<div id="listener">
+  <script type="text/javascript">
+    var listener = document.getElementById('listener')
+    listener.addEventListener('load', moduleDidLoad, true);
+    listener.addEventListener('message', handleMessage, true);
+  </script>
 
-  Note: The <EMBED> element is wrapped inside a <DIV>, which has both a 'load'
-  and a 'message' event listener attached.  This wrapping method is used
-  instead of attaching the event listeners directly to the <EMBED> element to
-  ensure that the listeners are active before the NaCl module 'load' event
-  fires.  This also allows you to use PPB_Messaging.PostMessage() (in C) or
-  pp::Instance.PostMessage() (in C++) from within the initialization code in
-  your NaCl module.
-  -->
-  <div id="listener">
-    <script type="text/javascript">
-      var listener = document.getElementById('listener')
-      listener.addEventListener('load', moduleDidLoad, true);
-      listener.addEventListener('message', handleMessage, true);
-    </script>
-
-    <embed name="nacl_module"
-           id="oort"
-           width=640 height=480
-           src="oort.nmf"
-           type="application/x-nacl" />
-  </div>
-
-</p>
-
-<h2>Status</h2>
-<div id="statusField">NO-STATUS</div>
+  <embed name="nacl_module" id="oort" src="oort.nmf" type="application/x-nacl" />
+</div>
 </body>
 </html>
