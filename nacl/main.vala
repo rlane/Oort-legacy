@@ -1,6 +1,8 @@
 namespace Oort {
 	Game game;
 	Renderer renderer;
+	RenderPerf tick_perf;
+	RenderPerf render_perf;
 
 	public static void init() {
 		print("Oort starting\n");
@@ -27,12 +29,22 @@ namespace Oort {
 		renderer.init();
 		renderer.reshape(800, 600);
 		print("Initialization complete");
+		tick_perf = new RenderPerf();
+		render_perf = new RenderPerf();
 	}
 
 	public static void tick() {
+		TimeVal tick_start_time = TimeVal();
+		game.purge();
 		game.tick();
 		renderer.tick();
+		tick_perf.update_from_time(tick_start_time);
+
+		TimeVal render_start_time = TimeVal();
 		renderer.render();
-		game.purge();
+		render_perf.update_from_time(render_start_time);
+
+		renderer.render_text(10, 10, "tick: " + tick_perf.summary());
+		renderer.render_text(10, 20, "render: " + render_perf.summary());
 	}
 }

@@ -155,7 +155,7 @@ namespace Oort {
 			perf.update_from_time(start_time);
 		}
 
-		void render_text(int x, int y, string text) {
+		public void render_text(int x, int y, string text) {
 			var prog = text_program;
 			var pos = pixel2screen(vec2(x,y));
 			var spacing = 9.0f;
