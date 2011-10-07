@@ -3,6 +3,8 @@ namespace Oort {
 	Renderer renderer;
 	RenderPerf tick_perf;
 	RenderPerf render_perf;
+	int width;
+	int height;
 
 	public static void init() {
 		print("Oort starting\n");
@@ -16,6 +18,20 @@ namespace Oort {
 
 	public static void handle_message(string msg) {
 		print("Received message: %s\n", msg);
+		string[] args;
+		Shell.parse_argv(msg, out args);
+		if (args[0] == "start") {
+			start();
+		}
+	}
+
+	public static void reshape(int w, int h) {
+		message("reshape: w=%d h=%d", w, h);
+		width = w;
+		height = h;
+		if (renderer != null) {
+			renderer.reshape(width, height);
+		}
 	}
 
 	public static void start() {
@@ -27,7 +43,7 @@ namespace Oort {
 		print("Initializing renderer\n");
 		renderer = new Renderer(game, scn.initial_view_scale);
 		renderer.init();
-		renderer.reshape(800, 600);
+		renderer.reshape(width, height);
 		print("Initialization complete");
 		tick_perf = new RenderPerf();
 		render_perf = new RenderPerf();

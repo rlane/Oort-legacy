@@ -42,6 +42,7 @@ void oort_init(void);
 void oort_start(void);
 void oort_tick(void);
 void oort_handle_message(char *msg);
+void oort_reshape(int width, int height);
 
 /**
  * Returns a mutable C string contained in the @a var or NULL if @a var is not
@@ -120,6 +121,7 @@ static void Instance_DidChangeView(PP_Instance instance,
                                    const struct PP_Rect* position,
                                    const struct PP_Rect* clip) {
 	printf("Instance_DidChangeView\n");
+	oort_reshape(position->size.width, position->size.height);
 }
 
 static void Instance_DidChangeFocus(PP_Instance instance,
@@ -153,8 +155,8 @@ void tick_callback(void* user_data, int32_t result)
 void Messaging_HandleMessage(PP_Instance instance, struct PP_Var var_message) {
 	printf("Messaging_HandleMessage\n");
 	char *msg = AllocateCStrFromVar(var_message);
-	if (!strcmp(msg, "run")) {
-		oort_start();
+	oort_handle_message(msg);
+	if (!strcmp(msg, "start")) {
 		tick_callback(NULL, 0);
 	}
 	free(msg);
