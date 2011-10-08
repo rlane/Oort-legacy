@@ -7,17 +7,17 @@ namespace Oort {
 	int height;
 
 	public static void init() {
-		print("Oort starting\n");
+		message("Oort starting");
 		Renderer.static_init();
 
-		print("Loading ship classes\n");
+		message("Loading ship classes");
 		if (!ShipClass.load()) {
-			print("Failed to load ship classes.\n");
+			message("Failed to load ship classes");
 		}
 	}
 
 	public static void handle_message(string msg) {
-		print("Received message: %s\n", msg);
+		message("Received message: %s", msg);
 		string[] args;
 		Shell.parse_argv(msg, out args);
 		if (args[0] == "start") {
@@ -45,16 +45,16 @@ namespace Oort {
 	}
 
 	public static void start() {
-		print("Parsing scenario\n");
+		message("Parsing scenario");
 		var scn = Scenario.parse(Resources.load("scenarios/basic.json"));
 		var ai = new AI() { filename="examples/reference.lua", code=Resources.load("examples/reference.lua") };
-		print("Creating game\n");
+		message("Creating game");
 		game = new Game(0, scn, { ai, ai });
-		print("Initializing renderer\n");
+		message("Initializing renderer");
 		renderer = new Renderer(game, scn.initial_view_scale);
 		renderer.init();
 		renderer.reshape(width, height);
-		print("Initialization complete");
+		message("Initialization complete");
 		tick_perf = new RenderPerf();
 		render_perf = new RenderPerf();
 	}
