@@ -22,24 +22,23 @@ void main(void) {
 	} else {
 		float size;
 		vec4 color;
-		float ticks_left = time_left * 32.0; // XXX
 		if (type == PARTICLE_TYPE_HIT) {
-			size = 0.3*ticks_left;
-			color = vec4(1.0, 0.78, 0.78, ticks_left*0.03125);
+			size = 96.0*time_left;
+			color = vec4(1.0, 0.78, 0.78, time_left);
 		} else if (type == PARTICLE_TYPE_PLASMA) {
-			size = 0.4*ticks_left;
-			color = vec4(1.0, 0.1, 0.1, ticks_left*0.125);
+			size = 128.0*time_left;
+			color = vec4(1.0, 0.1, 0.1, 4.0*time_left);
 		} else if (type == PARTICLE_TYPE_ENGINE) {
-			size = 0.1*ticks_left;
-			color = vec4(1.0, 0.8, 0.17, 0.039 + ticks_left*0.02);
+			size = 32.0*time_left;
+			color = vec4(1.0, 0.8, 0.17, 0.039 + 0.64*time_left);
 		} else if (type == PARTICLE_TYPE_EXPLOSION) {
 			float s = length(velocity);
-			size = 0.05 + 0.05*ticks_left;
-			float g = 255.0*min(1.0, 0.0625*s+ticks_left*0.1)/256.0;
-			color = vec4(1.0, g, 0.2, 0.04 + ticks_left*0.078);
+			size = 0.5 + 16.0*time_left;
+			float g = min(1.0, 0.0625*s + 3.2*time_left);
+			color = vec4(1.0, g, 0.2, 0.04 + 2.496*time_left);
 		}
 		v_color = color;
-		gl_PointSize = size*10.0*view_scale; // XXX
+		gl_PointSize = size*view_scale;
 		float t = current_time - initial_time;
 		vec2 position = initial_position + t*velocity*32.0; // XXX
 		gl_Position = p_matrix * vec4(position, 0.0, 1.0);
