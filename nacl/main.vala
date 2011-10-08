@@ -34,6 +34,16 @@ namespace Oort {
 		}
 	}
 
+	public static bool handle_key(uint32 key) {
+		if (key == 68) {
+			renderer.dump_perf();
+			return true;
+		} else {
+			message("unhandled key %u '%c'", key, (char)key);
+			return false;
+		}
+	}
+
 	public static void start() {
 		print("Parsing scenario\n");
 		var scn = Scenario.parse(Resources.load("scenarios/basic.json"));

@@ -17,9 +17,11 @@
 #include "ppapi/c/ppb_messaging.h"
 #include "ppapi/c/ppb_core.h"
 #include "ppapi/c/ppb_var.h"
+#include "ppapi/c/ppb_input_event.h"
 #include "ppapi/c/ppp.h"
 #include "ppapi/c/ppp_instance.h"
 #include "ppapi/c/ppp_messaging.h"
+#include "ppapi/c/ppp_input_event.h"
 #include "ppapi/c/pp_completion_callback.h"
 #include "ppapi/c/ppb_graphics_3d.h"
 #include "ppapi/gles2/gl2ext_ppapi.h"
@@ -35,6 +37,8 @@ static struct PPB_Var* var_interface = NULL;
 static struct PPB_Graphics3D* graphics3d_interface = NULL;
 static struct PPB_Instance* instance_interface = NULL;
 static struct PPB_Core* core_interface = NULL;
+static struct PPB_InputEvent* input_interface = NULL;
+static struct PPB_KeyboardInputEvent* keyboard_interface = NULL;
 static PP_Module module_id = 0;
 static PP_Resource context;
 
@@ -43,6 +47,7 @@ void oort_start(void);
 void oort_tick(void);
 void oort_handle_message(char *msg);
 void oort_reshape(int width, int height);
+PP_Bool oort_handle_key(uint32_t keycode);
 
 /**
  * Returns a mutable C string contained in the @a var or NULL if @a var is not
@@ -91,6 +96,7 @@ static PP_Bool Instance_DidCreate(PP_Instance instance,
                                   const char* argn[],
                                   const char* argv[]) {
 
+	int ret;
 	printf("Instance_DidCreate\n");
   oort_init();
 
@@ -110,6 +116,18 @@ static PP_Bool Instance_DidCreate(PP_Instance instance,
     return PP_FALSE;
   }
 
+	ret = input_interface->RequestFilteringInputEvents(instance, PP_INPUTEVENT_CLASS_KEYBOARD);
+	if (ret != PP_OK) {
+		printf("failed to request input events\n");
+		return PP_FALSE;
+	}
+
+	ret = input_interface->RequestInputEvents(instance, PP_INPUTEVENT_CLASS_MOUSE);
+	if (ret != PP_OK) {
+		printf("failed to request input events\n");
+		return PP_FALSE;
+	}
+
   return PP_TRUE;
 }
 
@@ -127,7 +145,7 @@ static void Instance_DidChangeView(PP_Instance instance,
 
 static void Instance_DidChangeFocus(PP_Instance instance,
                                     PP_Bool has_focus) {
-	printf("Instance_DidChangeFocus\n");
+	printf("Instance_DidChangeFocus: %d\n", has_focus);
 }
 
 static PP_Bool Instance_HandleDocumentLoad(PP_Instance instance,
@@ -163,6 +181,23 @@ void Messaging_HandleMessage(PP_Instance instance, struct PP_Var var_message) {
 	free(msg);
 }
 
+
+PP_Bool InputEvent_HandleInputEvent(PP_Instance instance, PP_Resource input_event)
+{
+	PP_InputEvent_Type type = input_interface->GetType(input_event);
+	//printf("input event: type %d\n", type);
+	if (type == PP_INPUTEVENT_TYPE_KEYDOWN) {
+		uint32_t keycode = keyboard_interface->GetKeyCode(input_event);
+		return oort_handle_key(keycode);
+	} else if (type == PP_INPUTEVENT_TYPE_MOUSEDOWN) {
+		return TRUE;
+	} else if (type == PP_INPUTEVENT_TYPE_MOUSEUP) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
 PP_EXPORT int32_t PPP_InitializeModule(PP_Module a_module_id,
                                        PPB_GetInterface get_browser) {
 	printf("PPP_InitializeModule\n");
@@ -173,6 +208,8 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module a_module_id,
   graphics3d_interface = (struct PPB_Graphics3D*)(get_browser(PPB_GRAPHICS_3D_INTERFACE));
   instance_interface = (struct PPB_Instance*)(get_browser(PPB_INSTANCE_INTERFACE));
   core_interface = (struct PPB_Core*)(get_browser(PPB_CORE_INTERFACE));
+  input_interface = (struct PPB_InputEvent*)(get_browser(PPB_INPUT_EVENT_INTERFACE));
+  keyboard_interface = (struct PPB_KeyboardInputEVent*)(get_browser(PPB_KEYBOARD_INPUT_EVENT_INTERFACE));
 
   if (!glInitializePPAPI(get_browser)) {
     printf("glInitializePPAPI failed\n");
@@ -198,7 +235,12 @@ PP_EXPORT const void* PPP_GetInterface(const char* interface_name) {
       &Messaging_HandleMessage
     };
     return &messaging_interface;
-  }
+  } else if (strcmp(interface_name, PPP_INPUT_EVENT_INTERFACE) == 0) {
+    static struct PPP_InputEvent input_interface = {
+      &InputEvent_HandleInputEvent
+    };
+    return &input_interface;
+	}
   return NULL;
 }
 
