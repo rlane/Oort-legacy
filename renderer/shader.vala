@@ -55,8 +55,13 @@ class Oort.ShaderProgram {
 
 	VertexShader vertex_shader;
 	FragmentShader fragment_shader;
+	HashTable<string,int> uniform_locations;
+	HashTable<string,int> attribute_locations;
 
 	public ShaderProgram(string name, VertexShader vs, FragmentShader fs) throws ShaderError {
+		attribute_locations = new HashTable<string,int>(str_hash, str_equal);
+		uniform_locations = new HashTable<string,int>(str_hash, str_equal);
+
 		id = glCreateProgram();
 		vertex_shader = vs;
 		fragment_shader = fs;
@@ -87,12 +92,19 @@ class Oort.ShaderProgram {
 	}
 
 	public GLint uniform(string name) {
-		var x = glGetUniformLocation(id, name);
-		glCheck();
-		if (x == -1) {
-			GLib.error("bad uniform %s", name);
+		string key;
+		int loc;
+		if (uniform_locations.lookup_extended(name, out key, out loc)) {
+		} else {
+			loc = glGetUniformLocation(id, name);
+			glCheck();
+			if (loc == -1) {
+				GLib.error("bad uniform %s", name);
+			} else {
+				uniform_locations.insert(name, loc);
+			}
 		}
-		return x;
+		return (GLint) loc;
 	}
 
 	public GLint u(string name) {
@@ -100,12 +112,19 @@ class Oort.ShaderProgram {
 	}
 
 	public GLint attribute(string name) {
-		var x = glGetAttribLocation(id, name);
-		glCheck();
-		if (x == -1) {
-			GLib.error("bad attribute %s", name);
+		string key;
+		int loc;
+		if (attribute_locations.lookup_extended(name, out key, out loc)) {
+		} else {
+			loc = glGetAttribLocation(id, name);
+			glCheck();
+			if (loc == -1) {
+				GLib.error("bad attribute %s", name);
+			} else {
+				attribute_locations.insert(name, loc);
+			}
 		}
-		return x;
+		return (GLint) loc;
 	}
 
 	public GLint a(string name) {
