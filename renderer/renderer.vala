@@ -58,6 +58,7 @@ namespace Oort {
 
 		public void init() {
 			glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			gl_platform_init();
 			glLineWidth(1.2f);
 

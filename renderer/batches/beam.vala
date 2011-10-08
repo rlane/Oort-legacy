@@ -21,9 +21,9 @@ class Oort.BeamBatch : Oort.RenderBatch {
 			1, 0
 		};
 
-		foreach (unowned Beam b in game.all_beams) {
-			prog.use();
+		glVertexAttribPointer(prog.a("texcoord"), 2, GL_FLOAT, false, 0, texcoords);
 
+		foreach (unowned Beam b in game.all_beams) {
 			Vec4f color;
 			float offset = 0.0f;
 			float length = (float)b.length*1.1f;
@@ -58,7 +58,6 @@ class Oort.BeamBatch : Oort.RenderBatch {
 			glUniform4f(prog.u("color"), color.x, color.y, color.z, 1);
 
 			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, vertices);
-			glVertexAttribPointer(prog.a("texcoord"), 2, GL_FLOAT, false, 0, texcoords);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 

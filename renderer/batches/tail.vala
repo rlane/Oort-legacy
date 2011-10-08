@@ -23,7 +23,6 @@ class Oort.TailBatch : Oort.RenderBatch {
 			glUniform4f(prog.u("color"), colorv.x, colorv.y, colorv.z, colorv.w/3.0f);
 			glVertexAttribPointer(prog.a("vertex"), 2, GL_FLOAT, false, 0, segments);
 			glVertexAttribPointer(prog.a("alpha"), 1, GL_FLOAT, false, 0, alphas);
-			glCheck();
 
 			segments[0] = (float) s.physics.p.x;
 			segments[1] = (float) s.physics.p.y;
@@ -47,6 +46,5 @@ class Oort.TailBatch : Oort.RenderBatch {
 		glDisableVertexAttribArray(prog.a("vertex"));
 		glDisableVertexAttribArray(prog.a("alpha"));
 		glUseProgram(0);
-		glCheck();
 	}
 }

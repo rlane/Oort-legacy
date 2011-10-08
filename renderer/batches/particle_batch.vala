@@ -26,7 +26,6 @@ class Oort.ParticleBatch : Oort.RenderBatch {
 		glUniformMatrix4fv(prog.u("p_matrix"), 1, false, renderer.p_matrix.data);
 		glUniform1f(prog.u("current_time"), current_time);
 		glUniform1i(prog.u("tex"), 0);
-		glCheck();
 
 		ParticleData[] data = {};
 
@@ -91,6 +90,5 @@ class Oort.ParticleBatch : Oort.RenderBatch {
 
 		glUseProgram(0);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glCheck();
 	}
 }
