@@ -2,6 +2,15 @@ using GL;
 using Vector;
 using Math;
 
+public struct Oort.ParticleData {
+	public Vec4f color; // XXX shader
+	public Vec2f initial_position;
+	public Vec2f velocity;
+	public float initial_time;
+	public float lifetime;
+	public float size; // XXX shader
+}
+
 namespace Oort {
 	public class Renderer {
 		public bool render_all_debug_lines = false;
@@ -24,6 +33,7 @@ namespace Oort {
 		ShaderProgram text_program;
 		Model circle_model;
 		RenderBatch[] batches;
+		ParticleData[] tmp_particles;
 
 		public static void static_init() {
 			Oort.Ship.gfx_create_cb = on_ship_created;
@@ -117,6 +127,7 @@ namespace Oort {
 		}
 
 		public void render() {
+			Util.toggle_callgrind_collection();
 			prng.set_seed(0); // XXX tick seed
 			TimeVal start_time = TimeVal();
 
@@ -155,6 +166,7 @@ namespace Oort {
 
 			glFinish();
 			perf.update_from_time(start_time);
+			Util.toggle_callgrind_collection();
 		}
 
 		public void render_text(int x, int y, string text) {
@@ -327,6 +339,12 @@ namespace Oort {
 		}
 
 		public void tick() {
+			Util.toggle_callgrind_collection();
+			tick_particles();
+			Util.toggle_callgrind_collection();
+		}
+
+		public void tick_particles() {
 			float current_time = game.ticks * (float)Game.TICK_LENGTH;
 			foreach (unowned Bullet b in game.all_bullets) {
 				if (b.dead) continue;

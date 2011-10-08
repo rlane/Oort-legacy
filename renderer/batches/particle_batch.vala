@@ -10,15 +10,6 @@ class Oort.ParticleBatch : Oort.RenderBatch {
 		particle_tex = new ParticleTexture();
 	}
 
-	private struct ParticleData {
-		public Vec4f color;
-		public Vec2f initial_position;
-		public Vec2f velocity;
-		public float initial_time;
-		public float lifetime;
-		public float size;
-	}
-
 	public override void render() {
 		var current_time = (float)(game.ticks*Game.TICK_LENGTH);
 		glBlendFunc(GL_ONE, GL_ONE);
