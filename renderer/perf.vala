@@ -2,11 +2,10 @@ public class Oort.RenderPerf {
 	const int BUCKETS = 20;
 	const int BUCKET_SIZE = 5; // ms
 
-	public double last_frame_time;
+	public double frame_time_avg = 0.0;
 	double frame_time_min = 100000;
 	double frame_time_max = 0;
 	int num_frames = 0;
-	double frame_time_total = 0.0;
 	int[] histogram;
 
 	public RenderPerf() {
@@ -14,9 +13,12 @@ public class Oort.RenderPerf {
 	}
 
 	public void update(double frame_time) {
-		last_frame_time = frame_time;
+		if (num_frames == 0) {
+			frame_time_avg = frame_time;
+		} else {
+			frame_time_avg = (frame_time_avg*31.0 + frame_time)/32.0;
+		}
 		num_frames++;
-		frame_time_total += frame_time;
 		frame_time_min = double.min(frame_time, frame_time_min);
 		frame_time_max = double.max(frame_time, frame_time_max);
 		int bucket = (int) (frame_time/BUCKET_SIZE);
@@ -35,7 +37,7 @@ public class Oort.RenderPerf {
 
 	public void dump() {
 		print("num frames: %d\n", num_frames);
-		print("avg time: %f ms\n", frame_time_total/num_frames);
+		print("avg time: %f ms\n", frame_time_avg);
 		print("min time: %f ms\n", frame_time_min);
 		print("max time: %f ms\n", frame_time_max);
 		print("time histogram:\n");
@@ -47,6 +49,6 @@ public class Oort.RenderPerf {
 	}
 
 	public string summary() {
-		return "avg=%.1fms min=%.1fms max=%.1fms".printf(frame_time_total/num_frames, frame_time_min, frame_time_max);
+		return "avg=%.1fms min=%.1fms max=%.1fms".printf(frame_time_avg, frame_time_min, frame_time_max);
 	}
 }

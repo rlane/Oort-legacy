@@ -10,10 +10,15 @@ abstract class Oort.RenderBatch : GLib.Object {
 	}
 
 	public void do_render() {
-		var start_time = TimeVal();
-		render();
-		glFinish();
-		perf.update_from_time(start_time);
+		if (renderer.debug) {
+			var start_time = TimeVal();
+			render();
+			glFinish();
+			glCheck();
+			perf.update_from_time(start_time);
+		} else {
+			render();
+		}
 	}
 
 	public abstract void init() throws Error;

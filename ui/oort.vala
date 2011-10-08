@@ -250,7 +250,7 @@ namespace Oort {
 			
 			if (show_fps && frame_usecs != 0 && sample_usecs != 0) {
 				renderer.textf(rect.width-9*9, 15, "FPS: %.1f", (1000*1000.0)/sample_usecs);
-				renderer.textf(rect.width-14*9, 25, "ms/frame: %.1f", renderer.perf.last_frame_time);
+				renderer.textf(rect.width-14*9, 25, "ms/frame: %.1f", renderer.perf.frame_time_avg);
 			}
 
 			switch (game_state) {

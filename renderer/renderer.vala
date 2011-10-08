@@ -13,6 +13,7 @@ namespace Oort {
 		public Game game;
 		public bool follow_picked = false;
 		public RenderPerf perf;
+		public bool debug = true;
 
 		public Mat4f p_matrix;
 		public Rand prng;
