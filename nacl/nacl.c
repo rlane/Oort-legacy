@@ -121,6 +121,7 @@ static void Instance_DidChangeView(PP_Instance instance,
                                    const struct PP_Rect* position,
                                    const struct PP_Rect* clip) {
 	printf("Instance_DidChangeView\n");
+	graphics3d_interface->ResizeBuffers(context, position->size.width, position->size.height);
 	oort_reshape(position->size.width, position->size.height);
 }
 
