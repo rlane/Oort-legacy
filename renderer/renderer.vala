@@ -3,12 +3,12 @@ using Vector;
 using Math;
 
 public struct Oort.ParticleData {
-	public Vec4f color; // XXX shader
 	public Vec2f initial_position;
 	public Vec2f velocity;
 	public float initial_time;
 	public float lifetime;
-	public float size; // XXX shader
+	public float type;
+	public float padding;
 }
 
 namespace Oort {
