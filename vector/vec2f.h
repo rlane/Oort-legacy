@@ -11,4 +11,14 @@ static inline Vec2f vec2f(float x, float y)
 	return r;
 }
 
+static inline Vec2f vec2f_scale(Vec2f a, float f)
+{
+	return vec2f(a.x*f, a.y*f);
+}
+
+static inline Vec2f vec2f_add(Vec2f a, Vec2f b)
+{
+	return vec2f(a.x+b.x, a.y+b.y);
+}
+
 #endif

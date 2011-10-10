@@ -29,6 +29,8 @@ namespace Vector {
 		public float y;
 		public float *data;
 		public Vector.Vec4f projectXY(ref Mat4f mModelView, ref Mat4f mProjection, [CCode (array_length=false)] int viewport[4]);
+		public Vector.Vec2f add(Vector.Vec2f v);
+		public Vector.Vec2f scale(float f);
 
 		public string to_string() {
 			return "(%0.3g, %0.3g)".printf(x, y);
