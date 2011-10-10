@@ -5,6 +5,8 @@ namespace Oort {
 	RenderPerf render_perf;
 	int width;
 	int height;
+	int mouse_x;
+	int mouse_y;
 
 	public static void init() {
 		message("Oort starting");
@@ -35,13 +37,24 @@ namespace Oort {
 	}
 
 	public static bool handle_key(uint32 key) {
-		if (key == 68) {
+		if (key == 68) { // 'D'
 			renderer.dump_perf();
+			return true;
+		} else if (key == 88) { // 'X'
+			renderer.zoom(mouse_x, mouse_y, 1.0/1.1);
+			return true;
+		} else if (key == 90) { // 'Z'
+			renderer.zoom(mouse_x, mouse_y, 1.1);
 			return true;
 		} else {
 			message("unhandled key %u '%c'", key, (char)key);
 			return false;
 		}
+	}
+
+	public static void handle_mouse_move(int x, int y) {
+		mouse_x = x;
+		mouse_y = y;
 	}
 
 	public static void start() {

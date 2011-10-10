@@ -39,6 +39,7 @@ static struct PPB_Instance* instance_interface = NULL;
 static struct PPB_Core* core_interface = NULL;
 static struct PPB_InputEvent* input_interface = NULL;
 static struct PPB_KeyboardInputEvent* keyboard_interface = NULL;
+static struct PPB_MouseInputEvent* mouse_interface = NULL;
 static PP_Module module_id = 0;
 static PP_Resource context;
 
@@ -48,6 +49,7 @@ void oort_tick(void);
 void oort_handle_message(char *msg);
 void oort_reshape(int width, int height);
 PP_Bool oort_handle_key(uint32_t keycode);
+void oort_handle_mouse_move(int x, int y);
 
 /**
  * Returns a mutable C string contained in the @a var or NULL if @a var is not
@@ -190,8 +192,12 @@ PP_Bool InputEvent_HandleInputEvent(PP_Instance instance, PP_Resource input_even
 		uint32_t keycode = keyboard_interface->GetKeyCode(input_event);
 		return oort_handle_key(keycode);
 	} else if (type == PP_INPUTEVENT_TYPE_MOUSEDOWN) {
+		struct PP_Point pos = mouse_interface->GetPosition(input_event);
+		oort_handle_mouse_move(pos.x, pos.y);
 		return TRUE;
-	} else if (type == PP_INPUTEVENT_TYPE_MOUSEUP) {
+	} else if (type == PP_INPUTEVENT_TYPE_MOUSEMOVE) {
+		struct PP_Point pos = mouse_interface->GetPosition(input_event);
+		oort_handle_mouse_move(pos.x, pos.y);
 		return TRUE;
 	} else {
 		return FALSE;
@@ -210,6 +216,7 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module a_module_id,
   core_interface = (struct PPB_Core*)(get_browser(PPB_CORE_INTERFACE));
   input_interface = (struct PPB_InputEvent*)(get_browser(PPB_INPUT_EVENT_INTERFACE));
   keyboard_interface = (struct PPB_KeyboardInputEVent*)(get_browser(PPB_KEYBOARD_INPUT_EVENT_INTERFACE));
+  mouse_interface = (struct PPB_MouseInputEVent*)(get_browser(PPB_MOUSE_INPUT_EVENT_INTERFACE));
 
   if (!glInitializePPAPI(get_browser)) {
     printf("glInitializePPAPI failed\n");
