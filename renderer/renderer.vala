@@ -2,15 +2,6 @@ using GL;
 using Vector;
 using Math;
 
-public struct Oort.ParticleData {
-	public Vec2f initial_position;
-	public Vec2f velocity;
-	public float initial_time;
-	public float lifetime;
-	public float type;
-	public float padding;
-}
-
 namespace Oort {
 	public class Renderer {
 		public bool render_all_debug_lines = false;
@@ -26,6 +17,7 @@ namespace Oort {
 
 		public Mat4f p_matrix;
 		public Rand prng;
+		public List<ParticleBunch> particle_bunches;
 
 		Texture font_tex;
 		ShaderProgram ship_program;
@@ -33,7 +25,6 @@ namespace Oort {
 		ShaderProgram text_program;
 		Model circle_model;
 		RenderBatch[] batches;
-		ParticleData[] tmp_particles;
 
 		public static void static_init() {
 			Oort.Ship.gfx_create_cb = on_ship_created;
@@ -56,6 +47,7 @@ namespace Oort {
 			perf = new RenderPerf();
 
 			circle_model = Model.load("circle");
+			particle_bunches = new List<ParticleBunch>();
 
 			batches = {
 				new ParticleBatch(),
@@ -346,35 +338,59 @@ namespace Oort {
 
 		public void tick_particles() {
 			float current_time = game.ticks * (float)Game.TICK_LENGTH;
+			var bunch = new ParticleBunch(current_time);
+
 			foreach (unowned Bullet b in game.all_bullets) {
 				if (b.dead) continue;
+				unowned Physics q = b.physics;
 				if (b.type == BulletType.PLASMA) {
-					Particle.shower(ParticleType.PLASMA, current_time, b.physics.p, vec2(0,0), b.physics.v.scale(1.0/63),
-					                double.min(b.physics.m/5,0.1)*80, 3, 4, 9);
+					bunch.shower(ParticleType.PLASMA,
+					             q.p.to_vec2f(),
+					             vec2f(0,0), q.v.to_vec2f().scale(1.0f/63),
+					             float.min((float)q.m/5,0.1f)*80, 3, 4, 9);
 				} else if (b.type == BulletType.EXPLOSION) {
 					if (prng.next_double() < 0.1) {
-						Particle.shower(ParticleType.EXPLOSION, current_time, b.physics.p, vec2(0,0), b.physics.v.scale(Game.TICK_LENGTH).scale(0.001), 8, 5, 17, 6);
+						bunch.shower(ParticleType.EXPLOSION, q.p.to_vec2f(),
+						             vec2f(0,0), q.v.to_vec2f().scale((float)Game.TICK_LENGTH).scale(0.001f),
+						             8, 5, 17, 6);
 					}
 				}
 			}
-
 			foreach (unowned BulletHit hit in game.bullet_hits) {
 				var n = uint16.max((uint16)(hit.e/10000),1);
-				Particle.shower(ParticleType.HIT, current_time, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
+				bunch.shower(ParticleType.HIT, hit.cp.to_vec2f(),
+				             hit.s.physics.v.scale(Game.TICK_LENGTH).to_vec2f(), vec2f(0,0),
+				             8, 1, 20, n);
 			}
 
 			foreach (unowned BeamHit hit in game.beam_hits) {
 				var n = uint16.max((uint16)(hit.e/500),1);
-				Particle.shower(ParticleType.HIT, current_time, hit.cp, hit.s.physics.v.scale(Game.TICK_LENGTH), vec2(0,0), 8, 1, 20, n);
+				bunch.shower(ParticleType.HIT, hit.cp.to_vec2f(),
+				             hit.s.physics.v.scale(Game.TICK_LENGTH).to_vec2f(), vec2f(0,0),
+				             8, 1, 20, n);
 			}
 
 			foreach (unowned Ship s in game.all_ships) {
 				if (s.physics.acc.abs() != 0) {
 					var vec_main = vec2(-s.physics.acc.x, 0).rotate(s.physics.h).scale(s.physics.m/1000);
 					var vec_lateral = vec2(0, -s.physics.acc.y).rotate(s.physics.h).scale(s.physics.m/1000);
-					Particle.shower(ParticleType.ENGINE, current_time, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_main.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
-					Particle.shower(ParticleType.ENGINE, current_time, s.physics.p, s.physics.v.scale(Game.TICK_LENGTH), vec_lateral.scale(Game.TICK_LENGTH), 1, 2, 4, 8);
+					bunch.shower(ParticleType.ENGINE, s.physics.p.to_vec2f(),
+					             s.physics.v.scale(Game.TICK_LENGTH).to_vec2f(),
+					             vec_main.scale(Game.TICK_LENGTH).to_vec2f(),
+					             1, 2, 4, 8);
+					bunch.shower(ParticleType.ENGINE, s.physics.p.to_vec2f(),
+					             s.physics.v.scale(Game.TICK_LENGTH).to_vec2f(),
+					             vec_lateral.scale(Game.TICK_LENGTH).to_vec2f(),
+					             1, 2, 4, 8);
 				}
+			}
+
+			if (particle_bunches.length() > 32) {
+				particle_bunches.delete_link(particle_bunches.first());
+			}
+
+			if (bunch.count > 0) {
+				particle_bunches.append(bunch);
 			}
 		}
 

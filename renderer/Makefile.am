@@ -6,7 +6,6 @@ AM_CFLAGS = \
 	-include $(CONFIG_HEADER) \
 	-include oort.h \
 	-I $(top_srcdir)/vector \
-	-I $(top_srcdir)/vector \
 	-I $(top_srcdir)/math3d \
 	-I $(top_srcdir)/sim \
 	$(CJSON_CFLAGS) \
@@ -23,7 +22,6 @@ AM_VALAFLAGS = \
 	--pkg gtkglext-1.0 \
 	--pkg glew \
 	--pkg gl \
-	--pkg particle \
 	--pkg glutil \
 	--pkg gio-2.0 \
 	--pkg font \
@@ -42,7 +40,7 @@ noinst_LIBRARIES = librenderer.a
 librenderer_a_SOURCES = \
 	renderer.vala \
 	glutil.c \
-	particle.c \
+	particle.vala \
 	font.c \
 	textures.vala \
 	model.vala \
@@ -58,11 +56,9 @@ librenderer_a_SOURCES = \
 
 noinst_HEADERS = \
 	glutil.h \
-	particle.h \
 	tga.h \
 	font.h \
 	font.vapi \
-	particle.vapi \
 	glutil.vapi
 
 #libsim_a_LDFLAGS = $(OORT_LIBS)

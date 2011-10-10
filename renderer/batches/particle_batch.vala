@@ -19,25 +19,7 @@ class Oort.ParticleBatch : Oort.RenderBatch {
 		glUniform1f(prog.u("view_scale"), (float)renderer.view_scale);
 		glUniform1i(prog.u("tex"), 0);
 
-		ParticleData[] data = {};
-
-		for (int i = 0; i < Particle.MAX; i++) {
-			unowned Particle c = Particle.get(i);
-			data += ParticleData() {
-				initial_position = c.p.to_vec2f(),
-				velocity = c.v.to_vec2f(),
-				initial_time = c.initial_time,
-				lifetime = c.lifetime,
-				type = (float) c.type
-			};
-		}
-
-		GLsizei stride = (GLsizei) sizeof(ParticleData);
-		glVertexAttribPointer(prog.a("initial_position"), 2, GL_FLOAT, false, stride, &data[0].initial_position);
-		glVertexAttribPointer(prog.a("velocity"), 2, GL_FLOAT, false, stride, &data[0].velocity);
-		glVertexAttribPointer(prog.a("initial_time"), 1, GL_FLOAT, false, stride, &data[0].initial_time);
-		glVertexAttribPointer(prog.a("lifetime"), 1, GL_FLOAT, false, stride, &data[0].lifetime);
-		glVertexAttribPointer(prog.a("type"), 1, GL_FLOAT, false, stride, &data[0].type);
+		GLsizei stride = (GLsizei) sizeof(Particle);
 
 		glEnableVertexAttribArray(prog.a("initial_position"));
 		glEnableVertexAttribArray(prog.a("velocity"));
@@ -45,7 +27,21 @@ class Oort.ParticleBatch : Oort.RenderBatch {
 		glEnableVertexAttribArray(prog.a("lifetime"));
 		glEnableVertexAttribArray(prog.a("type"));
 		particle_tex.bind();
-		glDrawArrays(GL_POINTS, 0, (GLsizei) data.length);
+
+		foreach (ParticleBunch bunch in renderer.particle_bunches) {
+			if (bunch.buffer == 0) {
+				bunch.build();
+			}
+			glBindBuffer(GL_ARRAY_BUFFER, bunch.buffer);
+			glVertexAttribPointer(prog.a("initial_position"), 2, GL_FLOAT, false, stride, (void*)0);
+			glVertexAttribPointer(prog.a("velocity"), 2, GL_FLOAT, false, stride, (void*)8);
+			glVertexAttribPointer(prog.a("initial_time"), 1, GL_FLOAT, false, stride, (void*)16);
+			glVertexAttribPointer(prog.a("lifetime"), 1, GL_FLOAT, false, stride, (void*)20);
+			glVertexAttribPointer(prog.a("type"), 1, GL_FLOAT, false, stride, (void*)24);
+			glDrawArrays(GL_POINTS, 0, (GLsizei) bunch.count);
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisableVertexAttribArray(prog.a("initial_position"));
 		glDisableVertexAttribArray(prog.a("velocity"));
