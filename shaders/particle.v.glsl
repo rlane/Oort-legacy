@@ -8,10 +8,10 @@ attribute float lifetime;
 attribute float type;
 varying vec4 v_color;
 
-#define PARTICLE_TYPE_HIT 0
-#define PARTICLE_TYPE_PLASMA 1
-#define PARTICLE_TYPE_ENGINE 2
-#define PARTICLE_TYPE_EXPLOSION 3
+#define PARTICLE_TYPE_HIT 0.0
+#define PARTICLE_TYPE_PLASMA 1.0
+#define PARTICLE_TYPE_ENGINE 2.0
+#define PARTICLE_TYPE_EXPLOSION 3.0
 
 void main(void) {
 	float time_left = initial_time + lifetime - current_time;
