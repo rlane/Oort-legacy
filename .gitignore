@@ -72,6 +72,7 @@ renderer/oort_renderer.h
 renderer/oort_renderer.vapi
 nacl/main.c
 nacl/embedded_resources.c
+renderer/particle.c
 
 sim/liboort-1.0.a
 third_party/luajit_build/luajit-stamp
