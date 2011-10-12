@@ -386,7 +386,9 @@ namespace Oort {
 			}
 
 			if (particle_bunches.length() > 32) {
-				particle_bunches.delete_link(particle_bunches.first());
+				unowned List<ParticleBunch> link = particle_bunches.first();
+				link.data = null;
+				particle_bunches.delete_link(link);
 			}
 
 			if (bunch.count > 0) {
