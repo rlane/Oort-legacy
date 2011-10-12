@@ -30,3 +30,7 @@ export PATH=${NACL_BIN_PATH}:${PATH};
 	--libdir=${NACL_SDK_USR}/lib \
 	--oldincludedir=${NACL_SDK_USR}/include
 make all
+
+tag=`git log --pretty=format:%h -1`
+cp nacl/oort_nacl oort_nacl.$tag.$NACL_PACKAGES_BITSIZE.nexe
+echo output oort_nacl.$tag.$NACL_PACKAGES_BITSIZE.nexe
