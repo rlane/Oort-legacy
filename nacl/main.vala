@@ -56,6 +56,13 @@ namespace Oort {
 		}
 	}
 
+	public static void handle_mouse_click(int x, int y, int button) {
+		if (button == 0) {
+			renderer.follow_picked = false;
+			renderer.pick(x,y);
+		}
+	}
+
 	public static void handle_mouse_move(int x, int y) {
 		mouse_x = x;
 		mouse_y = y;

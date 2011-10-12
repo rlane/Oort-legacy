@@ -50,6 +50,7 @@ void oort_handle_message(char *msg);
 void oort_reshape(int width, int height);
 PP_Bool oort_handle_key(uint32_t keycode);
 void oort_handle_mouse_move(int x, int y);
+void oort_handle_mouse_click(int x, int y, int button);
 
 /**
  * Returns a mutable C string contained in the @a var or NULL if @a var is not
@@ -193,7 +194,8 @@ PP_Bool InputEvent_HandleInputEvent(PP_Instance instance, PP_Resource input_even
 		return oort_handle_key(keycode);
 	} else if (type == PP_INPUTEVENT_TYPE_MOUSEDOWN) {
 		struct PP_Point pos = mouse_interface->GetPosition(input_event);
-		oort_handle_mouse_move(pos.x, pos.y);
+		PP_InputEvent_MouseButton button = mouse_interface->GetButton(input_event);
+		oort_handle_mouse_click(pos.x, pos.y, button);
 		return TRUE;
 	} else if (type == PP_INPUTEVENT_TYPE_MOUSEMOVE) {
 		struct PP_Point pos = mouse_interface->GetPosition(input_event);
