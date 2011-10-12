@@ -41,19 +41,16 @@ public class Oort.ParticleBunch {
 			error("cannot shower after build");
 		}
 
-		v0 = v0.scale((float)Game.TICK_LENGTH);
-		v = v.scale((float)Game.TICK_LENGTH);
-
 		int i;
 		for (i = 0; i < count; i++) {
 			float a = (float)prng.next_double() * 3.1416f * 2.0f;
 			float s = (float)prng.next_double() * s_max;
 			float fdp = (float)prng.next_double();
-			var dp = v.scale(fdp);
+			var dp = v.scale(fdp*(float)Game.TICK_LENGTH);
 			float lifetime = (float)prng.double_range(life_min, life_max);
 			var dv = vec2f(cosf(a)*s, sinf(a)*s);
 			data += Particle() {
-				initial_position = p0.add(dp).add(dv),
+				initial_position = p0.add(dp).add(dv.scale((float)Game.TICK_LENGTH)),
 			  velocity = v0.add(v).add(dv),
 				initial_time = initial_time,
 				lifetime = lifetime,

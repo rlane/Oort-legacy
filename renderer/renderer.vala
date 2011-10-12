@@ -349,12 +349,12 @@ namespace Oort {
 					bunch.shower(ParticleType.PLASMA,
 					             q.p.to_vec2f(),
 					             vec2f(0,0), q.v.to_vec2f().scale(0.507f),
-					             float.min((float)q.m/5,0.1f)*80, 0.094f, 0.125f, 9);
+					             float.min((float)q.m*6.4f,3.2f)*80, 0.094f, 0.125f, 9);
 				} else if (b.type == BulletType.EXPLOSION) {
 					if (prng.next_double() < 0.1) {
 						bunch.shower(ParticleType.EXPLOSION, q.p.to_vec2f(),
 						             vec2f(0,0), q.v.to_vec2f().scale(0.001f),
-						             8, 0.16f, 0.53f, 6);
+						             256, 0.16f, 0.53f, 6);
 					}
 				}
 			}
@@ -362,14 +362,14 @@ namespace Oort {
 				var n = uint16.max((uint16)(hit.e/10000),1);
 				bunch.shower(ParticleType.HIT, hit.cp.to_vec2f(),
 				             hit.s.physics.v.to_vec2f(), vec2f(0,0),
-				             8, 0.03f, 0.63f, n);
+				             256, 0.03f, 0.63f, n);
 			}
 
 			foreach (unowned BeamHit hit in game.beam_hits) {
 				var n = uint16.max((uint16)(hit.e/500),1);
 				bunch.shower(ParticleType.HIT, hit.cp.to_vec2f(),
 				             hit.s.physics.v.to_vec2f(), vec2f(0,0),
-				             8, 0.03f, 0.63f, n);
+				             256, 0.03f, 0.63f, n);
 			}
 
 			foreach (unowned Ship s in game.all_ships) {
@@ -378,10 +378,10 @@ namespace Oort {
 					var vec_lateral = vec2(0, -s.physics.acc.y).rotate(s.physics.h).scale(s.physics.m/1000);
 					bunch.shower(ParticleType.ENGINE, s.physics.p.to_vec2f(),
 					             s.physics.v.to_vec2f(), vec_main.to_vec2f(),
-					             1, 0.06f, 0.13f, 8);
+					             32, 0.06f, 0.13f, 8);
 					bunch.shower(ParticleType.ENGINE, s.physics.p.to_vec2f(),
 					             s.physics.v.to_vec2f(), vec_lateral.to_vec2f(),
-					             1, 0.06f, 0.13f, 8);
+					             32, 0.06f, 0.13f, 8);
 				}
 			}
 

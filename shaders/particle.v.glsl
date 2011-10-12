@@ -40,7 +40,7 @@ void main(void) {
 		v_color = color;
 		gl_PointSize = size*view_scale;
 		float t = current_time - initial_time;
-		vec2 position = initial_position + t*velocity*32.0; // XXX
+		vec2 position = initial_position + t*velocity;
 		gl_Position = p_matrix * vec4(position, 0.0, 1.0);
 	}
 }
