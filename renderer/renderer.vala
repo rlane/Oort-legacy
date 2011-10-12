@@ -349,7 +349,7 @@ namespace Oort {
 					bunch.shower(ParticleType.PLASMA,
 					             q.p.to_vec2f(),
 					             vec2f(0,0), q.v.to_vec2f().scale(0.507f),
-					             float.min((float)q.m*6.4f,3.2f)*80, 0.094f, 0.125f, 9);
+					             20.0f, 0.2f, 0.4f, 4);
 				} else if (b.type == BulletType.EXPLOSION) {
 					if (prng.next_double() < 0.1) {
 						bunch.shower(ParticleType.EXPLOSION, q.p.to_vec2f(),

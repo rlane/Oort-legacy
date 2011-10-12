@@ -26,8 +26,8 @@ void main(void) {
 			size = 96.0*time_left;
 			color = vec4(1.0, 0.78, 0.78, time_left);
 		} else if (type == PARTICLE_TYPE_PLASMA) {
-			size = 128.0*time_left;
-			color = vec4(1.0, 0.1, 0.1, 4.0*time_left);
+			size = 64.0*time_left;
+			color = vec4(1.0, 0.1, 0.1, 3.3*time_left);
 		} else if (type == PARTICLE_TYPE_ENGINE) {
 			size = 32.0*time_left;
 			color = vec4(1.0, 0.8, 0.17, 0.039 + 0.64*time_left);
