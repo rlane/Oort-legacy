@@ -26,6 +26,8 @@ namespace Oort {
 		Model circle_model;
 		RenderBatch[] batches;
 
+		const int MAX_PARTICLE_BUNCHES = 32;
+
 		public static void static_init() {
 			Oort.Ship.gfx_create_cb = on_ship_created;
 
@@ -347,12 +349,12 @@ namespace Oort {
 					bunch.shower(ParticleType.PLASMA,
 					             q.p.to_vec2f(),
 					             vec2f(0,0), q.v.to_vec2f().scale(1.0f/63),
-					             float.min((float)q.m/5,0.1f)*80, 3, 4, 9);
+					             float.min((float)q.m/5,0.1f)*80, 0.094f, 0.125f, 9);
 				} else if (b.type == BulletType.EXPLOSION) {
 					if (prng.next_double() < 0.1) {
 						bunch.shower(ParticleType.EXPLOSION, q.p.to_vec2f(),
 						             vec2f(0,0), q.v.to_vec2f().scale((float)Game.TICK_LENGTH).scale(0.001f),
-						             8, 5, 17, 6);
+						             8, 0.16f, 0.53f, 6);
 					}
 				}
 			}
@@ -360,14 +362,14 @@ namespace Oort {
 				var n = uint16.max((uint16)(hit.e/10000),1);
 				bunch.shower(ParticleType.HIT, hit.cp.to_vec2f(),
 				             hit.s.physics.v.scale(Game.TICK_LENGTH).to_vec2f(), vec2f(0,0),
-				             8, 1, 20, n);
+				             8, 0.03f, 0.63f, n);
 			}
 
 			foreach (unowned BeamHit hit in game.beam_hits) {
 				var n = uint16.max((uint16)(hit.e/500),1);
 				bunch.shower(ParticleType.HIT, hit.cp.to_vec2f(),
 				             hit.s.physics.v.scale(Game.TICK_LENGTH).to_vec2f(), vec2f(0,0),
-				             8, 1, 20, n);
+				             8, 0.03f, 0.63f, n);
 			}
 
 			foreach (unowned Ship s in game.all_ships) {
@@ -377,15 +379,15 @@ namespace Oort {
 					bunch.shower(ParticleType.ENGINE, s.physics.p.to_vec2f(),
 					             s.physics.v.scale(Game.TICK_LENGTH).to_vec2f(),
 					             vec_main.scale(Game.TICK_LENGTH).to_vec2f(),
-					             1, 2, 4, 8);
+					             1, 0.06f, 0.13f, 8);
 					bunch.shower(ParticleType.ENGINE, s.physics.p.to_vec2f(),
 					             s.physics.v.scale(Game.TICK_LENGTH).to_vec2f(),
 					             vec_lateral.scale(Game.TICK_LENGTH).to_vec2f(),
-					             1, 2, 4, 8);
+					             1, 0.06f, 0.13f, 8);
 				}
 			}
 
-			if (particle_bunches.length() > 32) {
+			if (particle_bunches.length() > MAX_PARTICLE_BUNCHES) {
 				unowned List<ParticleBunch> link = particle_bunches.first();
 				link.data = null;
 				particle_bunches.delete_link(link);

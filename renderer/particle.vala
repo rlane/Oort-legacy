@@ -35,7 +35,7 @@ public class Oort.ParticleBunch {
 
 	public void shower(ParticleType type,
 	                   Vec2f p0, Vec2f v0, Vec2f v,
-	                   float s_max, uint16 life_ticks_min, uint16 life_ticks_max,
+	                   float s_max, float life_min, float life_max,
 	                   uint16 count) {
 		if (buffer != 0) {
 			error("cannot shower after build");
@@ -47,8 +47,7 @@ public class Oort.ParticleBunch {
 			float s = (float)prng.next_double() * s_max;
 			float fdp = (float)prng.next_double();
 			var dp = v.scale(fdp);
-			int life_ticks = (life_ticks_min == life_ticks_max) ? life_ticks_min : prng.int_range(life_ticks_min,life_ticks_max);
-			float lifetime = life_ticks/32.0f;
+			float lifetime = (float)prng.double_range(life_min, life_max);
 			var dv = vec2f(cosf(a)*s, sinf(a)*s);
 			data += Particle() {
 				initial_position = p0.add(dp).add(dv),
