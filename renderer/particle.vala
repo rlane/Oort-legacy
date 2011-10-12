@@ -41,6 +41,9 @@ public class Oort.ParticleBunch {
 			error("cannot shower after build");
 		}
 
+		v0 = v0.scale((float)Game.TICK_LENGTH);
+		v = v.scale((float)Game.TICK_LENGTH);
+
 		int i;
 		for (i = 0; i < count; i++) {
 			float a = (float)prng.next_double() * 3.1416f * 2.0f;
