@@ -40,20 +40,17 @@ namespace Oort {
 	public static bool handle_key(uint32 key) {
 		if (key == 68) { // 'D'
 			renderer.dump_perf();
-			return true;
 		} else if (key == 88) { // 'X'
 			renderer.zoom(mouse_x, mouse_y, 1.0/1.1);
-			return true;
 		} else if (key == 90) { // 'Z'
 			renderer.zoom(mouse_x, mouse_y, 1.1);
-			return true;
 		} else if (key == ' ') {
 			paused = !paused;
-			return true;
 		} else {
 			message("unhandled key %u '%c'", key, (char)key);
 			return false;
 		}
+		return true;
 	}
 
 	public static void handle_mouse_click(int x, int y, int button) {

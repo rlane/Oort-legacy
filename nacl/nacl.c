@@ -244,8 +244,8 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module a_module_id,
   instance_interface = (struct PPB_Instance*)(get_browser(PPB_INSTANCE_INTERFACE));
   core_interface = (struct PPB_Core*)(get_browser(PPB_CORE_INTERFACE));
   input_interface = (struct PPB_InputEvent*)(get_browser(PPB_INPUT_EVENT_INTERFACE));
-  keyboard_interface = (struct PPB_KeyboardInputEVent*)(get_browser(PPB_KEYBOARD_INPUT_EVENT_INTERFACE));
-  mouse_interface = (struct PPB_MouseInputEVent*)(get_browser(PPB_MOUSE_INPUT_EVENT_INTERFACE));
+  keyboard_interface = (struct PPB_KeyboardInputEvent*)(get_browser(PPB_KEYBOARD_INPUT_EVENT_INTERFACE));
+  mouse_interface = (struct PPB_MouseInputEvent*)(get_browser(PPB_MOUSE_INPUT_EVENT_INTERFACE));
 
   if (!glInitializePPAPI(get_browser)) {
     printf("glInitializePPAPI failed\n");
