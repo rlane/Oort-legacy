@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 
 #include "oort.h"
 #include "oort_renderer.h"
@@ -156,12 +157,38 @@ static PP_Bool Instance_HandleDocumentLoad(PP_Instance instance,
   return PP_FALSE;
 }
 
+static void timersub(struct timeval *a, struct timeval *b, struct timeval *res) {
+	const int million = 1000000;
+	res->tv_sec = a->tv_sec - b->tv_sec;
+	res->tv_usec = a->tv_usec - b->tv_usec;
+	if (res->tv_usec < 0) {
+		res->tv_usec += million;
+		res->tv_sec -= 1;
+	} else if (res->tv_usec > million) {
+		res->tv_usec -= million;
+		res->tv_sec += 1;
+	}
+}
+
 void tick_callback(void* user_data, int32_t result);
 
 void swap_callback(void* user_data, int32_t result)
 {
 	struct PP_CompletionCallback cb = { tick_callback, NULL, PP_COMPLETIONCALLBACK_FLAG_NONE };
-	core_interface->CallOnMainThread(0, cb, 0);
+	static struct timeval last_tv;
+	static struct timeval frame_tv = { 0, 31250 };
+	struct timeval cur_tv, diff_tv, remaining_tv;
+	gettimeofday(&cur_tv, NULL);
+	timersub(&cur_tv, &last_tv, &diff_tv);
+	timersub(&frame_tv, &diff_tv, &remaining_tv);
+	int remaining_ms;
+	if (remaining_tv.tv_sec < 0 || remaining_tv.tv_usec < 0) {
+		remaining_ms = 0;
+	} else {
+		remaining_ms = remaining_tv.tv_usec/1000;
+	}
+	last_tv = cur_tv;
+	core_interface->CallOnMainThread(remaining_ms, cb, 0);
 }
 
 void tick_callback(void* user_data, int32_t result)
