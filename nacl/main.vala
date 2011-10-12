@@ -7,6 +7,7 @@ namespace Oort {
 	int height;
 	int mouse_x;
 	int mouse_y;
+	bool paused = false;
 
 	public static void init() {
 		message("Oort starting");
@@ -46,6 +47,9 @@ namespace Oort {
 		} else if (key == 90) { // 'Z'
 			renderer.zoom(mouse_x, mouse_y, 1.1);
 			return true;
+		} else if (key == ' ') {
+			paused = !paused;
+			return true;
 		} else {
 			message("unhandled key %u '%c'", key, (char)key);
 			return false;
@@ -73,11 +77,13 @@ namespace Oort {
 	}
 
 	public static void tick() {
-		TimeVal tick_start_time = TimeVal();
-		game.purge();
-		game.tick();
-		renderer.tick();
-		tick_perf.update_from_time(tick_start_time);
+		if (!paused) {
+			TimeVal tick_start_time = TimeVal();
+			game.purge();
+			game.tick();
+			renderer.tick();
+			tick_perf.update_from_time(tick_start_time);
+		}
 
 		TimeVal render_start_time = TimeVal();
 		renderer.render();
