@@ -55,6 +55,7 @@ librenderer_a_SOURCES = \
 	batches/beam.vala
 
 noinst_HEADERS = \
+	oort_renderer.h \
 	glutil.h \
 	tga.h \
 	font.h \
