@@ -8,6 +8,8 @@ namespace Oort {
 	int mouse_x;
 	int mouse_y;
 	bool paused = false;
+	bool single_step = false;
+	bool need_redraw = true;
 
 	public static void init() {
 		message("Oort starting");
@@ -35,6 +37,7 @@ namespace Oort {
 		if (renderer != null) {
 			renderer.reshape(width, height);
 		}
+		need_redraw = true;
 	}
 
 	public static bool handle_key(uint32 key) {
@@ -46,10 +49,14 @@ namespace Oort {
 			renderer.zoom(mouse_x, mouse_y, 1.1);
 		} else if (key == ' ') {
 			paused = !paused;
+		} else if (key == 13) {
+			paused = false;
+			single_step = true;
 		} else {
 			message("unhandled key %u '%c'", key, (char)key);
 			return false;
 		}
+		need_redraw = true;
 		return true;
 	}
 
@@ -57,6 +64,7 @@ namespace Oort {
 		if (button == 0) {
 			renderer.follow_picked = false;
 			renderer.pick(x,y);
+			need_redraw = true;
 		}
 	}
 
@@ -87,13 +95,23 @@ namespace Oort {
 			game.tick();
 			renderer.tick();
 			tick_perf.update_from_time(tick_start_time);
+			need_redraw = true;
 		}
 
-		TimeVal render_start_time = TimeVal();
-		renderer.render();
-		render_perf.update_from_time(render_start_time);
+		if (single_step) {
+			paused = true;
+			single_step = false;
+		}
 
-		renderer.render_text(10, 10, "tick: " + tick_perf.summary());
-		renderer.render_text(10, 20, "render: " + render_perf.summary());
+		if (need_redraw) {
+			TimeVal render_start_time = TimeVal();
+			renderer.render();
+			render_perf.update_from_time(render_start_time);
+
+			renderer.render_text(10, 10, "tick: " + tick_perf.summary());
+			renderer.render_text(10, 20, "render: " + render_perf.summary());
+
+			need_redraw = false;
+		}
 	}
 }
