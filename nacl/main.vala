@@ -52,6 +52,10 @@ namespace Oort {
 		} else if (key == 13) {
 			paused = false;
 			single_step = true;
+		} else if (key == 86) {
+			if (renderer.picked != null) {
+				renderer.follow_picked = !renderer.follow_picked;
+			}
 		} else {
 			message("unhandled key %u '%c'", key, (char)key);
 			return false;
