@@ -1,4 +1,10 @@
 namespace Oort {
+	enum GameState {
+		DEMO,
+		RUNNING,
+		FINISHED,
+	}
+
 	Game game;
 	Renderer renderer;
 	RenderPerf tick_perf;
@@ -10,6 +16,8 @@ namespace Oort {
 	bool paused = false;
 	bool single_step = false;
 	bool need_redraw = true;
+	GameState game_state;
+	unowned Team winner = null;
 
 	public static void init() {
 		message("Oort starting");
@@ -90,14 +98,24 @@ namespace Oort {
 		message("Initialization complete");
 		tick_perf = new RenderPerf();
 		render_perf = new RenderPerf();
+		game_state = GameState.RUNNING;
 	}
 
 	public static void tick() {
 		if (!paused) {
 			TimeVal tick_start_time = TimeVal();
+
 			game.purge();
 			game.tick();
 			renderer.tick();
+
+			if (game_state == GameState.RUNNING) {
+				winner = game.check_victory();
+				if (winner != null) {
+					game_state = GameState.FINISHED;
+				}
+			}
+
 			tick_perf.update_from_time(tick_start_time);
 			need_redraw = true;
 		}
@@ -114,6 +132,14 @@ namespace Oort {
 
 			renderer.render_text(10, 10, "tick: " + tick_perf.summary());
 			renderer.render_text(10, 20, "render: " + render_perf.summary());
+
+			switch (game_state) {
+			case GameState.RUNNING:
+				break;
+			case GameState.FINISHED:
+				renderer.textf(width/2-4*20, 50, "%s is victorious", winner.name);
+				break;
+			}
 
 			need_redraw = false;
 		}
