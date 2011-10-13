@@ -41,6 +41,7 @@ static struct PPB_Core* core_interface = NULL;
 static struct PPB_InputEvent* input_interface = NULL;
 static struct PPB_KeyboardInputEvent* keyboard_interface = NULL;
 static struct PPB_MouseInputEvent* mouse_interface = NULL;
+static struct PPB_WheelInputEvent* wheel_interface = NULL;
 static PP_Module module_id = 0;
 static PP_Resource context;
 
@@ -52,6 +53,7 @@ void oort_reshape(int width, int height);
 PP_Bool oort_handle_key(uint32_t keycode);
 void oort_handle_mouse_move(int x, int y);
 void oort_handle_mouse_click(int x, int y, int button);
+void oort_handle_mouse_wheel(float delta);
 
 /**
  * Returns a mutable C string contained in the @a var or NULL if @a var is not
@@ -120,7 +122,7 @@ static PP_Bool Instance_DidCreate(PP_Instance instance,
     return PP_FALSE;
   }
 
-	ret = input_interface->RequestFilteringInputEvents(instance, PP_INPUTEVENT_CLASS_KEYBOARD);
+	ret = input_interface->RequestFilteringInputEvents(instance, PP_INPUTEVENT_CLASS_KEYBOARD|PP_INPUTEVENT_CLASS_WHEEL);
 	if (ret != PP_OK) {
 		printf("failed to request input events\n");
 		return PP_FALSE;
@@ -224,6 +226,11 @@ PP_Bool InputEvent_HandleInputEvent(PP_Instance instance, PP_Resource input_even
 		PP_InputEvent_MouseButton button = mouse_interface->GetButton(input_event);
 		oort_handle_mouse_click(pos.x, pos.y, button);
 		return TRUE;
+	} else if (type == PP_INPUTEVENT_TYPE_WHEEL) {
+		struct PP_Point pos = mouse_interface->GetPosition(input_event);
+		struct PP_FloatPoint delta = wheel_interface->GetDelta(input_event);
+		oort_handle_mouse_wheel(delta.y);
+		return TRUE;
 	} else if (type == PP_INPUTEVENT_TYPE_MOUSEMOVE) {
 		struct PP_Point pos = mouse_interface->GetPosition(input_event);
 		oort_handle_mouse_move(pos.x, pos.y);
@@ -246,6 +253,7 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module a_module_id,
   input_interface = (struct PPB_InputEvent*)(get_browser(PPB_INPUT_EVENT_INTERFACE));
   keyboard_interface = (struct PPB_KeyboardInputEvent*)(get_browser(PPB_KEYBOARD_INPUT_EVENT_INTERFACE));
   mouse_interface = (struct PPB_MouseInputEvent*)(get_browser(PPB_MOUSE_INPUT_EVENT_INTERFACE));
+  wheel_interface = (struct PPB_WheelInputEvent*)(get_browser(PPB_WHEEL_INPUT_EVENT_INTERFACE));
 
   if (!glInitializePPAPI(get_browser)) {
     printf("glInitializePPAPI failed\n");

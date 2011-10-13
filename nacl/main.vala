@@ -1,3 +1,5 @@
+using Math;
+
 namespace Oort {
 	enum GameState {
 		DEMO,
@@ -78,6 +80,13 @@ namespace Oort {
 			renderer.pick(x,y);
 			need_redraw = true;
 		}
+	}
+
+	public static void handle_mouse_wheel(float delta) {
+		delta /= 53;
+		float a = delta<0 ? 0.9f : 1.1f;
+		float zoom = powf(a, fabsf(delta));
+		renderer.zoom(mouse_x, mouse_y, zoom);
 	}
 
 	public static void handle_mouse_move(int x, int y) {
