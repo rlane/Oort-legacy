@@ -127,6 +127,7 @@ namespace Oort {
 
 			glEnable(GL_BLEND);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glFinish();
 
 			Mat4f.load_simple_ortho(out p_matrix,
 			                        (float)this.view_pos.x,
