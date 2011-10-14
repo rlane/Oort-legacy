@@ -264,11 +264,12 @@ namespace Oort {
 				break;
 			}
 
+			tick_lock.unlock();
+
 			gldrawable.swap_buffers();
 
 			gldrawable.gl_end();
 
-			tick_lock.unlock();
 			return true;
 		}
 
