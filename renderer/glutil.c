@@ -10,6 +10,13 @@
 
 #include "glutil.h"
 
+#if defined(WIN32)
+#include <GL/wglew.h>
+#elif !defined(__native_client__)
+#include <GL/glxew.h>
+#include <GL/glx.h>
+#endif
+
 #include "tga.h"
 
 void screenshot(const char *filename)
@@ -57,6 +64,26 @@ void glCheck(void)
 #endif
 }
 
+static void enable_vsync(void)
+{
+#if defined(WIN32)
+	wglSwapIntervalEXT(1);
+#elif !defined(__native_client__)
+	if (0) {
+#ifdef GLX_SGI_swap_control
+	} else if (glXSwapIntervalSGI != NULL) {
+		glXSwapIntervalSGI(1);
+#endif
+#ifdef GLX_MESA_swap_control
+	} else if (glXSwapIntervalMESA != NULL) {
+		glXSwapIntervalMESA(1);
+#endif
+	} else {
+		printf("vsync not supported\n");
+	}
+#endif
+}
+
 void gl_platform_init(void)
 {
 #ifndef __native_client__
@@ -65,4 +92,5 @@ void gl_platform_init(void)
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
+	enable_vsync();
 }
