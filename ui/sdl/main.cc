@@ -16,6 +16,10 @@
 #include "sim/ship.h"
 #include "sim/game.h"
 
+#include "gl/check.h"
+#include "gl/shader.h"
+#include "gl/program.h"
+
 using glm::vec2;
 using glm::dvec2;
 using std::make_shared;
@@ -61,136 +65,6 @@ static std::string read_file(std::string filename)
 	return data;
 }
 
-void glCheck()
-{
-	auto err = glGetError();
-	if (err != GL_NO_ERROR) {
-		std::cerr << "GL error: " << glewGetErrorString(err) << std::endl;
-		throw new std::exception();
-	}
-}
-
-class Shader {
-public:
-	typedef shared_ptr<Shader> P;
-
-	GLuint id;
-	const std::string filename;
-
-	Shader(GLenum type, std::string filename) :
-		filename(filename)
-	{
-		id = glCreateShader(type);
-		auto data = read_file(filename);
-		const GLchar *sources[1] = { (GLchar*) data.data() };
-		GLint source_lens[1] = { (GLint) data.size() };
-		glShaderSource(id, 1, sources, source_lens);
-		glCompileShader(id);
-		glCheck();
-
-		display_info_log();
-
-		int status;
-		glGetShaderiv(id, GL_COMPILE_STATUS, &status);
-		glCheck();
-
-		if (status == GL_FALSE) {
-			throw new std::exception();
-		}
-	}
-
-	void display_info_log() {
-		int len;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
-		glCheck();
-		if (len > 1) {
-			auto log = new char[len];
-			glGetShaderInfoLog(id, len, &len, log);
-			std::cerr << "Shader info log for " << filename << ": " << log;
-			delete[] log;
-		}
-	}
-
-	~Shader()
-	{
-		if (id != 0) {
-			glDeleteShader(id);
-		}
-	}
-
-	Shader(const Shader&) = delete;
-	Shader& operator=(const Shader&) = delete;
-};
-
-class FragmentShader : public Shader {
-public:
-	FragmentShader(std::string filename) :
-		Shader(GL_FRAGMENT_SHADER, filename) {}
-};
-
-class VertexShader : public Shader {
-public:
-	VertexShader(std::string filename) :
-		Shader(GL_VERTEX_SHADER, filename) {}
-};
-
-
-class Program {
-public:
-	GLuint id;
-	shared_ptr<VertexShader> vertex_shader;
-	shared_ptr<FragmentShader> fragment_shader;
-
-	Program(shared_ptr<VertexShader> vertex_shader,
-			    shared_ptr<FragmentShader> fragment_shader) :
-		      vertex_shader(vertex_shader),
-					fragment_shader(fragment_shader)
-	{
-		id = glCreateProgram();
-		glAttachShader(id, vertex_shader->id);
-		glAttachShader(id, fragment_shader->id);
-		glLinkProgram(id);
-		display_info_log();
-		glCheck();
-		glValidateProgram(id);
-		int status;
-		glGetProgramiv(id, GL_VALIDATE_STATUS, &status);
-		glCheck();
-
-		if (status == GL_FALSE) {
-			throw new std::exception();
-		}
-	}
-
-	void display_info_log() {
-		int len;
-		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &len);
-		glCheck();
-		if (len > 1) {
-			auto log = new char[len];
-			glGetProgramInfoLog(id, len, &len, log);
-			std::cerr << log;
-			delete[] log;
-		}
-	}
-
-	~Program() {
-		glDeleteProgram(id);
-	}
-
-	void use() {
-		glCheck();
-		glUseProgram(id);
-		glCheck();
-	}
-
-	static void clear() {
-		glCheck();
-		glUseProgram(0);
-		glCheck();
-	}
-};
-
 int main(int argc, char **argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -209,10 +83,8 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	auto foo = read_file("shaders/ship.v.glsl");
-
-	Program prog(make_shared<VertexShader>("shaders/ship.v.glsl"),
-			         make_shared<FragmentShader>("shaders/ship.f.glsl"));
+	GL::Program prog(make_shared<GL::VertexShader>(read_file("shaders/ship.v.glsl")),
+			             make_shared<GL::FragmentShader>(read_file("shaders/ship.f.glsl")));
 
 	dvec2 b(2.0f,3.0f);
 	auto ship = make_shared<Oort::Ship>();
@@ -234,12 +106,12 @@ int main(int argc, char **argv)
 			handle_sdl_event(event);
 		}
 
-		glCheck();
+		GL::check();
 
 		glClear( GL_COLOR_BUFFER_BIT );
 
 		prog.use();
-		glCheck();
+		GL::check();
 
 		BOOST_FOREACH(auto ship, game->ships) {
 			ship->physics.v = dvec2(1.0, 1.0);
@@ -254,18 +126,18 @@ int main(int argc, char **argv)
 			int p_matrix_loc = glGetUniformLocation(prog.id, "p_matrix");
 			int color_loc = glGetUniformLocation(prog.id, "color");
 			int vertex_loc = glGetAttribLocation(prog.id, "vertex");
-			glCheck();
+			GL::check();
 
 			glUniformMatrix4fv(mv_matrix_loc, 1, false, glm::value_ptr(mv_matrix));
 			glUniformMatrix4fv(p_matrix_loc, 1, false, glm::value_ptr(p_matrix));
 			glUniform4fv(color_loc, 1, glm::value_ptr(color));
 			glVertexAttrib2f(vertex_loc, vertex.x, vertex.y);
 			glDrawArrays(GL_POINTS, 0, 1);
-			glCheck();
+			GL::check();
 		}
 
-		Program::clear();
-		glCheck();
+		GL::Program::clear();
+		GL::check();
 
 		SDL_GL_SwapBuffers();
 		usleep(31250);
