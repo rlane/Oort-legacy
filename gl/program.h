@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include <memory>
+#include <unordered_map>
 #include "glm/gtc/type_ptr.hpp"
+#include "common/log.h"
 #include "gl/shader.h"
 #include "gl/check.h"
 
@@ -68,11 +70,23 @@ public:
 	}
 
 	int uniform_location(std::string name) {
-		return glGetUniformLocation(id, name.c_str());
+		auto loc_iter = uniform_locs.find(name);
+		if (loc_iter != uniform_locs.end()) {
+			return loc_iter->second;
+		}
+		int loc = glGetUniformLocation(id, name.c_str());
+		uniform_locs.insert(LocMap::value_type(name, loc));
+		return loc;
 	}
 
 	int attrib_location(std::string name) {
-		return glGetAttribLocation(id, name.c_str());
+		auto loc_iter = attrib_locs.find(name);
+		if (loc_iter != attrib_locs.end()) {
+			return loc_iter->second;
+		}
+		int loc = glGetAttribLocation(id, name.c_str());
+		attrib_locs.insert(LocMap::value_type(name, loc));
+		return loc;
 	}
 
 	void uniform(std::string name, glm::mat4 &val) {
@@ -86,6 +100,11 @@ public:
 	void attrib(std::string name, glm::vec2 &val) {
 		glVertexAttrib2f(attrib_location(name), val.x, val.y);
 	}
+
+private:
+	typedef std::unordered_map<std::string,int> LocMap;
+	LocMap attrib_locs;
+	LocMap uniform_locs;
 };
 
 }
