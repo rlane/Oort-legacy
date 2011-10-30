@@ -6,11 +6,11 @@
 namespace Oort {
 
 Ship::Ship() {
-	log("created ship\n");
+	//log("created ship\n");
 }
 
 Ship::~Ship() {
-	log("destroyed ship\n");
+	//log("destroyed ship\n");
 }
 
 }

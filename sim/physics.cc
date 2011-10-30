@@ -3,13 +3,15 @@
 #include "common/log.h"
 
 Oort::Physics::Physics() {
-	log("constructing physics\n");
+	//log("constructing physics\n");
 }
 
 Oort::Physics::~Physics() {
-	log("destroying physics\n");
+	//log("destroying physics\n");
 }
 
 void Oort::Physics::tick(double tick_length) {
+	// TODO(rlane): use midpoint approximation
 	p += v * tick_length;
+	v += a * tick_length;
 }

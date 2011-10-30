@@ -1,10 +1,16 @@
 // Copyright 2011 Rich Lane
 #include <stdio.h>
+#include <time.h>
+#include <sys/timeb.h>
 #include <GL/glew.h>
 #include <SDL.h>
 #define NO_SDL_GLEXT
 #include <SDL_opengl.h>
 #include <boost/foreach.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/timer.hpp>
 #include <memory>
 #include <vector>
 #include <string>
@@ -24,6 +30,15 @@ using glm::vec2;
 using glm::dvec2;
 using std::make_shared;
 using std::shared_ptr;
+
+// needs -lrt (real-time lib)
+// 1970-01-01 epoch UTC time, 1 mcs resolution (divide by 1M to get time_t)
+uint64_t ClockGetTime()
+{
+    timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return (uint64_t)ts.tv_sec * 1000000LL + (uint64_t)ts.tv_nsec / 1000LL;
+}
 
 namespace Oort {
 
@@ -54,27 +69,40 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	if (SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1) != 0) {
+		printf("unable to configure vsync\n");
+	}
 
 	SDL_SetVideoMode(1600, 900, 16, SDL_OPENGL | SDL_FULLSCREEN);
-	glViewport(0, 0, 1600, 900);
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
-		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(err));
 		return 1;
 	}
 
-	dvec2 b(2.0f, 3.0f);
-	auto ship = make_shared<Ship>();
-	ship->physics.v = dvec2(2.0, 3.0);
-	ship->physics.tick(1.0/32);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	glViewport(0, 0, 1600, 900);
+
 	auto game = make_shared<Game>();
-	game->ships.push_back(make_shared<Ship>());
+	boost::random::mt19937 prng(42);
+	boost::random::normal_distribution<> p_dist(0.0, 1.0);
+	boost::random::normal_distribution<> v_dist(0.0, 5.0);
+	boost::random::normal_distribution<> a_dist(0.0, 10.0);
+
+	for (auto i = 0; i < 10000; i++) {
+		auto ship = make_shared<Ship>();
+		ship->physics.p = dvec2(p_dist(prng), p_dist(prng));
+		ship->physics.v = dvec2(v_dist(prng), v_dist(prng));
+		game->ships.push_back(ship);
+	}
 
 	SDL_Event event;
 
 	Renderer renderer(game);
+	auto prev = ClockGetTime();
+	int frame_count = 0;
 
 	while (running) {
 		while(SDL_PollEvent(&event)) {
@@ -82,14 +110,22 @@ int main(int argc, char **argv) {
 		}
 
 		BOOST_FOREACH(auto ship, game->ships) {
-			ship->physics.v = dvec2(1.0, 1.0);
+			ship->physics.a = dvec2(a_dist(prng), a_dist(prng));
 			ship->physics.tick(1.0/32);
 		}
 
 		renderer.render();
 
 		SDL_GL_SwapBuffers();
-		usleep(31250);
+
+		++frame_count;
+		auto now = ClockGetTime();
+		auto elapsed = now - prev;
+		if (elapsed >= 1000000LL) {
+			printf("%0.2f fps\n", 1e6*frame_count/elapsed);
+			frame_count = 0;
+			prev = now;
+		}
 	}
 
 	return 0;

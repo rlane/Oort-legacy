@@ -35,7 +35,10 @@ void Renderer::render() {
 	prog->use();
 	GL::check();
 
+	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	glm::mat4 p_matrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f);
@@ -44,7 +47,7 @@ void Renderer::render() {
 
 	BOOST_FOREACH(auto ship, game->ships) {
 		glm::mat4 mv_matrix;
-		glm::vec4 color(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 color(1.0f, 1.0f, 1.0f, 0.3f);
 		vec2 vertex(ship->physics.p);
 		GL::check();
 
