@@ -73,7 +73,8 @@ int main(int argc, char **argv) {
 		printf("unable to configure vsync\n");
 	}
 
-	SDL_SetVideoMode(1600, 900, 16, SDL_OPENGL | SDL_FULLSCREEN);
+	int w = 1600, h = 900;
+	SDL_SetVideoMode(w, h, 16, SDL_OPENGL | SDL_FULLSCREEN);
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
@@ -101,6 +102,7 @@ int main(int argc, char **argv) {
 	SDL_Event event;
 
 	Renderer renderer(game);
+	renderer.set_screen_dimensions(w, h);
 	auto prev = ClockGetTime();
 	int frame_count = 0;
 

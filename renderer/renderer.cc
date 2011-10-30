@@ -36,6 +36,11 @@ Renderer::Renderer(shared_ptr<Game> game)
 	vertex_buf.data(vertices);
 }
 
+void Renderer::set_screen_dimensions(int w, int h) {
+	screen_width = w;
+	screen_height = h;
+}
+
 void Renderer::render() {
 	GL::check();
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -49,7 +54,11 @@ void Renderer::render() {
 	glBlendFunc(GL_ONE, GL_ONE);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	glm::mat4 p_matrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f);
+	auto aspect = float(screen_width)/screen_height;
+	auto view_radius = 100.0f;
+
+	glm::mat4 p_matrix = glm::ortho(-view_radius, view_radius,
+			                            -view_radius/aspect, view_radius/aspect);
 
 	prog->uniform("p_matrix", p_matrix);
 
