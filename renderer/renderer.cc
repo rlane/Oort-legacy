@@ -11,6 +11,7 @@
 #include "common/resources.h"
 #include "gl/program.h"
 #include "gl/shader.h"
+#include "gl/buffer.h"
 #include "gl/check.h"
 
 using glm::vec2;
@@ -27,6 +28,15 @@ Renderer::Renderer(shared_ptr<Game> game)
 	    make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
 	    make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl"))))
 {
+
+	std::vector<vec2> vertices = { vec2(-0.7, -0.71),
+	                               vec2(-0.7, 0.71),
+	                               vec2(1, 0) };
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buf.id);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(vec2), &vertices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 void Renderer::render() {
@@ -46,21 +56,18 @@ void Renderer::render() {
 
 	prog->uniform("p_matrix", p_matrix);
 
-	std::vector<vec2> vertices = { vec2(-0.7, -0.71),
-	                               vec2(-0.7, 0.71),
-	                               vec2(1, 0) };
-
 	BOOST_FOREACH(auto ship, game->ships) {
 		glm::mat4 mv_matrix;
 		mv_matrix = glm::translate(mv_matrix, glm::vec3(ship->physics.p, 0));
 		glm::vec4 color(1.0f, 1.0f, 1.0f, 0.3f);
-		vec2 vertex(ship->physics.p);
 		GL::check();
 
 		prog->uniform("mv_matrix", mv_matrix);
 		prog->uniform("color", color);
+		glBindBuffer(GL_ARRAY_BUFFER, vertex_buf.id);
 		glVertexAttribPointer(prog->attrib_location("vertex"),
-		                      2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
+		                      2, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		GL::check();
 
 		glDrawArrays(GL_LINE_LOOP, 0, 3);

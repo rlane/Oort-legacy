@@ -5,6 +5,7 @@
 #include <boost/scoped_ptr.hpp>
 #include "sim/game.h"
 #include "gl/program.h"
+#include "gl/buffer.h"
 
 namespace Oort {
 
@@ -17,6 +18,7 @@ public:
 private:
 	std::shared_ptr<Game> game;
 	boost::scoped_ptr<GL::Program> prog;
+	GL::Buffer vertex_buf;
 };
 
 }
