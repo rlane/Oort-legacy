@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include <memory>
+#include "glm/gtc/type_ptr.hpp"
 #include "gl/shader.h"
 #include "gl/check.h"
 
@@ -72,6 +73,18 @@ public:
 
 	int attrib_location(std::string name) {
 		return glGetAttribLocation(id, name.c_str());
+	}
+
+	void uniform(std::string name, glm::mat4 &val) {
+		glUniformMatrix4fv(uniform_location(name), 1, false, glm::value_ptr(val));
+	}
+
+	void uniform(std::string name, glm::vec4 &val) {
+		glUniform4fv(uniform_location(name), 1, glm::value_ptr(val));
+	}
+
+	void attrib(std::string name, glm::vec2 &val) {
+		glVertexAttrib2f(attrib_location(name), val.x, val.y);
 	}
 };
 
