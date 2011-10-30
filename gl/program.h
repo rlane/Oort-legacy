@@ -1,4 +1,6 @@
-#pragma once
+// Copyright 2011 Rich Lane
+#ifndef OORT_GL_PROGRAM_H_
+#define OORT_GL_PROGRAM_H_
 
 #include "gl/shader.h"
 
@@ -13,10 +15,9 @@ public:
 	shared_ptr<FragmentShader> fragment_shader;
 
 	Program(shared_ptr<VertexShader> vertex_shader,
-			    shared_ptr<FragmentShader> fragment_shader) :
-		      vertex_shader(vertex_shader),
-					fragment_shader(fragment_shader)
-	{
+	        shared_ptr<FragmentShader> fragment_shader) :
+	        vertex_shader(vertex_shader),
+	        fragment_shader(fragment_shader) {
 		id = glCreateProgram();
 		glAttachShader(id, vertex_shader->id);
 		glAttachShader(id, fragment_shader->id);
@@ -40,7 +41,7 @@ public:
 		if (len > 1) {
 			auto log = new char[len];
 			glGetProgramInfoLog(id, len, &len, log);
-			std::cerr << log;
+			printf("program info log: %s\n", log);
 			delete[] log;
 		}
 	}
@@ -63,3 +64,5 @@ public:
 };
 
 }
+
+#endif

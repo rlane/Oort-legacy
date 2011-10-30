@@ -1,14 +1,16 @@
-#include <iostream>
+// Copyright 2011 Rich Lane
+#include <stdio.h>
 #include "sim/ship.h"
 #include "sim/physics.h"
 
-using namespace std;
-using namespace Oort;
+namespace Oort {
 
 Ship::Ship() {
-	cout << "created ship" << endl;
+	printf("created ship\n");
 }
 
 Ship::~Ship() {
-	cout << "destroyed ship" << endl;
+	printf("destroyed ship\n");
+}
+
 }

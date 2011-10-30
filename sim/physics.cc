@@ -1,16 +1,14 @@
+// Copyright 2011 Rich Lane
 #include <sim/physics.h>
 
-#include <iostream>
-
-
-using namespace std;
+#include <stdio.h>
 
 Oort::Physics::Physics() {
-	cout << "constructing physics" << endl;
+	printf("constructing physics\n");
 }
 
 Oort::Physics::~Physics() {
-	cout << "destroying physics" << endl;
+	printf("destroying physics\n");
 }
 
 void Oort::Physics::tick(double tick_length) {

@@ -1,17 +1,19 @@
-#include <iostream>
-#include <fstream>
-#include <memory>
-#include <vector>
-#include <string>
-#include <boost/foreach.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/string_cast.hpp>
+// Copyright 2011 Rich Lane
+#include <stdio.h>
 #include <GL/glew.h>
 #include <SDL.h>
 #define NO_SDL_GLEXT
 #include <SDL_opengl.h>
+#include <boost/foreach.hpp>
+#include <fstream>
+#include <memory>
+#include <vector>
+#include <string>
+
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 #include "sim/ship.h"
 #include "sim/game.h"
@@ -27,11 +29,10 @@ using std::shared_ptr;
 
 static bool running = true;
 
-static void handle_sdl_event(SDL_Event &event)
-{
-	switch(event.type){
+static void handle_sdl_event(const SDL_Event &event) {
+	switch(event.type) {
 		case SDL_KEYDOWN:
-			switch(event.key.keysym.sym) {
+			switch (event.key.keysym.sym) {
 				case SDLK_ESCAPE:
 					running = false;
 					break;
@@ -47,8 +48,7 @@ static void handle_sdl_event(SDL_Event &event)
 	}
 }
 
-static std::string read_file(std::string filename)
-{
+static std::string read_file(std::string filename) {
 	typedef std::istream_iterator<char> istream_iterator;
 	typedef std::ostream_iterator<char> ostream_iterator;
 	std::ifstream file;
@@ -56,17 +56,17 @@ static std::string read_file(std::string filename)
 	file.open(filename, std::ios::in|std::ios::binary|std::ios::ate);
 	file >> std::noskipws;
 	auto size = file.tellg();
-	std::cout << "reading " << filename << " size " << size << std::endl;
+	printf("reading %s size %d\n", filename.c_str(), static_cast<int>(size));
 	std::string data;
 	data.reserve(size);
 	file.seekg(0, std::ios::beg);
-	std::copy(istream_iterator(file), istream_iterator(), std::back_inserter(data));
+	std::copy(istream_iterator(file), istream_iterator(),
+			      std::back_inserter(data));
 	file.close();
 	return data;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
 		return 1;
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	SDL_Surface *screen = SDL_SetVideoMode(1600, 900, 16, SDL_OPENGL | SDL_FULLSCREEN);
+	SDL_SetVideoMode(1600, 900, 16, SDL_OPENGL | SDL_FULLSCREEN);
 	glViewport(0, 0, 1600, 900);
 
 	GLenum err = glewInit();
@@ -83,24 +83,24 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	GL::Program prog(make_shared<GL::VertexShader>(read_file("shaders/ship.v.glsl")),
-			             make_shared<GL::FragmentShader>(read_file("shaders/ship.f.glsl")));
+	GL::Program prog(
+		make_shared<GL::VertexShader>(read_file("shaders/ship.v.glsl")),
+		make_shared<GL::FragmentShader>(read_file("shaders/ship.f.glsl")));
 
-	dvec2 b(2.0f,3.0f);
+	dvec2 b(2.0f, 3.0f);
 	auto ship = make_shared<Oort::Ship>();
 	ship->physics.v = dvec2(2.0, 3.0);
 	ship->physics.tick(1.0/32);
-	std::cout << "position:" << glm::to_string(ship->physics.p) << std::endl;
 	auto game = make_shared<Oort::Game>();
 	game->ships.push_back(make_shared<Oort::Ship>());
 
 	SDL_Event event;
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	glm::mat4 p_matrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f);
-	
+
 	while (running) {
 		while(SDL_PollEvent(&event)) {
 			handle_sdl_event(event);
@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 
 		GL::check();
 
-		glClear( GL_COLOR_BUFFER_BIT );
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		prog.use();
 		GL::check();
@@ -116,7 +116,6 @@ int main(int argc, char **argv)
 		BOOST_FOREACH(auto ship, game->ships) {
 			ship->physics.v = dvec2(1.0, 1.0);
 			ship->physics.tick(1.0/32);
-			//std::cout << "position:" << glm::to_string(ship->physics.p) << std::endl;
 
 			glm::mat4 mv_matrix;
 			glm::vec4 color(1.0f, 1.0f, 1.0f, 1.0f);

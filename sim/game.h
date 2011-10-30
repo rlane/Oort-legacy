@@ -1,3 +1,5 @@
+// Copyright 2011 Rich Lane
+
 #ifndef OORT_SIM_GAME_H_
 #define OORT_SIM_GAME_H_
 
@@ -9,11 +11,11 @@ namespace Oort {
 
 class Game {
 	public:
-		Game();
-		~Game();
-	
-		std::list<std::shared_ptr<Ship>> ships;
 
+	Game();
+	~Game();
+
+	std::list<std::shared_ptr<Ship>> ships;
 };
 
 }

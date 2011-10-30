@@ -1,14 +1,19 @@
-#pragma once
+// Copyright 2011 Rich Lane
+#ifndef OORT_GL_CHECK_H_
+#define OORT_GL_CHECK_H_
+
+#include <stdio.h>
 
 namespace GL {
 
-void check()
-{
+void check() {
 	auto err = glGetError();
 	if (err != GL_NO_ERROR) {
-		std::cerr << "GL error: " << glewGetErrorString(err) << std::endl;
+		printf("GL error: %s\n", glewGetErrorString(err));
 		throw new std::exception();
 	}
 }
 
 }
+
+#endif

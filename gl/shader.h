@@ -1,4 +1,8 @@
-#pragma once
+// Copyright 2011 Rich Lane
+#ifndef OORT_GL_SHADER_H_
+#define OORT_GL_SHADER_H_
+
+#include <string>
 
 namespace GL {
 
@@ -10,10 +14,9 @@ public:
 
 	GLuint id;
 
-	Shader(GLenum type, std::string code)
-	{
+	Shader(GLenum type, std::string code) {
 		id = glCreateShader(type);
-		const GLchar *sources[1] = { (GLchar*) code.data() };
+		const GLchar *sources[1] = { reinterpret_cast<const GLchar*>(code.data()) };
 		GLint source_lens[1] = { (GLint) code.size() };
 		glShaderSource(id, 1, sources, source_lens);
 		glCompileShader(id);
@@ -37,13 +40,12 @@ public:
 		if (len > 1) {
 			auto log = new char[len];
 			glGetShaderInfoLog(id, len, &len, log);
-			std::cerr << "shader info log: " << log;
+			printf("shader info log: %s\n", log);
 			delete[] log;
 		}
 	}
 
-	~Shader()
-	{
+	~Shader() {
 		if (id != 0) {
 			glDeleteShader(id);
 		}
@@ -55,14 +57,16 @@ public:
 
 class FragmentShader : public Shader {
 public:
-	FragmentShader(std::string filename) :
+	explicit FragmentShader(std::string filename) :
 		Shader(GL_FRAGMENT_SHADER, filename) {}
 };
 
 class VertexShader : public Shader {
 public:
-	VertexShader(std::string filename) :
+	explicit VertexShader(std::string filename) :
 		Shader(GL_VERTEX_SHADER, filename) {}
 };
 
 }
+
+#endif
