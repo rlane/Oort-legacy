@@ -33,10 +33,7 @@ Renderer::Renderer(shared_ptr<Game> game)
 	                               vec2(-0.7, 0.71),
 	                               vec2(1, 0) };
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_buf.id);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(vec2), &vertices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+	vertex_buf.data(vertices);
 }
 
 void Renderer::render() {
@@ -64,10 +61,10 @@ void Renderer::render() {
 
 		prog->uniform("mv_matrix", mv_matrix);
 		prog->uniform("color", color);
-		glBindBuffer(GL_ARRAY_BUFFER, vertex_buf.id);
+		vertex_buf.bind();
 		glVertexAttribPointer(prog->attrib_location("vertex"),
 		                      2, GL_FLOAT, GL_FALSE, 0, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		vertex_buf.unbind();
 		GL::check();
 
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
