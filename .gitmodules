@@ -1,0 +1,6 @@
+[submodule "third_party/json-spirit"]
+	path = third_party/json-spirit
+	url = git://gitorious.org/json-spirit/json-spirit.git
+[submodule "third_party/glm"]
+	path = third_party/glm
+	url = git://ogl-math.git.sourceforge.net/gitroot/ogl-math/ogl-math
