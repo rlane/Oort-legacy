@@ -17,3 +17,7 @@ install-sh
 ltmain.sh
 missing
 stamp-h1
+
+core
+*.trace
+vgcore*
