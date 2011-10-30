@@ -5,5 +5,4 @@ attribute vec2 vertex;
 void main()
 {
 	gl_Position = p_matrix * mv_matrix * vec4(vertex, 0.0, 1.0);
-	gl_PointSize = 10.0;
 }

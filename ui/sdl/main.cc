@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 	boost::random::normal_distribution<> v_dist(0.0, 5.0);
 	boost::random::normal_distribution<> a_dist(0.0, 10.0);
 
-	for (auto i = 0; i < 10000; i++) {
+	for (auto i = 0; i < 100; i++) {
 		auto ship = make_shared<Ship>();
 		ship->physics.p = dvec2(p_dist(prng), p_dist(prng));
 		ship->physics.v = dvec2(v_dist(prng), v_dist(prng));
