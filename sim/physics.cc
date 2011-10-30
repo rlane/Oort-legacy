@@ -1,14 +1,13 @@
 // Copyright 2011 Rich Lane
-#include <sim/physics.h>
-
-#include <stdio.h>
+#include "sim/physics.h"
+#include "common/log.h"
 
 Oort::Physics::Physics() {
-	printf("constructing physics\n");
+	log("constructing physics\n");
 }
 
 Oort::Physics::~Physics() {
-	printf("destroying physics\n");
+	log("destroying physics\n");
 }
 
 void Oort::Physics::tick(double tick_length) {

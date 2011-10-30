@@ -9,7 +9,7 @@ namespace GL {
 void check() {
 	auto err = glGetError();
 	if (err != GL_NO_ERROR) {
-		printf("GL error: %s\n", glewGetErrorString(err));
+		fprintf(stderr, "GL error: %s\n", glewGetErrorString(err));
 		throw new std::exception();
 	}
 }

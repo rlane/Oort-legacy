@@ -5,7 +5,6 @@
 #define NO_SDL_GLEXT
 #include <SDL_opengl.h>
 #include <boost/foreach.hpp>
-#include <fstream>
 #include <memory>
 #include <vector>
 #include <string>
@@ -15,17 +14,21 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/string_cast.hpp"
 
-#include "sim/ship.h"
-#include "sim/game.h"
-
 #include "gl/check.h"
 #include "gl/shader.h"
 #include "gl/program.h"
+
+#include "common/log.h"
+#include "common/resources.h"
+#include "sim/ship.h"
+#include "sim/game.h"
 
 using glm::vec2;
 using glm::dvec2;
 using std::make_shared;
 using std::shared_ptr;
+
+namespace Oort {
 
 static bool running = true;
 
@@ -48,24 +51,6 @@ static void handle_sdl_event(const SDL_Event &event) {
 	}
 }
 
-static std::string read_file(std::string filename) {
-	typedef std::istream_iterator<char> istream_iterator;
-	typedef std::ostream_iterator<char> ostream_iterator;
-	std::ifstream file;
-	file.exceptions(std::ifstream::badbit);
-	file.open(filename, std::ios::in|std::ios::binary|std::ios::ate);
-	file >> std::noskipws;
-	auto size = file.tellg();
-	printf("reading %s size %d\n", filename.c_str(), static_cast<int>(size));
-	std::string data;
-	data.reserve(size);
-	file.seekg(0, std::ios::beg);
-	std::copy(istream_iterator(file), istream_iterator(),
-			      std::back_inserter(data));
-	file.close();
-	return data;
-}
-
 int main(int argc, char **argv) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
@@ -84,15 +69,15 @@ int main(int argc, char **argv) {
 	}
 
 	GL::Program prog(
-		make_shared<GL::VertexShader>(read_file("shaders/ship.v.glsl")),
-		make_shared<GL::FragmentShader>(read_file("shaders/ship.f.glsl")));
+		make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
+		make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl")));
 
 	dvec2 b(2.0f, 3.0f);
-	auto ship = make_shared<Oort::Ship>();
+	auto ship = make_shared<Ship>();
 	ship->physics.v = dvec2(2.0, 3.0);
 	ship->physics.tick(1.0/32);
-	auto game = make_shared<Oort::Game>();
-	game->ships.push_back(make_shared<Oort::Ship>());
+	auto game = make_shared<Game>();
+	game->ships.push_back(make_shared<Ship>());
 
 	SDL_Event event;
 
@@ -143,4 +128,10 @@ int main(int argc, char **argv) {
 	}
 
 	return 0;
+}
+
+}
+
+int main(int argc, char **argv) {
+	return Oort::main(argc, argv);
 }

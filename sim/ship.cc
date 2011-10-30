@@ -1,16 +1,16 @@
 // Copyright 2011 Rich Lane
-#include <stdio.h>
 #include "sim/ship.h"
 #include "sim/physics.h"
+#include "common/log.h"
 
 namespace Oort {
 
 Ship::Ship() {
-	printf("created ship\n");
+	log("created ship\n");
 }
 
 Ship::~Ship() {
-	printf("destroyed ship\n");
+	log("destroyed ship\n");
 }
 
 }

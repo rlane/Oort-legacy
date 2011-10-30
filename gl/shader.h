@@ -2,6 +2,7 @@
 #ifndef OORT_GL_SHADER_H_
 #define OORT_GL_SHADER_H_
 
+#include <stdio.h>
 #include <string>
 
 namespace GL {
@@ -40,7 +41,7 @@ public:
 		if (len > 1) {
 			auto log = new char[len];
 			glGetShaderInfoLog(id, len, &len, log);
-			printf("shader info log: %s\n", log);
+			fprintf(stderr, "shader info log: %s\n", log);
 			delete[] log;
 		}
 	}
