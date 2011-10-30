@@ -3,7 +3,10 @@
 #define OORT_GL_SHADER_H_
 
 #include <stdio.h>
+#include <GL/glew.h>
 #include <string>
+#include <memory>
+#include "gl/check.h"
 
 namespace GL {
 

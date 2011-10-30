@@ -6,7 +6,7 @@
 
 namespace GL {
 
-void check() {
+inline void check() {
 	auto err = glGetError();
 	if (err != GL_NO_ERROR) {
 		fprintf(stderr, "GL error: %s\n", glewGetErrorString(err));

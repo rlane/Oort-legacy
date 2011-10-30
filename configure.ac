@@ -36,6 +36,7 @@ AC_SUBST(GLEW_LIBS)
 AC_CONFIG_FILES([
 	Makefile
 	sim/Makefile
+	renderer/Makefile
 	ui/headless/Makefile
 	ui/sdl/Makefile
 ])

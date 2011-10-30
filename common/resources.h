@@ -2,9 +2,13 @@
 #ifndef OORT_COMMON_RESOURCES_H_
 #define OORT_COMMON_RESOURCES_H_
 
+#include <iostream>
 #include <fstream>
+#include <iterator>
 #include <string>
 #include <algorithm>
+
+#include "common/log.h"
 
 namespace Oort {
 
