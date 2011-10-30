@@ -65,6 +65,14 @@ public:
 		glUseProgram(0);
 		GL::check();
 	}
+
+	int uniform_location(std::string name) {
+		return glGetUniformLocation(id, name.c_str());
+	}
+
+	int attrib_location(std::string name) {
+		return glGetAttribLocation(id, name.c_str());
+	}
 };
 
 }

@@ -40,19 +40,20 @@ void Renderer::render() {
 
 	glm::mat4 p_matrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f);
 
+	int mv_matrix_loc = prog->uniform_location("mv_matrix");
+	int p_matrix_loc = prog->uniform_location("p_matrix");
+	int color_loc = prog->uniform_location("color");
+	int vertex_loc = prog->attrib_location("vertex");
+
+	glUniformMatrix4fv(p_matrix_loc, 1, false, glm::value_ptr(p_matrix));
+
 	BOOST_FOREACH(auto ship, game->ships) {
 		glm::mat4 mv_matrix;
 		glm::vec4 color(1.0f, 1.0f, 1.0f, 1.0f);
 		vec2 vertex(ship->physics.p);
-
-		int mv_matrix_loc = glGetUniformLocation(prog->id, "mv_matrix");
-		int p_matrix_loc = glGetUniformLocation(prog->id, "p_matrix");
-		int color_loc = glGetUniformLocation(prog->id, "color");
-		int vertex_loc = glGetAttribLocation(prog->id, "vertex");
 		GL::check();
 
 		glUniformMatrix4fv(mv_matrix_loc, 1, false, glm::value_ptr(mv_matrix));
-		glUniformMatrix4fv(p_matrix_loc, 1, false, glm::value_ptr(p_matrix));
 		glUniform4fv(color_loc, 1, glm::value_ptr(color));
 		glVertexAttrib2f(vertex_loc, vertex.x, vertex.y);
 		glDrawArrays(GL_POINTS, 0, 1);
