@@ -7,8 +7,6 @@
 #define NO_SDL_GLEXT
 #include <SDL_opengl.h>
 #include <boost/foreach.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
 #include <boost/timer.hpp>
 #include <memory>
 #include <vector>
@@ -24,6 +22,7 @@
 #include "common/resources.h"
 #include "sim/ship.h"
 #include "sim/game.h"
+#include "sim/scenario.h"
 #include "renderer/renderer.h"
 
 using glm::vec2;
@@ -91,23 +90,8 @@ int main(int argc, char **argv) {
 	glViewport(0, 0, 1600, 900);
 
 	auto game = make_shared<Game>();
-	boost::random::mt19937 prng(42);
-	boost::random::normal_distribution<> p_dist(0.0, 1.0);
-	boost::random::normal_distribution<> v_dist(0.0, 5.0);
-
-	std::vector<shared_ptr<Team>> teams = {
-		make_shared<Team>("red", glm::vec3(1, 0, 0)),
-		make_shared<Team>("green", glm::vec3(0, 1, 0)),
-		make_shared<Team>("blue", glm::vec3(0, 0, 1)),
-	};
-
-	for (auto i = 0; i < 100; i++) {
-		auto ship = make_shared<Ship>(teams[i%teams.size()]);
-		ship->physics.p = dvec2(p_dist(prng), p_dist(prng));
-		ship->physics.v = dvec2(v_dist(prng), v_dist(prng));
-		ship->physics.h = 0.0;
-		game->ships.push_back(ship);
-	}
+	Scenario scn;
+	scn.setup(*game);
 
 	SDL_Event event;
 
