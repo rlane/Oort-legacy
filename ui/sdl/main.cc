@@ -93,8 +93,14 @@ int main(int argc, char **argv) {
 	boost::random::normal_distribution<> v_dist(0.0, 5.0);
 	boost::random::normal_distribution<> a_dist(0.0, 10.0);
 
+	std::vector<shared_ptr<Team>> teams = {
+		make_shared<Team>("red", glm::vec3(1, 0, 0)),
+		make_shared<Team>("green", glm::vec3(0, 1, 0)),
+		make_shared<Team>("blue", glm::vec3(0, 0, 1)),
+	};
+
 	for (auto i = 0; i < 100; i++) {
-		auto ship = make_shared<Ship>();
+		auto ship = make_shared<Ship>(teams[i%teams.size()]);
 		ship->physics.p = dvec2(p_dist(prng), p_dist(prng));
 		ship->physics.v = dvec2(v_dist(prng), v_dist(prng));
 		ship->physics.h = 0.0;

@@ -5,7 +5,8 @@
 
 namespace Oort {
 
-Ship::Ship() {
+Ship::Ship(std::shared_ptr<Team> team)
+	: team(team)	{
 	//log("created ship\n");
 }
 

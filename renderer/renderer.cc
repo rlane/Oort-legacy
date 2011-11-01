@@ -66,7 +66,7 @@ void Renderer::render() {
 		glm::mat4 mv_matrix;
 		mv_matrix = glm::translate(mv_matrix, glm::vec3(ship->physics.p, 0));
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(float(ship->physics.h)), glm::vec3(0, 0, 1));
-		glm::vec4 color(1.0f, 1.0f, 1.0f, 0.3f);
+		glm::vec4 color(ship->team->color, 0.7f);
 		GL::check();
 
 		prog->uniform("mv_matrix", mv_matrix);

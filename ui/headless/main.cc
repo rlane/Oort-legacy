@@ -7,6 +7,7 @@
 
 #include "common/log.h"
 #include "sim/ship.h"
+#include "sim/team.h"
 #include "sim/game.h"
 
 using glm::vec2;
@@ -17,12 +18,13 @@ namespace Oort {
 
 int main(int argc, char **argv) {
 	dvec2 b(2.0f, 3.0f);
-	auto ship = make_shared<Oort::Ship>();
+	auto red_team = make_shared<Team>("red", glm::vec3(1, 0, 0));
+	auto ship = make_shared<Oort::Ship>(red_team);
 	ship->physics.v = dvec2(2.0, 3.0);
 	ship->physics.tick(1.0/32);
 	log("position: %s\n", glm::to_string(ship->physics.p).c_str());
 	auto game = make_shared<Oort::Game>();
-	game->ships.push_back(make_shared<Oort::Ship>());
+	game->ships.push_back(make_shared<Oort::Ship>(red_team));
 	BOOST_FOREACH(auto ship, game->ships) {
 		ship->physics.v = dvec2(1.0, 1.0);
 		ship->physics.tick(1.0/32);
