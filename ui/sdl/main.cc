@@ -6,7 +6,6 @@
 #include <SDL.h>
 #define NO_SDL_GLEXT
 #include <SDL_opengl.h>
-#include <boost/foreach.hpp>
 #include <boost/timer.hpp>
 #include <memory>
 #include <vector>
@@ -106,10 +105,7 @@ int main(int argc, char **argv) {
 		}
 
 		if (!paused) {
-			BOOST_FOREACH(auto ship, game->ships) {
-				ship->tick();
-				ship->physics.tick(1.0/32);
-			}
+			game->tick();
 		}
 
 		renderer.render();

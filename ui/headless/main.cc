@@ -21,10 +21,7 @@ int main(int argc, char **argv) {
 	auto game = make_shared<Oort::Game>();
 	Scenario scn;
 	scn.setup(*game);
-	BOOST_FOREACH(auto ship, game->ships) {
-		ship->tick();
-		ship->physics.tick(1.0/32);
-	}
+	game->tick();
 	return 0;
 }
 
