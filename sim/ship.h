@@ -16,6 +16,8 @@ class Ship {
 	Ship(std::shared_ptr<Team> team);
 	~Ship();
 
+	void tick();
+
 	Ship(const Ship&) = delete;
 	Ship& operator=(const Ship&) = delete;
 };

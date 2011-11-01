@@ -8,7 +8,6 @@
 #include <SDL_opengl.h>
 #include <boost/foreach.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/timer.hpp>
 #include <memory>
@@ -91,7 +90,6 @@ int main(int argc, char **argv) {
 	boost::random::mt19937 prng(42);
 	boost::random::normal_distribution<> p_dist(0.0, 1.0);
 	boost::random::normal_distribution<> v_dist(0.0, 5.0);
-	boost::random::normal_distribution<> a_dist(0.0, 10.0);
 
 	std::vector<shared_ptr<Team>> teams = {
 		make_shared<Team>("red", glm::vec3(1, 0, 0)),
@@ -120,9 +118,7 @@ int main(int argc, char **argv) {
 		}
 
 		BOOST_FOREACH(auto ship, game->ships) {
-			ship->physics.a = dvec2(a_dist(prng), a_dist(prng));
-			auto norm_v = glm::normalize(vec2(ship->physics.v.x, -ship->physics.v.y));
-			ship->physics.h = glm::radians(glm::orientedAngle(norm_v, vec2(1, 0)));
+			ship->tick();
 			ship->physics.tick(1.0/32);
 		}
 
