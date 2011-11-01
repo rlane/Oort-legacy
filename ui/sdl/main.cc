@@ -19,6 +19,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/string_cast.hpp"
+#include "glm/gtx/vector_angle.hpp"
 
 #include "common/log.h"
 #include "common/resources.h"
@@ -96,6 +97,7 @@ int main(int argc, char **argv) {
 		auto ship = make_shared<Ship>();
 		ship->physics.p = dvec2(p_dist(prng), p_dist(prng));
 		ship->physics.v = dvec2(v_dist(prng), v_dist(prng));
+		ship->physics.h = 0.0;
 		game->ships.push_back(ship);
 	}
 
@@ -113,6 +115,8 @@ int main(int argc, char **argv) {
 
 		BOOST_FOREACH(auto ship, game->ships) {
 			ship->physics.a = dvec2(a_dist(prng), a_dist(prng));
+			auto norm_v = glm::normalize(vec2(ship->physics.v.x, -ship->physics.v.y));
+			ship->physics.h = glm::radians(glm::orientedAngle(norm_v, vec2(1, 0)));
 			ship->physics.tick(1.0/32);
 		}
 

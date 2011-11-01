@@ -14,4 +14,6 @@ void Oort::Physics::tick(double tick_length) {
 	// TODO(rlane): use midpoint approximation
 	p += v * tick_length;
 	v += a * tick_length;
+	h += w * tick_length;
+	w += wa * tick_length;
 }
