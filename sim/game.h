@@ -16,6 +16,7 @@ class Game {
 	~Game();
 
 	void tick();
+	std::shared_ptr<Team> check_victory();
 
 	std::list<std::shared_ptr<Ship>> ships;
 };

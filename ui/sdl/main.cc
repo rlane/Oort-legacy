@@ -106,6 +106,11 @@ int main(int argc, char **argv) {
 
 		if (!paused) {
 			game->tick();
+			auto winner = game->check_victory();
+			if (winner != nullptr) {
+				printf("Team %s is victorious\n", winner->name.c_str());
+				break;
+			}
 		}
 
 		renderer.render();

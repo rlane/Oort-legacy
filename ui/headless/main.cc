@@ -21,7 +21,16 @@ int main(int argc, char **argv) {
 	auto game = make_shared<Oort::Game>();
 	Scenario scn;
 	scn.setup(*game);
-	game->tick();
+
+	while (true) {
+		game->tick();
+		auto winner = game->check_victory();
+		if (winner != nullptr) {
+			printf("Team %s is victorious\n", winner->name.c_str());
+			break;
+		}
+	}
+
 	return 0;
 }
 
