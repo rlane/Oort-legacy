@@ -43,6 +43,7 @@ uint64_t ClockGetTime()
 namespace Oort {
 
 static bool running = true;
+static bool paused = false;
 
 static void handle_sdl_event(const SDL_Event &event) {
 	switch(event.type) {
@@ -50,6 +51,9 @@ static void handle_sdl_event(const SDL_Event &event) {
 			switch (event.key.keysym.sym) {
 				case SDLK_ESCAPE:
 					running = false;
+					break;
+				case SDLK_SPACE:
+					paused = !paused;
 					break;
 				default:
 					break;
@@ -117,9 +121,11 @@ int main(int argc, char **argv) {
 			handle_sdl_event(event);
 		}
 
-		BOOST_FOREACH(auto ship, game->ships) {
-			ship->tick();
-			ship->physics.tick(1.0/32);
+		if (!paused) {
+			BOOST_FOREACH(auto ship, game->ships) {
+				ship->tick();
+				ship->physics.tick(1.0/32);
+			}
 		}
 
 		renderer.render();
