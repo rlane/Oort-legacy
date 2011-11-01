@@ -1,5 +1,4 @@
 .deps
 Makefile
-Makefile.am
 Makefile.in
 oort_headless
