@@ -89,8 +89,9 @@ int main(int argc, char **argv) {
 	glViewport(0, 0, 1600, 900);
 
 	auto game = make_shared<Game>();
+	auto ai = make_shared<AI>("foo.lua", "");
 	Scenario scn;
-	scn.setup(*game);
+	scn.setup(*game, { ai, ai, ai });
 
 	SDL_Event event;
 

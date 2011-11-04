@@ -2,6 +2,7 @@
 #ifndef OORT_SIM_SCENARIO_H_
 #define OORT_SIM_SCENARIO_H_
 
+#include <vector>
 #include "sim/game.h"
 
 namespace Oort {
@@ -11,7 +12,7 @@ public:
 
   Scenario();
 
-	void setup(Game &game);
+	void setup(Game &game, std::vector<std::shared_ptr<AI>> ais);
 };
 
 }

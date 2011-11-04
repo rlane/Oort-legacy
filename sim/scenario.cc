@@ -13,15 +13,15 @@ namespace Oort {
 Scenario::Scenario() {
 }
 
-void Scenario::setup(Game &game) {
+void Scenario::setup(Game &game, std::vector<std::shared_ptr<AI>> ais) {
 	boost::random::mt19937 prng(42);
 	boost::random::normal_distribution<> p_dist(0.0, 1.0);
 	boost::random::normal_distribution<> v_dist(0.0, 5.0);
 
 	std::vector<std::shared_ptr<Team>> teams = {
-		std::make_shared<Team>("red", glm::vec3(1, 0, 0)),
-		std::make_shared<Team>("green", glm::vec3(0, 1, 0)),
-		std::make_shared<Team>("blue", glm::vec3(0, 0, 1)),
+		std::make_shared<Team>("red", ais[0], glm::vec3(1, 0, 0)),
+		std::make_shared<Team>("green", ais[1], glm::vec3(0, 1, 0)),
+		std::make_shared<Team>("blue", ais[2], glm::vec3(0, 0, 1)),
 	};
 
 	for (auto i = 0; i < 100; i++) {

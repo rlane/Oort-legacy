@@ -10,6 +10,7 @@
 #include "sim/team.h"
 #include "sim/game.h"
 #include "sim/scenario.h"
+#include "sim/ai.h"
 
 using glm::vec2;
 using glm::dvec2;
@@ -18,9 +19,10 @@ using std::make_shared;
 namespace Oort {
 
 int main(int argc, char **argv) {
+	auto ai = make_shared<AI>("foo.lua", "");
 	auto game = make_shared<Oort::Game>();
 	Scenario scn;
-	scn.setup(*game);
+	scn.setup(*game, { ai, ai, ai });
 
 	while (true) {
 		game->tick();
