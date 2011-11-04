@@ -2,6 +2,7 @@ NULL =
 
 AM_CXXFLAGS = \
 	-include $(CONFIG_HEADER) \
+	-I $(top_srcdir) \
 	$(GLM_CFLAGS) \
 	$(GLEW_CFLAGS)
 	$(NULL)

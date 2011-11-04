@@ -3,10 +3,13 @@ NULL =
 AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = \
+	common \
 	sim \
 	renderer \
+	gl \
 	ui/headless \
 	ui/sdl \
+	third_party \
 	$(NULL)
 
 lint:
