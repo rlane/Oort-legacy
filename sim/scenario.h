@@ -3,16 +3,31 @@
 #define OORT_SIM_SCENARIO_H_
 
 #include <vector>
+#include <memory>
+#include <boost/optional.hpp>
+#include "glm/glm.hpp"
 #include "sim/game.h"
 
 namespace Oort {
 
+struct ScnShip {
+	std::string klass;
+	glm::dvec2 p, v;
+	double h;
+};
+
+struct ScnTeam {
+	std::string name;
+	glm::vec3 color;
+	boost::optional<std::string> code;
+	std::vector<ScnShip> ships;
+};
+
 class Scenario {
 public:
+	std::vector<ScnTeam> teams;
 
   Scenario();
-
-	void setup(Game &game, std::vector<std::shared_ptr<AI>> ais);
 };
 
 }

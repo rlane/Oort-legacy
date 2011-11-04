@@ -11,25 +11,23 @@
 namespace Oort {
 
 Scenario::Scenario() {
-}
-
-void Scenario::setup(Game &game, std::vector<std::shared_ptr<AI>> ais) {
 	boost::random::mt19937 prng(42);
 	boost::random::normal_distribution<> p_dist(0.0, 1.0);
 	boost::random::normal_distribution<> v_dist(0.0, 5.0);
 
-	std::vector<std::shared_ptr<Team>> teams = {
-		std::make_shared<Team>("red", ais[0], glm::vec3(1, 0, 0)),
-		std::make_shared<Team>("green", ais[1], glm::vec3(0, 1, 0)),
-		std::make_shared<Team>("blue", ais[2], glm::vec3(0, 0, 1)),
+	teams = {
+		{ "red", glm::vec3(1, 0, 0), nullptr, {} },
+		{ "green", glm::vec3(0, 1, 0), nullptr, {} },
+		{ "blue", glm::vec3(0, 0, 1), nullptr, {} },
 	};
 
 	for (auto i = 0; i < 100; i++) {
-		auto ship = std::make_shared<Ship>(teams[i%teams.size()]);
-		ship->physics.p = glm::dvec2(p_dist(prng), p_dist(prng));
-		ship->physics.v = glm::dvec2(v_dist(prng), v_dist(prng));
-		ship->physics.h = 0.0;
-		game.ships.push_back(ship);
+		ScnShip ship;
+		ship.klass = "fighter";
+		ship.p = glm::dvec2(p_dist(prng), p_dist(prng));
+		ship.v = glm::dvec2(v_dist(prng), v_dist(prng));
+		ship.h = 0.0;
+		teams[i % teams.size()].ships.push_back(ship);
 	}
 }
 

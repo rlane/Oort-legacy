@@ -20,9 +20,9 @@ namespace Oort {
 
 int main(int argc, char **argv) {
 	auto ai = make_shared<AI>("foo.lua", "");
-	auto game = make_shared<Oort::Game>();
 	Scenario scn;
-	scn.setup(*game, { ai, ai, ai });
+	std::vector<std::shared_ptr<AI>> ais{ ai, ai, ai };
+	auto game = make_shared<Oort::Game>(scn, ais);
 
 	while (true) {
 		game->tick();

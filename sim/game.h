@@ -5,14 +5,18 @@
 
 #include <list>
 #include <memory>
+#include <vector>
 #include "sim/ship.h"
 
 namespace Oort {
 
+class Scenario;
+class AI;
+
 class Game {
 	public:
 
-	Game();
+	Game(Scenario &scn, std::vector<std::shared_ptr<AI>> &ais);
 	~Game();
 
 	void tick();

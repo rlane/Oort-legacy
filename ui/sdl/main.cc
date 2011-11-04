@@ -88,10 +88,10 @@ int main(int argc, char **argv) {
 
 	glViewport(0, 0, 1600, 900);
 
-	auto game = make_shared<Game>();
 	auto ai = make_shared<AI>("foo.lua", "");
 	Scenario scn;
-	scn.setup(*game, { ai, ai, ai });
+	std::vector<std::shared_ptr<AI>> ais{ ai, ai, ai };
+	auto game = make_shared<Oort::Game>(scn, ais);
 
 	SDL_Event event;
 

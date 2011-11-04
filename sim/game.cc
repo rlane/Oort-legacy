@@ -2,18 +2,36 @@
 #include "sim/game.h"
 
 #include <memory>
+#include <vector>
 #include <unordered_set>
 #include <boost/foreach.hpp>
 
 #include "glm/glm.hpp"
 
 #include "sim/ship.h"
+#include "sim/scenario.h"
+#include "sim/ai.h"
 
 using std::shared_ptr;
+using std::vector;
+using std::make_shared;
 
 namespace Oort {
 
-Game::Game() {
+Game::Game(Scenario &scn, vector<shared_ptr<AI>> &ais) {
+	int player_ai_index = 0;
+
+	for (auto scn_team : scn.teams) {
+		auto ai = ais[player_ai_index++];
+		auto team = make_shared<Team>(scn_team.name, ai, scn_team.color);
+		for (auto scn_ship : scn_team.ships) {
+			auto ship = make_shared<Ship>(team);
+			ship->physics.p = scn_ship.p;
+			ship->physics.v = scn_ship.v;
+			ship->physics.h = scn_ship.h;
+			ships.push_back(ship);
+		}
+	}
 }
 
 Game::~Game() {
