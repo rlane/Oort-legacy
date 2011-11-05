@@ -6,6 +6,8 @@ AM_CXXFLAGS = \
 	$(GLM_CFLAGS) \
 	$(NULL)
 
+LIBS=$(LUA_LIBS)
+
 bin_PROGRAMS = oort_headless
 oort_headless_SOURCES = main.cc
 oort_headless_LDADD = $(top_builddir)/sim/libsim.a

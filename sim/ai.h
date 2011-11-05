@@ -4,6 +4,8 @@
 
 #include <string>
 
+class lua_State;
+
 namespace Oort {
 
 struct AISourceCode {
@@ -21,6 +23,7 @@ public:
 
 private:
 	Ship *ship;
+	lua_State *G, *L;
 };
 
 }

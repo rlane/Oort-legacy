@@ -4,6 +4,7 @@ AM_CXXFLAGS = \
 	-include $(CONFIG_HEADER) \
 	-I $(top_srcdir) \
 	$(GLM_CFLAGS) \
+	$(LUA_CFLAGS) \
 	$(NULL)
 
 noinst_LIBRARIES = libsim.a
