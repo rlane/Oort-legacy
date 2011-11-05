@@ -11,12 +11,12 @@
 namespace Oort {
 
 class Scenario;
-class AI;
+class AISourceCode;
 
 class Game {
 	public:
 
-	Game(Scenario &scn, std::vector<std::shared_ptr<AI>> &ais);
+	Game(Scenario &scn, std::vector<AISourceCode> &ais);
 	~Game();
 
 	void tick();

@@ -18,7 +18,7 @@ using std::make_shared;
 
 namespace Oort {
 
-Game::Game(Scenario &scn, vector<shared_ptr<AI>> &ais) {
+Game::Game(Scenario &scn, vector<AISourceCode> &ais) {
 	int player_ai_index = 0;
 
 	for (auto scn_team : scn.teams) {

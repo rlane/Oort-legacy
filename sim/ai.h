@@ -6,13 +6,9 @@
 
 namespace Oort {
 
-class AI {
-public:
+struct AISourceCode {
 	std::string filename;
 	std::string code;
-
-	AI(std::string filename, std::string code)
-		: filename(filename), code(code) {}
 };
 
 }
