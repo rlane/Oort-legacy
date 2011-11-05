@@ -12,6 +12,7 @@ class Ship {
 	public:
 	Physics physics;
 	std::shared_ptr<Team> team;
+	std::unique_ptr<AI> ai;
 
 	Ship(std::shared_ptr<Team> team);
 	~Ship();

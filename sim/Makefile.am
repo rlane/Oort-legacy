@@ -13,6 +13,7 @@ libsim_a_SOURCES = \
 	physics.cc \
 	ship.cc \
 	scenario.cc \
+	ai.cc \
 	$(NULL)
 
 noinst_HEADERS = game.h physics.h ship.h team.h ai.h scenario.h

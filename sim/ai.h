@@ -11,6 +11,18 @@ struct AISourceCode {
 	std::string code;
 };
 
+class Ship;
+
+class AI {
+public:
+	AI(Ship *ship, AISourceCode &src);
+	~AI();
+	void tick();
+
+private:
+	Ship *ship;
+};
+
 }
 
 #endif
