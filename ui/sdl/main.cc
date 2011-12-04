@@ -42,6 +42,7 @@ namespace Oort {
 
 static bool running = true;
 static bool paused = false;
+static bool single_step = false;
 
 static void handle_sdl_event(const SDL_Event &event) {
 	switch(event.type) {
@@ -53,6 +54,9 @@ static void handle_sdl_event(const SDL_Event &event) {
 				case SDLK_SPACE:
 					paused = !paused;
 					break;
+				case SDLK_RETURN:
+					paused = false;
+					single_step = true;
 				default:
 					break;
 			}
@@ -106,6 +110,11 @@ int main(int argc, char **argv) {
 		}
 
 		if (!paused) {
+			if (single_step) {
+				single_step = false;
+				paused = true;
+			}
+
 			game->tick();
 			auto winner = game->check_victory();
 			if (winner != nullptr) {
