@@ -8,7 +8,7 @@ AM_CXXFLAGS = \
 	$(GLEW_CFLAGS)
 	$(NULL)
 
-LIBS=$(SDL_LIBS) $(GLEW_LIBS) $(LUA_LIBS)
+LIBS=$(SDL_LIBS) $(GLEW_LIBS) $(LUA_LIBS) $(BOX2D_LIBS)
 
 bin_PROGRAMS = oort_sdl
 oort_sdl_SOURCES = main.cc

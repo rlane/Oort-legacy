@@ -3,18 +3,23 @@
 #define OORT_SIM_SHIP_H_
 
 #include <memory>
-#include "sim/physics.h"
-#include "sim/team.h"
+
+class b2Body;
 
 namespace Oort {
 
+class Game;
+class Team;
+class AI;
+
 class Ship {
 	public:
-	Physics physics;
+	Game *game;
 	std::shared_ptr<Team> team;
 	std::unique_ptr<AI> ai;
+	b2Body *body;
 
-	Ship(std::shared_ptr<Team> team);
+	Ship(Game *game, std::shared_ptr<Team> team);
 	~Ship();
 
 	void tick();

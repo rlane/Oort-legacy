@@ -22,6 +22,7 @@
 #include "sim/ship.h"
 #include "sim/game.h"
 #include "sim/scenario.h"
+#include "sim/team.h"
 #include "renderer/renderer.h"
 
 using glm::vec2;

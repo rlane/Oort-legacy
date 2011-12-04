@@ -6,7 +6,7 @@ AM_CXXFLAGS = \
 	$(GLM_CFLAGS) \
 	$(NULL)
 
-LIBS=$(LUA_LIBS)
+LIBS=$(LUA_LIBS) $(BOX2D_LIBS)
 
 bin_PROGRAMS = oort_headless
 oort_headless_SOURCES = main.cc

@@ -6,10 +6,13 @@
 #include <list>
 #include <memory>
 #include <vector>
-#include "sim/ship.h"
+
+class b2World;
 
 namespace Oort {
 
+class Ship;
+class Team;
 class Scenario;
 class AISourceCode;
 
@@ -22,6 +25,7 @@ class Game {
 	void tick();
 	std::shared_ptr<Team> check_victory();
 
+	std::unique_ptr<b2World> world;
 	std::list<std::shared_ptr<Ship>> ships;
 };
 

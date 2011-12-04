@@ -12,6 +12,7 @@ extern "C" {
 
 #include "glm/glm.hpp"
 #include "glm/gtx/vector_angle.hpp"
+#include <Box2D/Box2D.h>
 
 #include "sim/ship.h"
 #include "common/log.h"
@@ -35,9 +36,11 @@ AI::~AI() {
 }
 
 void AI::tick() {
-	ship->physics.a = dvec2(a_dist(prng), a_dist(prng));
-	auto norm_v = glm::normalize(dvec2(ship->physics.v.x, -ship->physics.v.y));
-	ship->physics.h = glm::radians(glm::orientedAngle(norm_v, dvec2(1, 0)));
+	ship->body->ApplyForceToCenter(b2Vec2(a_dist(prng), a_dist(prng)));
+	auto v = ship->body->GetLinearVelocity();
+	auto t = ship->body->GetTransform();
+	float h = atan2(v.y, v.x);
+	ship->body->SetTransform(t.p, h);
 }
 
 }

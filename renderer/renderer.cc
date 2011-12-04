@@ -6,7 +6,10 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/string_cast.hpp"
+#include <Box2D/Box2D.h>
 
+#include "sim/ship.h"
+#include "sim/team.h"
 #include "common/log.h"
 #include "common/resources.h"
 #include "gl/program.h"
@@ -64,8 +67,10 @@ void Renderer::render() {
 
 	BOOST_FOREACH(auto ship, game->ships) {
 		glm::mat4 mv_matrix;
-		mv_matrix = glm::translate(mv_matrix, glm::vec3(ship->physics.p, 0));
-		mv_matrix = glm::rotate(mv_matrix, glm::degrees(float(ship->physics.h)), glm::vec3(0, 0, 1));
+		auto p = ship->body->GetPosition();
+		auto h = ship->body->GetAngle();
+		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
+		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
 		glm::vec4 color(ship->team->color, 0.7f);
 		GL::check();
 
