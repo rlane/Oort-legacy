@@ -9,14 +9,16 @@ class b2Body;
 namespace Oort {
 
 class Game;
+class Team;
 
 class Entity {
 	public:
 	Game *game;
+	std::shared_ptr<Team> team;
 	b2Body *body;
 	bool dead;
 
-	Entity(Game *game);
+	Entity(Game *game, std::shared_ptr<Team> team);
 	~Entity();
 
 	virtual void tick();

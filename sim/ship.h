@@ -7,13 +7,11 @@
 
 namespace Oort {
 
-class Team;
-class AI;
 class Game;
+class AI;
 
 class Ship : public Entity {
 	public:
-	std::shared_ptr<Team> team;
 	std::unique_ptr<AI> ai;
 
 	Ship(Game *game, std::shared_ptr<Team> team);

@@ -7,12 +7,10 @@
 
 namespace Oort {
 
-class Team;
 class Game;
 
 class Bullet : public Entity {
 	public:
-	std::shared_ptr<Team> team;
 	float creation_time;
 	float lifetime;
 

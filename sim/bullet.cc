@@ -13,8 +13,7 @@ using glm::vec2;
 namespace Oort {
 
 Bullet::Bullet(Game *game, std::shared_ptr<Team> team)
-  : Entity(game),
-    team(team),
+  : Entity(game, team),
     creation_time(game->time) {
 	b2CircleShape shape;
 	shape.m_radius = 0.1f;

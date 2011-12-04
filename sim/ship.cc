@@ -13,8 +13,7 @@ using glm::vec2;
 namespace Oort {
 
 Ship::Ship(Game *game, std::shared_ptr<Team> team)
-	: Entity(game),
-	  team(team),
+	: Entity(game, team),
 	  ai(new AI(this, team->ai)) {
 	b2CircleShape shape;
 	shape.m_radius = 1.0f;
