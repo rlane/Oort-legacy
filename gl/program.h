@@ -89,15 +89,15 @@ public:
 		return loc;
 	}
 
-	void uniform(std::string name, glm::mat4 &val) {
+	void uniform(std::string name, const glm::mat4 &val) {
 		glUniformMatrix4fv(uniform_location(name), 1, false, glm::value_ptr(val));
 	}
 
-	void uniform(std::string name, glm::vec4 &val) {
+	void uniform(std::string name, const glm::vec4 &val) {
 		glUniform4fv(uniform_location(name), 1, glm::value_ptr(val));
 	}
 
-	void attrib(std::string name, glm::vec2 &val) {
+	void attrib(std::string name, const glm::vec2 &val) {
 		glVertexAttrib2f(attrib_location(name), val.x, val.y);
 	}
 
