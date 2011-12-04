@@ -25,6 +25,7 @@ Game::Game(Scenario &scn, vector<AISourceCode> &ais) {
 	int player_ai_index = 0;
 	b2Vec2 gravity(0, 0);
 	world = std::unique_ptr<b2World>(new b2World(gravity));
+	world->SetAutoClearForces(false);
 
 	for (auto scn_team : scn.teams) {
 		auto ai = ais[player_ai_index++];
@@ -52,6 +53,7 @@ void Game::tick() {
 	for (int i = 0; i < steps_per_tick; i++) {
 		world->Step(step_length, 8, 3);
 	}
+	world->ClearForces();
 	ticks++;
 
 #if 0

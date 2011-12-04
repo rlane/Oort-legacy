@@ -16,10 +16,10 @@ class Ship : public Entity {
 	std::shared_ptr<Team> team;
 	std::unique_ptr<AI> ai;
 
-	virtual void tick();
-
 	Ship(Game *game, std::shared_ptr<Team> team);
 	~Ship();
+
+	virtual void tick();
 };
 
 }
