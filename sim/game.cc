@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_set>
+#include <typeinfo>
 #include <boost/foreach.hpp>
 
 #include "glm/glm.hpp"
@@ -21,6 +22,24 @@ using std::make_shared;
 
 namespace Oort {
 
+class ContactFilter : public b2ContactFilter {
+	bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
+		auto entityA = (Entity*) fixtureA->GetBody()->GetUserData();
+		auto entityB = (Entity*) fixtureB->GetBody()->GetUserData();
+
+		if (typeid(*entityA) == typeid(Bullet)) {
+			std::swap(entityA, entityB);
+		}
+
+		if (typeid(*entityA) == typeid(Ship) &&
+		    typeid(*entityB) == typeid(Bullet)) {
+			return entityA->team != entityB->team;
+		}
+		
+		return true;
+	}
+} contact_filter;
+
 Game::Game(Scenario &scn, vector<AISourceCode> &ais)
   : ticks(0),
     time(0) {
@@ -28,6 +47,7 @@ Game::Game(Scenario &scn, vector<AISourceCode> &ais)
 	b2Vec2 gravity(0, 0);
 	world = std::unique_ptr<b2World>(new b2World(gravity));
 	world->SetAutoClearForces(false);
+	world->SetContactFilter(&contact_filter);
 
 	for (auto scn_team : scn.teams) {
 		auto ai = ais[player_ai_index++];

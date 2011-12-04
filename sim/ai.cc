@@ -48,9 +48,7 @@ void AI::tick() {
 		auto h = t.q.GetAngle();
 		auto v = ship->body->GetLinearVelocity();
 		v += 30.0f*b2Vec2(cos(h), sin(h));
-		auto norm_v = v;
-		norm_v.Normalize();
-		bullet->body->SetTransform(t.p + norm_v, h);
+		bullet->body->SetTransform(t.p, h);
 		bullet->body->SetLinearVelocity(v);
 		ship->game->bullets.push_back(bullet);
 	}
