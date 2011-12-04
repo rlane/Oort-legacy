@@ -36,11 +36,11 @@ AI::~AI() {
 }
 
 void AI::tick() {
-	ship->body->ApplyForceToCenter(b2Vec2(a_dist(prng), a_dist(prng)));
-	auto v = ship->body->GetLinearVelocity();
-	auto t = ship->body->GetTransform();
-	float h = atan2(v.y, v.x);
-	ship->body->SetTransform(t.p, h);
+	ship->thrust_main(a_dist(prng));
+	ship->thrust_lateral(a_dist(prng));
+
+	auto w = ship->body->GetAngularVelocity();
+	ship->thrust_angular(-w);
 
 	if (ship->game->ticks % 4 == 0) {
 		ship->fire();

@@ -21,6 +21,16 @@ class Ship : public Entity {
 
 	virtual void tick();
 	void fire();
+	void thrust_main(float force);
+	void thrust_lateral(float force);
+	void thrust_angular(float force);
+
+	private:
+	float main_thrust;
+	float lateral_thrust;
+	float angular_thrust;
+
+	void update_forces();
 };
 
 }

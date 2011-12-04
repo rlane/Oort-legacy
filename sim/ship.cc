@@ -29,6 +29,7 @@ Ship::~Ship() {
 
 void Ship::tick() {
 	ai->tick();
+	update_forces();
 }
 
 void Ship::fire() {
@@ -40,6 +41,27 @@ void Ship::fire() {
 	bullet->body->SetTransform(t.p, h);
 	bullet->body->SetLinearVelocity(v);
 	game->bullets.push_back(bullet);
+}
+
+void Ship::thrust_main(float force) {
+	main_thrust = force;
+}
+
+void Ship::thrust_lateral(float force) {
+	lateral_thrust = force;
+}
+
+void Ship::thrust_angular(float force) {
+	angular_thrust = force;
+}
+
+void Ship::update_forces() {
+	auto t = body->GetTransform();
+	auto local_force_vec = b2Vec2(main_thrust, lateral_thrust);
+	b2Transform t2(b2Vec2(0,0), t.q);
+	auto world_force_vec = b2MulT(t2, local_force_vec);
+	body->ApplyForceToCenter(world_force_vec);
+	body->ApplyTorque(angular_thrust);
 }
 
 }
