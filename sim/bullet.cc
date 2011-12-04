@@ -19,11 +19,7 @@ Bullet::Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id)
     lifetime(1.0f) {
 	b2CircleShape shape;
 	shape.m_radius = 0.1f;
-	auto x = body->CreateFixture(&shape, 1.0f);
-	b2Filter filter;
-	filter.categoryBits = 0x2;
-	filter.maskBits = 0x1;
-	x->SetFilterData(filter);
+	body->CreateFixture(&shape, 1.0f);
 }
 
 Bullet::~Bullet() {

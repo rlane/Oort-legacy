@@ -28,6 +28,9 @@ class ContactFilter : public b2ContactFilter {
 		auto entityB = (Entity*) fixtureB->GetBody()->GetUserData();
 
 		if (typeid(*entityA) == typeid(Bullet)) {
+			if (typeid(*entityB) == typeid(Bullet)) {
+				return false;
+			}
 			std::swap(entityA, entityB);
 		}
 
