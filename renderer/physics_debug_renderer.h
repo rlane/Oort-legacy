@@ -14,6 +14,8 @@ namespace Oort {
 
 class PhysicsDebugRenderer : public b2Draw {
 public:
+	float view_radius;
+
 	PhysicsDebugRenderer();
 
 	void set_screen_dimensions(int w, int h);

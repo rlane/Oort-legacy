@@ -36,7 +36,8 @@
 namespace Oort {
 
 PhysicsDebugRenderer::PhysicsDebugRenderer()
-  : prog(new GL::Program(
+  : view_radius(100.0f),
+    prog(new GL::Program(
       std::make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
       std::make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl")))),
     mRatio(1.0f) {
@@ -57,7 +58,6 @@ void PhysicsDebugRenderer::begin_render() {
 	glLineWidth(1.2f);
 
 	auto aspect = float(screen_width)/screen_height;
-	auto view_radius = 100.0f;
 
 	glm::mat4 p_matrix = glm::ortho(-view_radius, view_radius,
 	                                -view_radius/aspect, view_radius/aspect);

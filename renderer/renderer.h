@@ -12,6 +12,8 @@ namespace Oort {
 
 class Renderer {
 public:
+	float view_radius;
+
 	Renderer(std::shared_ptr<Game> game);
 	void set_screen_dimensions(int w, int h);
 	void render();

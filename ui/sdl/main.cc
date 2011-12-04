@@ -51,6 +51,9 @@ static bool paused = false;
 static bool single_step = false;
 static bool render_physics_debug = false;
 
+static std::unique_ptr<Renderer> renderer;
+static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
+
 static void handle_sdl_event(const SDL_Event &event) {
 	switch(event.type) {
 		case SDL_KEYDOWN:
@@ -67,6 +70,14 @@ static void handle_sdl_event(const SDL_Event &event) {
 					break;
 				case SDLK_g:
 					render_physics_debug = !render_physics_debug;
+					break;
+				case SDLK_x:
+					renderer->view_radius *= 1.1;
+					physics_debug_renderer->view_radius *= 1.1;
+					break;
+				case SDLK_z:
+					renderer->view_radius /= 1.1;
+					physics_debug_renderer->view_radius /= 1.1;
 					break;
 				default:
 					break;
@@ -110,13 +121,13 @@ int main(int argc, char **argv) {
 
 	SDL_Event event;
 
-	Renderer renderer(game);
-	renderer.set_screen_dimensions(w, h);
+	renderer = std::unique_ptr<Renderer>(new Renderer(game));
+	renderer->set_screen_dimensions(w, h);
 
-	PhysicsDebugRenderer physics_debug_renderer;
-	physics_debug_renderer.set_screen_dimensions(w, h);
-	physics_debug_renderer.SetFlags(b2Draw::e_shapeBit);
-	game->world->SetDebugDraw(&physics_debug_renderer);
+	physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
+	physics_debug_renderer->set_screen_dimensions(w, h);
+	physics_debug_renderer->SetFlags(b2Draw::e_shapeBit);
+	game->world->SetDebugDraw(physics_debug_renderer.get());
 
 	auto prev = ClockGetTime();
 	int frame_count = 0;
@@ -143,13 +154,13 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		renderer.render();
+		renderer->render();
 
 		if (render_physics_debug) {
-			physics_debug_renderer.begin_render();
-			physics_debug_renderer.DrawCircle(b2Vec2(0,0), 30.0f, b2Color(0.6,0.8,0.6));
+			physics_debug_renderer->begin_render();
+			physics_debug_renderer->DrawCircle(b2Vec2(0,0), 30.0f, b2Color(0.6,0.8,0.6));
 			game->world->DrawDebugData();
-			physics_debug_renderer.end_render();
+			physics_debug_renderer->end_render();
 		}
 
 		SDL_GL_SwapBuffers();

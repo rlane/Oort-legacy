@@ -26,12 +26,12 @@ using boost::scoped_ptr;
 namespace Oort {
 
 Renderer::Renderer(shared_ptr<Game> game)
-	: game(game),
-	  prog(new GL::Program(
-	    make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
-	    make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl"))))
+  : view_radius(100.0f),
+    game(game),
+    prog(new GL::Program(
+      make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
+      make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl"))))
 {
-
 	std::vector<vec2> vertices = { vec2(-0.7, -0.71),
 	                               vec2(-0.7, 0.71),
 	                               vec2(1, 0) };
@@ -61,7 +61,6 @@ void Renderer::render() {
 	glLineWidth(1.2f);
 
 	auto aspect = float(screen_width)/screen_height;
-	auto view_radius = 100.0f;
 
 	glm::mat4 p_matrix = glm::ortho(-view_radius, view_radius,
 			                            -view_radius/aspect, view_radius/aspect);
