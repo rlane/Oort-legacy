@@ -42,6 +42,22 @@ class ContactFilter : public b2ContactFilter {
 	}
 } contact_filter;
 
+class ContactListener : public b2ContactListener {
+	void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) {
+		auto entityA = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
+		auto entityB = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
+
+		if (typeid(*entityA) == typeid(Bullet)) {
+			std::swap(entityA, entityB);
+		}
+
+		if (typeid(*entityA) == typeid(Ship) &&
+		    typeid(*entityB) == typeid(Bullet)) {
+			entityB->dead = true;
+		}
+	}
+} contact_listener;
+
 Game::Game(Scenario &scn, vector<AISourceCode> &ais)
   : ticks(0),
     time(0) {
@@ -50,6 +66,7 @@ Game::Game(Scenario &scn, vector<AISourceCode> &ais)
 	world = std::unique_ptr<b2World>(new b2World(gravity));
 	world->SetAutoClearForces(false);
 	world->SetContactFilter(&contact_filter);
+	world->SetContactListener(&contact_listener);
 
 	for (auto scn_team : scn.teams) {
 		auto ai = ais[player_ai_index++];
