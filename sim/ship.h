@@ -3,29 +3,23 @@
 #define OORT_SIM_SHIP_H_
 
 #include <memory>
-
-class b2Body;
+#include "sim/entity.h"
 
 namespace Oort {
 
-class Game;
 class Team;
 class AI;
+class Game;
 
-class Ship {
+class Ship : public Entity {
 	public:
-	Game *game;
 	std::shared_ptr<Team> team;
 	std::unique_ptr<AI> ai;
-	b2Body *body;
+
+	virtual void tick();
 
 	Ship(Game *game, std::shared_ptr<Team> team);
 	~Ship();
-
-	void tick();
-
-	Ship(const Ship&) = delete;
-	Ship& operator=(const Ship&) = delete;
 };
 
 }
