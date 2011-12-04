@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
 
 		if (render_physics_debug) {
 			physics_debug_renderer.begin_render();
-			physics_debug_renderer.DrawCircle(b2Vec2(0,0), 10.0f, b2Color(1,1,1));
+			physics_debug_renderer.DrawCircle(b2Vec2(0,0), 30.0f, b2Color(0.6,0.8,0.6));
 			game->world->DrawDebugData();
 			physics_debug_renderer.end_render();
 		}
