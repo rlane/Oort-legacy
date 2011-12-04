@@ -21,6 +21,7 @@ using std::make_shared;
 namespace Oort {
 
 Game::Game(Scenario &scn, vector<AISourceCode> &ais) {
+	ticks = 0;
 	int player_ai_index = 0;
 	b2Vec2 gravity(0, 0);
 	world = std::unique_ptr<b2World>(new b2World(gravity));
@@ -40,11 +41,31 @@ Game::Game(Scenario &scn, vector<AISourceCode> &ais) {
 Game::~Game() {
 }
 
+const float tick_length = 1.0f/32;
+const int steps_per_tick = 10;
+const float step_length = tick_length/steps_per_tick;
+
 void Game::tick() {
 	BOOST_FOREACH(auto ship, ships) {
 		ship->tick();
 	}
-	world->Step(1.0/32, 8, 8);
+	for (int i = 0; i < steps_per_tick; i++) {
+		world->Step(step_length, 8, 3);
+	}
+	ticks++;
+
+#if 0
+	auto profile = world->GetProfile();
+	printf("\n");
+	printf("step: %0.2f ms\n", profile.step);
+	printf("collide: %0.2f ms\n", profile.collide);
+	printf("solve: %0.2f ms\n", profile.solve);
+	printf("solveInit: %0.2f ms\n", profile.solveInit);
+	printf("solveVelocity: %0.2f ms\n", profile.solveVelocity);
+	printf("solvePosition: %0.2f ms\n", profile.solvePosition);
+	printf("broadphase: %0.2f ms\n", profile.broadphase);
+	printf("solveTOI: %0.2f ms\n", profile.solveTOI);
+#endif
 }
 
 shared_ptr<Team> Game::check_victory() {

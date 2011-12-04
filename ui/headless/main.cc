@@ -4,6 +4,7 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
+#include <Box2D/Common/b2Timer.h>
 
 #include "common/log.h"
 #include "sim/ship.h"
@@ -24,6 +25,8 @@ int main(int argc, char **argv) {
 	std::vector<AISourceCode> ais{ ai, ai, ai };
 	auto game = make_shared<Oort::Game>(scn, ais);
 
+	b2Timer timer;
+
 	while (true) {
 		game->tick();
 		auto winner = game->check_victory();
@@ -32,6 +35,8 @@ int main(int argc, char **argv) {
 			break;
 		}
 	}
+
+	printf("ms/frame: %0.2f\n", timer.GetMilliseconds()/game->ticks);
 
 	return 0;
 }

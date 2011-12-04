@@ -27,6 +27,7 @@ class Game {
 
 	std::unique_ptr<b2World> world;
 	std::list<std::shared_ptr<Ship>> ships;
+	int ticks;
 };
 
 }
