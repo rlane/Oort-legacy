@@ -24,6 +24,7 @@
 #include "sim/scenario.h"
 #include "sim/team.h"
 #include "renderer/renderer.h"
+#include "renderer/physics_debug_renderer.h"
 
 using glm::vec2;
 using std::make_shared;
@@ -43,6 +44,7 @@ namespace Oort {
 static bool running = true;
 static bool paused = false;
 static bool single_step = false;
+static bool render_physics_debug = false;
 
 static void handle_sdl_event(const SDL_Event &event) {
 	switch(event.type) {
@@ -57,6 +59,10 @@ static void handle_sdl_event(const SDL_Event &event) {
 				case SDLK_RETURN:
 					paused = false;
 					single_step = true;
+					break;
+				case SDLK_g:
+					render_physics_debug = !render_physics_debug;
+					break;
 				default:
 					break;
 			}
@@ -101,6 +107,12 @@ int main(int argc, char **argv) {
 
 	Renderer renderer(game);
 	renderer.set_screen_dimensions(w, h);
+
+	PhysicsDebugRenderer physics_debug_renderer;
+	physics_debug_renderer.set_screen_dimensions(w, h);
+	physics_debug_renderer.SetFlags(b2Draw::e_shapeBit);
+	game->world->SetDebugDraw(&physics_debug_renderer);
+
 	auto prev = ClockGetTime();
 	int frame_count = 0;
 
@@ -124,6 +136,13 @@ int main(int argc, char **argv) {
 		}
 
 		renderer.render();
+
+		if (render_physics_debug) {
+			physics_debug_renderer.begin_render();
+			physics_debug_renderer.DrawCircle(b2Vec2(0,0), 10.0f, b2Color(1,1,1));
+			game->world->DrawDebugData();
+			physics_debug_renderer.end_render();
+		}
 
 		SDL_GL_SwapBuffers();
 

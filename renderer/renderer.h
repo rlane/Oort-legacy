@@ -1,3 +1,4 @@
+// Copyright 2011 Rich Lane
 #ifndef OORT_RENDERER_RENDERER_H_
 #define OORT_RENDERER_RENDERER_H_
 
