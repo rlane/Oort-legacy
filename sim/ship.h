@@ -2,6 +2,7 @@
 #ifndef OORT_SIM_SHIP_H_
 #define OORT_SIM_SHIP_H_
 
+#include <stdint.h>
 #include <memory>
 #include "sim/entity.h"
 
@@ -13,6 +14,7 @@ class AI;
 class Ship : public Entity {
 	public:
 	std::unique_ptr<AI> ai;
+	uint32_t id;
 
 	Ship(Game *game, std::shared_ptr<Team> team);
 	~Ship();

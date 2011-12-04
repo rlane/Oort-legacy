@@ -2,6 +2,7 @@
 #ifndef OORT_SIM_BULLET_H_
 #define OORT_SIM_BULLET_H_
 
+#include <stdint.h>
 #include <memory>
 #include "sim/entity.h"
 
@@ -11,10 +12,11 @@ class Game;
 
 class Bullet : public Entity {
 	public:
+	uint32_t creator_id;
 	float creation_time;
 	float lifetime;
 
-	Bullet(Game *game, std::shared_ptr<Team> team);
+	Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id);
 	~Bullet();
 
 	virtual void tick();

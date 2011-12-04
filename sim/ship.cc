@@ -12,9 +12,12 @@ using glm::vec2;
 
 namespace Oort {
 
+static uint32_t next_id = 1;
+
 Ship::Ship(Game *game, std::shared_ptr<Team> team)
 	: Entity(game, team),
-	  ai(new AI(this, team->ai)) {
+	  ai(new AI(this, team->ai)),
+	  id(next_id++) { // XXX
 	b2CircleShape shape;
 	shape.m_radius = 1.0f;
 	body->CreateFixture(&shape, 1.0f);

@@ -12,8 +12,9 @@ using glm::vec2;
 
 namespace Oort {
 
-Bullet::Bullet(Game *game, std::shared_ptr<Team> team)
+Bullet::Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id)
   : Entity(game, team),
+    creator_id(creator_id),
     creation_time(game->time),
     lifetime(1.0f) {
 	b2CircleShape shape;
