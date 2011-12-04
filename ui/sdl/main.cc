@@ -41,6 +41,11 @@ uint64_t ClockGetTime()
 
 namespace Oort {
 
+static enum class State {
+	RUNNING,
+	FINISHED
+} state = State::RUNNING;
+
 static bool running = true;
 static bool paused = false;
 static bool single_step = false;
@@ -128,10 +133,13 @@ int main(int argc, char **argv) {
 			}
 
 			game->tick();
-			auto winner = game->check_victory();
-			if (winner != nullptr) {
-				printf("Team %s is victorious\n", winner->name.c_str());
-				break;
+
+			if (state == State::RUNNING) {
+				auto winner = game->check_victory();
+				if (winner != nullptr) {
+					printf("Team %s is victorious\n", winner->name.c_str());
+					state = State::FINISHED;
+				}
 			}
 		}
 
