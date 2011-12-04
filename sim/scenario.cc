@@ -24,8 +24,8 @@ Scenario::Scenario() {
 	for (auto i = 0; i < 100; i++) {
 		ScnShip ship;
 		ship.klass = "fighter";
-		ship.p = glm::dvec2(p_dist(prng), p_dist(prng));
-		ship.v = glm::dvec2(v_dist(prng), v_dist(prng));
+		ship.p = glm::vec2(p_dist(prng), p_dist(prng));
+		ship.v = glm::vec2(v_dist(prng), v_dist(prng));
 		ship.h = 0.0;
 		teams[i % teams.size()].ships.push_back(ship);
 	}

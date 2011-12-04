@@ -9,7 +9,6 @@
 #include "common/log.h"
 
 using glm::vec2;
-using glm::dvec2;
 
 namespace Oort {
 

@@ -18,7 +18,6 @@
 #include "gl/check.h"
 
 using glm::vec2;
-using glm::dvec2;
 using std::make_shared;
 using std::shared_ptr;
 using boost::scoped_ptr;

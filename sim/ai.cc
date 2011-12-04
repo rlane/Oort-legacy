@@ -17,8 +17,6 @@ extern "C" {
 #include "sim/ship.h"
 #include "common/log.h"
 
-using glm::dvec2;
-
 namespace Oort {
 
 static boost::random::mt19937 prng(42);

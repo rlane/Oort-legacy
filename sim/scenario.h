@@ -12,8 +12,8 @@ namespace Oort {
 
 struct ScnShip {
 	std::string klass;
-	glm::dvec2 p, v;
-	double h;
+	glm::vec2 p, v;
+	float h;
 };
 
 struct ScnTeam {

@@ -14,7 +14,6 @@
 #include "sim/ai.h"
 
 using glm::vec2;
-using glm::dvec2;
 using std::make_shared;
 
 namespace Oort {
