@@ -43,14 +43,7 @@ void AI::tick() {
 	ship->body->SetTransform(t.p, h);
 
 	if (ship->game->ticks % 4 == 0) {
-		auto bullet = std::make_shared<Bullet>(ship->game, ship->team, ship->id);
-		auto t = ship->body->GetTransform();
-		auto h = t.q.GetAngle();
-		auto v = ship->body->GetLinearVelocity();
-		v += 30.0f*b2Vec2(cos(h), sin(h));
-		bullet->body->SetTransform(t.p, h);
-		bullet->body->SetLinearVelocity(v);
-		ship->game->bullets.push_back(bullet);
+		ship->fire();
 	}
 }
 

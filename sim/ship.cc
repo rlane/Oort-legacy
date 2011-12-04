@@ -6,6 +6,7 @@
 #include "sim/ai.h"
 #include "sim/team.h"
 #include "sim/game.h"
+#include "sim/bullet.h"
 #include "common/log.h"
 
 using glm::vec2;
@@ -28,6 +29,17 @@ Ship::~Ship() {
 
 void Ship::tick() {
 	ai->tick();
+}
+
+void Ship::fire() {
+	auto bullet = std::make_shared<Bullet>(game, team, id);
+	auto t = body->GetTransform();
+	auto h = t.q.GetAngle();
+	auto v = body->GetLinearVelocity();
+	v += 30.0f*b2Vec2(cos(h), sin(h));
+	bullet->body->SetTransform(t.p, h);
+	bullet->body->SetLinearVelocity(v);
+	game->bullets.push_back(bullet);
 }
 
 }

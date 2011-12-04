@@ -20,6 +20,7 @@ class Ship : public Entity {
 	~Ship();
 
 	virtual void tick();
+	void fire();
 };
 
 }
