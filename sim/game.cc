@@ -10,6 +10,7 @@
 #include <Box2D/Box2D.h>
 
 #include "sim/ship.h"
+#include "sim/bullet.h"
 #include "sim/scenario.h"
 #include "sim/ai.h"
 #include "sim/team.h"
@@ -20,8 +21,9 @@ using std::make_shared;
 
 namespace Oort {
 
-Game::Game(Scenario &scn, vector<AISourceCode> &ais) {
-	ticks = 0;
+Game::Game(Scenario &scn, vector<AISourceCode> &ais)
+  : ticks(0),
+    time(0) {
 	int player_ai_index = 0;
 	b2Vec2 gravity(0, 0);
 	world = std::unique_ptr<b2World>(new b2World(gravity));
@@ -50,11 +52,17 @@ void Game::tick() {
 	BOOST_FOREACH(auto ship, ships) {
 		ship->tick();
 	}
+
+	BOOST_FOREACH(auto bullet, bullets) {
+		bullet->tick();
+	}
+
 	for (int i = 0; i < steps_per_tick; i++) {
 		world->Step(step_length, 8, 3);
 	}
 	world->ClearForces();
 	ticks++;
+	time = ticks * tick_length;
 
 #if 0
 	auto profile = world->GetProfile();

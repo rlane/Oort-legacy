@@ -14,7 +14,9 @@ extern "C" {
 #include "glm/gtx/vector_angle.hpp"
 #include <Box2D/Box2D.h>
 
+#include "sim/game.h"
 #include "sim/ship.h"
+#include "sim/bullet.h"
 #include "common/log.h"
 
 namespace Oort {
@@ -39,6 +41,15 @@ void AI::tick() {
 	auto t = ship->body->GetTransform();
 	float h = atan2(v.y, v.x);
 	ship->body->SetTransform(t.p, h);
+
+	if (ship->game->ticks % 32 == 0) {
+		auto bullet = std::make_shared<Bullet>(ship->game, ship->team);
+		auto t = ship->body->GetTransform();
+		auto v = ship->body->GetLinearVelocity();
+		bullet->body->SetTransform(t.p, t.q.GetAngle());
+		bullet->body->SetLinearVelocity(1.1f*v);
+		ship->game->bullets.push_back(bullet);
+	}
 }
 
 }

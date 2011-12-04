@@ -9,6 +9,7 @@
 #include <Box2D/Box2D.h>
 
 #include "sim/ship.h"
+#include "sim/bullet.h"
 #include "sim/team.h"
 #include "common/log.h"
 #include "common/resources.h"
@@ -71,6 +72,28 @@ void Renderer::render() {
 		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
 		glm::vec4 color(ship->team->color, 0.7f);
+		GL::check();
+
+		prog->uniform("mv_matrix", mv_matrix);
+		prog->uniform("color", color);
+		vertex_buf.bind();
+		glVertexAttribPointer(prog->attrib_location("vertex"),
+		                      2, GL_FLOAT, GL_FALSE, 0, 0);
+		vertex_buf.unbind();
+		GL::check();
+
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		GL::check();
+	}
+
+	BOOST_FOREACH(auto bullet, game->bullets) {
+		glm::mat4 mv_matrix;
+		auto p = bullet->body->GetPosition();
+		auto h = bullet->body->GetAngle();
+		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
+		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
+		mv_matrix = glm::scale(mv_matrix, glm::vec3(0.1f, 0.1f, 0.1f));
+		glm::vec4 color(bullet->team->color, 0.4f);
 		GL::check();
 
 		prog->uniform("mv_matrix", mv_matrix);

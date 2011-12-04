@@ -14,6 +14,7 @@ class Entity {
 	public:
 	Game *game;
 	b2Body *body;
+	bool dead;
 
 	Entity(Game *game);
 	~Entity();

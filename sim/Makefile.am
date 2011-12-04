@@ -14,11 +14,12 @@ libsim_a_SOURCES = \
 	game.cc \
 	entity.cc \
 	ship.cc \
+	bullet.cc \
 	scenario.cc \
 	ai.cc \
 	$(NULL)
 
-noinst_HEADERS = game.h ship.h team.h ai.h scenario.h entity.h
+noinst_HEADERS = game.h ship.h team.h ai.h scenario.h entity.h bullet.h
 
 libsim_a_LDFLAGS =
 libsim_a_LIBADD =

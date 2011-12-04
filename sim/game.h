@@ -12,6 +12,7 @@ class b2World;
 namespace Oort {
 
 class Ship;
+class Bullet;
 class Team;
 class Scenario;
 class AISourceCode;
@@ -27,7 +28,9 @@ class Game {
 
 	std::unique_ptr<b2World> world;
 	std::list<std::shared_ptr<Ship>> ships;
+	std::list<std::shared_ptr<Bullet>> bullets;
 	int ticks;
+	float time;
 };
 
 }

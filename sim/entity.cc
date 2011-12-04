@@ -13,7 +13,8 @@ using glm::vec2;
 namespace Oort {
 
 Entity::Entity(Game *game)
-	: game(game) {
+	: game(game),
+	  dead(false) {
 	b2BodyDef def;
 	def.type = b2_dynamicBody;
 	def.userData = this;
