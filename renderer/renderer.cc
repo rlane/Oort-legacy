@@ -54,8 +54,11 @@ void Renderer::render() {
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE, GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_LINE_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glLineWidth(1.2f);
 
 	auto aspect = float(screen_width)/screen_height;
 	auto view_radius = 100.0f;
