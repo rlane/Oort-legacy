@@ -42,12 +42,16 @@ void AI::tick() {
 	float h = atan2(v.y, v.x);
 	ship->body->SetTransform(t.p, h);
 
-	if (ship->game->ticks % 32 == 0) {
+	if (ship->game->ticks % 4 == 0) {
 		auto bullet = std::make_shared<Bullet>(ship->game, ship->team);
 		auto t = ship->body->GetTransform();
+		auto h = t.q.GetAngle();
 		auto v = ship->body->GetLinearVelocity();
-		bullet->body->SetTransform(t.p, t.q.GetAngle());
-		bullet->body->SetLinearVelocity(1.1f*v);
+		v += 30.0f*b2Vec2(cos(h), sin(h));
+		auto norm_v = v;
+		norm_v.Normalize();
+		bullet->body->SetTransform(t.p + norm_v, h);
+		bullet->body->SetLinearVelocity(v);
 		ship->game->bullets.push_back(bullet);
 	}
 }

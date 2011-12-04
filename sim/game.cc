@@ -48,7 +48,18 @@ const float tick_length = 1.0f/32;
 const int steps_per_tick = 10;
 const float step_length = tick_length/steps_per_tick;
 
+static bool entity_is_dead(std::shared_ptr<Entity> entity) {
+	return entity->dead;
+}
+
+void Game::reap() {
+	auto new_end = std::remove_if(begin(bullets), end(bullets), entity_is_dead);	
+	bullets.erase(new_end, end(bullets));
+}
+
 void Game::tick() {
+	reap();
+
 	BOOST_FOREACH(auto ship, ships) {
 		ship->tick();
 	}

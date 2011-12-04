@@ -23,6 +23,7 @@ Entity::Entity(Game *game, std::shared_ptr<Team> team)
 }
 
 Entity::~Entity() {
+	game->world->DestroyBody(body);
 }
 
 void Entity::tick() {

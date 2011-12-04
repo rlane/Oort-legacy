@@ -14,7 +14,8 @@ namespace Oort {
 
 Bullet::Bullet(Game *game, std::shared_ptr<Team> team)
   : Entity(game, team),
-    creation_time(game->time) {
+    creation_time(game->time),
+    lifetime(1.0f) {
 	b2CircleShape shape;
 	shape.m_radius = 0.1f;
 	auto x = body->CreateFixture(&shape, 1.0f);
