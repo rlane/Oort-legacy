@@ -56,6 +56,8 @@ static const float zoom_const = 2.0;
 static glm::vec2 view_center;
 static glm::vec2 view_speed;
 static const float pan_const = 0.01;
+static const int screen_width = 1600, screen_height = 900;
+static const float fps = 60;
 
 static std::unique_ptr<Renderer> renderer;
 static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
@@ -129,6 +131,18 @@ static void handle_sdl_event(const SDL_Event &event) {
 	}
 }
 
+glm::vec2 screen2world(glm::vec2 screen_pos) {
+	screen_pos -= glm::vec2(screen_width, screen_height) * 0.5f;
+	screen_pos.y = -screen_pos.y;
+	return view_center + screen_pos * (2*view_radius/screen_width);
+}
+
+glm::vec2 mouse_position() {
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+	return glm::vec2(x, y);
+}
+
 int main(int argc, char **argv) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
@@ -139,8 +153,7 @@ int main(int argc, char **argv) {
 		printf("unable to configure vsync\n");
 	}
 
-	int w = 1600, h = 900;
-	SDL_SetVideoMode(w, h, 16, SDL_OPENGL | SDL_FULLSCREEN);
+	SDL_SetVideoMode(screen_width, screen_height, 16, SDL_OPENGL | SDL_FULLSCREEN);
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
@@ -150,8 +163,8 @@ int main(int argc, char **argv) {
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	glViewport(0, 0, 1600, 900);
-	float aspect_ratio = float(w)/h;
+	glViewport(0, 0, screen_width, screen_height);
+	float aspect_ratio = float(screen_width)/screen_height;
 
 	AISourceCode ai{"foo.lua", ""};
 	Scenario scn;
@@ -191,7 +204,13 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		view_radius *= (1 + zoom_rate/60.0);
+		if (zoom_rate < 0) {
+			auto p = screen2world(mouse_position());
+			auto dp = (zoom_const/fps) * (p - view_center);
+			view_center += dp;
+		}
+		view_radius *= (1 + zoom_rate/fps);
+
 		view_center += view_speed*view_radius;
 
 		renderer->render(view_radius, aspect_ratio, view_center);
