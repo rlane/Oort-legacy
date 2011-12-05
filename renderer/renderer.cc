@@ -26,8 +26,7 @@ using boost::scoped_ptr;
 namespace Oort {
 
 Renderer::Renderer(shared_ptr<Game> game)
-  : view_radius(100.0f),
-    game(game),
+  : game(game),
     prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl"))))
@@ -39,12 +38,7 @@ Renderer::Renderer(shared_ptr<Game> game)
 	vertex_buf.data(vertices);
 }
 
-void Renderer::set_screen_dimensions(int w, int h) {
-	screen_width = w;
-	screen_height = h;
-}
-
-void Renderer::render() {
+void Renderer::render(float view_radius, float aspect_ratio) {
 	GL::check();
 	glClear(GL_COLOR_BUFFER_BIT);
 	prog->use();
@@ -60,10 +54,8 @@ void Renderer::render() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glLineWidth(1.2f);
 
-	auto aspect = float(screen_width)/screen_height;
-
 	glm::mat4 p_matrix = glm::ortho(-view_radius, view_radius,
-			                            -view_radius/aspect, view_radius/aspect);
+			                            -view_radius/aspect_ratio, view_radius/aspect_ratio);
 
 	prog->uniform("p_matrix", p_matrix);
 

@@ -14,12 +14,9 @@ namespace Oort {
 
 class PhysicsDebugRenderer : public b2Draw {
 public:
-	float view_radius;
-
 	PhysicsDebugRenderer();
 
-	void set_screen_dimensions(int w, int h);
-	void begin_render();
+	void begin_render(float view_radius, float aspect_ratio);
 	void end_render();
 
 	void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
@@ -35,7 +32,6 @@ public:
 private:
 	boost::scoped_ptr<GL::Program> prog;
 	float mRatio;
-	int screen_width, screen_height;
 };
 
 }

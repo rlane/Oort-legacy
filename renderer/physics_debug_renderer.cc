@@ -36,14 +36,14 @@
 namespace Oort {
 
 PhysicsDebugRenderer::PhysicsDebugRenderer()
-  : view_radius(100.0f),
-    prog(new GL::Program(
+  : prog(new GL::Program(
       std::make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
       std::make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl")))),
     mRatio(1.0f) {
 }
 
-void PhysicsDebugRenderer::begin_render() {
+void PhysicsDebugRenderer::begin_render(float view_radius,
+		                                    float aspect_ratio) {
 	GL::check();
 	prog->use();
 	glEnableVertexAttribArray(prog->attrib_location("vertex"));
@@ -57,10 +57,8 @@ void PhysicsDebugRenderer::begin_render() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glLineWidth(1.2f);
 
-	auto aspect = float(screen_width)/screen_height;
-
 	glm::mat4 p_matrix = glm::ortho(-view_radius, view_radius,
-	                                -view_radius/aspect, view_radius/aspect);
+	                                -view_radius/aspect_ratio, view_radius/aspect_ratio);
 	prog->uniform("p_matrix", p_matrix);
 
 	glm::mat4 mv_matrix;
@@ -227,11 +225,6 @@ void PhysicsDebugRenderer::DrawAABB(b2AABB* aabb, const b2Color& color)
 												2, GL_FLOAT, GL_FALSE, 0, glVertices);
 	glDrawArrays(GL_LINE_LOOP, 0, 8);
 
-}
-
-void PhysicsDebugRenderer::set_screen_dimensions(int w, int h) {
-	screen_width = w;
-	screen_height = h;
 }
 
 }

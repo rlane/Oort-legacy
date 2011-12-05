@@ -12,17 +12,13 @@ namespace Oort {
 
 class Renderer {
 public:
-	float view_radius;
-
 	Renderer(std::shared_ptr<Game> game);
-	void set_screen_dimensions(int w, int h);
-	void render();
+	void render(float view_radius, float aspect_ratio);
 
 private:
 	std::shared_ptr<Game> game;
 	boost::scoped_ptr<GL::Program> prog;
 	GL::Buffer vertex_buf;
-	int screen_width, screen_height;
 };
 
 }
