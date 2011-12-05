@@ -57,8 +57,7 @@ void Ship::thrust_angular(float force) {
 void Ship::update_forces() {
 	auto t = body->GetTransform();
 	auto local_force_vec = b2Vec2(main_thrust, lateral_thrust);
-	b2Transform t2(b2Vec2(0,0), t.q);
-	auto world_force_vec = b2MulT(t2, local_force_vec);
+	auto world_force_vec = b2Mul(t.q, local_force_vec);
 	body->ApplyForceToCenter(world_force_vec);
 	body->ApplyTorque(angular_thrust);
 }
