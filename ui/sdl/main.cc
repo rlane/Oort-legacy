@@ -51,6 +51,8 @@ static bool paused = false;
 static bool single_step = false;
 static bool render_physics_debug = false;
 static float view_radius = 100.0f;
+static float zoom_rate = 0;
+static const float zoom_const = 2.0;
 
 static std::unique_ptr<Renderer> renderer;
 static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
@@ -72,17 +74,27 @@ static void handle_sdl_event(const SDL_Event &event) {
 				case SDLK_g:
 					render_physics_debug = !render_physics_debug;
 					break;
-				case SDLK_x:
-					view_radius *= 1.1;
-					break;
 				case SDLK_z:
-					view_radius /= 1.1;
+					zoom_rate -= zoom_const;
+					break;
+				case SDLK_x:
+					zoom_rate += zoom_const;
 					break;
 				default:
 					break;
 			}
 			break;
 		case SDL_KEYUP:
+			switch (event.key.keysym.sym) {
+				case SDLK_z:
+					zoom_rate += zoom_const;
+					break;
+				case SDLK_x:
+					zoom_rate -= zoom_const;
+					break;
+				default:
+					break;
+			}
 			break;
 		case SDL_QUIT:
 			running = false;
@@ -151,6 +163,8 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
+
+		view_radius *= (1 + zoom_rate/60.0);
 
 		renderer->render(view_radius, aspect_ratio);
 
