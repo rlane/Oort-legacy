@@ -20,7 +20,7 @@ class Ship : public Entity {
 	~Ship();
 
 	virtual void tick();
-	void fire();
+	void fire(float angle);
 	void thrust_main(float force);
 	void thrust_lateral(float force);
 	void thrust_angular(float force);

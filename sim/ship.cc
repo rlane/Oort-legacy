@@ -32,13 +32,12 @@ void Ship::tick() {
 	update_forces();
 }
 
-void Ship::fire() {
+void Ship::fire(float angle) {
 	auto bullet = std::make_shared<Bullet>(game, team, id);
 	auto t = body->GetTransform();
-	auto h = t.q.GetAngle();
 	auto v = body->GetLinearVelocity();
-	v += 30.0f*b2Vec2(cos(h), sin(h));
-	bullet->body->SetTransform(t.p, h);
+	v += 30.0f*b2Vec2(cos(angle), sin(angle));
+	bullet->body->SetTransform(t.p, angle);
 	bullet->body->SetLinearVelocity(v);
 	game->bullets.push_back(bullet);
 }

@@ -43,7 +43,7 @@ void AI::tick() {
 	ship->thrust_angular(-w);
 
 	if (ship->game->ticks % 4 == 0) {
-		ship->fire();
+		ship->fire(th);
 	}
 }
 
