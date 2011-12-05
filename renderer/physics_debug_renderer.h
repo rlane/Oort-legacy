@@ -5,6 +5,7 @@
 #include <memory>
 #include <boost/scoped_ptr.hpp>
 
+#include "glm/glm.hpp"
 #include <Box2D/Box2D.h>
 
 #include "gl/program.h"
@@ -16,7 +17,7 @@ class PhysicsDebugRenderer : public b2Draw {
 public:
 	PhysicsDebugRenderer();
 
-	void begin_render(float view_radius, float aspect_ratio);
+	void begin_render(float view_radius, float aspect_ratio, glm::vec2 view_center);
 	void end_render();
 
 	void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);

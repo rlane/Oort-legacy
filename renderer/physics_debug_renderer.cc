@@ -43,7 +43,8 @@ PhysicsDebugRenderer::PhysicsDebugRenderer()
 }
 
 void PhysicsDebugRenderer::begin_render(float view_radius,
-		                                    float aspect_ratio) {
+                                        float aspect_ratio,
+                                        glm::vec2 view_center) {
 	GL::check();
 	prog->use();
 	glEnableVertexAttribArray(prog->attrib_location("vertex"));
@@ -57,8 +58,10 @@ void PhysicsDebugRenderer::begin_render(float view_radius,
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glLineWidth(1.2f);
 
-	glm::mat4 p_matrix = glm::ortho(-view_radius, view_radius,
-	                                -view_radius/aspect_ratio, view_radius/aspect_ratio);
+	glm::mat4 p_matrix = glm::ortho(view_center.x - view_radius,
+	                                view_center.x + view_radius,
+	                                view_center.y - view_radius/aspect_ratio,
+	                                view_center.y + view_radius/aspect_ratio);
 	prog->uniform("p_matrix", p_matrix);
 
 	glm::mat4 mv_matrix;

@@ -53,6 +53,9 @@ static bool render_physics_debug = false;
 static float view_radius = 100.0f;
 static float zoom_rate = 0;
 static const float zoom_const = 2.0;
+static glm::vec2 view_center;
+static glm::vec2 view_speed;
+static const float pan_const = 0.01;
 
 static std::unique_ptr<Renderer> renderer;
 static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
@@ -74,6 +77,18 @@ static void handle_sdl_event(const SDL_Event &event) {
 				case SDLK_g:
 					render_physics_debug = !render_physics_debug;
 					break;
+				case SDLK_w:
+					view_speed.y += pan_const;
+					break;
+				case SDLK_s:
+					view_speed.y -= pan_const;
+					break;
+				case SDLK_a:
+					view_speed.x -= pan_const;
+					break;
+				case SDLK_d:
+					view_speed.x += pan_const;
+					break;
 				case SDLK_z:
 					zoom_rate -= zoom_const;
 					break;
@@ -86,6 +101,18 @@ static void handle_sdl_event(const SDL_Event &event) {
 			break;
 		case SDL_KEYUP:
 			switch (event.key.keysym.sym) {
+				case SDLK_w:
+					view_speed.y -= pan_const;
+					break;
+				case SDLK_s:
+					view_speed.y += pan_const;
+					break;
+				case SDLK_a:
+					view_speed.x += pan_const;
+					break;
+				case SDLK_d:
+					view_speed.x -= pan_const;
+					break;
 				case SDLK_z:
 					zoom_rate += zoom_const;
 					break;
@@ -165,11 +192,12 @@ int main(int argc, char **argv) {
 		}
 
 		view_radius *= (1 + zoom_rate/60.0);
+		view_center += view_speed*view_radius;
 
-		renderer->render(view_radius, aspect_ratio);
+		renderer->render(view_radius, aspect_ratio, view_center);
 
 		if (render_physics_debug) {
-			physics_debug_renderer->begin_render(view_radius, aspect_ratio);
+			physics_debug_renderer->begin_render(view_radius, aspect_ratio, view_center);
 			physics_debug_renderer->DrawCircle(b2Vec2(0,0), 30.0f, b2Color(0.6,0.8,0.6));
 			game->world->DrawDebugData();
 			physics_debug_renderer->end_render();

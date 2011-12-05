@@ -13,7 +13,7 @@ namespace Oort {
 class Renderer {
 public:
 	Renderer(std::shared_ptr<Game> game);
-	void render(float view_radius, float aspect_ratio);
+	void render(float view_radius, float aspect_ratio, glm::vec2 view_center);
 
 private:
 	std::shared_ptr<Game> game;
