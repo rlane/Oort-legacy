@@ -19,8 +19,11 @@ Ship::Ship(Game *game, std::shared_ptr<Team> team)
 	: Entity(game, team),
 	  ai(new AI(this, team->ai)),
 	  id(next_id++) { // XXX
-	b2CircleShape shape;
-	shape.m_radius = 1.0f;
+	b2PolygonShape shape;
+	b2Vec2 vertices[] = { b2Vec2(-0.7, -0.71),
+	                      b2Vec2(1, 0),
+	                      b2Vec2(-0.7, 0.71) };
+	shape.Set(vertices, 3);
 	body->CreateFixture(&shape, 1.0f);
 }
 
