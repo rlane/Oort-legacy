@@ -199,6 +199,7 @@ int main(int argc, char **argv) {
 				paused = true;
 			}
 
+			test->hook("tick");
 			game->tick();
 
 			if (state == State::RUNNING) {
