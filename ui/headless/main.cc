@@ -12,6 +12,7 @@
 #include "sim/game.h"
 #include "sim/scenario.h"
 #include "sim/ai.h"
+#include "sim/test.h"
 
 using glm::vec2;
 using std::make_shared;
@@ -19,10 +20,13 @@ using std::make_shared;
 namespace Oort {
 
 int main(int argc, char **argv) {
-	AISourceCode ai{"foo.lua", ""};
-	Scenario scn;
-	std::vector<AISourceCode> ais{ ai, ai, ai };
-	auto game = make_shared<Oort::Game>(scn, ais);
+	if (argc < 2) {
+		fprintf(stderr, "usage: %s test.so\n", argv[0]);
+		return 1;
+	}
+
+	auto test = new Test(std::string(argv[1]));
+	auto game = test->game;
 
 	b2Timer timer;
 

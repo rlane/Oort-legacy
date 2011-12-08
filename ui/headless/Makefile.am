@@ -10,4 +10,5 @@ LIBS=$(LUA_LIBS) $(BOX2D_LIBS)
 
 bin_PROGRAMS = oort_headless
 oort_headless_SOURCES = main.cc
-oort_headless_LDADD = $(top_builddir)/sim/libsim.a
+oort_headless_LDADD =
+oort_headless_LDFLAGS = -Wl,--whole-archive $(top_builddir)/sim/libsim.a -Wl,--no-whole-archive

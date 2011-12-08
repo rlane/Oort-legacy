@@ -25,6 +25,7 @@
 #include "sim/team.h"
 #include "renderer/renderer.h"
 #include "renderer/physics_debug_renderer.h"
+#include "sim/test.h"
 
 using glm::vec2;
 using std::make_shared;
@@ -143,7 +144,17 @@ glm::vec2 mouse_position() {
 	return glm::vec2(x, y);
 }
 
+typedef int (*test_main_ft)();
+
 int main(int argc, char **argv) {
+	if (argc < 2) {
+		fprintf(stderr, "usage: %s test.so\n", argv[0]);
+		return 1;
+	}
+
+	auto test = new Test(std::string(argv[1]));
+	auto game = test->game;
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
 		return 1;
@@ -165,11 +176,6 @@ int main(int argc, char **argv) {
 
 	glViewport(0, 0, screen_width, screen_height);
 	float aspect_ratio = float(screen_width)/screen_height;
-
-	AISourceCode ai{"foo.lua", ""};
-	Scenario scn;
-	std::vector<AISourceCode> ais{ ai, ai, ai };
-	auto game = make_shared<Oort::Game>(scn, ais);
 
 	SDL_Event event;
 

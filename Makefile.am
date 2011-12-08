@@ -10,6 +10,7 @@ SUBDIRS = \
 	ui/headless \
 	ui/sdl \
 	third_party \
+	test \
 	$(NULL)
 
 lint:

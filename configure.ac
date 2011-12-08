@@ -11,7 +11,7 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 
-CXXFLAGS="-std=c++0x -g -O1 -Wall"
+CXXFLAGS="-std=c++0x -g -O1 -Wall -rdynamic"
 LDFLAGS=""
 
 AC_SUBST(CXXFLAGS)
@@ -52,6 +52,7 @@ AC_CONFIG_FILES([
 	ui/headless/Makefile
 	ui/sdl/Makefile
 	third_party/Makefile
+	test/Makefile
 ])
 
 AC_OUTPUT
