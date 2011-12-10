@@ -64,6 +64,7 @@ class ContactListener : public b2ContactListener {
 Game::Game(Scenario &scn, vector<AISourceCode> &ais)
   : ticks(0),
     time(0) {
+	test_finished = false;
 	int player_ai_index = 0;
 	b2Vec2 gravity(0, 0);
 	world = std::unique_ptr<b2World>(new b2World(gravity));

@@ -9,7 +9,12 @@ AM_CXXFLAGS = \
 	$(BOX2D_CFLAGS) \
 	$(NULL)
 
-all: $(patsubst %.cc,%.so,$(wildcard *.cc))
+TEST_LIBS := $(patsubst %.cc,%.so,$(wildcard *.cc))
 
-%.so: %.cc
-	$(CXX) -shared -fPIC $(CXXFLAGS) $(AM_CXXFLAGS) $^ -o $@
+all: $(TEST_LIBS)
+
+test: all
+	echo $(TEST_LIBS) | xargs -n1 $(top_srcdir)/ui/headless/oort_headless
+
+%.so: %.cc testcase.h
+	$(CXX) -shared -fPIC $(CXXFLAGS) $(AM_CXXFLAGS) $< -o $@

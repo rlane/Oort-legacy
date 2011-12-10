@@ -31,6 +31,7 @@ class Game {
 	std::list<std::shared_ptr<Bullet>> bullets;
 	int ticks;
 	float time;
+	bool test_finished;
 
 	private:
 	void reap();

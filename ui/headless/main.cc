@@ -20,23 +20,33 @@ using std::make_shared;
 namespace Oort {
 
 int main(int argc, char **argv) {
-	if (argc < 2) {
+	if (argc != 2) {
 		fprintf(stderr, "usage: %s test.so\n", argv[0]);
 		return 1;
 	}
 
+	printf("Running test %s\n", argv[1]);
 	auto test = new Test(std::string(argv[1]));
 	auto game = test->game;
 
 	b2Timer timer;
 
 	while (true) {
-		game->tick();
-		auto winner = game->check_victory();
-		if (winner != nullptr) {
-			printf("Team %s is victorious\n", winner->name.c_str());
-			break;
+		test->hook("tick");
+
+		if (!test) {
+			auto winner = game->check_victory();
+			if (winner != nullptr) {
+				printf("Team %s is victorious\n", winner->name.c_str());
+			}
+		} else {
+			if (game->test_finished) {
+				printf("Passed test in %d ticks\n", game->ticks);
+				break;
+			}
 		}
+
+		game->tick();
 	}
 
 	printf("ms/frame: %0.2f\n", timer.GetMilliseconds()/game->ticks);

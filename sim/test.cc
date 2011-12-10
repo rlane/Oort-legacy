@@ -9,10 +9,11 @@ namespace Oort {
 
 Test::Test(std::string path)
   : path(path) {
-
-	dl_handle = dlopen(path.c_str(), RTLD_NOW|RTLD_LOCAL);
+	char *p = realpath(path.c_str(), NULL);
+	dl_handle = dlopen(p, RTLD_NOW|RTLD_LOCAL);
+	free(p);
 	if (dl_handle == NULL) {
-		fprintf(stderr, "dlopen: %s", dlerror());
+		fprintf(stderr, "dlopen: %s\n", dlerror());
 		exit(1);
 	}
 

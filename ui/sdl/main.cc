@@ -147,11 +147,12 @@ glm::vec2 mouse_position() {
 typedef int (*test_main_ft)();
 
 int main(int argc, char **argv) {
-	if (argc < 2) {
+	if (argc != 2) {
 		fprintf(stderr, "usage: %s test.so\n", argv[0]);
 		return 1;
 	}
 
+	printf("Running test %s\n", argv[1]);
 	auto test = new Test(std::string(argv[1]));
 	auto game = test->game;
 
@@ -200,15 +201,23 @@ int main(int argc, char **argv) {
 			}
 
 			test->hook("tick");
-			game->tick();
 
 			if (state == State::RUNNING) {
-				auto winner = game->check_victory();
-				if (winner != nullptr) {
-					printf("Team %s is victorious\n", winner->name.c_str());
-					state = State::FINISHED;
+				if (!test) {
+					auto winner = game->check_victory();
+					if (winner != nullptr) {
+						printf("Team %s is victorious\n", winner->name.c_str());
+						state = State::FINISHED;
+					}
+				} else {
+					if (game->test_finished) {
+						printf("Test finished\n");
+						state = State::FINISHED;
+					}
 				}
 			}
+
+			game->tick();
 		}
 
 		if (zoom_rate < 0) {

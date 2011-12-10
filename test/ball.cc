@@ -28,6 +28,10 @@ Game *test_init() {
 }
 
 void test_tick(Game *game) {
+	if (game->ticks == 32*60) {
+		game->test_finished = true;
+	}
+
 	BOOST_FOREACH(auto ship, game->ships) {
 		ship->thrust_main(10);
 		ship->thrust_lateral(0);
