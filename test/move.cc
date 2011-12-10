@@ -9,14 +9,17 @@ public:
 		: wpA(this, vec2(0,0), 0.1),
 		  wpB(this, vec2(50,0), 0.1),
 		  wpC(this, vec2(100,0), 0.1),
-		  wpD(this, vec2(100,50), 10),
-		  wpE(this, vec2(100,100), 20) {
+		  wpD(this, vec2(100,50), 0.1),
+		  wpE(this, vec2(100,100), 0.1) {
 		AISourceCode ai{"foo.lua", ""};
 		auto green = make_shared<Team>("green", ai, vec3(0, 1, 0));
 		ship = make_shared<Ship>(this, green);
 		ships.push_back(ship);
 		thrust = 100 * ship->body->GetMass();
-		angular_thrust = M_PI/2 * ship->body->GetInertia();
+		b2MassData md;
+		ship->body->GetMassData(&md);
+		float rot_inertia = md.I - md.mass * b2Dot(md.center, md.center);
+		angular_thrust = M_PI/2 * rot_inertia;
 		ship->thrust_main(thrust);
 	}
 
