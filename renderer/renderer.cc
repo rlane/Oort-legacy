@@ -106,7 +106,6 @@ void Renderer::render(float view_radius,
 		GL::check();
 	}
 
-
 	glDisableVertexAttribArray(prog->attrib_location("vertex"));
 	GL::Program::clear();
 	GL::check();

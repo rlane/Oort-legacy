@@ -26,24 +26,14 @@ int main(int argc, char **argv) {
 	}
 
 	printf("Running test %s\n", argv[1]);
-	auto test = new Test(std::string(argv[1]));
-	auto game = test->game;
+	auto game = Test::load(std::string(argv[1]));
 
 	b2Timer timer;
 
 	while (true) {
-		test->hook("tick");
-
-		if (!test) {
-			auto winner = game->check_victory();
-			if (winner != nullptr) {
-				printf("Team %s is victorious\n", winner->name.c_str());
-			}
-		} else {
-			if (game->test_finished) {
-				printf("Passed test in %d ticks\n", game->ticks);
-				break;
-			}
+		if (game->test_finished) {
+			printf("Passed test in %d ticks\n", game->ticks);
+			break;
 		}
 
 		game->tick();

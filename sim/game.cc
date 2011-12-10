@@ -61,7 +61,7 @@ class ContactListener : public b2ContactListener {
 	}
 } contact_listener;
 
-Game::Game(Scenario &scn, vector<AISourceCode> &ais)
+Game::Game(const Scenario &scn, const vector<AISourceCode> &ais)
   : ticks(0),
     time(0) {
 	test_finished = false;
@@ -115,9 +115,11 @@ void Game::tick() {
 	for (int i = 0; i < steps_per_tick; i++) {
 		world->Step(step_length, 8, 3);
 	}
+
 	world->ClearForces();
 	ticks++;
 	time = ticks * tick_length;
+	after_tick();
 
 #if 0
 	auto profile = world->GetProfile();
@@ -131,6 +133,9 @@ void Game::tick() {
 	printf("broadphase: %0.2f ms\n", profile.broadphase);
 	printf("solveTOI: %0.2f ms\n", profile.solveTOI);
 #endif
+}
+
+void Game::after_tick() {
 }
 
 shared_ptr<Team> Game::check_victory() {

@@ -20,10 +20,11 @@ class AISourceCode;
 class Game {
 	public:
 
-	Game(Scenario &scn, std::vector<AISourceCode> &ais);
+	Game(const Scenario &scn, const std::vector<AISourceCode> &ais);
 	~Game();
 
 	void tick();
+	virtual void after_tick();
 	std::shared_ptr<Team> check_victory();
 
 	std::unique_ptr<b2World> world;

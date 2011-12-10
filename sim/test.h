@@ -5,23 +5,18 @@
 #include <string>
 #include <memory>
 
+#include "sim/game.h"
+
 namespace Oort {
 
-class Game;
-typedef void (*test_cb)(Game *);
-typedef Game *(*test_init_cb)();
-
-class Test {
+class Test : public Game {
 public:
-	std::string path;
-	std::shared_ptr<Game> game;
+	static Test *registered;
+	static std::shared_ptr<Test> load(std::string path);
 
-	Test(std::string path);
+	Test();
 	~Test();
 
-	void hook(const char *key);
-
-private:
 	void *dl_handle;
 };
 

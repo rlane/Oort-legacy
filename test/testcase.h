@@ -10,16 +10,12 @@
 #include "glm/glm.hpp"
 
 #include "sim/game.h"
+#include "sim/test.h"
 #include "sim/ai.h"
 #include "sim/team.h"
 #include "sim/scenario.h"
 #include "sim/ship.h"
 #include "sim/math_util.h"
-
-extern "C" {
-	Oort::Game *test_init(void);
-	void test_tick(Oort::Game*);
-}
 
 using namespace std;
 using namespace Oort;
@@ -72,6 +68,7 @@ void assert_contact(const Entity &a, const Entity &b) {
 		if (contact->other == other) {
 			return;
 		}
+		contact = contact->next;
 	}
 	ostringstream msg;
 	msg << "no contact: a=" << a.body->GetPosition() << " b=" << b.body->GetPosition();

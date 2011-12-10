@@ -2,48 +2,56 @@
 #include "sim/test.h"
 
 #include <dlfcn.h>
+#include <exception>
 
 #include "sim/game.h"
+#include "sim/scenario.h"
+#include "sim/ai.h"
 
 namespace Oort {
 
-Test::Test(std::string path)
-  : path(path) {
+Test *Test::registered;
+
+static void dl_deleter(Test *ptr) {
+	dlclose(ptr->dl_handle);
+	fprintf(stderr, "test unloaded\n");
+}
+
+std::shared_ptr<Test> Test::load(std::string path) {
+	assert(registered == NULL);
 	char *p = realpath(path.c_str(), NULL);
-	dl_handle = dlopen(p, RTLD_NOW|RTLD_LOCAL);
+	if (p == NULL) {
+		fprintf(stderr, "test not found\n");
+		exit(1);
+	}
+
+	auto dl_handle = dlopen(p, RTLD_NOW|RTLD_LOCAL);
 	free(p);
+
 	if (dl_handle == NULL) {
 		fprintf(stderr, "dlopen: %s\n", dlerror());
 		exit(1);
 	}
 
-	auto cb = (test_init_cb) dlsym(dl_handle, "test_init");
-	if (cb == NULL) {
-		fprintf(stderr, "could not find test_init\n");
+	if (registered == NULL) {
+		//throw std::runtime_error("no test registered");
+		fprintf(stderr, "no test registered\n");
 		exit(1);
 	}
-	game = std::shared_ptr<Game>(cb());
+
+	registered->dl_handle = dl_handle;
+	auto tmp = registered;
+	registered = NULL;
+	return std::shared_ptr<Test>(tmp, dl_deleter);
 }
 
-void Test::hook(const char *key) {
-	char buf[128];
-
-	snprintf(buf, sizeof(buf), "test_%s", key);
-
-	auto cb = (test_cb) dlsym(dl_handle, buf);
-	if (cb == NULL) {
-		fprintf(stderr, "could not find hook function %s\n", buf);
-		exit(1);
-	}
-
-	cb(game.get());
+Test::Test()
+  : Game(Scenario(), std::vector<AISourceCode>()) {
+	registered = this;
+	fprintf(stderr, "test loaded\n");
 }
 
 Test::~Test() {
-	if (dl_handle != NULL) {
-		dlclose(dl_handle);
-	}
-	fprintf(stderr, "test finished\n");
 }
 
 }
