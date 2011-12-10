@@ -50,3 +50,30 @@ static inline void assert_equal(b2Vec2 a, b2Vec2 b) {
 		throw runtime_error(tmp.str());
 	}
 }
+
+class Waypoint : public Entity {
+public:
+	Waypoint(Game *game, vec2 pos, float radius)
+	  : Entity(game, NULL) {
+		body->SetTransform(b2Vec2(pos.x, pos.y), 0);
+		b2CircleShape shape;
+		shape.m_radius = radius;
+		b2FixtureDef def;
+		def.shape = &shape;
+		def.isSensor = true;
+		body->CreateFixture(&def);
+	}
+};
+
+void assert_contact(const Entity &a, const Entity &b) {
+	auto contact = a.body->GetContactList();
+	auto other = b.body;
+	while (contact != NULL) {
+		if (contact->other == other) {
+			return;
+		}
+	}
+	ostringstream msg;
+	msg << "no contact: a=" << a.body->GetPosition() << " b=" << b.body->GetPosition();
+	throw runtime_error(msg.str());
+}
