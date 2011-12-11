@@ -21,7 +21,7 @@ Ship::Ship(Game *game, const ShipClass *klass, std::shared_ptr<Team> team)
 	  klass(klass),
 	  ai(new AI(this, team->ai)),
 	  id(next_id++) { // XXX
-	body->CreateFixture(klass->shape, klass->density);
+	body->CreateFixture(&klass->shape, klass->density);
 }
 
 Ship::~Ship() {

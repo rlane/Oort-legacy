@@ -10,12 +10,14 @@ namespace Oort {
 
 class ShipClass {
 public:
-	b2Shape *shape;
+	b2PolygonShape shape;
+	std::vector<glm::vec2> vertices;
 	float mass;
 	float density;
-	std::vector<glm::vec2> vertices;
 
 	static void initialize();
+
+	ShipClass(std::vector<glm::vec2> vertices, float mass);
 };
 
 extern ShipClass *fighter;
