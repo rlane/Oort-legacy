@@ -12,7 +12,7 @@ public:
 		vector<shared_ptr<Team>> teams = { red, green, blue };
 
 		for (auto i = 0; i < 100; i++) {
-			auto ship = make_shared<Ship>(this, teams[i % teams.size()]);
+			auto ship = make_shared<Ship>(this, fighter, teams[i % teams.size()]);
 			ship->body->SetTransform(b2Vec2(p_dist(prng), p_dist(prng)), 0);
 			ship->body->SetLinearVelocity(b2Vec2(v_dist(prng), v_dist(prng)));
 			ships.push_back(ship);

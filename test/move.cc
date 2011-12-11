@@ -13,7 +13,7 @@ public:
 		  wpE(this, vec2(100,100), 0.1) {
 		AISourceCode ai{"foo.lua", ""};
 		auto green = make_shared<Team>("green", ai, vec3(0, 1, 0));
-		ship = make_shared<Ship>(this, green);
+		ship = make_shared<Ship>(this, fighter, green);
 		ships.push_back(ship);
 		thrust = 100 * ship->body->GetMass();
 		b2MassData md;

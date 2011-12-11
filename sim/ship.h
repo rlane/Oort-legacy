@@ -10,13 +10,15 @@ namespace Oort {
 
 class Game;
 class AI;
+class ShipClass;
 
 class Ship : public Entity {
 	public:
+	const ShipClass *klass;
 	std::unique_ptr<AI> ai;
 	uint32_t id;
 
-	Ship(Game *game, std::shared_ptr<Team> team);
+	Ship(Game *game, const ShipClass *klass, std::shared_ptr<Team> team);
 	~Ship();
 
 	virtual void tick();

@@ -11,6 +11,7 @@
 #include <Box2D/Box2D.h>
 
 #include "sim/ship.h"
+#include "sim/ship_class.h"
 #include "sim/bullet.h"
 #include "sim/scenario.h"
 #include "sim/ai.h"
@@ -76,7 +77,7 @@ Game::Game(const Scenario &scn, const vector<AISourceCode> &ais)
 		auto ai = ais[player_ai_index++];
 		auto team = make_shared<Team>(scn_team.name, ai, scn_team.color);
 		for (auto scn_ship : scn_team.ships) {
-			auto ship = make_shared<Ship>(this, team);
+			auto ship = make_shared<Ship>(this, fighter, team);
 			ship->body->SetTransform(b2Vec2(scn_ship.p.x, scn_ship.p.y), scn_ship.h);
 			ship->body->SetLinearVelocity(b2Vec2(scn_ship.v.x, scn_ship.v.y));
 			ships.push_back(ship);

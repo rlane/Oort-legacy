@@ -4,10 +4,10 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
-#include <Box2D/Common/b2Timer.h>
 
 #include "common/log.h"
 #include "sim/ship.h"
+#include "sim/ship_class.h"
 #include "sim/team.h"
 #include "sim/game.h"
 #include "sim/scenario.h"
@@ -24,6 +24,8 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "usage: %s test.so\n", argv[0]);
 		return 1;
 	}
+
+	ShipClass::initialize();
 
 	printf("Running test %s\n", argv[1]);
 	auto game = Test::load(std::string(argv[1]));

@@ -15,6 +15,7 @@
 #include "sim/team.h"
 #include "sim/scenario.h"
 #include "sim/ship.h"
+#include "sim/ship_class.h"
 #include "sim/math_util.h"
 
 using namespace std;
