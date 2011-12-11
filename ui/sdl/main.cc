@@ -223,6 +223,12 @@ int main(int argc, char **argv) {
 
 		renderer->render(view_radius, aspect_ratio, view_center);
 
+		if (state == State::RUNNING) {
+			renderer->text(8, screen_height-10, "test running");
+		} else if (state == State::FINISHED) {
+			renderer->text(8, screen_height-10, "test finished");
+		} 
+
 		if (render_physics_debug) {
 			physics_debug_renderer->begin_render(view_radius, aspect_ratio, view_center);
 			for (const b2Body *body = game->world->GetBodyList(); body; body = body->GetNext()) {

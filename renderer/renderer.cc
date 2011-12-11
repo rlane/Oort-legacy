@@ -1,6 +1,7 @@
 #include "renderer/renderer.h"
 #include <boost/scoped_ptr.hpp>
 #include <boost/foreach.hpp>
+#include <stdint.h>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -17,7 +18,9 @@
 #include "gl/program.h"
 #include "gl/shader.h"
 #include "gl/buffer.h"
+#include "gl/texture.h"
 #include "gl/check.h"
+#include "renderer/font.h"
 
 using glm::vec2;
 using std::make_shared;
@@ -30,9 +33,39 @@ Renderer::Renderer(shared_ptr<Game> game)
   : game(game),
     prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl"))))
+      make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl")))),
+    text_prog(new GL::Program(
+      make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),
+      make_shared<GL::FragmentShader>(load_resource("shaders/text.f.glsl"))))
 {
 	vertex_buf.data(fighter->vertices);
+	load_font();
+}
+
+void Renderer::load_font() {
+	font_tex.bind();
+	GL::check();
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	GL::check();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	GL::check();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	GL::check();
+	const int n = 256;
+	unsigned char data[64*n];
+	for (int i = 0; i < n; i++) {
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				uint8 row = oort_font[8*i+y];
+				bool on = ((row >> x) & 1) == 1;
+				data[n*8*y + 8*i + x] = on ? 255 : 0;
+			}
+		}
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, n*8, 8, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
+	GL::check();
+	GL::Texture::unbind();
+	GL::check();
 }
 
 void Renderer::render(float view_radius,
@@ -106,6 +139,46 @@ void Renderer::render(float view_radius,
 	glDisableVertexAttribArray(prog->attrib_location("vertex"));
 	GL::Program::clear();
 	GL::check();
+}
+
+// XXX
+static constexpr float screen_width = 1600;
+static constexpr float screen_height = 900;
+
+static vec2 pixel2screen(vec2 p) {
+	return vec2((float) (2*p.x/screen_width-1),
+	            (float) (-2*p.y/screen_height+1));
+}
+
+void Renderer::text(int x, int y, const std::string &str) {
+	auto pos = pixel2screen(vec2(x,y));
+	auto spacing = 9.0f;
+	auto n = str.length();
+
+	auto chars = new float[n];
+	auto indices = new float[n];
+	for (unsigned int i = 0; i < n; i++) {
+		chars[i] = (float) str[i];
+		indices[i] = (float) i;
+	}
+
+	text_prog->use();
+	font_tex.bind();
+	glUniform1i(text_prog->uniform_location("tex"), 0);
+	glUniform1f(text_prog->uniform_location("dist"), 2.0f*spacing/screen_width);
+	glUniform2f(text_prog->uniform_location("position"), (float)pos.x, (float)pos.y);
+	glVertexAttribPointer(text_prog->attrib_location("character"), 1, GL_FLOAT, false, 0, chars);
+	glVertexAttribPointer(text_prog->attrib_location("index"), 1, GL_FLOAT, false, 0, indices);
+	glEnableVertexAttribArray(text_prog->attrib_location("character"));
+	glEnableVertexAttribArray(text_prog->attrib_location("index"));
+	glDrawArrays(GL_POINTS, 0, (GLsizei) str.length());
+	glDisableVertexAttribArray(text_prog->attrib_location("character"));
+	glDisableVertexAttribArray(text_prog->attrib_location("index"));
+	glUseProgram(0);
+	GL::check();
+
+	delete[](chars);
+	delete[](indices);
 }
 
 }

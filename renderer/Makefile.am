@@ -13,9 +13,10 @@ noinst_LIBRARIES = librenderer.a
 librenderer_a_SOURCES = \
 	renderer.cc \
 	physics_debug_renderer.cc \
+	font.c \
 	$(NULL)
 
-noinst_HEADERS = renderer.h physics_debug_renderer.h
+noinst_HEADERS = renderer.h physics_debug_renderer.h font.h
 
 librenderer_a_LDFLAGS =
 librenderer_a_LIBADD =
