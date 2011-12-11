@@ -16,10 +16,7 @@ public:
 		ship = make_shared<Ship>(this, fighter, green);
 		ships.push_back(ship);
 		thrust = 100 * ship->body->GetMass();
-		b2MassData md;
-		ship->body->GetMassData(&md);
-		float rot_inertia = md.I - md.mass * b2Dot(md.center, md.center);
-		angular_thrust = M_PI/2 * rot_inertia;
+		angular_thrust = M_PI/2 * ship->body->GetInertia();
 		ship->thrust_main(thrust);
 	}
 

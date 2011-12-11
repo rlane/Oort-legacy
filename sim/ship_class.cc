@@ -19,6 +19,10 @@ void ShipClass::initialize() {
 	b2MassData md;
 	fighter->shape->ComputeMass(&md, 1);
 	fighter->density = fighter->mass/md.mass;
+	for (int i = 0; i < 3; i++) {
+		vertices[i] -= md.center;
+	}
+	shape->Set(vertices, 3);
 
 #if 1
 	fighter->shape->ComputeMass(&md, fighter->density);
