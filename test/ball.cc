@@ -25,14 +25,14 @@ public:
 		}
 
 		BOOST_FOREACH(auto ship, ships) {
-			ship->thrust_main(10);
-			ship->thrust_lateral(0);
+			ship->acc_main(10);
+			ship->acc_lateral(0);
 
 			auto t = ship->body->GetTransform();
 			auto w = ship->body->GetAngularVelocity();
 			auto th = angle_between(t.p, b2Vec2(0,0));
 			auto dh = angle_diff(t.q.GetAngle(), th);
-			ship->thrust_angular(dh - w);
+			ship->acc_angular(dh - w);
 
 			if (ticks % 4 == 0) {
 				ship->fire(th);

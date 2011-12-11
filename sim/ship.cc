@@ -42,24 +42,29 @@ void Ship::fire(float angle) {
 	game->bullets.push_back(bullet);
 }
 
-void Ship::thrust_main(float force) {
-	main_thrust = force;
+void Ship::acc_main(float acc) {
+	main_acc = acc;
 }
 
-void Ship::thrust_lateral(float force) {
-	lateral_thrust = force;
+void Ship::acc_lateral(float acc) {
+	lateral_acc = acc;
 }
 
-void Ship::thrust_angular(float force) {
-	angular_thrust = force;
+void Ship::acc_angular(float acc) {
+	angular_acc = acc;
 }
 
 void Ship::update_forces() {
+	b2MassData md;
+	body->GetMassData(&md);
+	float main_thrust = main_acc * md.mass;
+	float lateral_thrust = lateral_acc * md.mass;
+	float torque = angular_acc * md.I;
 	auto t = body->GetTransform();
 	auto local_force_vec = b2Vec2(main_thrust, lateral_thrust);
 	auto world_force_vec = b2Mul(t.q, local_force_vec);
 	body->ApplyForceToCenter(world_force_vec);
-	body->ApplyTorque(angular_thrust);
+	body->ApplyTorque(torque);
 }
 
 }

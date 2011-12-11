@@ -1,6 +1,8 @@
 class MoveTest : public Test {
 public:
 	static const int s = 32;
+	static constexpr float main_acc = 100;
+	static constexpr float angular_acc = M_PI/2;
 	shared_ptr<Ship> ship;
 	Waypoint wpA, wpB, wpC, wpD, wpE;
 	float thrust, angular_thrust;
@@ -15,9 +17,7 @@ public:
 		auto green = make_shared<Team>("green", ai, vec3(0, 1, 0));
 		ship = make_shared<Ship>(this, fighter, green);
 		ships.push_back(ship);
-		thrust = 100 * ship->body->GetMass();
-		angular_thrust = M_PI/2 * ship->body->GetInertia();
-		ship->thrust_main(thrust);
+		ship->acc_main(main_acc);
 	}
 
 	void after_tick() {
@@ -25,24 +25,24 @@ public:
 			assert_contact(*ship, wpA);
 		} else if (ticks == 1*s) {
 			assert_contact(*ship, wpB);
-			ship->thrust_main(-thrust);
+			ship->acc_main(-main_acc);
 		} else if (ticks == 2*s) {
 			assert_contact(*ship, wpC);
-			ship->thrust_main(0);
-			ship->thrust_angular(angular_thrust);
+			ship->acc_main(0);
+			ship->acc_angular(angular_acc);
 		} else if (ticks == 3*s) {
 			assert_contact(*ship, wpC);
-			ship->thrust_angular(-angular_thrust);
+			ship->acc_angular(-angular_acc);
 		} else if (ticks == 4*s) {
 			assert_contact(*ship, wpC);
-			ship->thrust_angular(0);
-			ship->thrust_main(thrust);
+			ship->acc_angular(0);
+			ship->acc_main(main_acc);
 		} else if (ticks == 5*s) {
 			assert_contact(*ship, wpD);
-			ship->thrust_main(-thrust);
+			ship->acc_main(-main_acc);
 		} else if (ticks == 6*s) {
 			assert_contact(*ship, wpE);
-			ship->thrust_main(0);
+			ship->acc_main(0);
 			test_finished = true;
 		}
 	}
