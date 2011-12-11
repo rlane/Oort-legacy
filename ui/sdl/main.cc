@@ -225,12 +225,12 @@ int main(int argc, char **argv) {
 
 		if (render_physics_debug) {
 			physics_debug_renderer->begin_render(view_radius, aspect_ratio, view_center);
-			physics_debug_renderer->DrawCircle(b2Vec2(0,0), 30.0f, b2Color(0.6,0.8,0.6));
-			game->world->DrawDebugData();
 			for (const b2Body *body = game->world->GetBodyList(); body; body = body->GetNext()) {
 				physics_debug_renderer->DrawPoint(body->GetWorldCenter(), 2, b2Color(0.9, 0.4, 0.3));
 				physics_debug_renderer->DrawPoint(body->GetPosition(), 2, b2Color(0.3, 0.4, 0.9));
 			}
+			physics_debug_renderer->DrawCircle(b2Vec2(0,0), 30.0f, b2Color(0.6,0.8,0.6));
+			game->world->DrawDebugData();
 			physics_debug_renderer->end_render();
 		}
 
