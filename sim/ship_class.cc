@@ -2,6 +2,7 @@
 #include "sim/ship_class.h"
 
 #include <iostream>
+#include <boost/foreach.hpp>
 
 namespace Oort {
 
@@ -9,20 +10,25 @@ ShipClass *fighter;
 
 void ShipClass::initialize() {
 	fighter = new ShipClass();
-	auto shape = new b2PolygonShape();
-	fighter->shape = shape;
-	b2Vec2 vertices[] = { b2Vec2(-0.7, -0.71),
-	                      b2Vec2(1, 0),
-	                      b2Vec2(-0.7, 0.71) };
-	shape->Set(vertices, 3);
+	fighter->vertices = { glm::vec2(-0.7, -0.71),
+	                      glm::vec2(1, 0),
+	                      glm::vec2(-0.7, 0.71) };
 	fighter->mass = 10e3;
+
+	auto shape = new b2PolygonShape();
+	shape->Set((b2Vec2*) &fighter->vertices[0], fighter->vertices.size());
+	fighter->shape = shape;
+
+	// calculate density for desired mass
 	b2MassData md;
 	fighter->shape->ComputeMass(&md, 1);
 	fighter->density = fighter->mass/md.mass;
-	for (int i = 0; i < 3; i++) {
-		vertices[i] -= md.center;
+
+	// move center of mass to local origin
+	BOOST_FOREACH(glm::vec2 &v, fighter->vertices) {
+		v -= glm::vec2(md.center.x, md.center.y);
 	}
-	shape->Set(vertices, 3);
+	shape->Set((b2Vec2*) &fighter->vertices[0], fighter->vertices.size());
 
 #if 1
 	fighter->shape->ComputeMass(&md, fighter->density);

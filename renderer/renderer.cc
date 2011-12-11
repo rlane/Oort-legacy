@@ -9,6 +9,7 @@
 #include <Box2D/Box2D.h>
 
 #include "sim/ship.h"
+#include "sim/ship_class.h"
 #include "sim/bullet.h"
 #include "sim/team.h"
 #include "common/log.h"
@@ -31,11 +32,7 @@ Renderer::Renderer(shared_ptr<Game> game)
       make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl"))))
 {
-	std::vector<vec2> vertices = { vec2(-0.7, -0.71),
-	                               vec2(-0.7, 0.71),
-	                               vec2(1, 0) };
-
-	vertex_buf.data(vertices);
+	vertex_buf.data(fighter->vertices);
 }
 
 void Renderer::render(float view_radius,
