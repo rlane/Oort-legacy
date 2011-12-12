@@ -155,11 +155,10 @@ void Renderer::text(int x, int y, const std::string &str) {
 	auto spacing = 9.0f;
 	auto n = str.length();
 
-	std::vector<float> chars(n);
-	std::vector<float> indices(n);
+	std::vector<float> data(2*n);
 	for (unsigned int i = 0; i < n; i++) {
-		chars[i] = float(str[i]);
-		indices[i] = float(i);
+		data[2*i] = float(str[i]); // character
+		data[2*i+1] = float(i); // index
 	}
 
 	text_prog->use();
@@ -167,8 +166,8 @@ void Renderer::text(int x, int y, const std::string &str) {
 	text_prog->uniform("tex", 0);
 	text_prog->uniform("dist", 2.0f*spacing/screen_width);
 	text_prog->uniform("position", pos);
-	text_prog->attrib_ptr("character", &chars[0]);
-	text_prog->attrib_ptr("index", &indices[0]);
+	text_prog->attrib_ptr("character", &data[0], 8);
+	text_prog->attrib_ptr("index", &data[1], 8);
 	text_prog->enable_attrib_array("character");
 	text_prog->enable_attrib_array("index");
 	glDrawArrays(GL_POINTS, 0, n);
