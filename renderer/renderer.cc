@@ -155,30 +155,28 @@ void Renderer::text(int x, int y, const std::string &str) {
 	auto spacing = 9.0f;
 	auto n = str.length();
 
-	auto chars = new float[n];
-	auto indices = new float[n];
+	std::vector<float> chars(n);
+	std::vector<float> indices(n);
 	for (unsigned int i = 0; i < n; i++) {
-		chars[i] = (float) str[i];
-		indices[i] = (float) i;
+		chars[i] = float(str[i]);
+		indices[i] = float(i);
 	}
 
 	text_prog->use();
 	font_tex.bind();
-	glUniform1i(text_prog->uniform_location("tex"), 0);
-	glUniform1f(text_prog->uniform_location("dist"), 2.0f*spacing/screen_width);
-	glUniform2f(text_prog->uniform_location("position"), (float)pos.x, (float)pos.y);
-	glVertexAttribPointer(text_prog->attrib_location("character"), 1, GL_FLOAT, false, 0, chars);
-	glVertexAttribPointer(text_prog->attrib_location("index"), 1, GL_FLOAT, false, 0, indices);
-	glEnableVertexAttribArray(text_prog->attrib_location("character"));
-	glEnableVertexAttribArray(text_prog->attrib_location("index"));
-	glDrawArrays(GL_POINTS, 0, (GLsizei) str.length());
-	glDisableVertexAttribArray(text_prog->attrib_location("character"));
-	glDisableVertexAttribArray(text_prog->attrib_location("index"));
-	glUseProgram(0);
+	text_prog->uniform("tex", 0);
+	text_prog->uniform("dist", 2.0f*spacing/screen_width);
+	text_prog->uniform("position", pos);
+	text_prog->attrib_ptr("character", &chars[0]);
+	text_prog->attrib_ptr("index", &indices[0]);
+	text_prog->enable_attrib_array("character");
+	text_prog->enable_attrib_array("index");
+	glDrawArrays(GL_POINTS, 0, n);
+	text_prog->disable_attrib_array("character");
+	text_prog->disable_attrib_array("index");
+	GL::Texture::unbind();
+	GL::Program::clear();
 	GL::check();
-
-	delete[](chars);
-	delete[](indices);
 }
 
 }

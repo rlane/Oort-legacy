@@ -89,16 +89,40 @@ public:
 		return loc;
 	}
 
-	void uniform(std::string name, const glm::mat4 &val) {
-		glUniformMatrix4fv(uniform_location(name), 1, false, glm::value_ptr(val));
+	void uniform(std::string name, int val) {
+		glUniform1i(uniform_location(name), val);
+	}
+
+	void uniform(std::string name, float val) {
+		glUniform1f(uniform_location(name), val);
+	}
+
+	void uniform(std::string name, const glm::vec2 &val) {
+		glUniform2fv(uniform_location(name), 1, glm::value_ptr(val));
 	}
 
 	void uniform(std::string name, const glm::vec4 &val) {
 		glUniform4fv(uniform_location(name), 1, glm::value_ptr(val));
 	}
 
+	void uniform(std::string name, const glm::mat4 &val) {
+		glUniformMatrix4fv(uniform_location(name), 1, false, glm::value_ptr(val));
+	}
+
 	void attrib(std::string name, const glm::vec2 &val) {
 		glVertexAttrib2f(attrib_location(name), val.x, val.y);
+	}
+
+	void attrib_ptr(std::string name, float *vals) {
+		glVertexAttribPointer(attrib_location(name), 1, GL_FLOAT, false, 0, vals);
+	}
+
+	void enable_attrib_array(std::string name) {
+		glEnableVertexAttribArray(attrib_location(name));
+	}
+
+	void disable_attrib_array(std::string name) {
+		glDisableVertexAttribArray(attrib_location(name));
 	}
 
 private:
