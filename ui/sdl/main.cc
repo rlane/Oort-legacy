@@ -64,68 +64,76 @@ static const float fps = 60;
 static std::unique_ptr<Renderer> renderer;
 static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
 
+static void handle_keydown(int sym) {
+	switch (sym) {
+	case SDLK_ESCAPE:
+		running = false;
+		break;
+	case SDLK_SPACE:
+		paused = !paused;
+		break;
+	case SDLK_RETURN:
+		paused = false;
+		single_step = true;
+		break;
+	case SDLK_g:
+		render_physics_debug = !render_physics_debug;
+		break;
+	case SDLK_w:
+		view_speed.y += pan_const;
+		break;
+	case SDLK_s:
+		view_speed.y -= pan_const;
+		break;
+	case SDLK_a:
+		view_speed.x -= pan_const;
+		break;
+	case SDLK_d:
+		view_speed.x += pan_const;
+		break;
+	case SDLK_z:
+		zoom_rate -= zoom_const;
+		break;
+	case SDLK_x:
+		zoom_rate += zoom_const;
+		break;
+	default:
+		break;
+	}
+}
+
+static void handle_keyup(int sym) {
+	switch (sym) {
+	case SDLK_w:
+		view_speed.y -= pan_const;
+		break;
+	case SDLK_s:
+		view_speed.y += pan_const;
+		break;
+	case SDLK_a:
+		view_speed.x += pan_const;
+		break;
+	case SDLK_d:
+		view_speed.x -= pan_const;
+		break;
+	case SDLK_z:
+		zoom_rate += zoom_const;
+		break;
+	case SDLK_x:
+		zoom_rate -= zoom_const;
+		break;
+	default:
+		break;
+	}
+}
+
 static void handle_sdl_event(const SDL_Event &event) {
 	switch(event.type) {
 		case SDL_KEYDOWN:
-			switch (event.key.keysym.sym) {
-				case SDLK_ESCAPE:
-					running = false;
-					break;
-				case SDLK_SPACE:
-					paused = !paused;
-					break;
-				case SDLK_RETURN:
-					paused = false;
-					single_step = true;
-					break;
-				case SDLK_g:
-					render_physics_debug = !render_physics_debug;
-					break;
-				case SDLK_w:
-					view_speed.y += pan_const;
-					break;
-				case SDLK_s:
-					view_speed.y -= pan_const;
-					break;
-				case SDLK_a:
-					view_speed.x -= pan_const;
-					break;
-				case SDLK_d:
-					view_speed.x += pan_const;
-					break;
-				case SDLK_z:
-					zoom_rate -= zoom_const;
-					break;
-				case SDLK_x:
-					zoom_rate += zoom_const;
-					break;
-				default:
-					break;
-			}
+			handle_keydown(event.key.keysym.sym);
 			break;
 		case SDL_KEYUP:
-			switch (event.key.keysym.sym) {
-				case SDLK_w:
-					view_speed.y -= pan_const;
-					break;
-				case SDLK_s:
-					view_speed.y += pan_const;
-					break;
-				case SDLK_a:
-					view_speed.x += pan_const;
-					break;
-				case SDLK_d:
-					view_speed.x -= pan_const;
-					break;
-				case SDLK_z:
-					zoom_rate += zoom_const;
-					break;
-				case SDLK_x:
-					zoom_rate -= zoom_const;
-					break;
-				default:
-					break;
-			}
+			handle_keyup(event.key.keysym.sym);
 			break;
 		case SDL_QUIT:
 			running = false;
