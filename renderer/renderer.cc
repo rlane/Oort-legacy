@@ -74,7 +74,7 @@ void Renderer::render(float view_radius,
 	GL::check();
 	glClear(GL_COLOR_BUFFER_BIT);
 	prog->use();
-	glEnableVertexAttribArray(prog->attrib_location("vertex"));
+	prog->enable_attrib_array("vertex");
 	GL::check();
 
 	glEnable(GL_POINT_SPRITE);
@@ -136,7 +136,7 @@ void Renderer::render(float view_radius,
 		GL::check();
 	}
 
-	glDisableVertexAttribArray(prog->attrib_location("vertex"));
+	prog->disable_attrib_array("vertex");
 	GL::Program::clear();
 	GL::check();
 }
