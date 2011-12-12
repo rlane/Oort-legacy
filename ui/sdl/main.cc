@@ -17,6 +17,7 @@
 #include "glm/gtx/string_cast.hpp"
 #include "glm/gtx/vector_angle.hpp"
 
+#include "sim/math_util.h"
 #include "common/log.h"
 #include "common/resources.h"
 #include "sim/ship.h"
@@ -43,6 +44,8 @@ uint64_t ClockGetTime()
 
 namespace Oort {
 
+glm::vec2 screen2world(glm::vec2 screen_pos);
+
 static enum class State {
 	RUNNING,
 	FINISHED
@@ -60,6 +63,8 @@ static glm::vec2 view_speed;
 static const float pan_const = 0.01;
 static const int screen_width = 1600, screen_height = 900;
 static const float fps = 60;
+static shared_ptr<Ship> picked;
+static shared_ptr<Test> game;
 
 static std::unique_ptr<Renderer> renderer;
 static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
@@ -127,6 +132,53 @@ static void handle_keyup(int sym) {
 	}
 }
 
+class PickCallback : public b2QueryCallback {
+public:
+	b2Vec2 center;
+	int found_id;
+	float closest;
+
+	PickCallback(b2Vec2 center) 
+	: center(center),
+	  found_id(-1),
+	  closest(1000) {}
+
+	bool ReportFixture(b2Fixture *fixture) {
+		auto body = fixture->GetBody();
+		auto entity = static_cast<Entity*>(body->GetUserData());
+		auto ship = dynamic_cast<Ship*>(entity);
+		if (ship != nullptr) {
+			//printf("found ship %d\n", ship->id);
+			auto dist = (body->GetPosition() - center).Length();
+			if (dist < closest) {
+				closest = dist;
+				found_id = ship->id;
+			}
+		}
+		return true;
+	}
+};
+
+static void handle_mousebuttondown(int button, int x, int y) {
+	if (button == 1) {
+		auto c = screen2world(vec2(x,y));
+		//printf("screen: (%d, %d)\n", x, y);
+		//printf("world: (%0.2f, %0.2f)\n", c.x, c.y);
+		picked = nullptr;
+		vec2 size(1,1);
+		b2AABB aabb;
+		aabb.lowerBound = n2b(c - size);
+		aabb.upperBound = n2b(c + size);
+		PickCallback picker(n2b(c));
+		game->world->QueryAABB(&picker, aabb);
+		if (picker.found_id != -1) {
+			printf("picked ship %d\n", picker.found_id);
+		} else {
+			printf("no ship found\n");
+		}
+	}
+}
+
 static void handle_sdl_event(const SDL_Event &event) {
 	switch(event.type) {
 		case SDL_KEYDOWN:
@@ -134,6 +186,9 @@ static void handle_sdl_event(const SDL_Event &event) {
 			break;
 		case SDL_KEYUP:
 			handle_keyup(event.key.keysym.sym);
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			handle_mousebuttondown(event.button.button, event.button.x, event.button.y);
 			break;
 		case SDL_QUIT:
 			running = false;
@@ -164,7 +219,7 @@ int main(int argc, char **argv) {
 	ShipClass::initialize();
 
 	printf("Running test %s\n", argv[1]);
-	auto game = Test::load(std::string(argv[1]));
+	game = Test::load(std::string(argv[1]));
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
