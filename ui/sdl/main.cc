@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <sstream>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -63,7 +64,7 @@ static glm::vec2 view_speed;
 static const float pan_const = 0.01;
 static const int screen_width = 1600, screen_height = 900;
 static const float fps = 60;
-static shared_ptr<Ship> picked;
+static int picked_id = -1;
 static shared_ptr<Test> game;
 
 static std::unique_ptr<Renderer> renderer;
@@ -136,24 +137,17 @@ class PickCallback : public b2QueryCallback {
 public:
 	b2Vec2 center;
 	int found_id;
-	float closest;
 
 	PickCallback(b2Vec2 center) 
 	: center(center),
-	  found_id(-1),
-	  closest(1000) {}
+	  found_id(-1) {}
 
 	bool ReportFixture(b2Fixture *fixture) {
 		auto body = fixture->GetBody();
 		auto entity = static_cast<Entity*>(body->GetUserData());
 		auto ship = dynamic_cast<Ship*>(entity);
-		if (ship != nullptr) {
-			//printf("found ship %d\n", ship->id);
-			auto dist = (body->GetPosition() - center).Length();
-			if (dist < closest) {
-				closest = dist;
-				found_id = ship->id;
-			}
+		if (ship != nullptr && fixture->TestPoint(center)) {
+			found_id = ship->id;
 		}
 		return true;
 	}
@@ -162,9 +156,6 @@ public:
 static void handle_mousebuttondown(int button, int x, int y) {
 	if (button == 1) {
 		auto c = screen2world(vec2(x,y));
-		//printf("screen: (%d, %d)\n", x, y);
-		//printf("world: (%0.2f, %0.2f)\n", c.x, c.y);
-		picked = nullptr;
 		vec2 size(1,1);
 		b2AABB aabb;
 		aabb.lowerBound = n2b(c - size);
@@ -172,9 +163,9 @@ static void handle_mousebuttondown(int button, int x, int y) {
 		PickCallback picker(n2b(c));
 		game->world->QueryAABB(&picker, aabb);
 		if (picker.found_id != -1) {
-			printf("picked ship %d\n", picker.found_id);
+			picked_id = picker.found_id;
 		} else {
-			printf("no ship found\n");
+			picked_id = -1;
 		}
 	}
 }
@@ -291,6 +282,12 @@ int main(int argc, char **argv) {
 		} else if (state == State::FINISHED) {
 			renderer->text(8, screen_height-10, "test finished");
 		} 
+
+		if (picked_id != -1) {
+			std::ostringstream tmp;
+			tmp << "picked " << picked_id;
+			renderer->text(8, 4, tmp.str());
+		}
 
 		if (render_physics_debug) {
 			physics_debug_renderer->begin_render(view_radius, aspect_ratio, view_center);
