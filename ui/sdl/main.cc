@@ -64,7 +64,7 @@ static glm::vec2 view_speed;
 static const float pan_const = 0.01;
 static const int screen_width = 1600, screen_height = 900;
 static const float fps = 60;
-static int picked_id = -1;
+static uint32_t picked_id = INVALID_SHIP_ID;
 static shared_ptr<Test> game;
 
 static std::unique_ptr<Renderer> renderer;
@@ -136,11 +136,11 @@ static void handle_keyup(int sym) {
 class PickCallback : public b2QueryCallback {
 public:
 	b2Vec2 center;
-	int found_id;
+	uint32_t found_id;
 
 	PickCallback(b2Vec2 center) 
 	: center(center),
-	  found_id(-1) {}
+	  found_id(INVALID_SHIP_ID) {}
 
 	bool ReportFixture(b2Fixture *fixture) {
 		auto body = fixture->GetBody();
@@ -162,10 +162,10 @@ static void handle_mousebuttondown(int button, int x, int y) {
 		aabb.upperBound = n2b(c + size);
 		PickCallback picker(n2b(c));
 		game->world->QueryAABB(&picker, aabb);
-		if (picker.found_id != -1) {
+		if (picker.found_id != INVALID_SHIP_ID) {
 			picked_id = picker.found_id;
 		} else {
-			picked_id = -1;
+			picked_id = INVALID_SHIP_ID;
 		}
 	}
 }
@@ -283,7 +283,7 @@ int main(int argc, char **argv) {
 			renderer->text(8, screen_height-10, "test finished");
 		} 
 
-		if (picked_id != -1) {
+		if (picked_id != INVALID_SHIP_ID) {
 			std::ostringstream tmp;
 			tmp << "picked " << picked_id;
 			renderer->text(8, 4, tmp.str());

@@ -12,6 +12,10 @@ class Game;
 class AI;
 class ShipClass;
 
+enum {
+	INVALID_SHIP_ID = (uint32_t)-1
+};
+
 class Ship : public Entity {
 	public:
 	const ShipClass *klass;
