@@ -284,9 +284,16 @@ int main(int argc, char **argv) {
 		} 
 
 		if (picked_id != INVALID_SHIP_ID) {
-			std::ostringstream tmp;
-			tmp << "picked " << picked_id;
-			renderer->text(8, 4, tmp.str());
+			auto ship = game->lookup_ship(picked_id);
+			if (ship != nullptr) {
+				std::ostringstream tmp;
+				auto t = ship->body->GetTransform();
+				tmp << "picked " << picked_id <<
+				       " p=(" << t.p.x << "," << t.p.y << ")";
+				renderer->text(8, 4, tmp.str());
+			} else {
+				renderer->text(8, 4, "picked ship died");
+			}
 		}
 
 		if (render_physics_debug) {

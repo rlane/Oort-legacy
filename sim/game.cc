@@ -155,4 +155,13 @@ shared_ptr<Team> Game::check_victory() {
 	}
 }
 
+shared_ptr<Ship> Game::lookup_ship(uint32 id) {
+	BOOST_FOREACH(auto ship, ships) {
+		if (ship->id == id) {
+			return ship;
+		}
+	}
+	return nullptr;
+}
+
 }

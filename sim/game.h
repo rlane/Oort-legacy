@@ -3,6 +3,7 @@
 #ifndef OORT_SIM_GAME_H_
 #define OORT_SIM_GAME_H_
 
+#include <stdint.h>
 #include <list>
 #include <memory>
 #include <vector>
@@ -26,6 +27,7 @@ class Game {
 	void tick();
 	virtual void after_tick();
 	std::shared_ptr<Team> check_victory();
+	std::shared_ptr<Ship> lookup_ship(uint32_t id);
 
 	std::unique_ptr<b2World> world;
 	std::list<std::shared_ptr<Ship>> ships;
