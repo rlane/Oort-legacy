@@ -278,21 +278,31 @@ int main(int argc, char **argv) {
 		renderer->render(view_radius, aspect_ratio, view_center);
 
 		if (state == State::RUNNING) {
-			renderer->text(8, screen_height-10, "test running");
+			renderer->text(screen_width-120, screen_height-10, "test running");
 		} else if (state == State::FINISHED) {
-			renderer->text(8, screen_height-10, "test finished");
+			renderer->text(screen_width-120, screen_height-10, "test finished");
 		} 
 
 		if (picked_id != INVALID_SHIP_ID) {
 			auto ship = game->lookup_ship(picked_id);
 			if (ship != nullptr) {
+				const int x = 15;
+				const int dy = 12;
+				const int y = screen_height - 4*dy - 3;
 				std::ostringstream tmp;
 				auto t = ship->body->GetTransform();
-				tmp << "picked " << picked_id <<
-				       " p=(" << t.p.x << "," << t.p.y << ")";
-				renderer->text(8, 4, tmp.str());
+				auto p = b2n(t.p);
+				auto v = b2n(ship->body->GetLinearVelocity());
+				tmp << ship->klass->name << " " << ship->id;
+				renderer->text(x, y+0*dy, tmp.str()); tmp.str("");
+				tmp << "position: (" << p.x << "," << p.y << ")";
+				renderer->text(x, y+1*dy, tmp.str()); tmp.str("");
+				tmp << "heading: " << t.q.GetAngle();
+				renderer->text(x, y+2*dy, tmp.str()); tmp.str("");
+				tmp << "velocity: (" << v.x << "," << v.y << ")";
+				renderer->text(x, y+3*dy, tmp.str()); tmp.str("");
 			} else {
-				renderer->text(8, 4, "picked ship died");
+				picked_id = INVALID_SHIP_ID;
 			}
 		}
 

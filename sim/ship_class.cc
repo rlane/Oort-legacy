@@ -12,11 +12,14 @@ void ShipClass::initialize() {
 	std::vector<glm::vec2> vertices = { glm::vec2(-0.7, -0.71),
 	                                    glm::vec2(1, 0),
 	                                    glm::vec2(-0.7, 0.71) };
-	fighter = new ShipClass(vertices, 10e3);
+	fighter = new ShipClass("fighter", vertices, 10e3);
 }
 
-ShipClass::ShipClass(std::vector<glm::vec2> _vertices, float mass)
-	: vertices(_vertices),
+ShipClass::ShipClass(const std::string &name,
+                     std::vector<glm::vec2> _vertices,
+                     float mass)
+  : name(name),
+    vertices(_vertices),
     mass(mass) {
 	shape.Set((b2Vec2*) &vertices[0], vertices.size());
 

@@ -3,6 +3,7 @@
 #define OORT_SIM_SHIP_CLASS_H_
 
 #include <vector>
+#include <string>
 #include <Box2D/Box2D.h>
 #include "glm/glm.hpp"
 
@@ -10,6 +11,7 @@ namespace Oort {
 
 class ShipClass {
 public:
+	const std::string name;
 	b2PolygonShape shape;
 	std::vector<glm::vec2> vertices;
 	float mass;
@@ -17,7 +19,7 @@ public:
 
 	static void initialize();
 
-	ShipClass(std::vector<glm::vec2> vertices, float mass);
+	ShipClass(const std::string &name, std::vector<glm::vec2> vertices, float mass);
 };
 
 extern ShipClass *fighter;
