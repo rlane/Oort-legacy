@@ -18,8 +18,8 @@ Bullet::Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id)
     creation_time(game->time),
     lifetime(1.0f) {
 	b2CircleShape shape;
-	shape.m_radius = 0.1f;
-	body->CreateFixture(&shape, 1.0f);
+	shape.m_radius = 0.01f;
+	body->CreateFixture(&shape, 11000);
 }
 
 Bullet::~Bullet() {

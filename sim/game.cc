@@ -16,6 +16,7 @@
 #include "sim/scenario.h"
 #include "sim/ai.h"
 #include "sim/team.h"
+#include "sim/math_util.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -57,6 +58,13 @@ class ContactListener : public b2ContactListener {
 
 		if (typeid(*entityA) == typeid(Ship) &&
 		    typeid(*entityB) == typeid(Bullet)) {
+			auto ship = dynamic_cast<Ship*>(entityA);
+			float dv = glm::length(b2n(entityA->body->GetLinearVelocity() - entityB->body->GetLinearVelocity()));
+			float e = 0.5 * entityB->body->GetMass() * dv*dv;
+			ship->hull -= e;
+			if (ship->hull < 0) {
+				ship->dead = true;
+			}
 			entityB->dead = true;
 		}
 	}

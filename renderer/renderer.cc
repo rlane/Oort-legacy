@@ -120,7 +120,7 @@ void Renderer::render(float view_radius,
 		auto h = bullet->body->GetAngle();
 		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
-		mv_matrix = glm::scale(mv_matrix, glm::vec3(0.1f, 0.1f, 0.1f));
+		mv_matrix = glm::scale(mv_matrix, glm::vec3(1,1,1)*0.01f);
 		glm::vec4 color(bullet->team->color, 0.4f);
 		GL::check();
 
