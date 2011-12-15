@@ -16,10 +16,11 @@ public:
 	std::vector<glm::vec2> vertices;
 	float mass;
 	float density;
+	float hull;
 
 	static void initialize();
 
-	ShipClass(const std::string &name, std::vector<glm::vec2> vertices, float mass);
+	ShipClass(const std::string &name, std::vector<glm::vec2> vertices, float mass, float hull);
 };
 
 extern ShipClass *fighter;

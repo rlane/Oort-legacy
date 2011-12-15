@@ -21,6 +21,7 @@ class Ship : public Entity {
 	const ShipClass *klass;
 	std::unique_ptr<AI> ai;
 	uint32_t id;
+	float hull;
 
 	Ship(Game *game, const ShipClass *klass, std::shared_ptr<Team> team);
 	~Ship();

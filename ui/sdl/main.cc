@@ -288,7 +288,7 @@ int main(int argc, char **argv) {
 			if (ship != nullptr) {
 				const int x = 15;
 				const int dy = 12;
-				const int y = screen_height - 4*dy - 3;
+				const int y = screen_height - 5*dy - 3;
 				std::ostringstream tmp;
 				auto t = ship->body->GetTransform();
 				auto p = b2n(t.p);
@@ -301,6 +301,8 @@ int main(int argc, char **argv) {
 				renderer->text(x, y+2*dy, tmp.str()); tmp.str("");
 				tmp << "velocity: (" << v.x << "," << v.y << ")";
 				renderer->text(x, y+3*dy, tmp.str()); tmp.str("");
+				tmp << "hull: " << ship->hull;
+				renderer->text(x, y+4*dy, tmp.str()); tmp.str("");
 			} else {
 				picked_id = INVALID_SHIP_ID;
 			}

@@ -12,15 +12,17 @@ void ShipClass::initialize() {
 	std::vector<glm::vec2> vertices = { glm::vec2(-0.7, -0.71),
 	                                    glm::vec2(1, 0),
 	                                    glm::vec2(-0.7, 0.71) };
-	fighter = new ShipClass("fighter", vertices, 10e3);
+	fighter = new ShipClass("fighter", vertices, 10e3, 450e3);
 }
 
 ShipClass::ShipClass(const std::string &name,
                      std::vector<glm::vec2> _vertices,
-                     float mass)
+                     float mass,
+										 float hull)
   : name(name),
     vertices(_vertices),
-    mass(mass) {
+    mass(mass),
+    hull(hull) {
 	shape.Set((b2Vec2*) &vertices[0], vertices.size());
 
 	// calculate density for desired mass
