@@ -106,8 +106,12 @@ static bool entity_is_dead(std::shared_ptr<Entity> entity) {
 }
 
 void Game::reap() {
-	auto new_end = std::remove_if(begin(bullets), end(bullets), entity_is_dead);	
-	bullets.erase(new_end, end(bullets));
+	bullets.erase(
+		std::remove_if(begin(bullets), end(bullets), entity_is_dead),
+		end(bullets));
+	ships.erase(
+		std::remove_if(begin(ships), end(ships), entity_is_dead),
+		end(ships));
 }
 
 void Game::tick() {

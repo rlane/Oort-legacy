@@ -1,6 +1,6 @@
 class GunTest : public Test {
 public:
-	shared_ptr<Ship> shipA, shipB;
+	weak_ptr<Ship> shipA, shipB;
 	unique_ptr<ShipClass> target;
 
 	GunTest() {
@@ -11,25 +11,30 @@ public:
 		target = unique_ptr<ShipClass>(new ShipClass("target", fighter->vertices, 10e3, 10e3));
 
 		{
-			shipA = make_shared<Ship>(this, fighter, blue);
-			shipA->body->SetTransform(b2Vec2(0, 0), 0);
-			shipA->body->SetLinearVelocity(b2Vec2(0, 0));
-			ships.push_back(shipA);
+			auto tmpA = make_shared<Ship>(this, fighter, blue);
+			tmpA->body->SetTransform(b2Vec2(0, 0), 0);
+			tmpA->body->SetLinearVelocity(b2Vec2(0, 0));
+			ships.push_back(tmpA);
+			shipA = tmpA;
 		}
 
 		{
-			shipB = make_shared<Ship>(this, target.get(), red);
-			shipB->body->SetTransform(b2Vec2(10, 0), M_PI/2);
-			shipB->body->SetLinearVelocity(b2Vec2(0, 0));
-			ships.push_back(shipB);
+			auto tmpB = make_shared<Ship>(this, target.get(), red);
+			tmpB->body->SetTransform(b2Vec2(10, 0), M_PI/2);
+			tmpB->body->SetLinearVelocity(b2Vec2(0, 0));
+			ships.push_back(tmpB);
+			shipB = tmpB;
 		}
 	}
 
 	void after_tick() {
-		if (shipB->dead) {
+		cout << "use count: " << shipB.use_count() << endl;
+		auto tmpB = shipB.lock();
+		if (!tmpB) {
 			test_finished = true;
 		} else {
-			shipA->fire(0);
+			cout << "dead: " << tmpB->dead << endl;
+			shipA.lock()->fire(0);
 		}
 	}
 } test;
