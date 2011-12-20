@@ -21,24 +21,33 @@ public:
 		}
 	}
 
+	shared_ptr<Ship> find_target(Ship &s) {
+		BOOST_FOREACH(auto t, ships) {
+			if (t->team != s.team) {
+				return t;
+			}
+		}
+		return nullptr;
+	}
+
 	void after_tick() {
-		if (ticks == 32*60) {
+		if (check_victory()) {
 			test_finished = true;
 		}
 
 		BOOST_FOREACH(auto ship, ships) {
-			ship->acc_main(10);
-			ship->acc_lateral(0);
+			auto t = find_target(*ship);
 
-			auto p = ship->get_position();
-			auto h = ship->get_heading();
-			auto w = ship->get_angular_velocity();
-			auto th = angle_between(p, vec2(0,0));
-			auto dh = angle_diff(h, th);
-			ship->acc_angular(dh - w);
+			if (t) {
+				auto p = ship->get_position();
+				auto th = angle_between(p, t->get_position());
+				drive_towards(*ship, t->get_position(), 1000);
 
-			if (ticks % 4 == 0) {
-				ship->fire(th);
+				if (ticks % 4 == 0) {
+					ship->fire(th);
+				}
+			} else {
+				drive_towards(*ship, vec2(0,0), 100);
 			}
 		}
 	}

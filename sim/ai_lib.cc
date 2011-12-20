@@ -52,7 +52,7 @@ void drive_towards(Ship &s, vec2 tp, float speed) {
 	s.acc_lateral(-1*rv.y);
 	turn_to(s, a);
 
-	float max_main_acc = 10;
+	float max_main_acc = 100;
 	auto diff = angle_diff(a,h);
 	if (rv.x > speed) {
 		s.acc_main(speed-rv.x);
