@@ -16,7 +16,8 @@ namespace Oort {
 Entity::Entity(Game *game, std::shared_ptr<Team> team)
 	: game(game),
 	  team(team),
-	  dead(false) {
+	  dead(false),
+	  mass(0) {
 	b2BodyDef def;
 	def.type = b2_dynamicBody;
 	def.userData = this;

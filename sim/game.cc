@@ -60,7 +60,7 @@ class ContactListener : public b2ContactListener {
 		    typeid(*entityB) == typeid(Bullet)) {
 			auto ship = dynamic_cast<Ship*>(entityA);
 			float dv = glm::length(entityA->get_velocity() - entityB->get_velocity());
-			float e = 0.5 * entityB->body->GetMass() * dv*dv;
+			float e = 0.5 * entityB->mass * dv*dv;
 			ship->hull -= e;
 			if (ship->hull < 0) {
 				ship->dead = true;

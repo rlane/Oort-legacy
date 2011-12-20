@@ -18,6 +18,7 @@ public:
 	Game *game;
 	std::shared_ptr<Team> team;
 	bool dead;
+	float mass;
 
 	Entity(Game *game, std::shared_ptr<Team> team);
 	~Entity();
@@ -41,7 +42,6 @@ public:
 
 protected:
 	b2Body *body;
-	friend class Oort::ContactListener;
 	friend void Oort::assert_contact(const Entity &a, const Entity &b);
 };
 
