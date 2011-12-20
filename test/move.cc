@@ -7,7 +7,7 @@ public:
 	static constexpr float main_acc = d;
 	static constexpr float angular_acc = M_PI/2;
 	shared_ptr<Ship> ship;
-	Waypoint wpA, wpB, wpC, wpD, wpE, wpF, wpG;
+	Waypoint wpA, wpB, wpC, wpD, wpE, wpF, wpG, wpH;
 	float thrust, angular_thrust;
 
 	MoveTest()
@@ -17,7 +17,8 @@ public:
 		  wpD(this, vec2(d,d/2), 0.1),
 		  wpE(this, vec2(d,d), 0.1),
 		  wpF(this, vec2(d/2,d), 0.1),
-		  wpG(this, vec2(0,d), 0.1) {
+		  wpG(this, vec2(0,d), 0.1),
+		  wpH(this, vec2(0,d/2), 0.1) {
 		AISourceCode ai{"foo.lua", ""};
 		auto green = make_shared<Team>("green", ai, vec3(0, 1, 0));
 		ship = make_shared<Ship>(this, fighter, green);
@@ -55,6 +56,20 @@ public:
 		} else if (ticks == 8*s) {
 			assert_contact(*ship, wpG);
 			ship->acc_lateral(0);
+			ship->acc_angular(angular_acc*2);
+		} else if (ticks == 9*s) {
+			assert_contact(*ship, wpG);
+			ship->acc_angular(-angular_acc*2);
+		} else if (ticks == 10*s) {
+			assert_contact(*ship, wpG);
+			ship->acc_angular(0);
+			ship->acc_main(main_acc);
+		} else if (ticks == 11*s) {
+			assert_contact(*ship, wpH);
+			ship->acc_main(-main_acc);
+		} else if (ticks == 12*s) {
+			assert_contact(*ship, wpA);
+			ship->acc_main(0);
 			test_finished = true;
 		}
 	}
