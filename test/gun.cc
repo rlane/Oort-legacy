@@ -14,16 +14,18 @@ public:
 
 		{
 			auto tmpA = make_shared<Ship>(this, fighter, blue);
-			tmpA->body->SetTransform(b2Vec2(0, 0), 0);
-			tmpA->body->SetLinearVelocity(b2Vec2(0, 0));
+			tmpA->set_position(vec2(00, 0));
+			tmpA->set_heading(0);
+			tmpA->set_velocity(vec2(0,0));
 			ships.push_back(tmpA);
 			shipA = tmpA;
 		}
 
 		{
 			auto tmpB = make_shared<Ship>(this, target.get(), red);
-			tmpB->body->SetTransform(b2Vec2(10, 0), M_PI/2);
-			tmpB->body->SetLinearVelocity(b2Vec2(0, 0));
+			tmpB->set_position(vec2(10, 0));
+			tmpB->set_heading(M_PI/2);
+			tmpB->set_velocity(vec2(0,0));
 			ships.push_back(tmpB);
 			shipB = tmpB;
 		}

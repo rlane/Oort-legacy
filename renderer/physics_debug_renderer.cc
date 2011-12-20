@@ -31,6 +31,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/string_cast.hpp"
 
+#include "sim/math_util.h"
 #include "common/resources.h"
 
 namespace Oort {
@@ -58,10 +59,10 @@ void PhysicsDebugRenderer::begin_render(float view_radius,
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glLineWidth(1.2f);
 
-	glm::mat4 p_matrix = glm::ortho(view_center.x - view_radius,
-	                                view_center.x + view_radius,
-	                                view_center.y - view_radius/aspect_ratio,
-	                                view_center.y + view_radius/aspect_ratio);
+	glm::mat4 p_matrix = glm::ortho((view_center.x - view_radius)/Oort::SCALE,
+	                                (view_center.x + view_radius)/Oort::SCALE,
+	                                (view_center.y - view_radius/aspect_ratio)/Oort::SCALE,
+	                                (view_center.y + view_radius/aspect_ratio)/Oort::SCALE);
 	prog->uniform("p_matrix", p_matrix);
 
 	glm::mat4 mv_matrix;

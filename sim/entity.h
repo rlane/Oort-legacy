@@ -3,6 +3,7 @@
 #define OORT_SIM_ENTITY_H_
 
 #include <memory>
+#include "glm/glm.hpp"
 
 class b2Body;
 
@@ -10,12 +11,12 @@ namespace Oort {
 
 class Game;
 class Team;
+class ContactListener;
 
 class Entity {
-	public:
+public:
 	Game *game;
 	std::shared_ptr<Team> team;
-	b2Body *body;
 	bool dead;
 
 	Entity(Game *game, std::shared_ptr<Team> team);
@@ -23,8 +24,25 @@ class Entity {
 
 	virtual void tick();
 
+	void set_position(glm::vec2 p);
+	glm::vec2 get_position() const;
+
+	void set_velocity(glm::vec2 v);
+	glm::vec2 get_velocity() const;
+
+	void set_heading(float angle);
+	float get_heading() const;
+
+	void set_angular_velocity(float w);
+	float get_angular_velocity() const;
+
 	Entity(const Entity&) = delete;
 	Entity& operator=(const Entity&) = delete;
+
+protected:
+	b2Body *body;
+	friend class Oort::ContactListener;
+	friend void Oort::assert_contact(const Entity &a, const Entity &b);
 };
 
 }

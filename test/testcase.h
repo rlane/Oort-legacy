@@ -22,11 +22,12 @@ using namespace std;
 using namespace Oort;
 using namespace glm;
 
-static inline ostream& operator<<(ostream& s, const b2Vec2& a) {
+static inline ostream& operator<<(ostream& s, const glm::vec2& a) {
 	s << "(" << a.x << ", " << a.y << ")";
 	return s;
 }
 
+#if 0
 static const float epsilon = 0.2;
 
 static inline void assert_equal(float a, float b) {
@@ -47,14 +48,17 @@ static inline void assert_equal(b2Vec2 a, b2Vec2 b) {
 		throw runtime_error(tmp.str());
 	}
 }
+#endif
+
+namespace Oort {
 
 class Waypoint : public Entity {
 public:
 	Waypoint(Game *game, vec2 pos, float radius)
 	  : Entity(game, NULL) {
-		body->SetTransform(b2Vec2(pos.x, pos.y), 0);
+		set_position(pos);
 		b2CircleShape shape;
-		shape.m_radius = radius;
+		shape.m_radius = radius/Oort::SCALE;
 		b2FixtureDef def;
 		def.shape = &shape;
 		def.isSensor = true;
@@ -72,6 +76,8 @@ void assert_contact(const Entity &a, const Entity &b) {
 		contact = contact->next;
 	}
 	ostringstream msg;
-	msg << "no contact: a=" << a.body->GetPosition() << " b=" << b.body->GetPosition();
+	msg << "no contact: a=" << a.get_position() << " b=" << b.get_position();
 	throw runtime_error(msg.str());
+}
+
 }

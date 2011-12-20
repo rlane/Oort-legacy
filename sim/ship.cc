@@ -2,12 +2,14 @@
 #include "sim/ship.h"
 
 #include <Box2D/Box2D.h>
+#include "glm/gtx/rotate_vector.hpp"
 
 #include "sim/ai.h"
 #include "sim/team.h"
 #include "sim/game.h"
 #include "sim/bullet.h"
 #include "sim/ship_class.h"
+#include "sim/math_util.h"
 #include "common/log.h"
 
 using glm::vec2;
@@ -35,11 +37,12 @@ void Ship::tick() {
 
 void Ship::fire(float angle) {
 	auto bullet = std::make_shared<Bullet>(game, team, id);
-	auto t = body->GetTransform();
-	auto v = body->GetLinearVelocity();
-	v += 30.0f*b2Vec2(cos(angle), sin(angle));
-	bullet->body->SetTransform(t.p, angle);
-	bullet->body->SetLinearVelocity(v);
+	auto p = get_position();
+	auto v = get_velocity();
+	v += 30.0f*vec2(cos(angle), sin(angle));
+	bullet->set_position(p);
+	bullet->set_heading(angle);
+	bullet->set_velocity(v);
 	game->bullets.push_back(bullet);
 }
 
@@ -61,10 +64,9 @@ void Ship::update_forces() {
 	float main_thrust = main_acc * md.mass;
 	float lateral_thrust = lateral_acc * md.mass;
 	float torque = angular_acc * md.I;
-	auto t = body->GetTransform();
-	auto local_force_vec = b2Vec2(main_thrust, lateral_thrust);
-	auto world_force_vec = b2Mul(t.q, local_force_vec);
-	body->ApplyForceToCenter(world_force_vec);
+	auto local_force_vec = vec2(main_thrust, lateral_thrust);
+	auto world_force_vec = glm::rotate(local_force_vec, glm::degrees(get_heading()));
+	body->ApplyForceToCenter(n2b(world_force_vec));
 	body->ApplyTorque(torque);
 }
 

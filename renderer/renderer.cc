@@ -95,8 +95,8 @@ void Renderer::render(float view_radius,
 
 	BOOST_FOREACH(auto ship, game->ships) {
 		glm::mat4 mv_matrix;
-		auto p = ship->body->GetPosition();
-		auto h = ship->body->GetAngle();
+		auto p = ship->get_position();
+		auto h = ship->get_heading();
 		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
 		glm::vec4 color(ship->team->color, 0.7f);
@@ -116,8 +116,8 @@ void Renderer::render(float view_radius,
 
 	BOOST_FOREACH(auto bullet, game->bullets) {
 		glm::mat4 mv_matrix;
-		auto p = bullet->body->GetPosition();
-		auto h = bullet->body->GetAngle();
+		auto p = bullet->get_position();
+		auto h = bullet->get_heading();
 		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
 		mv_matrix = glm::scale(mv_matrix, glm::vec3(1,1,1)*0.01f);

@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <memory>
+#include "glm/glm.hpp"
 #include "sim/entity.h"
 
 namespace Oort {

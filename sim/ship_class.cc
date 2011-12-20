@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <boost/foreach.hpp>
+#include "sim/math_util.h"
 
 namespace Oort {
 
@@ -35,6 +36,12 @@ ShipClass::ShipClass(const std::string &name,
 		v -= glm::vec2(md.center.x, md.center.y);
 	}
 	shape.Set((b2Vec2*) &vertices[0], vertices.size());
+
+	auto physics_vertices = vertices;
+	BOOST_FOREACH(glm::vec2 &v, physics_vertices) {
+		v *= (1.0/Oort::SCALE);
+	}
+	shape.Set((b2Vec2*) &physics_vertices[0], physics_vertices.size());
 }
 
 }

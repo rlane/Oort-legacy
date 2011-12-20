@@ -59,7 +59,7 @@ class ContactListener : public b2ContactListener {
 		if (typeid(*entityA) == typeid(Ship) &&
 		    typeid(*entityB) == typeid(Bullet)) {
 			auto ship = dynamic_cast<Ship*>(entityA);
-			float dv = glm::length(b2n(entityA->body->GetLinearVelocity() - entityB->body->GetLinearVelocity()));
+			float dv = glm::length(entityA->get_velocity() - entityB->get_velocity());
 			float e = 0.5 * entityB->body->GetMass() * dv*dv;
 			ship->hull -= e;
 			if (ship->hull < 0) {
@@ -86,8 +86,9 @@ Game::Game(const Scenario &scn, const vector<AISourceCode> &ais)
 		auto team = make_shared<Team>(scn_team.name, ai, scn_team.color);
 		for (auto scn_ship : scn_team.ships) {
 			auto ship = make_shared<Ship>(this, fighter, team);
-			ship->body->SetTransform(b2Vec2(scn_ship.p.x, scn_ship.p.y), scn_ship.h);
-			ship->body->SetLinearVelocity(b2Vec2(scn_ship.v.x, scn_ship.v.y));
+			ship->set_position(scn_ship.p);
+			ship->set_heading(scn_ship.h);
+			ship->set_velocity(scn_ship.v);
 			ships.push_back(ship);
 		}
 	}
@@ -154,7 +155,7 @@ void Game::after_tick() {
 shared_ptr<Team> Game::check_victory() {
 	std::unordered_set<shared_ptr<Team>> set;
 	BOOST_FOREACH(auto ship, ships) {
-		if (ship->body->GetPosition().Length() < 30) { // TODO(rlane): set in scenario
+		if (glm::length(ship->get_position()) < 30) { // TODO(rlane): set in scenario
 			set.insert(ship->team);
 		}
 	}

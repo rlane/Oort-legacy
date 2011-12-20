@@ -15,8 +15,8 @@ public:
 
 		for (auto i = 0; i < 100; i++) {
 			auto ship = make_shared<Ship>(this, fighter, teams[i % teams.size()]);
-			ship->body->SetTransform(b2Vec2(p_dist(prng), p_dist(prng)), 0);
-			ship->body->SetLinearVelocity(b2Vec2(v_dist(prng), v_dist(prng)));
+			ship->set_position(vec2(p_dist(prng), p_dist(prng)));
+			ship->set_velocity(vec2(v_dist(prng), v_dist(prng)));
 			ships.push_back(ship);
 		}
 	}
@@ -30,10 +30,11 @@ public:
 			ship->acc_main(10);
 			ship->acc_lateral(0);
 
-			auto t = ship->body->GetTransform();
-			auto w = ship->body->GetAngularVelocity();
-			auto th = angle_between(t.p, b2Vec2(0,0));
-			auto dh = angle_diff(t.q.GetAngle(), th);
+			auto p = ship->get_position();
+			auto h = ship->get_heading();
+			auto w = ship->get_angular_velocity();
+			auto th = angle_between(p, vec2(0,0));
+			auto dh = angle_diff(h, th);
 			ship->acc_angular(dh - w);
 
 			if (ticks % 4 == 0) {
