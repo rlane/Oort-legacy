@@ -63,11 +63,11 @@ public:
 		} else if (ticks == 10*s) {
 			assert_contact(*ship, wpG);
 			ship->acc_angular(0);
-			ship->acc_main(main_acc);
-		} else if (ticks == 11*s) {
+			ship->acc_main(main_acc*64);
+		} else if (ticks == 10*s + 1*s/8) {
 			assert_contact(*ship, wpH);
-			ship->acc_main(-main_acc);
-		} else if (ticks == 12*s) {
+			ship->acc_main(-main_acc*64);
+		} else if (ticks == 10*s + 2*s/8) {
 			assert_contact(*ship, wpA);
 			ship->acc_main(0);
 			test_finished = true;
