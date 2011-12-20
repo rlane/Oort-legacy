@@ -17,9 +17,11 @@
 #include "sim/ship.h"
 #include "sim/ship_class.h"
 #include "sim/math_util.h"
+#include "sim/ai_lib.h"
 
 using namespace std;
 using namespace Oort;
+using namespace Oort::AILib;
 using namespace glm;
 
 static inline ostream& operator<<(ostream& s, const glm::vec2& a) {

@@ -7,6 +7,7 @@ noinst_HEADERS = \
   common/log.h common/resources.h \
   sim/game.h sim/ship.h sim/ship_class.h sim/team.h sim/ai.h \
 	sim/scenario.h sim/entity.h sim/bullet.h sim/test.h sim/math_util.h \
+	sim/ai_lib.h \
 	renderer/renderer.h renderer/physics_debug_renderer.h renderer/font.h \
 	test/testcase.h
 
@@ -22,6 +23,7 @@ AM_CXXFLAGS = \
 
 SIM_SRCS = \
   sim/ai.cc \
+  sim/ai_lib.cc \
   sim/bullet.cc \
   sim/entity.cc \
   sim/game.cc \
