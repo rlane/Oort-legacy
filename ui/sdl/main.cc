@@ -53,7 +53,7 @@ static enum class State {
 } state = State::RUNNING;
 
 static bool running = true;
-static bool paused = false;
+static bool paused = true;
 static bool single_step = false;
 static bool render_physics_debug = false;
 static float view_radius = 100.0f;
