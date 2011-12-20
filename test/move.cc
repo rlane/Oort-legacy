@@ -1,3 +1,5 @@
+#include "test/testcase.h"
+
 class MoveTest : public Test {
 public:
 	static const int s = 32;

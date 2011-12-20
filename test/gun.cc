@@ -1,3 +1,5 @@
+#include "test/testcase.h"
+
 class GunTest : public Test {
 public:
 	weak_ptr<Ship> shipA, shipB;

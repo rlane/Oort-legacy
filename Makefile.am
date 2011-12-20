@@ -45,6 +45,7 @@ EXTRA_DIST = $(GLM_DIST) $(TEST_SRCS) $(SHADERS_DIST)
 CLEANFILES = $(TESTS)
 
 bin_PROGRAMS = oort_headless oort_sdl
+all: $(bin_PROGRAMS) $(TESTS)
 
 oort_headless_SOURCES := ui/headless/main.cc $(SIM_SRCS)
 oort_headless_LDADD=$(LUA_LIBS) $(BOX2D_LIBS)
@@ -54,9 +55,9 @@ oort_sdl_LDADD=$(SDL_LIBS) $(GLEW_LIBS) $(LUA_LIBS) $(BOX2D_LIBS)
 
 TESTS_ENVIRONMENT = $(top_builddir)/oort_headless
 
-test/%.so: test/%.cc test/testcase.h
+test/%.so: test/%.cc
 	@mkdir -p test
-	$(AM_V_CXX) $(CXX) -shared -fPIC -include test/testcase.h $(CXXFLAGS) $(AM_CXXFLAGS) $< -o $@
+	$(AM_V_CXX) $(CXX) -shared -fPIC $(CXXFLAGS) $(AM_CXXFLAGS) $< -o $@
 
 lint:
 	find sim renderer ui gl -iname '*.cc' -o -iname '*.h' | xargs python cpplint.py --filter=-whitespace/tab,-build/header_guard,-\whitespace/blank_line,-whitespace/labels

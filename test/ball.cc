@@ -1,3 +1,5 @@
+#include "test/testcase.h"
+
 class BallTest : public Test {
 public:
 	BallTest() {
