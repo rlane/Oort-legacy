@@ -2,19 +2,61 @@ NULL =
 
 AUTOMAKE_OPTIONS = foreign
 
-SUBDIRS = \
-	common \
-	sim \
-	renderer \
-	gl \
-	ui/headless \
-	ui/sdl \
-	third_party \
-	test \
+noinst_HEADERS = \
+  gl/buffer.h gl/check.h gl/program.h gl/shader.h gl/texture.h \
+  common/log.h common/resources.h \
+  sim/game.h sim/ship.h sim/ship_class.h sim/team.h sim/ai.h \
+	sim/scenario.h sim/entity.h sim/bullet.h sim/test.h sim/math_util.h \
+	renderer/renderer.h renderer/physics_debug_renderer.h renderer/font.h \
+	test/testcase.h
+
+AM_CXXFLAGS = \
+	-include $(CONFIG_HEADER) \
+	-I $(top_srcdir) \
+	$(GLM_CFLAGS) \
+	$(LUA_CFLAGS) \
+	$(BOX2D_CFLAGS) \
+	$(GLEW_CFLAGS) \
+	$(SDL_CFLAGS) \
 	$(NULL)
+
+SIM_SRCS = \
+  sim/ai.cc \
+  sim/bullet.cc \
+  sim/entity.cc \
+  sim/game.cc \
+  sim/scenario.cc \
+  sim/ship.cc \
+  sim/ship_class.cc \
+  sim/test.cc
+
+RENDERER_SRCS = \
+	renderer/physics_debug_renderer.cc \
+	renderer/renderer.cc \
+	renderer/font.c
+
+TEST_SRCS := $(wildcard $(top_srcdir)/test/*.cc)
+TESTS := $(patsubst $(top_srcdir)/test/%.cc,$(top_builddir)/test/%.so,$(TEST_SRCS))
+
+GLM_DIST := $(shell find $(top_srcdir)/third_party/glm -path $(top_srcdir)/third_party/glm/.git -prune -o -type f -a -print)
+SHADERS_DIST := shaders/ship.f.glsl shaders/ship.v.glsl shaders/text.f.glsl shaders/text.v.glsl
+
+EXTRA_DIST = $(GLM_DIST) $(TEST_SRCS) $(SHADERS_DIST)
+CLEANFILES = $(TESTS)
+
+bin_PROGRAMS = oort_headless oort_sdl
+
+oort_headless_SOURCES := ui/headless/main.cc $(SIM_SRCS)
+oort_headless_LDADD=$(LUA_LIBS) $(BOX2D_LIBS)
+
+oort_sdl_SOURCES := ui/sdl/main.cc $(SIM_SRCS) $(RENDERER_SRCS)
+oort_sdl_LDADD=$(SDL_LIBS) $(GLEW_LIBS) $(LUA_LIBS) $(BOX2D_LIBS)
+
+TESTS_ENVIRONMENT = $(top_builddir)/oort_headless
+
+test/%.so: test/%.cc test/testcase.h
+	@mkdir -p test
+	$(AM_V_CXX) $(CXX) -shared -fPIC -include test/testcase.h $(CXXFLAGS) $(AM_CXXFLAGS) $< -o $@
 
 lint:
 	find sim renderer ui gl -iname '*.cc' -o -iname '*.h' | xargs python cpplint.py --filter=-whitespace/tab,-build/header_guard,-\whitespace/blank_line,-whitespace/labels
-
-test: all
-	make -C test test

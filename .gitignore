@@ -17,7 +17,12 @@ install-sh
 ltmain.sh
 missing
 stamp-h1
+.deps/
+.dirstamp
 
 core
 *.trace
 vgcore*
+
+oort_headless
+oort_sdl
