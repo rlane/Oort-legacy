@@ -29,6 +29,7 @@ Entity::~Entity() {
 }
 
 void Entity::tick() {
+	set_heading(normalize_angle(get_heading()));
 }
 
 void Entity::set_position(vec2 p) {

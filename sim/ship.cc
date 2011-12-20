@@ -32,6 +32,7 @@ Ship::~Ship() {
 }
 
 void Ship::tick() {
+	Entity::tick();
 	ai->tick();
 	update_forces();
 }
