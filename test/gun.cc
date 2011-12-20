@@ -10,7 +10,7 @@ public:
 		auto blue = make_shared<Team>("blue", ai, vec3(0, 0, 1));
 		auto red = make_shared<Team>("red", ai, vec3(1, 0, 0));
 
-		target = unique_ptr<ShipClass>(new ShipClass("target", fighter->vertices, 10e3, 10e3));
+		target = unique_ptr<ShipClass>(new ShipClass("target", fighter->vertices, 10e3, 100e3));
 
 		{
 			auto tmpA = make_shared<Ship>(this, fighter, blue);

@@ -40,7 +40,7 @@ void Ship::fire(float angle) {
 	auto bullet = std::make_shared<Bullet>(game, team, id);
 	auto p = get_position();
 	auto v = get_velocity();
-	v += 30.0f*vec2(cos(angle), sin(angle));
+	v += 1000.0f*vec2(cos(angle), sin(angle));
 	bullet->set_position(p);
 	bullet->set_heading(angle);
 	bullet->set_velocity(v);

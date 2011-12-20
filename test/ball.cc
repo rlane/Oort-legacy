@@ -4,8 +4,8 @@ class BallTest : public Test {
 public:
 	BallTest() {
 		boost::random::mt19937 prng(42);
-		boost::random::normal_distribution<> p_dist(0.0, 10.0);
-		boost::random::normal_distribution<> v_dist(0.0, 5.0);
+		boost::random::normal_distribution<> p_dist(0.0, 10000.0);
+		boost::random::normal_distribution<> v_dist(0.0, 20.0);
 
 		AISourceCode ai{"foo.lua", ""};
 		auto red = make_shared<Team>("red", ai, vec3(1, 0, 0));
