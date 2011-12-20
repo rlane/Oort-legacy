@@ -42,6 +42,10 @@ public:
 		auto dp = target_ref->get_position() - ship_ref->get_position();
 		auto th = radians(orientedAngle(vec2(1,0), normalize(dp)));
 		ship_ref->fire(th);
+
+		auto a = 30.0f * normalize(dp);
+		ship_ref->acc_main(a.x);
+		ship_ref->acc_lateral(a.y);
 	}
 
 	void target_ai_tick() {
