@@ -277,6 +277,16 @@ int main(int argc, char **argv) {
 
 		renderer->render(view_radius, aspect_ratio, view_center);
 
+		if (paused) {
+			std::ostringstream tmp;
+			tmp << "(paused) tick " << game->ticks;
+			renderer->text(screen_width-tmp.str().length()*9-3, screen_height-22, tmp.str());
+		} else {
+			std::ostringstream tmp;
+			tmp << "tick " << game->ticks;
+			renderer->text(screen_width-tmp.str().length()*9-3, screen_height-22, tmp.str());
+		}
+
 		if (state == State::RUNNING) {
 			renderer->text(screen_width-120, screen_height-10, "test running");
 		} else if (state == State::FINISHED) {
