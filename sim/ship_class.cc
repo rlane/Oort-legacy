@@ -14,7 +14,7 @@ void ShipClass::initialize() {
 	ShipClassDef def;
 	def.name = "fighter";
 	def.mass = 10e3;
-	def.hull = 45e6;
+	def.hull = 4.5e6;
 	def.max_main_acc = 100;
 	def.max_lateral_acc = 50;
 	def.max_angular_acc = 2;

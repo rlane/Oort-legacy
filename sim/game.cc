@@ -52,9 +52,13 @@ class ContactFilter : public b2ContactFilter {
 } contact_filter;
 
 class ContactListener : public b2ContactListener {
-	void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) {
+	void PreSolve(b2Contact *contact, const b2Manifold *oldManifold) {
 		auto entityA = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
 		auto entityB = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
+
+		if (entityA->dead || entityB->dead) {
+			return;
+		}
 
 		if (typeid(*entityA) == typeid(Bullet)) {
 			std::swap(entityA, entityB);
@@ -65,6 +69,7 @@ class ContactListener : public b2ContactListener {
 			auto ship = dynamic_cast<Ship*>(entityA);
 			float dv = glm::length(entityA->get_velocity() - entityB->get_velocity());
 			float e = 0.5 * entityB->mass * dv*dv;
+			//printf("ship %d; bullet %p; damage %g\n", ship->id, entityB, e);
 			ship->hull -= e;
 			if (ship->hull < 0) {
 				ship->dead = true;
