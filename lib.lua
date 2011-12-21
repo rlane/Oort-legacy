@@ -32,8 +32,8 @@ end
 -- a*x^2 + b*x + c
 function smallest_positive_root_of_quadratic_equation(a, b, c)
 	local z = math.sqrt(b^2 - 4*a*c)
-	local x1 = (b + z)/(2*a)
-	local x2 = (b - z)/(2*a)
+	local x1 = (-b + z)/(2*a)
+	local x2 = (-b - z)/(2*a)
 	if x1 < 0 then return x2 end
 	if x2 < 0 then return x1 end
 	return math.min(x1, x2)
@@ -167,7 +167,7 @@ end
 
 function accelerated_goto(p,v,a)
 	local _a = a
-	local _b = 2*v
+	local _b = -2*v
 	local _c = -p + v*v/(2*a)
 	--printf("a=%0.3g b=%0.3g c=%0.3g\n", _a, _b, _c)
 	local t = smallest_positive_root_of_quadratic_equation(_a,_b,_c)
