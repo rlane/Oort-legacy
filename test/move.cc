@@ -30,7 +30,7 @@ public:
 			def.max_main_acc = main_acc*64;
 			def.max_lateral_acc = lateral_acc;
 			def.max_angular_acc = angular_acc*2;
-			def.vertices = fighter->vertices;
+			def.model = fighter->model;
 			speedy = unique_ptr<ShipClass>(new ShipClass(def));
 		}
 

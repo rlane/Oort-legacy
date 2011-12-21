@@ -7,7 +7,7 @@ noinst_HEADERS = \
   common/log.h common/resources.h \
   sim/game.h sim/ship.h sim/ship_class.h sim/team.h sim/ai.h \
 	sim/scenario.h sim/entity.h sim/bullet.h sim/test.h sim/math_util.h \
-	sim/ai_lib.h \
+	sim/ai_lib.h sim/model.h \
 	renderer/renderer.h renderer/physics_debug_renderer.h renderer/font.h \
 	test/testcase.h
 
@@ -19,6 +19,7 @@ AM_CXXFLAGS = \
 	$(BOX2D_CFLAGS) \
 	$(GLEW_CFLAGS) \
 	$(SDL_CFLAGS) \
+	$(JSON_CFLAGS) \
 	$(NULL)
 
 SIM_SRCS = \
@@ -27,6 +28,7 @@ SIM_SRCS = \
   sim/bullet.cc \
   sim/entity.cc \
   sim/game.cc \
+  sim/model.cc \
   sim/scenario.cc \
   sim/ship.cc \
   sim/ship_class.cc \

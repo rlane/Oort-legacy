@@ -4,6 +4,7 @@
 #include <iostream>
 #include <boost/foreach.hpp>
 #include "sim/math_util.h"
+#include "sim/model.h"
 
 namespace Oort {
 
@@ -17,14 +18,15 @@ void ShipClass::initialize() {
 	def.max_main_acc = 100;
 	def.max_lateral_acc = 50;
 	def.max_angular_acc = 2;
-	def.vertices = { glm::vec2(-0.7, -0.71), glm::vec2(1, 0), glm::vec2(-0.7, 0.71) };
-	BOOST_FOREACH(glm::vec2 &v, def.vertices) { v *= 10; }
+	def.model = Model::load("fighter");
 	fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
 }
 
 ShipClass::ShipClass(const ShipClassDef &def)
   : ShipClassDef(def)
 {
+	std::vector<glm::vec2> &vertices = model->collision_shape.vertices;
+
 	shape.Set((b2Vec2*) &vertices[0], vertices.size());
 
 	// calculate density for desired mass

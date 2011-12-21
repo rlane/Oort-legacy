@@ -10,6 +10,8 @@
 
 namespace Oort {
 
+struct Model;
+
 struct ShipClassDef {
 	std::string name;
 	float mass;
@@ -17,7 +19,7 @@ struct ShipClassDef {
 	float max_main_acc;
 	float max_lateral_acc;
 	float max_angular_acc;
-	std::vector<glm::vec2> vertices;
+	Model *model;
 };
 
 class ShipClass : public ShipClassDef {

@@ -18,7 +18,7 @@ public:
 			def.max_main_acc = 0;
 			def.max_lateral_acc = 0;
 			def.max_angular_acc = 0;
-			def.vertices = fighter->vertices;
+			def.model = fighter->model;
 			target = unique_ptr<ShipClass>(new ShipClass(def));
 		}
 

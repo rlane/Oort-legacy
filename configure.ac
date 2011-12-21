@@ -20,6 +20,9 @@ AC_SUBST(LDFLAGS)
 GLM_CFLAGS='-I $(top_srcdir)/third_party/glm'
 AC_SUBST(GLM_CFLAGS)
 
+JSON_CFLAGS='-I $(top_srcdir)/third_party/json-spirit/json_spirit'
+AC_SUBST(JSON_CFLAGS)
+
 BOX2D_CFLAGS=''
 BOX2D_LIBS='-lBox2D'
 AC_SUBST(BOX2D_CFLAGS)

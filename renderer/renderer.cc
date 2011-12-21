@@ -15,6 +15,7 @@
 #include "sim/ship_class.h"
 #include "sim/bullet.h"
 #include "sim/team.h"
+#include "sim/model.h"
 #include "common/log.h"
 #include "common/resources.h"
 #include "gl/program.h"
@@ -43,7 +44,7 @@ Renderer::Renderer(shared_ptr<Game> game)
       make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/text.f.glsl"))))
 {
-	vertex_buf.data(fighter->vertices);
+	vertex_buf.data(fighter->model->shapes[0].vertices);
 	load_font();
 }
 
