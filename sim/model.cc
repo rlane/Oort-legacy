@@ -28,6 +28,7 @@ Model *Model::load(std::string name) {
 
 	auto model = new Model;
 	model->name = obj.find("name")->second.get_str();
+	model->alpha = float(obj.find("alpha")->second.get_real());
 	json_spirit::mArray shapes = obj.find("shapes")->second.get_array();
 	BOOST_FOREACH(json_spirit::mValue &e, shapes) {
 		model->shapes.push_back(read_shape(e.get_array()));

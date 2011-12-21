@@ -120,7 +120,7 @@ void Renderer::render_ships() {
 		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
 		mv_matrix = glm::scale(mv_matrix, glm::vec3(1, 1, 1) * ship->klass.scale);
-		glm::vec4 color(ship->team->color, 0.7f);
+		glm::vec4 color(ship->team->color, ship->klass.model->alpha);
 		GL::check();
 
 		ship_prog->uniform("mv_matrix", mv_matrix);
