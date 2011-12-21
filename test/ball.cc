@@ -4,7 +4,7 @@ class BallTest : public Test {
 public:
 	BallTest() {
 		boost::random::mt19937 prng(42);
-		boost::random::normal_distribution<> p_dist(0.0, 10000.0);
+		boost::random::normal_distribution<> p_dist(0.0, 1000.0);
 		boost::random::normal_distribution<> v_dist(0.0, 20.0);
 
 		AISourceCode ai{"foo.lua", ""};
@@ -22,12 +22,18 @@ public:
 	}
 
 	shared_ptr<Ship> find_target(Ship &s) {
+		shared_ptr<Ship> target;
+		float dist = 1e9f;
 		BOOST_FOREACH(auto t, ships) {
 			if (t->team != s.team) {
-				return t;
+				float d = length(t->get_position() - s.get_position());
+				if (d < dist) {
+					target = t;
+					dist = d;
+				}
 			}
 		}
-		return nullptr;
+		return target;
 	}
 
 	void after_tick() {
