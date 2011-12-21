@@ -13,7 +13,11 @@ void ShipClass::initialize() {
 	std::vector<glm::vec2> vertices = { glm::vec2(-0.7, -0.71),
 	                                    glm::vec2(1, 0),
 	                                    glm::vec2(-0.7, 0.71) };
-	fighter = new ShipClass("fighter", vertices, 10e3, 4.5e6);
+	BOOST_FOREACH(glm::vec2 &v, vertices) {
+		v *= 10;
+	}
+
+	fighter = new ShipClass("fighter", vertices, 10e3, 45e6);
 }
 
 ShipClass::ShipClass(const std::string &name,

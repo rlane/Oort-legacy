@@ -22,7 +22,7 @@ public:
 		{
 			auto team = make_shared<Team>("red", ai, vec3(1, 0, 0));
 			auto s = make_shared<Ship>(this, fighter, team);
-			s->set_position(vec2(100, 0));
+			s->set_position(vec2(1500, 0));
 			ships.push_back(s);
 			target = s;
 		}
