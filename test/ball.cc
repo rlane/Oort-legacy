@@ -13,9 +13,16 @@ public:
 		auto green = make_shared<Team>("green", ai, vec3(0, 1, 0));
 		auto blue = make_shared<Team>("blue", ai, vec3(0, 0, 1));
 		vector<shared_ptr<Team>> teams = { red, green, blue };
+		vector<ShipClass*> klasses = { 
+			fighter.get(),
+			fighter.get(),
+			fighter.get(),
+			ion_cannon_frigate.get(),
+			assault_frigate.get(),
+		};
 
 		for (auto i = 0; i < 100; i++) {
-			auto ship = make_shared<Ship>(this, *fighter, teams[i % teams.size()]);
+			auto ship = make_shared<Ship>(this, *klasses[(i/teams.size()) % klasses.size()], teams[i % teams.size()]);
 			ship->set_position(vec2(p_dist(prng), p_dist(prng)));
 			ship->set_velocity(vec2(v_dist(prng), v_dist(prng)));
 			ships.push_back(ship);
@@ -46,7 +53,7 @@ public:
 			auto t = find_target(*ship);
 
 			if (t) {
-				drive_towards(*ship, t->get_position(), 1000);
+				drive_towards(*ship, t->get_position(), ship->klass.max_main_acc*5);
 
 				if (ticks % 4 == 0) {
 					auto a = lead(ship->get_position(), t->get_position(),
@@ -57,7 +64,7 @@ public:
 					}
 				}
 			} else {
-				drive_towards(*ship, vec2(0,0), 100);
+				drive_towards(*ship, vec2(0,0), ship->klass.max_main_acc*2);
 			}
 		}
 	}

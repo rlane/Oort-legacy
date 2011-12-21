@@ -33,8 +33,9 @@ public:
 	ShipClass(const ShipClassDef &def);
 };
 
-extern std::unique_ptr<ShipClass> fighter;
-
+extern std::unique_ptr<ShipClass> fighter,
+                                  ion_cannon_frigate,
+                                  assault_frigate;
 }
 
 #endif

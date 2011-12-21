@@ -8,19 +8,49 @@
 
 namespace Oort {
 
-std::unique_ptr<ShipClass> fighter;
+std::unique_ptr<ShipClass> fighter,
+                           ion_cannon_frigate,
+                           assault_frigate;
 
 void ShipClass::initialize() {
-	ShipClassDef def;
-	def.name = "fighter";
-	def.mass = 10e3;
-	def.hull = 4.5e6;
-	def.max_main_acc = 100;
-	def.max_lateral_acc = 50;
-	def.max_angular_acc = 2;
-	def.scale = 10;
-	def.model = Model::load("fighter");
-	fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
+	{
+		ShipClassDef def;
+		def.name = "fighter";
+		def.mass = 10e3;
+		def.hull = 4.5e6;
+		def.max_main_acc = 100;
+		def.max_lateral_acc = 10;
+		def.max_angular_acc = 1;
+		def.scale = 10;
+		def.model = Model::load("fighter");
+		fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
+	}
+
+	{
+		ShipClassDef def;
+		def.name = "ion cannon frigate";
+		def.mass = 160e3;
+		def.hull = 90e6;
+		def.max_main_acc = 20;
+		def.max_lateral_acc = 2;
+		def.max_angular_acc = 0.5;
+		def.scale = 40;
+		def.model = Model::load("ion_cannon_frigate");
+		ion_cannon_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
+	}
+
+	{
+		ShipClassDef def;
+		def.name = "assault frigate";
+		def.mass = 160e3;
+		def.hull = 135e6;
+		def.max_main_acc = 20;
+		def.max_lateral_acc = 4;
+		def.max_angular_acc = 0.7;
+		def.scale = 40;
+		def.model = Model::load("assault_frigate");
+		assault_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
+	}
 }
 
 ShipClass::ShipClass(const ShipClassDef &def)

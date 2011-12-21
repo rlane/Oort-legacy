@@ -12,14 +12,6 @@ public:
 		auto red = make_shared<Team>("red", ai, vec3(1, 0, 0));
 
 		{
-			ShipClassDef def = *fighter;
-			def.name = "target";
-			def.model = Model::load("ion_cannon_frigate");
-			def.scale = 50;
-			target = unique_ptr<ShipClass>(new ShipClass(def));
-		}
-
-		{
 			auto tmpA = make_shared<Ship>(this, *fighter, blue);
 			tmpA->set_position(vec2(0, 0));
 			tmpA->set_heading(0);
@@ -29,7 +21,7 @@ public:
 		}
 
 		{
-			auto tmpB = make_shared<Ship>(this, *target, red);
+			auto tmpB = make_shared<Ship>(this, *ion_cannon_frigate, red);
 			tmpB->set_position(vec2(500, 0));
 			tmpB->set_heading(M_PI/2);
 			tmpB->set_velocity(vec2(0,0));
