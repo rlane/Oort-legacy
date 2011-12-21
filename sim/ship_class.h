@@ -4,29 +4,33 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include <Box2D/Box2D.h>
 #include "glm/glm.hpp"
 
 namespace Oort {
 
-class ShipClass {
-public:
-	const std::string name;
-	b2PolygonShape shape;
-	std::vector<glm::vec2> vertices;
+struct ShipClassDef {
+	std::string name;
 	float mass;
-	float density;
 	float hull;
 	float max_main_acc;
 	float max_lateral_acc;
 	float max_angular_acc;
+	std::vector<glm::vec2> vertices;
+};
+
+class ShipClass : public ShipClassDef {
+public:
+	float density;
+	b2PolygonShape shape;
 
 	static void initialize();
 
-	ShipClass(const std::string &name, std::vector<glm::vec2> vertices, float mass, float hull);
+	ShipClass(const ShipClassDef &def);
 };
 
-extern ShipClass *fighter;
+extern std::unique_ptr<ShipClass> fighter;
 
 }
 

@@ -12,7 +12,7 @@ public:
 		auto red = make_shared<Team>("red", ai, vec3(1, 0, 0));
 
 		{
-			auto ship = make_shared<Ship>(this, fighter, green);
+			auto ship = make_shared<Ship>(this, *fighter, green);
 			ship->set_position(vec2(-dist, 0));
 			ship->set_velocity(vec2(speed, 0));
 			ship->set_heading(0);
@@ -20,7 +20,7 @@ public:
 		}
 
 		{
-			auto ship = make_shared<Ship>(this, fighter, red);
+			auto ship = make_shared<Ship>(this, *fighter, red);
 			ship->set_position(vec2(dist, 0));
 			ship->set_velocity(vec2(-speed, 0));
 			ship->set_heading(M_PI);

@@ -20,15 +20,15 @@ namespace Oort {
 
 static uint32_t next_id = 1;
 
-Ship::Ship(Game *game, const ShipClass *klass, std::shared_ptr<Team> team)
+Ship::Ship(Game *game, const ShipClass &klass, std::shared_ptr<Team> team)
 	: Entity(game, team),
 	  klass(klass),
 	  ai(new AI(this, team->ai)),
 	  id(next_id++), // XXX
 	  prng(id) { // XXX
-	hull = klass->hull;
-	mass = klass->mass;
-	body->CreateFixture(&klass->shape, klass->density);
+	hull = klass.hull;
+	mass = klass.mass;
+	body->CreateFixture(&klass.shape, klass.density);
 }
 
 Ship::~Ship() {
@@ -52,15 +52,15 @@ void Ship::fire(float angle) {
 }
 
 void Ship::acc_main(float acc) {
-	main_acc = glm::clamp(acc, -klass->max_main_acc, klass->max_main_acc);
+	main_acc = glm::clamp(acc, -klass.max_main_acc, klass.max_main_acc);
 }
 
 void Ship::acc_lateral(float acc) {
-	lateral_acc = glm::clamp(acc, -klass->max_lateral_acc, klass->max_lateral_acc);
+	lateral_acc = glm::clamp(acc, -klass.max_lateral_acc, klass.max_lateral_acc);
 }
 
 void Ship::acc_angular(float acc) {
-	angular_acc = glm::clamp(acc, -klass->max_angular_acc, klass->max_angular_acc);
+	angular_acc = glm::clamp(acc, -klass.max_angular_acc, klass.max_angular_acc);
 }
 
 void Ship::update_forces() {

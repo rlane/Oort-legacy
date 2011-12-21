@@ -20,12 +20,12 @@ enum {
 
 class Ship : public Entity {
 	public:
-	const ShipClass *klass;
+	const ShipClass &klass;
 	std::unique_ptr<AI> ai;
 	uint32_t id;
 	float hull;
 
-	Ship(Game *game, const ShipClass *klass, std::shared_ptr<Team> team);
+	Ship(Game *game, const ShipClass &klass, std::shared_ptr<Team> team);
 	~Ship();
 
 	virtual void tick();

@@ -20,14 +20,23 @@ public:
 		  wpE(this, vec2(d,d), 0.1),
 		  wpF(this, vec2(d/2,d), 0.1),
 		  wpG(this, vec2(0,d), 0.1),
-		  wpH(this, vec2(0,d/2), 0.1) {
-		speedy = unique_ptr<ShipClass>(new ShipClass("speedy", fighter->vertices, 10e3, 100e3));
-		speedy->max_main_acc = main_acc*64;
-		speedy->max_lateral_acc = lateral_acc;
-		speedy->max_angular_acc = angular_acc*2;
+		  wpH(this, vec2(0,d/2), 0.1)
+	{
+		{
+			ShipClassDef def;
+			def.name = "speedy";
+			def.mass = 10e3;
+			def.hull = 100e3;
+			def.max_main_acc = main_acc*64;
+			def.max_lateral_acc = lateral_acc;
+			def.max_angular_acc = angular_acc*2;
+			def.vertices = fighter->vertices;
+			speedy = unique_ptr<ShipClass>(new ShipClass(def));
+		}
+
 		AISourceCode ai{"foo.lua", ""};
 		auto green = make_shared<Team>("green", ai, vec3(0, 1, 0));
-		ship = make_shared<Ship>(this, speedy.get(), green);
+		ship = make_shared<Ship>(this, *speedy, green);
 		ships.push_back(ship);
 		ship->acc_main(main_acc);
 	}

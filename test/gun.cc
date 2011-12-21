@@ -10,10 +10,20 @@ public:
 		auto blue = make_shared<Team>("blue", ai, vec3(0, 0, 1));
 		auto red = make_shared<Team>("red", ai, vec3(1, 0, 0));
 
-		target = unique_ptr<ShipClass>(new ShipClass("target", fighter->vertices, 10e3, 100e3));
+		{
+			ShipClassDef def;
+			def.name = "target";
+			def.mass = 10e3;
+			def.hull = 100e3;
+			def.max_main_acc = 0;
+			def.max_lateral_acc = 0;
+			def.max_angular_acc = 0;
+			def.vertices = fighter->vertices;
+			target = unique_ptr<ShipClass>(new ShipClass(def));
+		}
 
 		{
-			auto tmpA = make_shared<Ship>(this, fighter, blue);
+			auto tmpA = make_shared<Ship>(this, *fighter, blue);
 			tmpA->set_position(vec2(00, 0));
 			tmpA->set_heading(0);
 			tmpA->set_velocity(vec2(0,0));
@@ -22,7 +32,7 @@ public:
 		}
 
 		{
-			auto tmpB = make_shared<Ship>(this, target.get(), red);
+			auto tmpB = make_shared<Ship>(this, *target, red);
 			tmpB->set_position(vec2(10, 0));
 			tmpB->set_heading(M_PI/2);
 			tmpB->set_velocity(vec2(0,0));

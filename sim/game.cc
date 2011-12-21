@@ -85,7 +85,7 @@ Game::Game(const Scenario &scn, const vector<AISourceCode> &ais)
 		auto ai = ais[player_ai_index++];
 		auto team = make_shared<Team>(scn_team.name, ai, scn_team.color);
 		for (auto scn_ship : scn_team.ships) {
-			auto ship = make_shared<Ship>(this, fighter, team);
+			auto ship = make_shared<Ship>(this, *fighter, team);
 			ship->set_position(scn_ship.p);
 			ship->set_heading(scn_ship.h);
 			ship->set_velocity(scn_ship.v);

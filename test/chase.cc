@@ -14,14 +14,14 @@ public:
 
 		{
 			auto team = make_shared<Team>("green", ai, vec3(0, 1, 0));
-			auto s = make_shared<Ship>(this, fighter, team);
+			auto s = make_shared<Ship>(this, *fighter, team);
 			ships.push_back(s);
 			ship = s;
 		}
 
 		{
 			auto team = make_shared<Team>("red", ai, vec3(1, 0, 0));
-			auto s = make_shared<Ship>(this, fighter, team);
+			auto s = make_shared<Ship>(this, *fighter, team);
 			s->set_position(vec2(1500, 0));
 			ships.push_back(s);
 			target = s;

@@ -303,7 +303,7 @@ int main(int argc, char **argv) {
 				auto p = ship->get_position();
 				auto h = ship->get_heading();
 				auto v = ship->get_velocity();
-				tmp << ship->klass->name << " " << ship->id;
+				tmp << ship->klass.name << " " << ship->id;
 				renderer->text(x, y+0*dy, tmp.str()); tmp.str("");
 				tmp << "position: (" << p.x << "," << p.y << ")";
 				renderer->text(x, y+1*dy, tmp.str()); tmp.str("");

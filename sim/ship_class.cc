@@ -7,30 +7,24 @@
 
 namespace Oort {
 
-ShipClass *fighter;
+std::unique_ptr<ShipClass> fighter;
 
 void ShipClass::initialize() {
-	std::vector<glm::vec2> vertices = { glm::vec2(-0.7, -0.71),
-	                                    glm::vec2(1, 0),
-	                                    glm::vec2(-0.7, 0.71) };
-	BOOST_FOREACH(glm::vec2 &v, vertices) {
-		v *= 10;
-	}
-
-	fighter = new ShipClass("fighter", vertices, 10e3, 45e6);
+	ShipClassDef def;
+	def.name = "fighter";
+	def.mass = 10e3;
+	def.hull = 45e6;
+	def.max_main_acc = 100;
+	def.max_lateral_acc = 50;
+	def.max_angular_acc = 2;
+	def.vertices = { glm::vec2(-0.7, -0.71), glm::vec2(1, 0), glm::vec2(-0.7, 0.71) };
+	BOOST_FOREACH(glm::vec2 &v, def.vertices) { v *= 10; }
+	fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
 }
 
-ShipClass::ShipClass(const std::string &name,
-                     std::vector<glm::vec2> _vertices,
-                     float mass,
-                     float hull)
-  : name(name),
-    vertices(_vertices),
-    mass(mass),
-    hull(hull),
-    max_main_acc(100),
-    max_lateral_acc(50),
-    max_angular_acc(2) {
+ShipClass::ShipClass(const ShipClassDef &def)
+  : ShipClassDef(def)
+{
 	shape.Set((b2Vec2*) &vertices[0], vertices.size());
 
 	// calculate density for desired mass
