@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <memory>
+#include <boost/random/mersenne_twister.hpp>
 #include "glm/glm.hpp"
 #include "sim/entity.h"
 
@@ -38,6 +39,7 @@ class Ship : public Entity {
 	float main_acc;
 	float lateral_acc;
 	float angular_acc;
+	boost::random::mt19937 prng;
 
 	void update_forces();
 };

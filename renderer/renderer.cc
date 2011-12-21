@@ -156,8 +156,7 @@ void Renderer::render_bullets() {
 
 	BOOST_FOREACH(auto bullet, game->bullets) {
 		auto dp = bullet->get_velocity() * (1.0f/64);
-		auto offset = bullet->get_velocity() * (float(p_dist(prng))/64);
-		auto p1 = bullet->get_position() + offset;
+		auto p1 = bullet->get_position();
 		auto p2 = p1 + dp;
 
 		glm::vec2 vertices[2] = { p1, p2 };

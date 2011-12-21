@@ -2,6 +2,8 @@
 #include "sim/ship.h"
 
 #include <Box2D/Box2D.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/normal_distribution.hpp>
 #include "glm/gtx/rotate_vector.hpp"
 
 #include "sim/ai.h"
@@ -22,7 +24,8 @@ Ship::Ship(Game *game, const ShipClass *klass, std::shared_ptr<Team> team)
 	: Entity(game, team),
 	  klass(klass),
 	  ai(new AI(this, team->ai)),
-	  id(next_id++) { // XXX
+	  id(next_id++), // XXX
+	  prng(id) { // XXX
 	hull = klass->hull;
 	mass = klass->mass;
 	body->CreateFixture(&klass->shape, klass->density);
@@ -38,10 +41,10 @@ void Ship::tick() {
 }
 
 void Ship::fire(float angle) {
+	boost::random::normal_distribution<float> v_dist(1000, 10);
 	auto bullet = std::make_shared<Bullet>(game, team, id);
 	auto p = get_position();
-	auto v = get_velocity();
-	v += 1000.0f*vec2(cos(angle), sin(angle));
+	auto v = get_velocity() + v_dist(prng) * vec2(cos(angle), sin(angle));
 	bullet->set_position(p);
 	bullet->set_heading(angle);
 	bullet->set_velocity(v);
