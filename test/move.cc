@@ -23,14 +23,11 @@ public:
 		  wpH(this, vec2(0,d/2), 0.1)
 	{
 		{
-			ShipClassDef def;
+			ShipClassDef def = *fighter;
 			def.name = "speedy";
-			def.mass = 10e3;
-			def.hull = 100e3;
 			def.max_main_acc = main_acc*64;
 			def.max_lateral_acc = lateral_acc;
 			def.max_angular_acc = angular_acc*2;
-			def.model = fighter->model;
 			speedy = unique_ptr<ShipClass>(new ShipClass(def));
 		}
 
