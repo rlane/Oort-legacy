@@ -31,7 +31,7 @@ namespace Oort {
 
 Renderer::Renderer(shared_ptr<Game> game)
   : game(game),
-    prog(new GL::Program(
+    ship_prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl")))),
     text_prog(new GL::Program(
@@ -94,10 +94,10 @@ void Renderer::render(float view_radius,
 }
 
 void Renderer::render_ships() {
-	prog->use();
-	prog->enable_attrib_array("vertex");
+	ship_prog->use();
+	ship_prog->enable_attrib_array("vertex");
 	GL::check();
-	prog->uniform("p_matrix", p_matrix);
+	ship_prog->uniform("p_matrix", p_matrix);
 
 	BOOST_FOREACH(auto ship, game->ships) {
 		glm::mat4 mv_matrix;
@@ -108,10 +108,10 @@ void Renderer::render_ships() {
 		glm::vec4 color(ship->team->color, 0.7f);
 		GL::check();
 
-		prog->uniform("mv_matrix", mv_matrix);
-		prog->uniform("color", color);
+		ship_prog->uniform("mv_matrix", mv_matrix);
+		ship_prog->uniform("color", color);
 		vertex_buf.bind();
-		glVertexAttribPointer(prog->attrib_location("vertex"),
+		glVertexAttribPointer(ship_prog->attrib_location("vertex"),
 		                      2, GL_FLOAT, GL_FALSE, 0, 0);
 		vertex_buf.unbind();
 		GL::check();
@@ -120,16 +120,16 @@ void Renderer::render_ships() {
 		GL::check();
 	}
 
-	prog->disable_attrib_array("vertex");
+	ship_prog->disable_attrib_array("vertex");
 	GL::Program::clear();
 	GL::check();
 }
 
 void Renderer::render_bullets() {
-	prog->use();
-	prog->enable_attrib_array("vertex");
+	ship_prog->use();
+	ship_prog->enable_attrib_array("vertex");
 	GL::check();
-	prog->uniform("p_matrix", p_matrix);
+	ship_prog->uniform("p_matrix", p_matrix);
 
 	BOOST_FOREACH(auto bullet, game->bullets) {
 		glm::mat4 mv_matrix;
@@ -141,10 +141,10 @@ void Renderer::render_bullets() {
 		glm::vec4 color(bullet->team->color, 0.4f);
 		GL::check();
 
-		prog->uniform("mv_matrix", mv_matrix);
-		prog->uniform("color", color);
+		ship_prog->uniform("mv_matrix", mv_matrix);
+		ship_prog->uniform("color", color);
 		vertex_buf.bind();
-		glVertexAttribPointer(prog->attrib_location("vertex"),
+		glVertexAttribPointer(ship_prog->attrib_location("vertex"),
 		                      2, GL_FLOAT, GL_FALSE, 0, 0);
 		vertex_buf.unbind();
 		GL::check();
@@ -153,7 +153,7 @@ void Renderer::render_bullets() {
 		GL::check();
 	}
 
-	prog->disable_attrib_array("vertex");
+	ship_prog->disable_attrib_array("vertex");
 	GL::Program::clear();
 	GL::check();
 }
