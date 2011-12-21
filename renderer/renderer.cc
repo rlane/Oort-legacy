@@ -111,6 +111,10 @@ void Renderer::render_ships() {
 	ship_prog->uniform("p_matrix", p_matrix);
 
 	BOOST_FOREACH(auto ship, game->ships) {
+		if (ship->dead) {
+			continue;
+		}
+
 		glm::mat4 mv_matrix;
 		auto p = ship->get_position();
 		auto h = ship->get_heading();
@@ -157,6 +161,10 @@ void Renderer::render_bullets() {
 	glVertexAttribPointer(bullet_prog->attrib_location("color"), 4, GL_FLOAT, false, 0, colors);
 
 	BOOST_FOREACH(auto bullet, game->bullets) {
+		if (bullet->dead) {
+			continue;
+		}
+
 		auto dp = bullet->get_velocity() * (1.0f/64);
 		auto p1 = bullet->get_position();
 		auto p2 = p1 + dp;

@@ -36,6 +36,10 @@ class ContactFilter : public b2ContactFilter {
 			std::swap(entityA, entityB);
 		}
 
+		if (entityA->dead || entityB->dead) {
+			return false;
+		}
+
 		if (typeid(*entityA) == typeid(Ship) &&
 		    typeid(*entityB) == typeid(Bullet)) {
 			auto ship = static_cast<Ship*>(entityA);

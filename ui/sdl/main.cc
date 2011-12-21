@@ -146,7 +146,7 @@ public:
 		auto body = fixture->GetBody();
 		auto entity = static_cast<Entity*>(body->GetUserData());
 		auto ship = dynamic_cast<Ship*>(entity);
-		if (ship != nullptr && fixture->TestPoint(center)) {
+		if (ship != nullptr && !ship->dead && fixture->TestPoint(center)) {
 			found_id = ship->id;
 		}
 		return true;
@@ -295,7 +295,7 @@ int main(int argc, char **argv) {
 
 		if (picked_id != INVALID_SHIP_ID) {
 			auto ship = game->lookup_ship(picked_id);
-			if (ship != nullptr) {
+			if (ship != nullptr && !ship->dead) {
 				const int x = 15;
 				const int dy = 12;
 				const int y = screen_height - 5*dy - 3;
