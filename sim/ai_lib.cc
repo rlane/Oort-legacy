@@ -1,5 +1,6 @@
 #include "sim/ai_lib.h"
 #include "sim/ship.h"
+#include "sim/ship_class.h"
 #include "sim/math_util.h"
 #include "glm/gtx/vector_angle.hpp"
 
@@ -41,10 +42,9 @@ int accelerated_goto(float p, float v, float a) {
 void turn_to(Ship &s, float angle) {
 	auto h = s.get_heading();
 	auto w = s.get_angular_velocity();
-	auto wa = 2.0f;
 	auto diff = angle_diff(h, angle);
-	auto f = accelerated_goto(diff, -w, wa);
-	s.acc_angular(f * wa);
+	auto f = accelerated_goto(diff, -w, s.klass->max_angular_acc);
+	s.acc_angular(f * s.klass->max_angular_acc);
 }
 
 void drive_towards(Ship &s, vec2 tp, float speed) {
@@ -56,14 +56,13 @@ void drive_towards(Ship &s, vec2 tp, float speed) {
 	s.acc_lateral(-1*rv.y);
 	turn_to(s, a);
 
-	float max_main_acc = 100;
 	auto diff = angle_diff(a,h);
 	if (rv.x > speed) {
 		s.acc_main(speed-rv.x);
 	} else if (fabsf(diff) < M_PI/4) {
-		s.acc_main(max_main_acc);
+		s.acc_main(s.klass->max_main_acc);
 	} else if (fabsf(diff) > 3*M_PI/4) {
-		s.acc_main(-max_main_acc);
+		s.acc_main(-s.klass->max_main_acc);
 	} else {
 		s.acc_main(0);
 	}

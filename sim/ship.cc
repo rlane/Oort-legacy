@@ -49,15 +49,15 @@ void Ship::fire(float angle) {
 }
 
 void Ship::acc_main(float acc) {
-	main_acc = acc;
+	main_acc = glm::clamp(acc, -klass->max_main_acc, klass->max_main_acc);
 }
 
 void Ship::acc_lateral(float acc) {
-	lateral_acc = acc;
+	lateral_acc = glm::clamp(acc, -klass->max_lateral_acc, klass->max_lateral_acc);
 }
 
 void Ship::acc_angular(float acc) {
-	angular_acc = acc;
+	angular_acc = glm::clamp(acc, -klass->max_angular_acc, klass->max_angular_acc);
 }
 
 void Ship::update_forces() {

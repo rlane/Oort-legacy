@@ -19,11 +19,14 @@ void ShipClass::initialize() {
 ShipClass::ShipClass(const std::string &name,
                      std::vector<glm::vec2> _vertices,
                      float mass,
-										 float hull)
+                     float hull)
   : name(name),
     vertices(_vertices),
     mass(mass),
-    hull(hull) {
+    hull(hull),
+    max_main_acc(100),
+    max_lateral_acc(50),
+    max_angular_acc(2) {
 	shape.Set((b2Vec2*) &vertices[0], vertices.size());
 
 	// calculate density for desired mass

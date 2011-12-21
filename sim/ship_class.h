@@ -17,6 +17,9 @@ public:
 	float mass;
 	float density;
 	float hull;
+	float max_main_acc;
+	float max_lateral_acc;
+	float max_angular_acc;
 
 	static void initialize();
 
