@@ -15,9 +15,9 @@ float sqr(float x) {
 }
 
 float smallest_positive_root_of_quadratic_equation(float a, float b, float c) {
-	float z = sqrtf(b*b - 4*a*c);
-	float x1 = (b + z)/(2*a);
-	float x2 = (b - z)/(2*a);
+	float z = sqrtf(sqr(b) - 4*a*c);
+	float x1 = (-b + z)/(2*a);
+	float x2 = (-b - z)/(2*a);
 	if (x1 < 0) {
 		return x2;
 	} else if (x2 < 0) {
@@ -29,7 +29,7 @@ float smallest_positive_root_of_quadratic_equation(float a, float b, float c) {
 
 int accelerated_goto(float p, float v, float a) {
 	auto _a = a;
-	auto _b = 2*v;
+	auto _b = -2*v;
 	auto _c = -p + v*v/(2*a);
 	auto t = smallest_positive_root_of_quadratic_equation(_a, _b, _c);
 	if (t > 0) {

@@ -9,7 +9,7 @@ public:
 
 	ChaseTest()
 	  : prng(42),
-	    v_dist(0.0, 100.0) {
+	    v_dist(0.0, 300.0) {
 		AISourceCode ai{"foo.lua", ""};
 
 		{
