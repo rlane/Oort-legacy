@@ -72,10 +72,6 @@ void Renderer::render(float view_radius,
                       float aspect_ratio,
                       glm::vec2 view_center) {
 	GL::check();
-	glClear(GL_COLOR_BUFFER_BIT);
-	prog->use();
-	prog->enable_attrib_array("vertex");
-	GL::check();
 
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
@@ -83,14 +79,24 @@ void Renderer::render(float view_radius,
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
 	glLineWidth(1.2f);
 
-	glm::mat4 p_matrix = glm::ortho(view_center.x - view_radius,
-	                                view_center.x + view_radius,
-	                                view_center.y - view_radius/aspect_ratio,
-	                                view_center.y + view_radius/aspect_ratio);
+	glClear(GL_COLOR_BUFFER_BIT);
 
+	p_matrix = glm::ortho(view_center.x - view_radius,
+	                      view_center.x + view_radius,
+	                      view_center.y - view_radius/aspect_ratio,
+	                      view_center.y + view_radius/aspect_ratio);
+
+	render_ships();
+	render_bullets();
+}
+
+void Renderer::render_ships() {
+	prog->use();
+	prog->enable_attrib_array("vertex");
+	GL::check();
 	prog->uniform("p_matrix", p_matrix);
 
 	BOOST_FOREACH(auto ship, game->ships) {
@@ -113,6 +119,17 @@ void Renderer::render(float view_radius,
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
 		GL::check();
 	}
+
+	prog->disable_attrib_array("vertex");
+	GL::Program::clear();
+	GL::check();
+}
+
+void Renderer::render_bullets() {
+	prog->use();
+	prog->enable_attrib_array("vertex");
+	GL::check();
+	prog->uniform("p_matrix", p_matrix);
 
 	BOOST_FOREACH(auto bullet, game->bullets) {
 		glm::mat4 mv_matrix;

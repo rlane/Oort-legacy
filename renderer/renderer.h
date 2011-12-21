@@ -24,7 +24,11 @@ private:
 	GL::Buffer vertex_buf;
 	GL::Texture font_tex;
 
+	glm::mat4 p_matrix;
+
 	void load_font();
+	void render_ships();
+	void render_bullets();
 };
 
 }
