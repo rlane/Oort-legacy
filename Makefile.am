@@ -43,9 +43,11 @@ TEST_SRCS := $(wildcard $(top_srcdir)/test/*.cc)
 TESTS := $(patsubst $(top_srcdir)/test/%.cc,$(top_builddir)/test/%.so,$(TEST_SRCS))
 
 GLM_DIST := $(shell find $(top_srcdir)/third_party/glm -path $(top_srcdir)/third_party/glm/.git -prune -o -type f -a -print)
-SHADERS_DIST := shaders/ship.f.glsl shaders/ship.v.glsl shaders/text.f.glsl shaders/text.v.glsl
+JSON_DIST := $(shell find $(top_srcdir)/third_party/json-spirit -path $(top_srcdir)/third_party/json-spirit/.git -prune -o -type f -a -print)
+SHADERS_DIST := $(wildcard $(top_srcdir)/shaders/*.glsl)
+MODELS_DIST := $(wildcard $(top_srcdir)/models/*.json)
 
-EXTRA_DIST = $(GLM_DIST) $(TEST_SRCS) $(SHADERS_DIST)
+EXTRA_DIST = $(GLM_DIST) $(JSON_DIST) $(TEST_SRCS) $(SHADERS_DIST) $(MODELS_DIST)
 CLEANFILES = $(TESTS)
 
 bin_PROGRAMS = oort_headless oort_sdl

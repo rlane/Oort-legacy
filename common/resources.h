@@ -12,13 +12,14 @@
 
 namespace Oort {
 
-inline std::string load_resource(std::string name) {
+inline std::string load_resource(const std::string &name) {
 	typedef std::istream_iterator<char> istream_iterator;
 	typedef std::ostream_iterator<char> ostream_iterator;
 	std::ifstream file;
 	file.exceptions(std::ifstream::badbit);
-	// TODO(rlane): resources directory
-	file.open(name, std::ios::in|std::ios::binary|std::ios::ate);
+	auto dir = getenv("srcdir");
+	if (!dir) dir = (char*)".";
+	file.open(std::string(dir) + "/" + name, std::ios::in|std::ios::binary|std::ios::ate);
 	file >> std::noskipws;
 	auto size = file.tellg();
 	//log("reading %s size %d\n", name.c_str(), static_cast<int>(size));
