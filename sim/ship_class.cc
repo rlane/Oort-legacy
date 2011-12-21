@@ -18,6 +18,7 @@ void ShipClass::initialize() {
 	def.max_main_acc = 100;
 	def.max_lateral_acc = 50;
 	def.max_angular_acc = 2;
+	def.scale = 10;
 	def.model = Model::load("fighter");
 	fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
 }
@@ -25,26 +26,16 @@ void ShipClass::initialize() {
 ShipClass::ShipClass(const ShipClassDef &def)
   : ShipClassDef(def)
 {
-	std::vector<glm::vec2> &vertices = model->collision_shape.vertices;
-
-	shape.Set((b2Vec2*) &vertices[0], vertices.size());
+	auto physics_vertices = model->collision_shape.vertices;
+	BOOST_FOREACH(glm::vec2 &v, physics_vertices) {
+		v *= (scale/Oort::SCALE);
+	}
+	shape.Set((b2Vec2*) &physics_vertices[0], physics_vertices.size());
 
 	// calculate density for desired mass
 	b2MassData md;
 	shape.ComputeMass(&md, 1);
 	density = mass/md.mass;
-
-	// move center of mass to local origin
-	BOOST_FOREACH(glm::vec2 &v, vertices) {
-		v -= glm::vec2(md.center.x, md.center.y);
-	}
-	shape.Set((b2Vec2*) &vertices[0], vertices.size());
-
-	auto physics_vertices = vertices;
-	BOOST_FOREACH(glm::vec2 &v, physics_vertices) {
-		v *= (1.0/Oort::SCALE);
-	}
-	shape.Set((b2Vec2*) &physics_vertices[0], physics_vertices.size());
 }
 
 }
