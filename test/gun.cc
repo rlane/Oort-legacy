@@ -1,4 +1,5 @@
 #include "test/testcase.h"
+#include "sim/model.h"
 
 class GunTest : public Test {
 public:
@@ -13,6 +14,8 @@ public:
 		{
 			ShipClassDef def = *fighter;
 			def.name = "target";
+			def.model = Model::load("ion_cannon_frigate");
+			def.scale = 50;
 			target = unique_ptr<ShipClass>(new ShipClass(def));
 		}
 

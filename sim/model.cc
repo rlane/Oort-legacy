@@ -16,6 +16,7 @@ static Shape read_shape(json_spirit::mArray &vertices) {
 		float y = float(obj["y"].get_real());
 		s.vertices.push_back(glm::vec2(x, y));
 	}
+	s.vertex_buffer = nullptr;
 	return s;
 }
 
@@ -32,7 +33,12 @@ Model *Model::load(std::string name) {
 		model->shapes.push_back(read_shape(e.get_array()));
 	}
 	
-	model->collision_shape = model->shapes[0];
+	if (obj.count("collision_shape")) {
+		json_spirit::mArray vertices = obj.find("collision_shape")->second.get_array();
+		model->collision_shape = read_shape(vertices);
+	} else {
+		model->collision_shape = model->shapes[0];
+	}
 
 	// move center of mass to local origin
 	std::vector<glm::vec2> &vertices = model->collision_shape.vertices;

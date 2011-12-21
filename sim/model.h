@@ -4,12 +4,18 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "glm/glm.hpp"
+
+namespace GL {
+	class Buffer;
+}
 
 namespace Oort {
 
 struct Shape {
 	std::vector<glm::vec2> vertices;
+	GL::Buffer *vertex_buffer;
 };
 
 struct Model {

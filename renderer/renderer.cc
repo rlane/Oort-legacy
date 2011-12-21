@@ -44,7 +44,6 @@ Renderer::Renderer(shared_ptr<Game> game)
       make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/text.f.glsl"))))
 {
-	vertex_buf.data(fighter->model->shapes[0].vertices);
 	load_font();
 }
 
@@ -126,14 +125,22 @@ void Renderer::render_ships() {
 
 		ship_prog->uniform("mv_matrix", mv_matrix);
 		ship_prog->uniform("color", color);
-		vertex_buf.bind();
-		glVertexAttribPointer(ship_prog->attrib_location("vertex"),
-		                      2, GL_FLOAT, GL_FALSE, 0, 0);
-		vertex_buf.unbind();
-		GL::check();
 
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-		GL::check();
+		BOOST_FOREACH(Shape &shape, ship->klass.model->shapes) {
+			GL::Buffer *&vertex_buf = shape.vertex_buffer;
+			if (!vertex_buf) {
+				vertex_buf = new GL::Buffer();
+				vertex_buf->data(shape.vertices);
+			}
+			vertex_buf->bind();
+			glVertexAttribPointer(ship_prog->attrib_location("vertex"),
+			                      2, GL_FLOAT, GL_FALSE, 0, 0);
+			vertex_buf->unbind();
+			GL::check();
+
+			glDrawArrays(GL_LINE_LOOP, 0, shape.vertices.size());
+			GL::check();
+		}
 	}
 
 	ship_prog->disable_attrib_array("vertex");
