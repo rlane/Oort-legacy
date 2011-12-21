@@ -38,7 +38,7 @@ public:
 	}
 
 	void after_tick() {
-		if (check_victory()) {
+		if (ships.empty() || check_victory()) {
 			test_finished = true;
 		}
 
