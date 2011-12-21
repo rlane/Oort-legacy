@@ -24,9 +24,9 @@ void ShipClass::initialize() {
 		def.scale = 10;
 		def.model = Model::load("fighter");
 		GunDef gun;
-		gun.mass = 0.3f;
+		gun.mass = 0.03f;
 		gun.radius = 0.01f;
-		gun.velocity = 1000.0f;
+		gun.velocity = 3000.0f;
 		gun.ttl = 1.0f;
 		gun.reload_time = 0.125f;
 		def.guns.push_back(gun);
@@ -67,7 +67,7 @@ void ShipClass::initialize() {
 		gun.mass = 10.0f;
 		gun.radius = 0.01f;
 		gun.velocity = 600.0f;
-		gun.ttl = 5.0f;
+		gun.ttl = 10.0f;
 		gun.reload_time = 0.6f;
 		def.guns.push_back(gun);
 		assault_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
