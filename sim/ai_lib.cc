@@ -9,6 +9,10 @@ using namespace glm;
 namespace Oort {
 namespace AILib {
 
+float sqr(float x) {
+	return x*x;
+}
+
 float smallest_positive_root_of_quadratic_equation(float a, float b, float c) {
 	float z = sqrtf(b*b - 4*a*c);
 	float x1 = (b + z)/(2*a);
@@ -62,6 +66,22 @@ void drive_towards(Ship &s, vec2 tp, float speed) {
 		s.acc_main(-max_main_acc);
 	} else {
 		s.acc_main(0);
+	}
+}
+
+// Return the angle to shoot a constant-velocity projectile to hit a moving target
+float lead(vec2 p1, vec2 p2, vec2 v1, vec2 v2, float w, float t_max) {
+	auto dp = p2 - p1;
+	auto dv = v2 - v1;
+	auto a = (sqr(dv.x) + sqr(dv.y)) - sqr(w);
+	auto b = 2 * (dp.x*dv.x + dp.y*dv.y);
+	auto c = sqr(dp.x) + sqr(dp.y);
+	auto t = smallest_positive_root_of_quadratic_equation(a, b, c);
+	if (t >= 0 && t <= t_max) {
+		auto p3 = p2 + dv*t;
+		return angle_between(p1, p3);
+	} else {
+		return std::numeric_limits<float>::quiet_NaN();
 	}
 }
 

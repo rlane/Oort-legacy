@@ -40,11 +40,13 @@ public:
 			return;
 		}
 
-		auto dp = target_ref->get_position() - ship_ref->get_position();
-		auto th = radians(orientedAngle(vec2(1,0), normalize(dp)));
-
 		if (ticks % 4 == 0) {
-			ship_ref->fire(th);
+			auto a = lead(ship_ref->get_position(), target_ref->get_position(),
+			              ship_ref->get_velocity(), target_ref->get_velocity(),
+			              1000, 1);
+			if (!isnan(a)) {
+				ship_ref->fire(a);
+			}
 		}
 
 		drive_towards(*ship_ref, target_ref->get_position(), 100);

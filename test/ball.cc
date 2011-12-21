@@ -1,4 +1,5 @@
 #include "test/testcase.h"
+#include <math.h>
 
 class BallTest : public Test {
 public:
@@ -45,12 +46,15 @@ public:
 			auto t = find_target(*ship);
 
 			if (t) {
-				auto p = ship->get_position();
-				auto th = angle_between(p, t->get_position());
 				drive_towards(*ship, t->get_position(), 1000);
 
 				if (ticks % 4 == 0) {
-					ship->fire(th);
+					auto a = lead(ship->get_position(), t->get_position(),
+					              ship->get_velocity(), t->get_velocity(),
+					              1000, 1);
+					if (!isnan(a)) {
+						ship->fire(a);
+					}
 				}
 			} else {
 				drive_towards(*ship, vec2(0,0), 100);
