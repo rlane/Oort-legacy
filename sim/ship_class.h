@@ -12,6 +12,14 @@ namespace Oort {
 
 struct Model;
 
+struct GunDef {
+	float mass;
+	float radius;
+	float velocity;
+	float ttl;
+	float reload_time;
+};
+
 struct ShipClassDef {
 	std::string name;
 	float mass;
@@ -21,6 +29,7 @@ struct ShipClassDef {
 	float max_angular_acc;
 	float scale;
 	Model *model;
+	std::vector<GunDef> guns;
 };
 
 class ShipClass : public ShipClassDef {

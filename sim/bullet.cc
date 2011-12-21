@@ -7,21 +7,24 @@
 #include "sim/team.h"
 #include "sim/game.h"
 #include "sim/math_util.h"
+#include "sim/ship_class.h"
 #include "common/log.h"
 
 using glm::vec2;
 
 namespace Oort {
 
-Bullet::Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id)
+Bullet::Bullet(Game *game,
+               std::shared_ptr<Team> team,
+               uint32_t creator_id,
+               const GunDef &gun)
   : Entity(game, team),
     creator_id(creator_id),
     creation_time(game->time),
-    lifetime(1.0f) {
-	mass = 0.3;
-	auto radius = 0.01f;
+    lifetime(gun.ttl) {
+	mass = gun.mass;
 	b2CircleShape shape;
-	shape.m_radius = radius/Oort::SCALE;
+	shape.m_radius = gun.radius/Oort::SCALE;
 	body->CreateFixture(&shape, 11320);
 	body->SetBullet(true);
 }

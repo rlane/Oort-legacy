@@ -23,6 +23,13 @@ void ShipClass::initialize() {
 		def.max_angular_acc = 1;
 		def.scale = 10;
 		def.model = Model::load("fighter");
+		GunDef gun;
+		gun.mass = 0.3f;
+		gun.radius = 0.01f;
+		gun.velocity = 1000.0f;
+		gun.ttl = 1.0f;
+		gun.reload_time = 0.125f;
+		def.guns.push_back(gun);
 		fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
 
@@ -36,6 +43,13 @@ void ShipClass::initialize() {
 		def.max_angular_acc = 0.5;
 		def.scale = 40;
 		def.model = Model::load("ion_cannon_frigate");
+		GunDef gun;
+		gun.mass = 0.1f;
+		gun.radius = 0.01f;
+		gun.velocity = 2000.0f;
+		gun.ttl = 1.3f;
+		gun.reload_time = 0.125f;
+		def.guns.push_back(gun);
 		ion_cannon_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
 
@@ -49,6 +63,13 @@ void ShipClass::initialize() {
 		def.max_angular_acc = 0.7;
 		def.scale = 40;
 		def.model = Model::load("assault_frigate");
+		GunDef gun;
+		gun.mass = 10.0f;
+		gun.radius = 0.01f;
+		gun.velocity = 600.0f;
+		gun.ttl = 5.0f;
+		gun.reload_time = 0.6f;
+		def.guns.push_back(gun);
 		assault_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
 }

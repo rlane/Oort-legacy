@@ -9,6 +9,7 @@
 namespace Oort {
 
 class Game;
+class GunDef;
 
 class Bullet : public Entity {
 	public:
@@ -16,7 +17,7 @@ class Bullet : public Entity {
 	float creation_time;
 	float lifetime;
 
-	Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id);
+	Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id, const GunDef &gun);
 	~Bullet();
 
 	virtual void tick();

@@ -41,8 +41,9 @@ void Ship::tick() {
 }
 
 void Ship::fire(float angle) {
-	boost::random::normal_distribution<float> v_dist(1000, 10);
-	auto bullet = std::make_shared<Bullet>(game, team, id);
+	const GunDef &gun = klass.guns[0];
+	boost::random::normal_distribution<float> v_dist(gun.velocity, 10);
+	auto bullet = std::make_shared<Bullet>(game, team, id, gun);
 	auto p = get_position();
 	auto v = get_velocity() + v_dist(prng) * vec2(cos(angle), sin(angle));
 	bullet->set_position(p);

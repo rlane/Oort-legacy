@@ -53,9 +53,10 @@ public:
 
 			if (t) {
 				drive_towards(*ship, t->get_position(), speed);
+				const GunDef &gun = ship->klass.guns[0];
 				auto a = lead(ship->get_position(), t->get_position(),
-											ship->get_velocity(), t->get_velocity(),
-											1000, 1);
+				              ship->get_velocity(), t->get_velocity(),
+				              gun.velocity, gun.ttl);
 				if (!isnan(a)) {
 					ship->fire(a);
 				}

@@ -41,9 +41,10 @@ public:
 		}
 
 		if (ticks % 4 == 0) {
+			const GunDef &gun = ship_ref->klass.guns[0];
 			auto a = lead(ship_ref->get_position(), target_ref->get_position(),
 			              ship_ref->get_velocity(), target_ref->get_velocity(),
-			              1000, 1);
+			              gun.velocity, gun.ttl);
 			if (!isnan(a)) {
 				ship_ref->fire(a);
 			}
