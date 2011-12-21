@@ -14,7 +14,6 @@ Test *Test::registered;
 
 static void dl_deleter(Test *ptr) {
 	dlclose(ptr->dl_handle);
-	fprintf(stderr, "test unloaded\n");
 }
 
 std::shared_ptr<Test> Test::load(std::string path) {
@@ -48,7 +47,6 @@ std::shared_ptr<Test> Test::load(std::string path) {
 Test::Test()
   : Game(Scenario(), std::vector<AISourceCode>()) {
 	registered = this;
-	fprintf(stderr, "test loaded\n");
 }
 
 Test::~Test() {

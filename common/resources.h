@@ -21,7 +21,7 @@ inline std::string load_resource(std::string name) {
 	file.open(name, std::ios::in|std::ios::binary|std::ios::ate);
 	file >> std::noskipws;
 	auto size = file.tellg();
-	log("reading %s size %d\n", name.c_str(), static_cast<int>(size));
+	//log("reading %s size %d\n", name.c_str(), static_cast<int>(size));
 	std::string data;
 	data.reserve(size);
 	file.seekg(0, std::ios::beg);

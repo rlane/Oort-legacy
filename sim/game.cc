@@ -95,7 +95,6 @@ Game::Game(const Scenario &scn, const vector<AISourceCode> &ais)
 }
 
 Game::~Game() {
-	fprintf(stderr, "game finished\n");
 }
 
 const float tick_length = 1.0f/32;

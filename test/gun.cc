@@ -36,12 +36,10 @@ public:
 	}
 
 	void after_tick() {
-		cout << "use count: " << shipB.use_count() << endl;
 		auto tmpB = shipB.lock();
 		if (!tmpB) {
 			test_finished = true;
 		} else {
-			cout << "dead: " << tmpB->dead << endl;
 			shipA.lock()->fire(0);
 		}
 	}
