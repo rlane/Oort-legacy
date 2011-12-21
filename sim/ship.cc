@@ -46,6 +46,11 @@ void Ship::fire(float angle) {
 	const int idx = 0;
 	const GunDef &gun = klass.guns[idx];
 
+	float a = angle_diff(get_heading() + gun.angle, angle);
+	if (fabsf(a) > gun.coverage/2) {
+		return;
+	}
+
 	float &lft = last_fire_times[idx];
 	if (lft + gun.reload_time > game->time) {
 		return;

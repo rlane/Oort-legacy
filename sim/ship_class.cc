@@ -29,6 +29,8 @@ void ShipClass::initialize() {
 		gun.velocity = 3000.0f;
 		gun.ttl = 1.0f;
 		gun.reload_time = 0.125f;
+		gun.angle = 0.0;
+		gun.coverage = 0.8 * M_PI;
 		def.guns.push_back(gun);
 		fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
@@ -49,6 +51,8 @@ void ShipClass::initialize() {
 		gun.velocity = 5000.0f;
 		gun.ttl = 0.4f;
 		gun.reload_time = 0.03125f;
+		gun.angle = 0.0;
+		gun.coverage = 0;
 		def.guns.push_back(gun);
 		ion_cannon_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
@@ -69,6 +73,8 @@ void ShipClass::initialize() {
 		gun.velocity = 600.0f;
 		gun.ttl = 10.0f;
 		gun.reload_time = 0.6f;
+		gun.angle = 0.0;
+		gun.coverage = 2 * M_PI;
 		def.guns.push_back(gun);
 		assault_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}

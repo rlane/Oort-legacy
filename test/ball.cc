@@ -60,7 +60,11 @@ public:
 											ship->get_velocity(), t->get_velocity(),
 											gun.velocity, gun.ttl);
 				if (!isnan(a)) {
-					ship->fire(a);
+					if (gun.coverage == 0 && fabsf(angle_diff(ship->get_heading(), a) < 0.1)) {
+						ship->fire(ship->get_heading());
+					} else {
+						ship->fire(a);
+					}
 				}
 			} else {
 				drive_towards(*ship, vec2(0,0), ship->klass.max_main_acc*2);

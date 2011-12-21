@@ -18,6 +18,8 @@ struct GunDef {
 	float velocity;
 	float ttl;
 	float reload_time;
+	float angle;
+	float coverage;
 };
 
 struct ShipClassDef {
