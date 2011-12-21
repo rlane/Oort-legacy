@@ -327,6 +327,12 @@ int main(int argc, char **argv) {
 			physics_debug_renderer->DrawCircle(b2Vec2(0,0), 30.0f, b2Color(0.6,0.8,0.6));
 			game->world->DrawDebugData();
 			physics_debug_renderer->end_render();
+			{
+				auto p = screen2world(mouse_position());
+				std::ostringstream tmp;
+				tmp << "mouse position: " << glm::to_string(p);
+				renderer->text(5, 9, tmp.str());
+			}
 		}
 
 		SDL_GL_SwapBuffers();
