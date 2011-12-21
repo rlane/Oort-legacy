@@ -1,6 +1,8 @@
 #include "renderer/renderer.h"
 #include <boost/scoped_ptr.hpp>
 #include <boost/foreach.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/normal_distribution.hpp>
 #include <stdint.h>
 
 #include "glm/glm.hpp"
@@ -34,6 +36,9 @@ Renderer::Renderer(shared_ptr<Game> game)
     ship_prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl")))),
+    bullet_prog(new GL::Program(
+      make_shared<GL::VertexShader>(load_resource("shaders/bullet.v.glsl")),
+      make_shared<GL::FragmentShader>(load_resource("shaders/bullet.f.glsl")))),
     text_prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/text.f.glsl"))))
@@ -126,34 +131,37 @@ void Renderer::render_ships() {
 }
 
 void Renderer::render_bullets() {
-	ship_prog->use();
-	ship_prog->enable_attrib_array("vertex");
+	boost::random::mt19937 prng(game->ticks);
+	boost::random::normal_distribution<> p_dist(0.0, 0.5);
+
+	glm::vec4 colors[] = {
+		glm::vec4(0.27f, 0.27f, 0.27f, 0.33f),
+		glm::vec4(0.27f, 0.27f, 0.27f, 1.0f)
+	};
+
+	bullet_prog->use();
 	GL::check();
-	ship_prog->uniform("p_matrix", p_matrix);
+
+	bullet_prog->enable_attrib_array("vertex");
+	bullet_prog->enable_attrib_array("color");
+	bullet_prog->uniform("p_matrix", p_matrix);
+	bullet_prog->uniform("mv_matrix", glm::mat4());
+
+	glVertexAttribPointer(bullet_prog->attrib_location("color"), 4, GL_FLOAT, false, 0, colors);
 
 	BOOST_FOREACH(auto bullet, game->bullets) {
-		glm::mat4 mv_matrix;
-		auto p = bullet->get_position();
-		auto h = bullet->get_heading();
-		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
-		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
-		mv_matrix = glm::scale(mv_matrix, glm::vec3(1,1,1)*0.01f);
-		glm::vec4 color(bullet->team->color, 0.4f);
-		GL::check();
+		auto dp = bullet->get_velocity() * (1.0f/64);
+		auto offset = bullet->get_velocity() * (float(p_dist(prng))/64);
+		auto p1 = bullet->get_position() + offset;
+		auto p2 = p1 + dp;
 
-		ship_prog->uniform("mv_matrix", mv_matrix);
-		ship_prog->uniform("color", color);
-		vertex_buf.bind();
-		glVertexAttribPointer(ship_prog->attrib_location("vertex"),
-		                      2, GL_FLOAT, GL_FALSE, 0, 0);
-		vertex_buf.unbind();
-		GL::check();
-
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-		GL::check();
+		glm::vec2 vertices[2] = { p1, p2 };
+		glVertexAttribPointer(bullet_prog->attrib_location("vertex"), 2, GL_FLOAT, false, 0, vertices);
+		glDrawArrays(GL_LINES, 0, 2);
 	}
 
-	ship_prog->disable_attrib_array("vertex");
+	bullet_prog->disable_attrib_array("vertex");
+	bullet_prog->disable_attrib_array("color");
 	GL::Program::clear();
 	GL::check();
 }

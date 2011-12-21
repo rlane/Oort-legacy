@@ -20,6 +20,7 @@ public:
 private:
 	std::shared_ptr<Game> game;
 	boost::scoped_ptr<GL::Program> ship_prog;
+	boost::scoped_ptr<GL::Program> bullet_prog;
 	boost::scoped_ptr<GL::Program> text_prog;
 	GL::Buffer vertex_buf;
 	GL::Texture font_tex;
