@@ -44,11 +44,11 @@ void ShipClass::initialize() {
 		def.scale = 40;
 		def.model = Model::load("ion_cannon_frigate");
 		GunDef gun;
-		gun.mass = 0.1f;
+		gun.mass = 0.01f;
 		gun.radius = 0.01f;
-		gun.velocity = 2000.0f;
-		gun.ttl = 1.3f;
-		gun.reload_time = 0.125f;
+		gun.velocity = 5000.0f;
+		gun.ttl = 0.4f;
+		gun.reload_time = 0.03125f;
 		def.guns.push_back(gun);
 		ion_cannon_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
@@ -87,6 +87,12 @@ ShipClass::ShipClass(const ShipClassDef &def)
 	b2MassData md;
 	shape.ComputeMass(&md, 1);
 	density = mass/md.mass;
+
+#if 0
+	BOOST_FOREACH(auto &gun, guns) {
+		printf("class %s gun dps %g range %g\n", name.c_str(), gun.mass * gun.velocity * gun.velocity / gun.reload_time, gun.velocity * gun.ttl);
+	}
+#endif
 }
 
 }

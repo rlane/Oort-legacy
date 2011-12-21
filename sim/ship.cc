@@ -1,6 +1,7 @@
 // Copyright 2011 Rich Lane
 #include "sim/ship.h"
 
+#include <limits>
 #include <Box2D/Box2D.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -25,7 +26,8 @@ Ship::Ship(Game *game, const ShipClass &klass, std::shared_ptr<Team> team)
 	  klass(klass),
 	  ai(new AI(this, team->ai)),
 	  id(next_id++), // XXX
-	  prng(id) { // XXX
+	  prng(id), // XXX
+	  last_fire_times(klass.guns.size(), -std::numeric_limits<float>::infinity()) {
 	hull = klass.hull;
 	mass = klass.mass;
 	body->CreateFixture(&klass.shape, klass.density);
@@ -41,7 +43,16 @@ void Ship::tick() {
 }
 
 void Ship::fire(float angle) {
-	const GunDef &gun = klass.guns[0];
+	const int idx = 0;
+	const GunDef &gun = klass.guns[idx];
+
+	float &lft = last_fire_times[idx];
+	if (lft + gun.reload_time > game->time) {
+		return;
+	} else {
+		lft = game->time;
+	}
+
 	boost::random::normal_distribution<float> v_dist(gun.velocity, 10);
 	auto bullet = std::make_shared<Bullet>(game, team, id, gun);
 	auto p = get_position();
