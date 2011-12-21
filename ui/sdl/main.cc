@@ -232,13 +232,12 @@ int main(int argc, char **argv) {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	glViewport(0, 0, screen_width, screen_height);
-	float aspect_ratio = float(screen_width)/screen_height;
-
-	SDL_Event event;
 
 	renderer = std::unique_ptr<Renderer>(new Renderer(game));
+	renderer->reshape(screen_width, screen_height);
 
 	physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
+	physics_debug_renderer->reshape(screen_width, screen_height);
 	physics_debug_renderer->SetFlags(b2Draw::e_shapeBit);
 	game->world->SetDebugDraw(physics_debug_renderer.get());
 
@@ -246,6 +245,7 @@ int main(int argc, char **argv) {
 	int frame_count = 0;
 
 	while (running) {
+		SDL_Event event;
 		while(SDL_PollEvent(&event)) {
 			handle_sdl_event(event);
 		}
@@ -275,7 +275,7 @@ int main(int argc, char **argv) {
 
 		view_center += view_speed*view_radius;
 
-		renderer->render(view_radius, aspect_ratio, view_center);
+		renderer->render(view_radius, view_center);
 
 		if (paused) {
 			std::ostringstream tmp;
@@ -319,7 +319,7 @@ int main(int argc, char **argv) {
 		}
 
 		if (render_physics_debug) {
-			physics_debug_renderer->begin_render(view_radius, aspect_ratio, view_center);
+			physics_debug_renderer->begin_render(view_radius, view_center);
 			for (const b2Body *body = game->world->GetBodyList(); body; body = body->GetNext()) {
 				physics_debug_renderer->DrawPoint(body->GetWorldCenter(), 2, b2Color(0.9, 0.4, 0.3));
 				physics_debug_renderer->DrawPoint(body->GetPosition(), 2, b2Color(0.3, 0.4, 0.9));

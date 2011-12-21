@@ -14,7 +14,8 @@ namespace Oort {
 class Renderer {
 public:
 	Renderer(std::shared_ptr<Game> game);
-	void render(float view_radius, float aspect_ratio, glm::vec2 view_center);
+	void reshape(int screen_width, int screen_height);
+	void render(float view_radius, glm::vec2 view_center);
 	void text(int x, int y, const std::string &str);
 
 private:
@@ -24,6 +25,8 @@ private:
 	boost::scoped_ptr<GL::Program> text_prog;
 	GL::Buffer vertex_buf;
 	GL::Texture font_tex;
+	int screen_width, screen_height;
+	float aspect_ratio;
 
 	glm::mat4 p_matrix;
 

@@ -73,8 +73,13 @@ void Renderer::load_font() {
 	GL::check();
 }
 
+void Renderer::reshape(int screen_width, int screen_height) {
+	this->screen_width = screen_width;
+	this->screen_height = screen_height;
+	this->aspect_ratio = float(screen_width)/screen_height;
+}
+
 void Renderer::render(float view_radius,
-                      float aspect_ratio,
                       glm::vec2 view_center) {
 	GL::check();
 

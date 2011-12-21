@@ -39,12 +39,17 @@ namespace Oort {
 PhysicsDebugRenderer::PhysicsDebugRenderer()
   : prog(new GL::Program(
       std::make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
-      std::make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl")))),
-    mRatio(1.0f) {
+      std::make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl"))))
+{
+}
+
+void PhysicsDebugRenderer::reshape(int screen_width, int screen_height) {
+	this->screen_width = screen_width;
+	this->screen_height = screen_height;
+	this->aspect_ratio = float(screen_width)/screen_height;
 }
 
 void PhysicsDebugRenderer::begin_render(float view_radius,
-                                        float aspect_ratio,
                                         glm::vec2 view_center) {
 	GL::check();
 	prog->use();
@@ -82,17 +87,6 @@ void PhysicsDebugRenderer::end_render() {
 
 void PhysicsDebugRenderer::DrawPolygon(const b2Vec2* old_vertices, int32 vertexCount, const b2Color& color)
 {
-/*
-	ccVertex2F vertices[vertexCount];
-
-	for( int i=0;i<vertexCount;i++) {
-		b2Vec2 tmp = old_vertices[i];
-		tmp *= mRatio;
-		vertices[i].x = tmp.x;
-		vertices[i].y = tmp.y;
-	}
-*/
-
 	prog->uniform("color", glm::vec4(color.r, color.g, color.b, 1.0));
 	glVertexAttribPointer(prog->attrib_location("vertex"),
 												2, GL_FLOAT, GL_FALSE, 0, old_vertices);
@@ -101,18 +95,6 @@ void PhysicsDebugRenderer::DrawPolygon(const b2Vec2* old_vertices, int32 vertexC
 
 void PhysicsDebugRenderer::DrawSolidPolygon(const b2Vec2* old_vertices, int32 vertexCount, const b2Color& color)
 {
-	/*
-	ccVertex2F vertices[vertexCount];
-
-	for( int i=0;i<vertexCount;i++) {
-		b2Vec2 tmp = old_vertices[i];
-		tmp = old_vertices[i];
-		tmp *= mRatio;
-		vertices[i].x = tmp.x;
-		vertices[i].y = tmp.y;
-	}
-	*/
-
 	glVertexAttribPointer(prog->attrib_location("vertex"),
 												2, GL_FLOAT, GL_FALSE, 0, old_vertices);
 
@@ -134,8 +116,8 @@ void PhysicsDebugRenderer::DrawCircle(const b2Vec2& center, float32 radius, cons
 	for (int32 i = 0; i < k_segments; ++i)
 	{
 		b2Vec2 v = center + radius * b2Vec2(cosf(theta), sinf(theta));
-		glVertices[i*2]=v.x * mRatio;
-		glVertices[i*2+1]=v.y * mRatio;
+		glVertices[i*2]=v.x;
+		glVertices[i*2+1]=v.y;
 		theta += k_increment;
 	}
 
@@ -158,8 +140,8 @@ void PhysicsDebugRenderer::DrawSolidCircle(const b2Vec2& center, float32 radius,
 	for (int32 i = 0; i < k_segments; ++i)
 	{
 		b2Vec2 v = center + radius * b2Vec2(cosf(theta), sinf(theta));
-		glVertices[i*2]=v.x * mRatio;
-		glVertices[i*2+1]=v.y * mRatio;
+		glVertices[i*2]=v.x;
+		glVertices[i*2+1]=v.y;
 		theta += k_increment;
 	}
 
@@ -178,8 +160,8 @@ void PhysicsDebugRenderer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const
 {
 	prog->uniform("color", glm::vec4(color.r, color.g, color.b, 1.0));
 	GLfloat				glVertices[] = {
-		p1.x * mRatio, p1.y * mRatio,
-		p2.x * mRatio, p2.y * mRatio
+		p1.x, p1.y,
+		p2.x, p2.y
 	};
 	glVertexAttribPointer(prog->attrib_location("vertex"),
 												2, GL_FLOAT, GL_FALSE, 0, glVertices);
@@ -203,7 +185,7 @@ void PhysicsDebugRenderer::DrawPoint(const b2Vec2& p, float32 size, const b2Colo
 	prog->uniform("color", glm::vec4(color.r, color.g, color.b, 1.0));
 	glPointSize(size);
 	GLfloat				glVertices[] = {
-		p.x * mRatio, p.y * mRatio
+		p.x, p.y
 	};
 	glVertexAttribPointer(prog->attrib_location("vertex"),
 												2, GL_FLOAT, GL_FALSE, 0, glVertices);
@@ -220,10 +202,10 @@ void PhysicsDebugRenderer::DrawAABB(b2AABB* aabb, const b2Color& color)
 	prog->uniform("color", glm::vec4(color.r, color.g, color.b, 1.0));
 
 	GLfloat				glVertices[] = {
-		aabb->lowerBound.x * mRatio, aabb->lowerBound.y * mRatio,
-		aabb->upperBound.x * mRatio, aabb->lowerBound.y * mRatio,
-		aabb->upperBound.x * mRatio, aabb->upperBound.y * mRatio,
-		aabb->lowerBound.x * mRatio, aabb->upperBound.y * mRatio
+		aabb->lowerBound.x, aabb->lowerBound.y,
+		aabb->upperBound.x, aabb->lowerBound.y,
+		aabb->upperBound.x, aabb->upperBound.y,
+		aabb->lowerBound.x, aabb->upperBound.y
 	};
 	glVertexAttribPointer(prog->attrib_location("vertex"),
 												2, GL_FLOAT, GL_FALSE, 0, glVertices);

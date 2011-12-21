@@ -17,7 +17,8 @@ class PhysicsDebugRenderer : public b2Draw {
 public:
 	PhysicsDebugRenderer();
 
-	void begin_render(float view_radius, float aspect_ratio, glm::vec2 view_center);
+	void reshape(int screen_width, int screen_height);
+	void begin_render(float view_radius, glm::vec2 view_center);
 	void end_render();
 
 	void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
@@ -32,7 +33,8 @@ public:
 
 private:
 	boost::scoped_ptr<GL::Program> prog;
-	float mRatio;
+	int screen_width, screen_height;
+	float aspect_ratio;
 };
 
 }
