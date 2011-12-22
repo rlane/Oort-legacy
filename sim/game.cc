@@ -86,7 +86,7 @@ class ContactListener : public b2ContactListener {
 	}
 } contact_listener;
 
-Game::Game(const Scenario &scn, const vector<AISourceCode> &ais)
+Game::Game(const Scenario &scn, const vector<std::shared_ptr<AIFactory>> &ai_factories)
   : ticks(0),
     time(0),
     radius(10000) {
@@ -99,8 +99,8 @@ Game::Game(const Scenario &scn, const vector<AISourceCode> &ais)
 	world->SetContactListener(&contact_listener);
 
 	for (auto scn_team : scn.teams) {
-		auto ai = ais[player_ai_index++];
-		auto team = make_shared<Team>(scn_team.name, ai, scn_team.color);
+		auto ai_factory = ai_factories[player_ai_index++];
+		auto team = make_shared<Team>(scn_team.name, ai_factory, scn_team.color);
 		for (auto scn_ship : scn_team.ships) {
 			auto ship = make_shared<Ship>(this, *fighter, team);
 			ship->set_position(scn_ship.p);

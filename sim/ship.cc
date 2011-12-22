@@ -22,14 +22,16 @@ namespace Oort {
 
 static uint32_t next_id = 1;
 
-Ship::Ship(Game *game, const ShipClass &klass, std::shared_ptr<Team> team)
+Ship::Ship(Game *game,
+		       const ShipClass &klass,
+					 std::shared_ptr<Team> team)
 	: Entity(game, team),
 	  klass(klass),
-	  ai(new AI(this, team->ai)),
 	  id(next_id++), // XXX
+		hull(klass.hull),
+	  ai(team->ai_factory->instantiate(*this)),
 	  prng(id), // XXX
 	  last_fire_times(klass.guns.size(), -std::numeric_limits<float>::infinity()) {
-	hull = klass.hull;
 	mass = klass.mass;
 	body->CreateFixture(&klass.shape, klass.density);
 }

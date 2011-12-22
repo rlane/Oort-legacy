@@ -1,15 +1,81 @@
 #include "test/testcase.h"
 
+static const int s = 32;
+static constexpr float d = 100;
+static constexpr float main_acc = d;
+static constexpr float lateral_acc = d/4;
+static constexpr float angular_acc = M_PI/2;
+
+enum {
+	t1 = 0,        // at wpA, main acc start
+	t2 = t1+s,     // at wpB, main acc reverse
+	t3 = t2+s,     // at wpC, main acc end, angular acc start
+	t4 = t3+s,     // at wpC, angular acc reverse
+	t5 = t4+s,     // at wpC, angular acc end, main acc start
+	t6 = t5+s,     // at wpD, main acc reverse
+	t7 = t6+s,     // at wpE, main acc end, lateral acc start
+	t8 = t7+2*s,   // at wpF, lateral acc reverse
+  t9 = t8+2*s,   // at wpG, lateral acc end, angular acc start (2x)
+	t10 = t9+s,    // at wpG, angular acc reverse
+	t11 = t10+s,   // at wpG, angular acc end, main acc start (64x)
+	t12 = t11+s/8, // at wpH, main acc reverse
+	t13 = t12+s/8, // at wpA, main acc end
+};
+
+class MoveAI : public CxxAI {
+public:
+	MoveAI(Ship &ship) : CxxAI(ship) {}
+
+	void tick() {
+		auto ticks = ship.game->ticks;
+		if (ticks == t1) {
+			ship.acc_main(main_acc);
+		} else if (ticks == t2) {
+			ship.acc_main(-main_acc);
+		} else if (ticks == t3) {
+			ship.acc_main(0);
+			ship.acc_angular(angular_acc);
+		} else if (ticks == t4) {
+			ship.acc_angular(-angular_acc);
+		} else if (ticks == t5) {
+			ship.acc_angular(0);
+			ship.acc_main(main_acc);
+		} else if (ticks == t6) {
+			ship.acc_main(-main_acc);
+		} else if (ticks == t7) {
+			ship.acc_main(0);
+			ship.acc_lateral(lateral_acc);
+		} else if (ticks == t8) {
+			ship.acc_lateral(-lateral_acc);
+		} else if (ticks == t9) {
+			ship.acc_lateral(0);
+			ship.acc_angular(angular_acc*2);
+		} else if (ticks == t10) {
+			ship.acc_angular(-angular_acc*2);
+		} else if (ticks == t11) {
+			ship.acc_angular(0);
+			ship.acc_main(main_acc*64);
+		} else if (ticks == t12) {
+			ship.acc_main(-main_acc*64);
+		} else if (ticks == t13) {
+			ship.acc_main(0);
+		}
+	}
+};
+
+class MoveAIFactory : public CxxAIFactory {
+public:
+	MoveAIFactory() : CxxAIFactory("move") {};
+
+	unique_ptr<AI> instantiate(Ship &ship) {
+		return unique_ptr<AI>(new MoveAI(ship));
+	}
+};
+
 class MoveTest : public Test {
 public:
-	static const int s = 32;
-	static constexpr float d = 100;
-	static constexpr float main_acc = d;
-	static constexpr float lateral_acc = d/4;
-	static constexpr float angular_acc = M_PI/2;
 	shared_ptr<Ship> ship;
 	Waypoint wpA, wpB, wpC, wpD, wpE, wpF, wpG, wpH;
-	float thrust, angular_thrust;
 	unique_ptr<ShipClass> speedy;
 
 	MoveTest()
@@ -31,57 +97,38 @@ public:
 			speedy = unique_ptr<ShipClass>(new ShipClass(def));
 		}
 
-		AISourceCode ai{"foo.lua", ""};
-		auto green = make_shared<Team>("green", ai, vec3(0, 1, 0));
+		auto green = make_shared<Team>("green", make_shared<MoveAIFactory>(), vec3(0, 1, 0));
 		ship = make_shared<Ship>(this, *speedy, green);
 		ships.push_back(ship);
-		ship->acc_main(main_acc);
 	}
 
 	void after_tick() {
 		if (ticks == 1) {
 			assert_contact(*ship, wpA);
-		} else if (ticks == 1*s) {
+		} else if (ticks == t2) {
 			assert_contact(*ship, wpB);
-			ship->acc_main(-main_acc);
-		} else if (ticks == 2*s) {
+		} else if (ticks == t3) {
 			assert_contact(*ship, wpC);
-			ship->acc_main(0);
-			ship->acc_angular(angular_acc);
-		} else if (ticks == 3*s) {
+		} else if (ticks == t4) {
 			assert_contact(*ship, wpC);
-			ship->acc_angular(-angular_acc);
-		} else if (ticks == 4*s) {
+		} else if (ticks == t5) {
 			assert_contact(*ship, wpC);
-			ship->acc_angular(0);
-			ship->acc_main(main_acc);
-		} else if (ticks == 5*s) {
+		} else if (ticks == t6) {
 			assert_contact(*ship, wpD);
-			ship->acc_main(-main_acc);
-		} else if (ticks == 6*s) {
+		} else if (ticks == t7) {
 			assert_contact(*ship, wpE);
-			ship->acc_main(0);
-			ship->acc_lateral(lateral_acc);
-		} else if (ticks == 8*s) {
+		} else if (ticks == t8) {
 			assert_contact(*ship, wpF);
-			ship->acc_lateral(-lateral_acc);
-		} else if (ticks == 10*s) {
+		} else if (ticks == t9) {
 			assert_contact(*ship, wpG);
-			ship->acc_lateral(0);
-			ship->acc_angular(angular_acc*2);
-		} else if (ticks == 11*s) {
+		} else if (ticks == t10) {
 			assert_contact(*ship, wpG);
-			ship->acc_angular(-angular_acc*2);
-		} else if (ticks == 12*s) {
+		} else if (ticks == t11) {
 			assert_contact(*ship, wpG);
-			ship->acc_angular(0);
-			ship->acc_main(main_acc*64);
-		} else if (ticks == 12*s + 1*s/8) {
+		} else if (ticks == t12) {
 			assert_contact(*ship, wpH);
-			ship->acc_main(-main_acc*64);
-		} else if (ticks == 12*s + 2*s/8) {
+		} else if (ticks == t13) {
 			assert_contact(*ship, wpA);
-			ship->acc_main(0);
 			test_finished = true;
 		}
 	}

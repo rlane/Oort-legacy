@@ -45,7 +45,7 @@ std::shared_ptr<Test> Test::load(std::string path) {
 }
 
 Test::Test()
-  : Game(Scenario(), std::vector<AISourceCode>()) {
+  : Game(Scenario(), std::vector<std::shared_ptr<AIFactory>>()) {
 	registered = this;
 }
 

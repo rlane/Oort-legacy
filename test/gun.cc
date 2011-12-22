@@ -1,15 +1,31 @@
 #include "test/testcase.h"
 #include "sim/model.h"
 
+class GunAI : public CxxAI {
+public:
+	GunAI(Ship &ship) : CxxAI(ship) {}
+
+	void tick() {
+		ship.fire_gun(0, 0);
+	}
+};
+
+class GunAIFactory : public CxxAIFactory {
+public:
+	GunAIFactory() : CxxAIFactory("gun") {};
+
+	unique_ptr<AI> instantiate(Ship &ship) {
+		return unique_ptr<AI>(new GunAI(ship));
+	}
+};
+
 class GunTest : public Test {
 public:
-	weak_ptr<Ship> shipA, shipB;
-	unique_ptr<ShipClass> target;
+	weak_ptr<Ship> shipB;
 
 	GunTest() {
-		AISourceCode ai{"foo.lua", ""};
-		auto blue = make_shared<Team>("blue", ai, vec3(0, 0, 1));
-		auto red = make_shared<Team>("red", ai, vec3(1, 0, 0));
+		auto blue = make_shared<Team>("blue", make_shared<GunAIFactory>(), vec3(0, 0, 1));
+		auto red = make_shared<Team>("red", make_shared<NullAIFactory>(), vec3(1, 0, 0));
 
 		{
 			auto tmpA = make_shared<Ship>(this, *fighter, blue);
@@ -17,7 +33,6 @@ public:
 			tmpA->set_heading(0);
 			tmpA->set_velocity(vec2(0,0));
 			ships.push_back(tmpA);
-			shipA = tmpA;
 		}
 
 		{
@@ -31,11 +46,8 @@ public:
 	}
 
 	void after_tick() {
-		auto tmpB = shipB.lock();
-		if (!tmpB) {
+		if (shipB.expired()) {
 			test_finished = true;
-		} else {
-			shipA.lock()->fire_gun(0, 0);
 		}
 	}
 } test;

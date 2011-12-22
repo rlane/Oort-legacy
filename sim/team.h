@@ -3,6 +3,7 @@
 #define OORT_SIM_TEAM_H_
 
 #include <string>
+#include <memory>
 #include "glm/glm.hpp"
 #include "sim/ai.h"
 
@@ -11,11 +12,11 @@ namespace Oort {
 class Team {
 public:
   std::string name;
-  AISourceCode ai;
+	std::shared_ptr<AIFactory> ai_factory;
   glm::vec3 color;
 
-  Team(std::string name, AISourceCode ai, glm::vec3 color)
-    : name(name), ai(ai), color(color) {}
+  Team(std::string name, std::shared_ptr<AIFactory> ai_factory, glm::vec3 color)
+    : name(name), ai_factory(ai_factory), color(color) {}
 };
 
 }

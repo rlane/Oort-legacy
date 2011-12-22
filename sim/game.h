@@ -17,12 +17,12 @@ class Bullet;
 class Beam;
 class Team;
 class Scenario;
-class AISourceCode;
+class AIFactory;
 
 class Game {
 	public:
 
-	Game(const Scenario &scn, const std::vector<AISourceCode> &ais);
+	Game(const Scenario &scn, const std::vector<std::shared_ptr<AIFactory>> &ai_factories);
 	~Game();
 
 	void tick();
