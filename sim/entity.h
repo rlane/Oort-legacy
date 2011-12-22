@@ -24,6 +24,7 @@ public:
 	~Entity();
 
 	virtual void tick();
+	virtual bool is_weapon();
 
 	void set_position(glm::vec2 p);
 	glm::vec2 get_position() const;

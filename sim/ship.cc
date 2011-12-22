@@ -11,6 +11,7 @@
 #include "sim/team.h"
 #include "sim/game.h"
 #include "sim/bullet.h"
+#include "sim/beam.h"
 #include "sim/ship_class.h"
 #include "sim/math_util.h"
 #include "common/log.h"
@@ -69,6 +70,27 @@ void Ship::fire_gun(int idx, float angle) {
 	bullet->set_heading(angle);
 	bullet->set_velocity(v);
 	game->bullets.push_back(bullet);
+}
+
+void Ship::fire_beam(int idx, float angle) {
+	if (idx >= (int)klass.beams.size()) {
+		return;
+	}
+
+	const BeamDef &def = klass.beams[idx];
+
+	float a = angle_diff(get_heading() + def.angle, angle);
+	if (fabsf(a) > def.coverage/2) {
+		return;
+	}
+
+	auto beam = std::make_shared<Beam>(game, team, id, def);
+	auto p = get_position();
+	auto v = get_velocity();
+	beam->set_position(p);
+	beam->set_heading(angle);
+	beam->set_velocity(v);
+	game->beams.push_back(beam);
 }
 
 void Ship::acc_main(float acc) {

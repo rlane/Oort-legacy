@@ -32,6 +32,7 @@ private:
 	void load_font();
 	void render_ships();
 	void render_bullets();
+	void render_beams();
 };
 
 }

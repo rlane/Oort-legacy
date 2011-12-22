@@ -45,15 +45,15 @@ void ShipClass::initialize() {
 		def.max_angular_acc = 0.5;
 		def.scale = 40;
 		def.model = Model::load("ion_cannon_frigate");
-		GunDef gun;
-		gun.mass = 0.01f;
-		gun.radius = 0.01f;
-		gun.velocity = 5000.0f;
-		gun.ttl = 0.4f;
-		gun.reload_time = 0.03125f;
-		gun.angle = 0.0;
-		gun.coverage = 0;
-		def.guns.push_back(gun);
+		{
+			BeamDef beam;
+			beam.damage = 6e6;
+			beam.length = 1e3;
+			beam.width = 6;
+			beam.angle = 0;
+			beam.coverage = 0;
+			def.beams.push_back(beam);
+		}
 		ion_cannon_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
 

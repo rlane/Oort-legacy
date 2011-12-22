@@ -55,16 +55,16 @@ public:
 			if (t) {
 				drive_towards(*ship, t->get_position(), ship->klass.max_main_acc*5);
 
-				const GunDef &gun = ship->klass.guns[0];
-				auto a = lead(ship->get_position(), t->get_position(),
-											ship->get_velocity(), t->get_velocity(),
-											gun.velocity, gun.ttl);
-				if (!isnan(a)) {
-					if (gun.coverage == 0 && fabsf(angle_diff(ship->get_heading(), a) < 0.1)) {
-						ship->fire_gun(0, ship->get_heading());
-					} else {
+				if (&ship->klass == fighter.get() || &ship->klass == assault_frigate.get()) {
+					const GunDef &gun = ship->klass.guns[0];
+					auto a = lead(ship->get_position(), t->get_position(),
+												ship->get_velocity(), t->get_velocity(),
+												gun.velocity, gun.ttl);
+					if (!isnan(a)) {
 						ship->fire_gun(0, a);
 					}
+				} else if (&ship->klass == ion_cannon_frigate.get()) {
+					ship->fire_beam(0, ship->get_heading());
 				}
 			} else {
 				drive_towards(*ship, vec2(0,0), ship->klass.max_main_acc*2);

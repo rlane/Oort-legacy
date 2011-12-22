@@ -14,6 +14,7 @@ namespace Oort {
 
 class Ship;
 class Bullet;
+class Beam;
 class Team;
 class Scenario;
 class AISourceCode;
@@ -32,6 +33,7 @@ class Game {
 	std::unique_ptr<b2World> world;
 	std::list<std::shared_ptr<Ship>> ships;
 	std::list<std::shared_ptr<Bullet>> bullets;
+	std::list<std::shared_ptr<Beam>> beams;
 	int ticks;
 	float time;
 	bool test_finished;

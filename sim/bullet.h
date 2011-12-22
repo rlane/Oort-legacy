@@ -21,6 +21,7 @@ class Bullet : public Entity {
 	~Bullet();
 
 	virtual void tick();
+	virtual bool is_weapon();
 };
 
 }

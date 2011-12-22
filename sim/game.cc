@@ -13,6 +13,7 @@
 #include "sim/ship.h"
 #include "sim/ship_class.h"
 #include "sim/bullet.h"
+#include "sim/beam.h"
 #include "sim/scenario.h"
 #include "sim/ai.h"
 #include "sim/team.h"
@@ -29,8 +30,8 @@ class ContactFilter : public b2ContactFilter {
 		auto entityA = (Entity*) fixtureA->GetBody()->GetUserData();
 		auto entityB = (Entity*) fixtureB->GetBody()->GetUserData();
 
-		if (typeid(*entityA) == typeid(Bullet)) {
-			if (typeid(*entityB) == typeid(Bullet)) {
+		if (entityA->is_weapon()) {
+			if (entityB->is_weapon()) {
 				return false;
 			}
 			std::swap(entityA, entityB);
@@ -40,11 +41,17 @@ class ContactFilter : public b2ContactFilter {
 			return false;
 		}
 
-		if (typeid(*entityA) == typeid(Ship) &&
-		    typeid(*entityB) == typeid(Bullet)) {
-			auto ship = static_cast<Ship*>(entityA);
-			auto bullet = static_cast<Bullet*>(entityB);
-			return ship->id != bullet->creator_id;
+		// XXX create Weapon subclass of Entity
+		if (typeid(*entityA) == typeid(Ship)) {
+			if (typeid(*entityB) == typeid(Bullet)) {
+				auto ship = static_cast<Ship*>(entityA);
+				auto bullet = static_cast<Bullet*>(entityB);
+				return ship->id != bullet->creator_id;
+		  } else if (typeid(*entityB) == typeid(Beam)) {
+				auto ship = static_cast<Ship*>(entityA);
+				auto beam = static_cast<Beam*>(entityB);
+				return ship->id != beam->creator_id;
+			}
 		}
 		
 		return true;
@@ -118,6 +125,7 @@ void Game::reap() {
 	bullets.erase(
 		std::remove_if(begin(bullets), end(bullets), entity_is_dead),
 		end(bullets));
+	beams.clear();
 	ships.erase(
 		std::remove_if(begin(ships), end(ships), entity_is_dead),
 		end(ships));

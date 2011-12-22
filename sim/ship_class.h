@@ -12,14 +12,23 @@ namespace Oort {
 
 struct Model;
 
-struct GunDef {
-	float mass;
-	float radius;
-	float velocity;
-	float ttl;
-	float reload_time;
-	float angle;
-	float coverage;
+struct WeaponDef {
+	float angle;     // radians
+	float coverage;  // radians
+};
+
+struct GunDef : public WeaponDef {
+	float mass;         // kg
+	float radius;       // meters
+	float velocity;     // meters/second
+	float ttl;          // seconds
+	float reload_time;  // seconds
+};
+
+struct BeamDef : public WeaponDef {
+	float damage;  // Watts
+	float length;  // meters
+	float width;   // meters
 };
 
 struct ShipClassDef {
@@ -32,6 +41,7 @@ struct ShipClassDef {
 	float scale;
 	Model *model;
 	std::vector<GunDef> guns;
+	std::vector<BeamDef> beams;
 };
 
 class ShipClass : public ShipClassDef {

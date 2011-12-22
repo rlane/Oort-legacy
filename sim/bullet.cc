@@ -38,4 +38,8 @@ void Bullet::tick() {
 	}
 }
 
+bool Bullet::is_weapon() {
+	return true;
+}
+
 }

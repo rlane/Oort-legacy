@@ -32,6 +32,10 @@ void Entity::tick() {
 	set_heading(normalize_angle(get_heading()));
 }
 
+bool Entity::is_weapon() {
+	return false;
+}
+
 void Entity::set_position(vec2 p) {
 	body->SetTransform(n2b(p), body->GetAngle());
 }
