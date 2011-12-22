@@ -42,8 +42,11 @@ void Ship::tick() {
 	update_forces();
 }
 
-void Ship::fire(float angle) {
-	const int idx = 0;
+void Ship::fire_gun(int idx, float angle) {
+	if (idx >= (int)klass.guns.size()) {
+		return;
+	}
+
 	const GunDef &gun = klass.guns[idx];
 
 	float a = angle_diff(get_heading() + gun.angle, angle);

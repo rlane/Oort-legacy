@@ -61,9 +61,9 @@ public:
 											gun.velocity, gun.ttl);
 				if (!isnan(a)) {
 					if (gun.coverage == 0 && fabsf(angle_diff(ship->get_heading(), a) < 0.1)) {
-						ship->fire(ship->get_heading());
+						ship->fire_gun(0, ship->get_heading());
 					} else {
-						ship->fire(a);
+						ship->fire_gun(0, a);
 					}
 				}
 			} else {

@@ -30,7 +30,7 @@ class Ship : public Entity {
 	~Ship();
 
 	virtual void tick();
-	void fire(float angle);
+	void fire_gun(int idx, float angle);
 
 	void acc_main(float acc);
 	void acc_lateral(float acc);

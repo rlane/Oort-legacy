@@ -35,7 +35,7 @@ public:
 		if (!tmpB) {
 			test_finished = true;
 		} else {
-			shipA.lock()->fire(0);
+			shipA.lock()->fire_gun(0, 0);
 		}
 	}
 } test;

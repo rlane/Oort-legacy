@@ -45,7 +45,7 @@ public:
 									ship_ref->get_velocity(), target_ref->get_velocity(),
 									gun.velocity, gun.ttl);
 		if (!isnan(a)) {
-			ship_ref->fire(a);
+			ship_ref->fire_gun(0, a);
 		}
 
 		drive_towards(*ship_ref, target_ref->get_position(), 100);
