@@ -88,7 +88,8 @@ class ContactListener : public b2ContactListener {
 
 Game::Game(const Scenario &scn, const vector<AISourceCode> &ais)
   : ticks(0),
-    time(0) {
+    time(0),
+    radius(10000) {
 	test_finished = false;
 	int player_ai_index = 0;
 	b2Vec2 gravity(0, 0);
@@ -171,7 +172,7 @@ void Game::after_tick() {
 shared_ptr<Team> Game::check_victory() {
 	std::unordered_set<shared_ptr<Team>> set;
 	BOOST_FOREACH(auto ship, ships) {
-		if (glm::length(ship->get_position()) < 30) { // TODO(rlane): set in scenario
+		if (glm::length(ship->get_position()) < radius) { // TODO(rlane): set in scenario
 			set.insert(ship->team);
 		}
 	}

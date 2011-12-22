@@ -37,6 +37,7 @@ class Game {
 	int ticks;
 	float time;
 	bool test_finished;
+	float radius;
 
 	private:
 	void reap();

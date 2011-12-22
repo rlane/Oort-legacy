@@ -324,7 +324,7 @@ int main(int argc, char **argv) {
 				physics_debug_renderer->DrawPoint(body->GetWorldCenter(), 2, b2Color(0.9, 0.4, 0.3));
 				physics_debug_renderer->DrawPoint(body->GetPosition(), 2, b2Color(0.3, 0.4, 0.9));
 			}
-			physics_debug_renderer->DrawCircle(b2Vec2(0,0), 30.0f, b2Color(0.6,0.8,0.6));
+			physics_debug_renderer->DrawCircle(b2Vec2(0,0), game->radius/Oort::SCALE, b2Color(0.6,0.8,0.6));
 			game->world->DrawDebugData();
 			physics_debug_renderer->end_render();
 			{
