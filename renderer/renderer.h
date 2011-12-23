@@ -22,6 +22,7 @@ private:
 	std::shared_ptr<Game> game;
 	boost::scoped_ptr<GL::Program> ship_prog;
 	boost::scoped_ptr<GL::Program> bullet_prog;
+	boost::scoped_ptr<GL::Program> beam_prog;
 	boost::scoped_ptr<GL::Program> text_prog;
 	GL::Texture font_tex;
 	int screen_width, screen_height;

@@ -42,6 +42,9 @@ Renderer::Renderer(shared_ptr<Game> game)
     bullet_prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/bullet.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/bullet.f.glsl")))),
+    beam_prog(new GL::Program(
+      make_shared<GL::VertexShader>(load_resource("shaders/beam.v.glsl")),
+      make_shared<GL::FragmentShader>(load_resource("shaders/beam.f.glsl")))),
     text_prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/text.f.glsl"))))
@@ -191,47 +194,48 @@ void Renderer::render_bullets() {
 }
 
 void Renderer::render_beams() {
-	glm::vec4 colors[] = {
-		glm::vec4(0.27f, 0.27f, 0.8f, 0.6f),
-		glm::vec4(0.27f, 0.27f, 0.8f, 0.6f),
-		glm::vec4(0.27f, 0.27f, 0.8f, 0.6f),
-		glm::vec4(0.27f, 0.27f, 0.8f, 0.6f),
+	auto &prog = *beam_prog;
+	prog.use();
+	prog.uniform("p_matrix", p_matrix);
+	prog.enable_attrib_array("vertex");
+	prog.enable_attrib_array("texcoord");
+
+	float texcoords[8] = {
+		0, 1,
+		0, 0,
+		1, 1,
+		1, 0
 	};
 
-	bullet_prog->use();
-	GL::check();
-
-	bullet_prog->enable_attrib_array("vertex");
-	bullet_prog->enable_attrib_array("color");
-	bullet_prog->uniform("p_matrix", p_matrix);
-
-	glVertexAttribPointer(bullet_prog->attrib_location("color"), 4, GL_FLOAT, false, 0, colors);
+	glVertexAttribPointer(prog.attrib_location("texcoord"), 2, GL_FLOAT, false, 0, texcoords);
 
 	BOOST_FOREACH(auto beam, game->beams) {
-		auto p = beam->get_position();
-		auto h = beam->get_heading();
+		glm::vec4 color = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 
 		glm::mat4 mv_matrix;
+		auto p = beam->get_position();
+		auto h = beam->get_heading();
 		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
-		bullet_prog->uniform("mv_matrix", mv_matrix);
 
-		const BeamDef &def = beam->get_def();
-		glm::vec2 vertices[] = {
-			vec2(0, -def.width/2),
-			vec2(def.length, -def.width/2),
-			vec2(def.length, def.width/2),
-			vec2(0, def.width/2),
+		auto &def = beam->get_def();
+		float vertices[8] = {
+			0, def.width/2.0f,
+			0, -def.width/2.0f,
+			def.length, def.width/2.0f,
+			def.length, -def.width/2.0f
 		};
 
-		glVertexAttribPointer(bullet_prog->attrib_location("vertex"), 2, GL_FLOAT, false, 0, vertices);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+		prog.uniform("mv_matrix", mv_matrix);
+		prog.uniform("color", color);
+
+		glVertexAttribPointer(prog.attrib_location("vertex"), 2, GL_FLOAT, false, 0, vertices);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
-	bullet_prog->disable_attrib_array("vertex");
-	bullet_prog->disable_attrib_array("color");
+	prog.disable_attrib_array("vertex");
+	prog.disable_attrib_array("texcoord");
 	GL::Program::clear();
-	GL::check();
 }
 
 // XXX

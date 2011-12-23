@@ -56,7 +56,7 @@ void ShipClass::initialize() {
 			beam.width = 6;
 			beam.angle = 0;
 			beam.coverage = 0;
-			beam.origin = vec2(27.4, 0);
+			beam.origin = vec2(27.33, 0);
 			def.beams.push_back(beam);
 		}
 		ion_cannon_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
