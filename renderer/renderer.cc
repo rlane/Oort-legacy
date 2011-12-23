@@ -111,10 +111,11 @@ void Renderer::render(float view_radius,
 }
 
 void Renderer::render_ships() {
-	ship_prog->use();
-	ship_prog->enable_attrib_array("vertex");
+	auto &prog = *ship_prog;
+	prog.use();
+	prog.enable_attrib_array("vertex");
 	GL::check();
-	ship_prog->uniform("p_matrix", p_matrix);
+	prog.uniform("p_matrix", p_matrix);
 
 	BOOST_FOREACH(auto ship, game->ships) {
 		if (ship->dead) {
@@ -130,8 +131,8 @@ void Renderer::render_ships() {
 		glm::vec4 color(ship->team->color, ship->klass.model->alpha);
 		GL::check();
 
-		ship_prog->uniform("mv_matrix", mv_matrix);
-		ship_prog->uniform("color", color);
+		prog.uniform("mv_matrix", mv_matrix);
+		prog.uniform("color", color);
 
 		BOOST_FOREACH(Shape &shape, ship->klass.model->shapes) {
 			GL::Buffer *&vertex_buf = shape.vertex_buffer;
@@ -149,12 +150,13 @@ void Renderer::render_ships() {
 		}
 	}
 
-	ship_prog->disable_attrib_array("vertex");
+	prog.disable_attrib_array("vertex");
 	GL::Program::clear();
 	GL::check();
 }
 
 void Renderer::render_bullets() {
+	auto &prog = *bullet_prog;
 	boost::random::mt19937 prng(game->ticks);
 	boost::random::normal_distribution<> p_dist(0.0, 0.5);
 
@@ -163,14 +165,14 @@ void Renderer::render_bullets() {
 		vec4(0.27f, 0.27f, 0.27f, 1.0f)
 	};
 
-	bullet_prog->use();
+	prog.use();
 	GL::check();
 
-	bullet_prog->enable_attrib_array("vertex");
-	bullet_prog->enable_attrib_array("color");
-	bullet_prog->uniform("p_matrix", p_matrix);
-	bullet_prog->uniform("mv_matrix", glm::mat4());
-	bullet_prog->attrib_ptr("color", colors);
+	prog.enable_attrib_array("vertex");
+	prog.enable_attrib_array("color");
+	prog.uniform("p_matrix", p_matrix);
+	prog.uniform("mv_matrix", glm::mat4());
+	prog.attrib_ptr("color", colors);
 
 	BOOST_FOREACH(auto bullet, game->bullets) {
 		if (bullet->dead) {
@@ -182,12 +184,12 @@ void Renderer::render_bullets() {
 		auto p2 = bullet->get_position();
 
 		vec2 vertices[] = { p1, p2 };
-		bullet_prog->attrib_ptr("vertex", vertices);
+		prog.attrib_ptr("vertex", vertices);
 		glDrawArrays(GL_LINES, 0, 2);
 	}
 
-	bullet_prog->disable_attrib_array("vertex");
-	bullet_prog->disable_attrib_array("color");
+	prog.disable_attrib_array("vertex");
+	prog.disable_attrib_array("color");
 	GL::Program::clear();
 	GL::check();
 }
