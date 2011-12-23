@@ -25,6 +25,10 @@ using std::make_shared;
 
 namespace Oort {
 
+const float tick_length = 1.0f/32;
+const int steps_per_tick = 10;
+const float step_length = tick_length/steps_per_tick;
+
 class ContactFilter : public b2ContactFilter {
 	bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
 		auto entityA = (Entity*) fixtureA->GetBody()->GetUserData();
@@ -59,7 +63,7 @@ class ContactFilter : public b2ContactFilter {
 } contact_filter;
 
 class ContactListener : public b2ContactListener {
-	void PreSolve(b2Contact *contact, const b2Manifold *oldManifold) {
+	void BeginContact(b2Contact *contact) {
 		auto entityA = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
 		auto entityB = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
 
@@ -67,21 +71,31 @@ class ContactListener : public b2ContactListener {
 			return;
 		}
 
-		if (typeid(*entityA) == typeid(Bullet)) {
+		if (entityA->is_weapon()) {
 			std::swap(entityA, entityB);
 		}
 
-		if (typeid(*entityA) == typeid(Ship) &&
-		    typeid(*entityB) == typeid(Bullet)) {
+		if (typeid(*entityA) == typeid(Ship)) {
 			auto ship = dynamic_cast<Ship*>(entityA);
-			float dv = glm::length(entityA->get_velocity() - entityB->get_velocity());
-			float e = 0.5 * entityB->mass * dv*dv;
-			//printf("ship %d; bullet %p; damage %g\n", ship->id, entityB, e);
-			ship->hull -= e;
-			if (ship->hull < 0) {
-				ship->dead = true;
+			if (typeid(*entityB) == typeid(Bullet)) {
+				float dv = glm::length(entityA->get_velocity() - entityB->get_velocity());
+				float e = 0.5 * entityB->mass * dv*dv;
+				//printf("ship %d; bullet %p; damage %g\n", ship->id, entityB, e);
+				ship->hull -= e;
+				if (ship->hull < 0) {
+					ship->dead = true;
+				}
+				entityB->dead = true;
+			} else if (typeid(*entityB) == typeid(Beam)) {
+				auto beam = static_cast<Beam*>(entityB);
+				float e = beam->damage * tick_length;
+				ship->hull -= e;
+				//printf("ship %d; beam %p; damage %g\n", ship->id, entityB, e);
+				if (ship->hull < 0) {
+					ship->dead = true;
+				}
+				entityB->dead = true;
 			}
-			entityB->dead = true;
 		}
 	}
 } contact_listener;
@@ -113,10 +127,6 @@ Game::Game(const Scenario &scn, const vector<std::shared_ptr<AIFactory>> &ai_fac
 
 Game::~Game() {
 }
-
-const float tick_length = 1.0f/32;
-const int steps_per_tick = 10;
-const float step_length = tick_length/steps_per_tick;
 
 static bool entity_is_dead(std::shared_ptr<Entity> entity) {
 	return entity->dead;
