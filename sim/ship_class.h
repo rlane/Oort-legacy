@@ -7,30 +7,12 @@
 #include <memory>
 #include <Box2D/Box2D.h>
 #include "glm/glm.hpp"
+#include "sim/bullet.h"
+#include "sim/beam.h"
 
 namespace Oort {
 
 struct Model;
-
-struct WeaponDef {
-	float angle;     // radians
-	float coverage;  // radians
-};
-
-struct GunDef : public WeaponDef {
-	float mass;         // kg
-	float radius;       // meters
-	float velocity;     // meters/second
-	float ttl;          // seconds
-	float reload_time;  // seconds
-};
-
-struct BeamDef : public WeaponDef {
-	float damage;  // Watts
-	float length;  // meters
-	float width;   // meters
-	glm::vec2 origin; // meters
-};
 
 struct ShipClassDef {
 	std::string name;

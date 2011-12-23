@@ -216,11 +216,12 @@ void Renderer::render_beams() {
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
 		bullet_prog->uniform("mv_matrix", mv_matrix);
 
+		const BeamDef &def = beam->get_def();
 		glm::vec2 vertices[] = {
-			vec2(0, -beam->width/2),
-			vec2(beam->length, -beam->width/2),
-			vec2(beam->length, beam->width/2),
-			vec2(0, beam->width/2),
+			vec2(0, -def.width/2),
+			vec2(def.length, -def.width/2),
+			vec2(def.length, def.width/2),
+			vec2(0, def.width/2),
 		};
 
 		glVertexAttribPointer(bullet_prog->attrib_location("vertex"), 2, GL_FLOAT, false, 0, vertices);

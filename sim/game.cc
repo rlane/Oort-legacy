@@ -65,32 +65,29 @@ class ContactListener : public b2ContactListener {
 			return;
 		}
 
-		if (entityA->is_weapon()) {
+		bool weapA = entityA->is_weapon();
+		bool weapB = entityB->is_weapon();
+
+		if (weapA) {
 			std::swap(entityA, entityB);
+			std::swap(weapA, weapB);
 		}
 
-		if (typeid(*entityA) == typeid(Ship)) {
-			auto ship = dynamic_cast<Ship*>(entityA);
-			if (typeid(*entityB) == typeid(Bullet)) {
-				float dv = glm::length(entityA->get_velocity() - entityB->get_velocity());
-				float e = 0.5 * entityB->mass * dv*dv;
-				//printf("ship %d; bullet %p; damage %g\n", ship->id, entityB, e);
-				ship->hull -= e;
-				if (ship->hull < 0) {
-					ship->dead = true;
-				}
-				entityB->dead = true;
-			} else if (typeid(*entityB) == typeid(Beam)) {
-				auto beam = static_cast<Beam*>(entityB);
-				float e = beam->damage * tick_length;
-				ship->hull -= e;
-				//printf("ship %d; beam %p; damage %g\n", ship->id, entityB, e);
-				if (ship->hull < 0) {
-					ship->dead = true;
-				}
-				entityB->dead = true;
-			}
+		if (weapA || !weapB) {
+			return;
 		}
+
+		assert(typeid(*entityA) == typeid(Ship));
+		assert(entityB->is_weapon());
+
+		auto ship = dynamic_cast<Ship*>(entityA);
+		auto weapon = dynamic_cast<Weapon*>(entityB);
+
+		weapon->damage(*ship);
+		if (ship->hull < 0) {
+			ship->dead = true;
+		}
+		weapon->dead = true;
 	}
 } contact_listener;
 

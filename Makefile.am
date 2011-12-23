@@ -7,7 +7,7 @@ noinst_HEADERS = \
   common/log.h common/resources.h \
   sim/game.h sim/ship.h sim/ship_class.h sim/team.h sim/ai.h \
 	sim/scenario.h sim/entity.h sim/bullet.h sim/test.h sim/math_util.h \
-	sim/ai_lib.h sim/model.h sim/beam.h \
+	sim/ai_lib.h sim/model.h sim/beam.h sim/weapon.h \
 	renderer/renderer.h renderer/physics_debug_renderer.h renderer/font.h \
 	test/testcase.h
 

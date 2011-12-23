@@ -86,7 +86,7 @@ void Ship::fire_beam(int idx, float angle) {
 		return;
 	}
 
-	auto beam = std::make_shared<Beam>(game, team, def);
+	auto beam = std::make_shared<Beam>(game, team, id, def);
 	auto p = get_position();
 	auto v = get_velocity();
 	beam->set_position(p + glm::rotate(def.origin, glm::degrees(angle)));

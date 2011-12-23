@@ -2,26 +2,28 @@
 #ifndef OORT_SIM_BULLET_H_
 #define OORT_SIM_BULLET_H_
 
-#include <stdint.h>
-#include <memory>
-#include "sim/entity.h"
+#include "sim/weapon.h"
 
 namespace Oort {
 
 class Game;
-class GunDef;
 
-class Bullet : public Entity {
-	public:
-	uint32_t creator_id;
+struct GunDef : public WeaponDef {
+	float mass;         // kg
+	float radius;       // meters
+	float velocity;     // meters/second
+	float ttl;          // seconds
+	float reload_time;  // seconds
+};
+
+class Bullet : public Weapon {
+public:
 	float creation_time;
-	float lifetime;
 
-	Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id, const GunDef &gun);
-	~Bullet();
-
+	Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id, const GunDef &def);
+	virtual void damage(Ship &ship);
+	virtual const GunDef &get_def() { return static_cast<const GunDef&>(def); }
 	virtual void tick();
-	virtual bool is_weapon();
 };
 
 }

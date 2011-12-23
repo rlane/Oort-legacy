@@ -2,26 +2,24 @@
 #ifndef OORT_SIM_BEAM_H_
 #define OORT_SIM_BEAM_H_
 
-#include <stdint.h>
-#include <memory>
-#include "sim/entity.h"
+#include "sim/weapon.h"
 
 namespace Oort {
 
 class Game;
-class BeamDef;
 
-class Beam : public Entity {
-	public:
-	uint32_t creator_id;
-	float damage;
-	float width;
-	float length;
+struct BeamDef : public WeaponDef {
+	float damage;  // Watts
+	float length;  // meters
+	float width;   // meters
+	glm::vec2 origin; // meters XXX put in WeaponDef
+};
 
-	Beam(Game *game, std::shared_ptr<Team> team, const BeamDef &beam);
-	~Beam();
-
-	virtual bool is_weapon();
+class Beam : public Weapon {
+public:
+	Beam(Game *game, std::shared_ptr<Team> team, uint32_t creator_id, const BeamDef &beam);
+	virtual void damage(Ship &ship);
+	virtual const BeamDef &get_def() { return static_cast<const BeamDef&>(def); }
 };
 
 }
