@@ -86,12 +86,15 @@ void Ship::fire_beam(int idx, float angle) {
 		return;
 	}
 
-	auto beam = std::make_shared<Beam>(game, team, id, def);
+	auto beam = std::make_shared<Beam>(game, team, def);
 	auto p = get_position();
 	auto v = get_velocity();
-	beam->set_position(p);
+	beam->set_position(p + glm::rotate(def.origin, glm::degrees(angle)));
 	beam->set_heading(angle);
 	beam->set_velocity(v);
+	b2WeldJointDef joint;
+	joint.Initialize(body, beam->get_body(), body->GetPosition());
+	game->world->CreateJoint(&joint);
 	game->beams.push_back(beam);
 }
 

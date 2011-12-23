@@ -50,6 +50,7 @@ void ShipClass::initialize() {
 			beam.damage = 6e6;
 			beam.length = 1e3;
 			beam.width = 6;
+			beam.origin = glm::vec2(27.4, 0);
 			beam.angle = 0;
 			beam.coverage = 0;
 			def.beams.push_back(beam);

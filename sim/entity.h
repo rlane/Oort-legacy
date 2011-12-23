@@ -38,6 +38,8 @@ public:
 	void set_angular_velocity(float w);
 	float get_angular_velocity() const;
 
+	b2Body *get_body() { return body; }
+
 	Entity(const Entity&) = delete;
 	Entity& operator=(const Entity&) = delete;
 

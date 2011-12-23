@@ -16,10 +16,8 @@ namespace Oort {
 
 Beam::Beam(Game *game,
            std::shared_ptr<Team> team,
-           uint32_t creator_id,
            const BeamDef &def)
-  : Entity(game, team),
-    creator_id(creator_id) {
+  : Entity(game, team) {
 	damage = def.damage;
 	width = def.width;
 	length = def.length;
@@ -31,7 +29,7 @@ Beam::Beam(Game *game,
 	};
 	b2PolygonShape shape;
 	shape.Set(&vertices[0], vertices.size());
-	body->CreateFixture(&shape, 0)->SetSensor(true);
+	body->CreateFixture(&shape, 0.1)->SetSensor(true);
 }
 
 Beam::~Beam() {

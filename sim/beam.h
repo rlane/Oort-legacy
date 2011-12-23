@@ -18,7 +18,7 @@ class Beam : public Entity {
 	float width;
 	float length;
 
-	Beam(Game *game, std::shared_ptr<Team> team, uint32_t creator_id, const BeamDef &beam);
+	Beam(Game *game, std::shared_ptr<Team> team, const BeamDef &beam);
 	~Beam();
 
 	virtual bool is_weapon();

@@ -45,17 +45,11 @@ class ContactFilter : public b2ContactFilter {
 			return false;
 		}
 
-		// XXX create Weapon subclass of Entity
-		if (typeid(*entityA) == typeid(Ship)) {
-			if (typeid(*entityB) == typeid(Bullet)) {
-				auto ship = static_cast<Ship*>(entityA);
-				auto bullet = static_cast<Bullet*>(entityB);
-				return ship->id != bullet->creator_id;
-		  } else if (typeid(*entityB) == typeid(Beam)) {
-				auto ship = static_cast<Ship*>(entityA);
-				auto beam = static_cast<Beam*>(entityB);
-				return ship->id != beam->creator_id;
-			}
+		if (typeid(*entityA) == typeid(Ship) &&
+				typeid(*entityB) == typeid(Bullet)) {
+			auto ship = static_cast<Ship*>(entityA);
+			auto bullet = static_cast<Bullet*>(entityB);
+			return ship->id != bullet->creator_id;
 		}
 		
 		return true;
