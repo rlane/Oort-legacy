@@ -105,9 +105,14 @@ void Renderer::render(float view_radius,
 	                      view_center.y - view_radius/aspect_ratio,
 	                      view_center.y + view_radius/aspect_ratio);
 
+	render_tails();
 	render_ships();
 	render_bullets();
 	render_beams();
+}
+
+void Renderer::tick() {
+	tick_tails();
 }
 
 void Renderer::render_ships() {
@@ -153,6 +158,49 @@ void Renderer::render_ships() {
 	prog.disable_attrib_array("vertex");
 	GL::Program::clear();
 	GL::check();
+}
+
+void Renderer::render_tails() {
+	auto &prog = *bullet_prog;
+	prog.use();
+	GL::check();
+
+	prog.enable_attrib_array("vertex");
+	prog.enable_attrib_array("color");
+	prog.uniform("p_matrix", p_matrix);
+	prog.uniform("mv_matrix", glm::mat4());
+	int stride = sizeof(TailVertex);
+	prog.attrib_ptr("vertex", &tail_segments[0].a.p, stride);
+	prog.attrib_ptr("color", &tail_segments[0].a.color, stride);
+	glDrawArrays(GL_LINES, 0, tail_segments.size()*2);
+	prog.disable_attrib_array("vertex");
+	prog.disable_attrib_array("color");
+	GL::Program::clear();
+	GL::check();
+}
+
+static bool tail_segment_expired(const TailSegment &ts) {
+	return ts.b.color.a <= 0.0f;
+}
+
+void Renderer::tick_tails() {
+	BOOST_FOREACH(auto &ts, tail_segments) {
+		auto &alpha = ts.b.color.a;
+		alpha = fmaxf(0, alpha - 0.02/32.0f);
+	}
+
+	tail_segments.erase(
+		std::remove_if(begin(tail_segments), end(tail_segments), tail_segment_expired),
+		end(tail_segments));
+
+	BOOST_FOREACH(auto ship, game->ships) {
+		tail_segments.emplace_back(
+			TailSegment{
+				TailVertex{ ship->get_position() - ship->get_velocity()*0.7f, vec4(ship->team->color, 0) },
+				TailVertex{ ship->get_position(), vec4(ship->team->color, 0.1) }
+			}
+		);
+	}
 }
 
 void Renderer::render_bullets() {

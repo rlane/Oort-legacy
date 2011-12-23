@@ -264,6 +264,7 @@ int main(int argc, char **argv) {
 			}
 
 			game->tick();
+			renderer->tick();
 		}
 
 		if (zoom_rate < 0) {
