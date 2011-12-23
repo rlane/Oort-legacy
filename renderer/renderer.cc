@@ -28,6 +28,7 @@
 #include "renderer/font.h"
 
 using glm::vec2;
+using glm::vec4;
 using std::make_shared;
 using std::shared_ptr;
 using boost::scoped_ptr;
@@ -139,8 +140,7 @@ void Renderer::render_ships() {
 				vertex_buf->data(shape.vertices);
 			}
 			vertex_buf->bind();
-			glVertexAttribPointer(ship_prog->attrib_location("vertex"),
-			                      2, GL_FLOAT, GL_FALSE, 0, 0);
+			bullet_prog->attrib_ptr("vertex", (vec2*)nullptr);
 			vertex_buf->unbind();
 			GL::check();
 
@@ -158,9 +158,9 @@ void Renderer::render_bullets() {
 	boost::random::mt19937 prng(game->ticks);
 	boost::random::normal_distribution<> p_dist(0.0, 0.5);
 
-	glm::vec4 colors[] = {
-		glm::vec4(0.27f, 0.27f, 0.27f, 0.33f),
-		glm::vec4(0.27f, 0.27f, 0.27f, 1.0f)
+	vec4 colors[] = {
+		vec4(0.27f, 0.27f, 0.27f, 0.33f),
+		vec4(0.27f, 0.27f, 0.27f, 1.0f)
 	};
 
 	bullet_prog->use();
@@ -170,8 +170,7 @@ void Renderer::render_bullets() {
 	bullet_prog->enable_attrib_array("color");
 	bullet_prog->uniform("p_matrix", p_matrix);
 	bullet_prog->uniform("mv_matrix", glm::mat4());
-
-	glVertexAttribPointer(bullet_prog->attrib_location("color"), 4, GL_FLOAT, false, 0, colors);
+	bullet_prog->attrib_ptr("color", colors);
 
 	BOOST_FOREACH(auto bullet, game->bullets) {
 		if (bullet->dead) {
@@ -182,8 +181,8 @@ void Renderer::render_bullets() {
 		auto p1 = bullet->get_position() - dp;
 		auto p2 = bullet->get_position();
 
-		glm::vec2 vertices[2] = { p1, p2 };
-		glVertexAttribPointer(bullet_prog->attrib_location("vertex"), 2, GL_FLOAT, false, 0, vertices);
+		vec2 vertices[] = { p1, p2 };
+		bullet_prog->attrib_ptr("vertex", vertices);
 		glDrawArrays(GL_LINES, 0, 2);
 	}
 
@@ -200,14 +199,14 @@ void Renderer::render_beams() {
 	prog.enable_attrib_array("vertex");
 	prog.enable_attrib_array("texcoord");
 
-	float texcoords[8] = {
-		0, 1,
-		0, 0,
-		1, 1,
-		1, 0
+	vec2 texcoords[] = {
+		vec2(0, 1),
+		vec2(0, 0),
+		vec2(1, 1),
+		vec2(1, 0)
 	};
 
-	glVertexAttribPointer(prog.attrib_location("texcoord"), 2, GL_FLOAT, false, 0, texcoords);
+	prog.attrib_ptr("texcoord", texcoords);
 
 	BOOST_FOREACH(auto beam, game->beams) {
 		glm::vec4 color = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
@@ -219,17 +218,17 @@ void Renderer::render_beams() {
 		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
 
 		auto &def = beam->get_def();
-		float vertices[8] = {
-			0, def.width/2.0f,
-			0, -def.width/2.0f,
-			def.length, def.width/2.0f,
-			def.length, -def.width/2.0f
+		vec2 vertices[] = {
+			vec2(0, def.width/2.0f),
+			vec2(0, -def.width/2.0f),
+			vec2(def.length, def.width/2.0f),
+			vec2(def.length, -def.width/2.0f)
 		};
 
 		prog.uniform("mv_matrix", mv_matrix);
 		prog.uniform("color", color);
 
-		glVertexAttribPointer(prog.attrib_location("vertex"), 2, GL_FLOAT, false, 0, vertices);
+		prog.attrib_ptr("vertex", vertices);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 

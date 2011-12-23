@@ -113,8 +113,16 @@ public:
 		glVertexAttrib2f(attrib_location(name), val.x, val.y);
 	}
 
-	void attrib_ptr(std::string name, float *vals, int stride=0) {
+	void attrib_ptr(std::string name, const float *vals, int stride=0) {
 		glVertexAttribPointer(attrib_location(name), 1, GL_FLOAT, false, stride, vals);
+	}
+
+	void attrib_ptr(std::string name, const glm::vec2 *vals, int stride=0) {
+		glVertexAttribPointer(attrib_location(name), 2, GL_FLOAT, false, stride, vals);
+	}
+
+	void attrib_ptr(std::string name, const glm::vec4 *vals, int stride=0) {
+		glVertexAttribPointer(attrib_location(name), 4, GL_FLOAT, false, stride, vals);
 	}
 
 	void enable_attrib_array(std::string name) {
