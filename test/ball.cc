@@ -37,8 +37,9 @@ class BallTest : public Test {
 public:
 	BallTest() {
 		boost::random::mt19937 prng(42);
-		boost::random::normal_distribution<> p_dist(0.0, 1000.0);
-		boost::random::normal_distribution<> v_dist(0.0, 20.0);
+		boost::random::normal_distribution<float> p_dist(0.0, 1000.0);
+		boost::random::normal_distribution<float> v_dist(0.0, 20.0);
+		boost::uniform_real<float> h_dist(0.0, 2*M_PI);
 
 		auto ai_factory = CxxAI::factory<BallAI>();
 		auto red = make_shared<Team>("red", ai_factory, vec3(1, 0, 0));
@@ -57,6 +58,7 @@ public:
 			auto ship = make_shared<Ship>(this, *klasses[(i/teams.size()) % klasses.size()], teams[i % teams.size()]);
 			ship->set_position(vec2(p_dist(prng), p_dist(prng)));
 			ship->set_velocity(vec2(v_dist(prng), v_dist(prng)));
+			ship->set_heading(h_dist(prng));
 			ships.push_back(ship);
 		}
 	}
