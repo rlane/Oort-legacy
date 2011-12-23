@@ -5,23 +5,8 @@ class BallAI : public CxxAI {
 public:
 	BallAI(Ship &ship) : CxxAI(ship) {}
 
-	shared_ptr<Ship> find_target() {
-		shared_ptr<Ship> target;
-		float dist = 1e9f;
-		BOOST_FOREACH(auto t, ship.game->ships) {
-			if (t->team != ship.team) {
-				float d = length(t->get_position() - ship.get_position());
-				if (d < dist) {
-					target = t;
-					dist = d;
-				}
-			}
-		}
-		return target;
-	}
-
 	void tick() {
-		auto t = find_target();
+		auto t = find_target(ship);
 
 		if (t) {
 			drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
@@ -43,15 +28,6 @@ public:
 	}
 };
 
-class BallAIFactory : public CxxAIFactory {
-public:
-	BallAIFactory() : CxxAIFactory("ball") {};
-
-	unique_ptr<AI> instantiate(Ship &ship) {
-		return unique_ptr<AI>(new BallAI(ship));
-	}
-};
-
 class BallTest : public Test {
 public:
 	BallTest() {
@@ -59,7 +35,7 @@ public:
 		boost::random::normal_distribution<> p_dist(0.0, 1000.0);
 		boost::random::normal_distribution<> v_dist(0.0, 20.0);
 
-		auto ai_factory = make_shared<BallAIFactory>();
+		auto ai_factory = CxxAI::factory<BallAI>();
 		auto red = make_shared<Team>("red", ai_factory, vec3(1, 0, 0));
 		auto green = make_shared<Team>("green", ai_factory, vec3(0, 1, 0));
 		auto blue = make_shared<Team>("blue", ai_factory, vec3(0, 0, 1));

@@ -3,14 +3,10 @@
 
 class ChaseAI : public CxxAI {
 public:
-	weak_ptr<Ship> target_weak;
-
-	ChaseAI(Ship &ship, weak_ptr<Ship> target_weak)
-	  : CxxAI(ship),
-	    target_weak(target_weak) {}
+	ChaseAI(Ship &ship) : CxxAI(ship) {}
 
 	void tick() {
-		auto target = target_weak.lock(); 
+		auto target = find_target(ship);
 
 		if (!target) {
 			drive_towards(ship, vec2(0,0), 10);
@@ -53,35 +49,13 @@ public:
 	}
 };
 
-class ChaseAIFactory : public CxxAIFactory {
-public:
-	weak_ptr<Ship> target_weak;
-
-	ChaseAIFactory(weak_ptr<Ship> target_weak)
-	  : CxxAIFactory("chase"),
-	    target_weak(target_weak) {};
-
-	unique_ptr<AI> instantiate(Ship &ship) {
-		return unique_ptr<AI>(new ChaseAI(ship, target_weak));
-	}
-};
-
-class TargetAIFactory : public CxxAIFactory {
-public:
-	TargetAIFactory() : CxxAIFactory("target") {};
-
-	unique_ptr<AI> instantiate(Ship &ship) {
-		return unique_ptr<AI>(new TargetAI(ship));
-	}
-};
-
 class ChaseTest : public Test {
 public:
 	weak_ptr<Ship> target_weak;
 
 	ChaseTest() {
 		{
-			auto team = make_shared<Team>("red", make_shared<TargetAIFactory>(), vec3(1, 0, 0));
+			auto team = make_shared<Team>("red", CxxAI::factory<TargetAI>(), vec3(1, 0, 0));
 			auto s = make_shared<Ship>(this, *fighter, team);
 			s->set_position(vec2(1500, 0));
 			ships.push_back(s);
@@ -89,7 +63,7 @@ public:
 		}
 
 		{
-			auto team = make_shared<Team>("green", make_shared<ChaseAIFactory>(target_weak), vec3(0, 1, 0));
+			auto team = make_shared<Team>("green", CxxAI::factory<ChaseAI>(), vec3(0, 1, 0));
 			auto s = make_shared<Ship>(this, *fighter, team);
 			ships.push_back(s);
 		}

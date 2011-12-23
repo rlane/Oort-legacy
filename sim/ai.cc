@@ -29,14 +29,4 @@ void AI::tick() {}
 CxxAI::CxxAI(Ship &ship) : AI(ship) {}
 void CxxAI::tick() {}
 
-class NullAI : public CxxAI {
-public:
-	NullAI(Ship &ship) : CxxAI(ship) {};
-	void tick() {};
-};
-
-std::unique_ptr<AI> NullAIFactory::instantiate(Ship &ship) {
-	return std::unique_ptr<AI>(new NullAI(ship));
-}
-
 }

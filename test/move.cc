@@ -63,15 +63,6 @@ public:
 	}
 };
 
-class MoveAIFactory : public CxxAIFactory {
-public:
-	MoveAIFactory() : CxxAIFactory("move") {};
-
-	unique_ptr<AI> instantiate(Ship &ship) {
-		return unique_ptr<AI>(new MoveAI(ship));
-	}
-};
-
 class MoveTest : public Test {
 public:
 	shared_ptr<Ship> ship;
@@ -97,7 +88,7 @@ public:
 			speedy = unique_ptr<ShipClass>(new ShipClass(def));
 		}
 
-		auto green = make_shared<Team>("green", make_shared<MoveAIFactory>(), vec3(0, 1, 0));
+		auto green = make_shared<Team>("green", CxxAI::factory<MoveAI>(), vec3(0, 1, 0));
 		ship = make_shared<Ship>(this, *speedy, green);
 		ships.push_back(ship);
 	}
