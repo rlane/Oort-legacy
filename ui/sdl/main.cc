@@ -56,7 +56,7 @@ static bool running = true;
 static bool paused = true;
 static bool single_step = false;
 static bool render_physics_debug = false;
-static float view_radius = 100.0f;
+static float view_radius = 3000.0f;
 static float zoom_rate = 0;
 static const float zoom_const = 2.0;
 static glm::vec2 view_center;
