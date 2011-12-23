@@ -31,6 +31,7 @@ void ShipClass::initialize() {
 		gun.velocity = 3000.0f;
 		gun.ttl = 1.0f;
 		gun.reload_time = 0.125f;
+		gun.deviation = 0.02;
 		gun.angle = 0.0;
 		gun.coverage = 0.8 * M_PI;
 		gun.origin = vec2(9, 0);
@@ -77,6 +78,7 @@ void ShipClass::initialize() {
 		gun.velocity = 600.0f;
 		gun.ttl = 10.0f;
 		gun.reload_time = 0.6f;
+		gun.deviation = 0.04;
 		gun.angle = 0.0;
 		gun.coverage = 2 * M_PI;
 		gun.origin = vec2(10, 0);

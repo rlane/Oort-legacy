@@ -14,6 +14,7 @@ struct GunDef : public WeaponDef {
 	float velocity;     // meters/second
 	float ttl;          // seconds
 	float reload_time;  // seconds
+	float deviation;    // radians
 };
 
 class Bullet : public Weapon {
