@@ -20,7 +20,12 @@ public:
 					ship.fire_gun(0, a);
 				}
 			} else if (&ship.klass == ion_cannon_frigate.get()) {
-				ship.fire_beam(0, ship.get_heading());
+				const BeamDef &beam = ship.klass.beams[0];
+				float a = angle_between(ship.get_position(), t->get_position());
+				float da = angle_diff(ship.get_heading(), a);
+				if (fabsf(da) < 0.1 && length(ship.get_position() - t->get_position()) < beam.length*1.1f) {
+					ship.fire_beam(0, ship.get_heading());
+				}
 			}
 		} else {
 			drive_towards(ship, vec2(0,0), ship.klass.max_main_acc*2);
