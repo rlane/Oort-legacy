@@ -175,8 +175,8 @@ void Renderer::render_bullets() {
 			continue;
 		}
 
-		auto dp = bullet->get_velocity() * (1.0f/64);
-		auto p1 = bullet->get_position();
+		auto dp = bullet->get_velocity() * (1.0f/40);
+		auto p1 = bullet->get_position() - dp*0.5f;
 		auto p2 = p1 + dp;
 
 		glm::vec2 vertices[2] = { p1, p2 };
