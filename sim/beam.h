@@ -12,7 +12,6 @@ struct BeamDef : public WeaponDef {
 	float damage;  // Watts
 	float length;  // meters
 	float width;   // meters
-	glm::vec2 origin; // meters XXX put in WeaponDef
 };
 
 class Beam : public Weapon {

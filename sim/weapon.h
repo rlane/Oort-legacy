@@ -12,8 +12,9 @@ class Game;
 class Ship;
 
 struct WeaponDef {
-	float angle;     // radians
-	float coverage;  // radians
+	float angle;       // radians
+	float coverage;    // radians
+	glm::vec2 origin;  // meters
 };
 
 class Weapon : public Entity {

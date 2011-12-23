@@ -6,6 +6,8 @@
 #include "sim/math_util.h"
 #include "sim/model.h"
 
+using glm::vec2;
+
 namespace Oort {
 
 std::unique_ptr<ShipClass> fighter,
@@ -31,6 +33,7 @@ void ShipClass::initialize() {
 		gun.reload_time = 0.125f;
 		gun.angle = 0.0;
 		gun.coverage = 0.8 * M_PI;
+		gun.origin = vec2(9, 0);
 		def.guns.push_back(gun);
 		fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
@@ -50,9 +53,9 @@ void ShipClass::initialize() {
 			beam.damage = 6e6;
 			beam.length = 1e3;
 			beam.width = 6;
-			beam.origin = glm::vec2(27.4, 0);
 			beam.angle = 0;
 			beam.coverage = 0;
+			beam.origin = vec2(27.4, 0);
 			def.beams.push_back(beam);
 		}
 		ion_cannon_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
@@ -76,6 +79,7 @@ void ShipClass::initialize() {
 		gun.reload_time = 0.6f;
 		gun.angle = 0.0;
 		gun.coverage = 2 * M_PI;
+		gun.origin = vec2(10, 0);
 		def.guns.push_back(gun);
 		assault_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}

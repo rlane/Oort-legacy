@@ -66,7 +66,7 @@ void Ship::fire_gun(int idx, float angle) {
 
 	boost::random::normal_distribution<float> v_dist(gun.velocity, 10);
 	auto bullet = std::make_shared<Bullet>(game, team, id, gun);
-	auto p = get_position();
+	auto p = get_position() + glm::rotate(gun.origin, glm::degrees(angle));
 	auto v = get_velocity() + v_dist(prng) * vec2(cos(angle), sin(angle));
 	bullet->set_position(p);
 	bullet->set_heading(angle);
@@ -87,9 +87,9 @@ void Ship::fire_beam(int idx, float angle) {
 	}
 
 	auto beam = std::make_shared<Beam>(game, team, id, def);
-	auto p = get_position();
+	auto p = get_position() + glm::rotate(def.origin, glm::degrees(angle));
 	auto v = get_velocity();
-	beam->set_position(p + glm::rotate(def.origin, glm::degrees(angle)));
+	beam->set_position(p);
 	beam->set_heading(angle);
 	beam->set_velocity(v);
 	b2WeldJointDef joint;
