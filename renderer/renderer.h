@@ -3,12 +3,13 @@
 #define OORT_RENDERER_RENDERER_H_
 
 #include <memory>
-#include <boost/scoped_ptr.hpp>
-#include "sim/game.h"
-#include "gl/program.h"
-#include "gl/texture.h"
+#include <string>
+#include <vector>
+#include "glm/glm.hpp"
 
 namespace Oort {
+
+class Game;
 
 namespace RendererBatches {
 	class Batch;
@@ -17,11 +18,6 @@ namespace RendererBatches {
 struct Text {
 	int x, y;
 	std::string str;
-
-#if 0
-	Text(int &_x, int &_y, std::string &_str)
-		: x(_x), y(_y), str(std::move(_str)) {}
-#endif
 };
 
 class Renderer {

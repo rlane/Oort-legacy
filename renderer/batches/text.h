@@ -3,6 +3,7 @@
 
 #include "renderer/batch.h"
 #include "gl/program.h"
+#include "gl/texture.h"
 
 namespace Oort {
 namespace RendererBatches {

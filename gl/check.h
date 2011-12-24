@@ -3,6 +3,7 @@
 #define OORT_GL_CHECK_H_
 
 #include <stdio.h>
+#include <GL/glew.h>
 
 namespace GL {
 

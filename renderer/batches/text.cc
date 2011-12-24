@@ -12,7 +12,6 @@ using glm::vec2;
 using glm::vec4;
 using std::make_shared;
 using std::shared_ptr;
-using boost::scoped_ptr;
 
 namespace Oort {
 namespace RendererBatches {
