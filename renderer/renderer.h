@@ -31,6 +31,7 @@ private:
 	int screen_width, screen_height;
 	float aspect_ratio;
 	std::vector<RendererBatches::Batch*> batches;
+	glm::vec2 pixel2screen(glm::vec2 p);
 
 	void load_font();
 };

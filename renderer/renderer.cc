@@ -118,11 +118,7 @@ void Renderer::tick() {
 	}
 }
 
-// XXX
-static constexpr float screen_width = 1600;
-static constexpr float screen_height = 900;
-
-static vec2 pixel2screen(vec2 p) {
+vec2 Renderer::pixel2screen(vec2 p) {
 	return vec2((float) (2*p.x/screen_width-1),
 	            (float) (-2*p.y/screen_height+1));
 }
