@@ -4,6 +4,7 @@
 #include <array>
 #include <stdint.h>
 #include <boost/foreach.hpp>
+#include <boost/random/uniform_real.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include "sim/game.h"
 #include "sim/ship.h"
@@ -32,7 +33,8 @@ ParticleBatch::ParticleBatch(Renderer &renderer)
 	: Batch(renderer),
     prog(GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/particle.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/particle.f.glsl"))))
+      make_shared<GL::FragmentShader>(load_resource("shaders/particle.f.glsl")))),
+		prng(42)
 {
 	create_texture();
 }
@@ -101,12 +103,39 @@ void ParticleBatch::render() {
 void ParticleBatch::tick() {
 	BOOST_FOREACH(auto bullet, game.bullets) {
 		if (bullet->get_def().type == GunType::PLASMA) {
-			particles.emplace_back(Particle{
-				bullet->get_position(),
-				bullet->get_velocity()*0.7f,
-				game.time, 0.2,
-				(float)ParticleType::PLASMA, 0 });
+			shower(ParticleType::PLASMA,
+			       bullet->get_position(),
+			       vec2(0,0), bullet->get_velocity() * 0.507f,
+			       20.0f, 0.2f, 0.4f, 4);
 		}
+	}
+}
+
+void ParticleBatch::shower(
+	ParticleType type,
+	vec2 p0, vec2 v0, vec2 v,
+	float s_max, float life_min, float life_max,
+	int count)
+{
+	boost::uniform_real<float> a_dist(0.0f, M_PI*2.0f);
+	boost::uniform_real<float> s_dist(0.0f, s_max);
+	boost::uniform_real<float> fdp_dist(0.0f, 1.0f);
+	boost::uniform_real<float> life_dist(life_min, life_max);
+	const float tick_length = 1.0f/32; // XXX
+	for (int i = 0; i < count; i++) {
+		float a = a_dist(prng);
+		float s = s_dist(prng);
+		float fdp = fdp_dist(prng);
+		float lifetime = life_dist(prng);
+		vec2 dp = v * fdp * tick_length;
+		vec2 dv = vec2(cosf(a)*s, sinf(a)*s);
+		particles.emplace_back(Particle{
+			/* initial_position */ p0 + dp + dv*tick_length,
+		  /* velocity */ v0 + v + dv,
+			/* initial_time */ game.time,
+			/* lifetime */ lifetime,
+			/* type */ (float)type
+		});
 	}
 }
 
