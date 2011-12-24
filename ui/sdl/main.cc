@@ -233,7 +233,7 @@ int main(int argc, char **argv) {
 
 	glViewport(0, 0, screen_width, screen_height);
 
-	renderer = std::unique_ptr<Renderer>(new Renderer(game));
+	renderer = std::unique_ptr<Renderer>(new Renderer(*game));
 	renderer->reshape(screen_width, screen_height);
 
 	physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());

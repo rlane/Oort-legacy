@@ -40,7 +40,7 @@ using namespace Oort::RendererBatches;
 
 namespace Oort {
 
-Renderer::Renderer(shared_ptr<Game> game)
+Renderer::Renderer(Game &game)
   : game(game),
     text_prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),

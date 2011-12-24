@@ -17,7 +17,7 @@ public:
 
 	Batch(Renderer &renderer)
 		: renderer(renderer),
-		  game(*renderer.game) {}
+		  game(renderer.game) {}
 
 	virtual void tick() {};
 	virtual void render() {};

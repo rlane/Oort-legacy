@@ -16,10 +16,10 @@ namespace RendererBatches {
 
 class Renderer {
 public:
-	std::shared_ptr<Game> game;
+	Game &game;
 	glm::mat4 p_matrix;
 
-	Renderer(std::shared_ptr<Game> game);
+	Renderer(Game &game);
 	void reshape(int screen_width, int screen_height);
 	void render(float view_radius, glm::vec2 view_center);
 	void tick();
