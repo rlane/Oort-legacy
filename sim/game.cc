@@ -58,8 +58,12 @@ class ContactFilter : public b2ContactFilter {
 
 class ContactListener : public b2ContactListener {
 	void BeginContact(b2Contact *contact) {
-		auto entityA = (Entity*) contact->GetFixtureA()->GetBody()->GetUserData();
-		auto entityB = (Entity*) contact->GetFixtureB()->GetBody()->GetUserData();
+		auto fixtureA = contact->GetFixtureA();
+		auto fixtureB = contact->GetFixtureB();
+		auto bodyA = fixtureA->GetBody();
+		auto bodyB = fixtureB->GetBody();
+		auto entityA = (Entity*) bodyA->GetUserData();
+		auto entityB = (Entity*) bodyB->GetUserData();
 
 		if (entityA->dead || entityB->dead) {
 			return;
@@ -82,10 +86,20 @@ class ContactListener : public b2ContactListener {
 
 		auto ship = dynamic_cast<Ship*>(entityA);
 		auto weapon = dynamic_cast<Weapon*>(entityB);
+		auto xfA = bodyA->GetTransform();
+		auto xfB = bodyB->GetTransform();
+		auto shapeA = fixtureA->GetShape();
+		auto shapeB = fixtureB->GetShape();
 
 		auto &game = *ship->game;
-		auto cp = b2n(contact->GetManifold()->points[0].localPoint);
-		game.hits.emplace_back(Hit{ ship, weapon, cp, weapon->damage(*ship) });
+		b2Manifold m;
+		contact->Evaluate(&m, xfA, xfB);
+		if (m.pointCount > 0) {
+			b2WorldManifold worldManifold;
+			worldManifold.Initialize(&m, xfA, shapeA->m_radius, xfB, shapeB->m_radius);
+			auto cp = b2n(worldManifold.points[0]);
+			game.hits.emplace_back(Hit{ ship, weapon, cp, weapon->damage(*ship) });
+		}
 	}
 } contact_listener;
 

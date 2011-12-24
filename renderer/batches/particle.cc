@@ -109,6 +109,13 @@ void ParticleBatch::tick() {
 			       20.0f, 0.2f, 0.4f, 4);
 		}
 	}
+
+	BOOST_FOREACH(auto hit, game.hits) {
+		auto n = short(glm::max(hit.e/10000,1.0f));
+		shower(ParticleType::HIT, hit.cp,
+		       hit.ship->get_velocity(), vec2(0,0),
+		       256, 0.03f, 0.63f, n);
+	}
 }
 
 void ParticleBatch::shower(
