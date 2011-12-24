@@ -28,6 +28,7 @@
 #include "renderer/font.h"
 #include "renderer/batches/ship.h"
 #include "renderer/batches/tail.h"
+#include "renderer/batches/bullet.h"
 
 using glm::vec2;
 using glm::vec4;
@@ -40,9 +41,6 @@ namespace Oort {
 
 Renderer::Renderer(shared_ptr<Game> game)
   : game(game),
-    bullet_prog(new GL::Program(
-      make_shared<GL::VertexShader>(load_resource("shaders/bullet.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/bullet.f.glsl")))),
     beam_prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/beam.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/beam.f.glsl")))),
@@ -53,6 +51,7 @@ Renderer::Renderer(shared_ptr<Game> game)
 	batches = {
 		new TailBatch(*this),
 		new ShipBatch(*this),
+		new BulletBatch(*this),
 	};
 	load_font();
 }
@@ -112,7 +111,6 @@ void Renderer::render(float view_radius,
 	BOOST_FOREACH(auto batch, batches) {
 		batch->render();
 	}
-	render_bullets();
 	render_beams();
 }
 
@@ -120,45 +118,6 @@ void Renderer::tick() {
 	BOOST_FOREACH(auto batch, batches) {
 		batch->tick();
 	}
-}
-
-void Renderer::render_bullets() {
-	auto &prog = *bullet_prog;
-	boost::random::mt19937 prng(game->ticks);
-	boost::random::normal_distribution<> p_dist(0.0, 0.5);
-
-	vec4 colors[] = {
-		vec4(0.27f, 0.27f, 0.27f, 0.33f),
-		vec4(0.27f, 0.27f, 0.27f, 1.0f)
-	};
-
-	prog.use();
-	GL::check();
-
-	prog.enable_attrib_array("vertex");
-	prog.enable_attrib_array("color");
-	prog.uniform("p_matrix", p_matrix);
-	prog.uniform("mv_matrix", glm::mat4());
-	prog.attrib_ptr("color", colors);
-
-	BOOST_FOREACH(auto bullet, game->bullets) {
-		if (bullet->dead) {
-			continue;
-		}
-
-		auto dp = bullet->get_velocity() * (1.0f/40);
-		auto p1 = bullet->get_position() - dp;
-		auto p2 = bullet->get_position();
-
-		vec2 vertices[] = { p1, p2 };
-		prog.attrib_ptr("vertex", vertices);
-		glDrawArrays(GL_LINES, 0, 2);
-	}
-
-	prog.disable_attrib_array("vertex");
-	prog.disable_attrib_array("color");
-	GL::Program::clear();
-	GL::check();
 }
 
 void Renderer::render_beams() {

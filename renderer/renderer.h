@@ -27,7 +27,6 @@ public:
 	void text(int x, int y, const std::string &str);
 
 private:
-	boost::scoped_ptr<GL::Program> bullet_prog;
 	boost::scoped_ptr<GL::Program> beam_prog;
 	boost::scoped_ptr<GL::Program> text_prog;
 	GL::Texture font_tex;
@@ -36,7 +35,6 @@ private:
 	std::vector<RendererBatches::Batch*> batches;
 
 	void load_font();
-	void render_bullets();
 	void render_beams();
 };
 
