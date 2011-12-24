@@ -25,11 +25,11 @@
 #include "gl/buffer.h"
 #include "gl/texture.h"
 #include "gl/check.h"
-#include "renderer/font.h"
 #include "renderer/batches/ship.h"
 #include "renderer/batches/tail.h"
 #include "renderer/batches/bullet.h"
 #include "renderer/batches/beam.h"
+#include "renderer/batches/text.h"
 
 using glm::vec2;
 using glm::vec4;
@@ -41,44 +41,15 @@ using namespace Oort::RendererBatches;
 namespace Oort {
 
 Renderer::Renderer(Game &game)
-  : game(game),
-    text_prog(new GL::Program(
-      make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/text.f.glsl"))))
+  : game(game)
 {
 	batches = {
 		new TailBatch(*this),
 		new ShipBatch(*this),
 		new BulletBatch(*this),
 		new BeamBatch(*this),
+		new TextBatch(*this),
 	};
-	load_font();
-}
-
-void Renderer::load_font() {
-	font_tex.bind();
-	GL::check();
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	GL::check();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	GL::check();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	GL::check();
-	const int n = 256;
-	unsigned char data[64*n];
-	for (int i = 0; i < n; i++) {
-		for (int x = 0; x < 8; x++) {
-			for (int y = 0; y < 8; y++) {
-				uint8 row = oort_font[8*i+y];
-				bool on = ((row >> x) & 1) == 1;
-				data[n*8*y + 8*i + x] = on ? 255 : 0;
-			}
-		}
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, n*8, 8, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
-	GL::check();
-	GL::Texture::unbind();
-	GL::check();
 }
 
 void Renderer::reshape(int screen_width, int screen_height) {
@@ -110,6 +81,8 @@ void Renderer::render(float view_radius,
 	BOOST_FOREACH(auto batch, batches) {
 		batch->render();
 	}
+
+	texts.clear();
 }
 
 void Renderer::tick() {
@@ -124,31 +97,7 @@ vec2 Renderer::pixel2screen(vec2 p) {
 }
 
 void Renderer::text(int x, int y, const std::string &str) {
-	auto pos = pixel2screen(vec2(x,y));
-	auto spacing = 9.0f;
-	auto n = str.length();
-
-	std::vector<float> data(2*n);
-	for (unsigned int i = 0; i < n; i++) {
-		data[2*i] = float(str[i]); // character
-		data[2*i+1] = float(i); // index
-	}
-
-	text_prog->use();
-	font_tex.bind();
-	text_prog->uniform("tex", 0);
-	text_prog->uniform("dist", 2.0f*spacing/screen_width);
-	text_prog->uniform("position", pos);
-	text_prog->attrib_ptr("character", &data[0], 8);
-	text_prog->attrib_ptr("index", &data[1], 8);
-	text_prog->enable_attrib_array("character");
-	text_prog->enable_attrib_array("index");
-	glDrawArrays(GL_POINTS, 0, n);
-	text_prog->disable_attrib_array("character");
-	text_prog->disable_attrib_array("index");
-	GL::Texture::unbind();
-	GL::Program::clear();
-	GL::check();
+	texts.emplace_back(Text{x, y, str});
 }
 
 }
