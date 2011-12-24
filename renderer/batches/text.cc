@@ -1,15 +1,8 @@
 #include "renderer/batches/text.h"
 
 #include <memory>
+#include <stdint.h>
 #include <boost/foreach.hpp>
-#include "glm/gtc/matrix_transform.hpp"
-#include "sim/game.h"
-#include "sim/ship.h"
-#include "sim/ship_class.h"
-#include "sim/model.h"
-#include "sim/math_util.h"
-#include "sim/team.h"
-#include "gl/buffer.h"
 #include "gl/texture.h"
 #include "gl/check.h"
 #include "renderer/font.h"
@@ -43,7 +36,7 @@ TextBatch::TextBatch(Renderer &renderer)
 	for (int i = 0; i < n; i++) {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
-				uint8 row = oort_font[8*i+y];
+				uint8_t row = oort_font[8*i+y];
 				bool on = ((row >> x) & 1) == 1;
 				data[n*8*y + 8*i + x] = on ? 255 : 0;
 			}

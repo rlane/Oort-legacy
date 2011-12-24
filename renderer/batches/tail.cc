@@ -2,16 +2,10 @@
 
 #include <memory>
 #include <boost/foreach.hpp>
-#include <boost/scoped_ptr.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include "sim/game.h"
 #include "sim/ship.h"
-#include "sim/ship_class.h"
-#include "sim/model.h"
-#include "sim/math_util.h"
 #include "sim/team.h"
-#include "gl/buffer.h"
-#include "gl/texture.h"
 #include "gl/check.h"
 #include "common/resources.h"
 
@@ -19,7 +13,6 @@ using glm::vec2;
 using glm::vec4;
 using std::make_shared;
 using std::shared_ptr;
-using boost::scoped_ptr;
 
 namespace Oort {
 namespace RendererBatches {

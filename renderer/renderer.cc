@@ -1,29 +1,9 @@
 #include "renderer/renderer.h"
-#include <boost/scoped_ptr.hpp>
 #include <boost/foreach.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <stdint.h>
 
 #include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtx/string_cast.hpp"
-#include <Box2D/Box2D.h>
 
-#include "sim/ship.h"
-#include "sim/ship_class.h"
-#include "sim/bullet.h"
-#include "sim/beam.h"
-#include "sim/team.h"
-#include "sim/model.h"
-#include "sim/math_util.h"
-#include "common/log.h"
-#include "common/resources.h"
-#include "gl/program.h"
-#include "gl/shader.h"
-#include "gl/buffer.h"
-#include "gl/texture.h"
 #include "gl/check.h"
 #include "renderer/batches/ship.h"
 #include "renderer/batches/tail.h"
@@ -35,7 +15,6 @@ using glm::vec2;
 using glm::vec4;
 using std::make_shared;
 using std::shared_ptr;
-using boost::scoped_ptr;
 using namespace Oort::RendererBatches;
 
 namespace Oort {
