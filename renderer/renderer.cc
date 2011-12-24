@@ -29,6 +29,7 @@
 #include "renderer/batches/ship.h"
 #include "renderer/batches/tail.h"
 #include "renderer/batches/bullet.h"
+#include "renderer/batches/beam.h"
 
 using glm::vec2;
 using glm::vec4;
@@ -41,9 +42,6 @@ namespace Oort {
 
 Renderer::Renderer(shared_ptr<Game> game)
   : game(game),
-    beam_prog(new GL::Program(
-      make_shared<GL::VertexShader>(load_resource("shaders/beam.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/beam.f.glsl")))),
     text_prog(new GL::Program(
       make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),
       make_shared<GL::FragmentShader>(load_resource("shaders/text.f.glsl"))))
@@ -52,6 +50,7 @@ Renderer::Renderer(shared_ptr<Game> game)
 		new TailBatch(*this),
 		new ShipBatch(*this),
 		new BulletBatch(*this),
+		new BeamBatch(*this),
 	};
 	load_font();
 }
@@ -111,58 +110,12 @@ void Renderer::render(float view_radius,
 	BOOST_FOREACH(auto batch, batches) {
 		batch->render();
 	}
-	render_beams();
 }
 
 void Renderer::tick() {
 	BOOST_FOREACH(auto batch, batches) {
 		batch->tick();
 	}
-}
-
-void Renderer::render_beams() {
-	auto &prog = *beam_prog;
-	prog.use();
-	prog.uniform("p_matrix", p_matrix);
-	prog.enable_attrib_array("vertex");
-	prog.enable_attrib_array("texcoord");
-
-	vec2 texcoords[] = {
-		vec2(0, 1),
-		vec2(0, 0),
-		vec2(1, 1),
-		vec2(1, 0)
-	};
-
-	prog.attrib_ptr("texcoord", texcoords);
-
-	BOOST_FOREACH(auto beam, game->beams) {
-		glm::vec4 color = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
-
-		glm::mat4 mv_matrix;
-		auto p = beam->get_position();
-		auto h = beam->get_heading();
-		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
-		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
-
-		auto &def = beam->get_def();
-		vec2 vertices[] = {
-			vec2(0, def.width/2.0f),
-			vec2(0, -def.width/2.0f),
-			vec2(def.length, def.width/2.0f),
-			vec2(def.length, -def.width/2.0f)
-		};
-
-		prog.uniform("mv_matrix", mv_matrix);
-		prog.uniform("color", color);
-
-		prog.attrib_ptr("vertex", vertices);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	}
-
-	prog.disable_attrib_array("vertex");
-	prog.disable_attrib_array("texcoord");
-	GL::Program::clear();
 }
 
 // XXX
