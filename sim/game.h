@@ -7,6 +7,7 @@
 #include <list>
 #include <memory>
 #include <vector>
+#include "glm/glm.hpp"
 
 class b2World;
 
@@ -18,6 +19,14 @@ class Beam;
 class Team;
 class Scenario;
 class AIFactory;
+class Weapon;
+
+struct Hit {
+	Ship *ship;
+	Weapon *weapon;
+	glm::vec2 cp;
+	float e;
+};
 
 class Game {
 	public:
@@ -34,6 +43,7 @@ class Game {
 	std::list<std::shared_ptr<Ship>> ships;
 	std::list<std::shared_ptr<Bullet>> bullets;
 	std::list<std::shared_ptr<Beam>> beams;
+	std::vector<Hit> hits;
 	int ticks;
 	float time;
 	bool test_finished;

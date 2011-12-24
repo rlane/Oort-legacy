@@ -83,11 +83,9 @@ class ContactListener : public b2ContactListener {
 		auto ship = dynamic_cast<Ship*>(entityA);
 		auto weapon = dynamic_cast<Weapon*>(entityB);
 
-		ship->hull -= weapon->damage(*ship);
-		if (ship->hull < 0) {
-			ship->dead = true;
-		}
-		weapon->dead = true;
+		auto &game = *ship->game;
+		auto cp = b2n(contact->GetManifold()->points[0].localPoint);
+		game.hits.emplace_back(Hit{ ship, weapon, cp, weapon->damage(*ship) });
 	}
 } contact_listener;
 
@@ -131,6 +129,7 @@ void Game::reap() {
 	ships.erase(
 		std::remove_if(begin(ships), end(ships), entity_is_dead),
 		end(ships));
+	hits.clear();
 }
 
 void Game::tick() {
@@ -149,6 +148,15 @@ void Game::tick() {
 	}
 
 	world->ClearForces();
+
+	BOOST_FOREACH(auto &hit, hits) {
+		hit.ship->hull -= hit.e;
+		if (hit.ship->hull < 0) {
+			hit.ship->dead = true;
+		}
+		hit.weapon->dead = true;
+	}
+
 	ticks++;
 	time = ticks * tick_length;
 	after_tick();
@@ -178,9 +186,12 @@ shared_ptr<Team> Game::check_victory() {
 		}
 	}
 
-	// TODO(rlane): handle size == 0
 	if (set.size() == 1) {
 		return *set.begin();
+	} else if (set.size() == 0) {
+		// TODO(rlane): handle size == 0
+		printf("tie\n");
+		abort();
 	} else {
 		return nullptr;
 	}
