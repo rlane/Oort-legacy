@@ -9,6 +9,7 @@ noinst_HEADERS = \
 	sim/scenario.h sim/entity.h sim/bullet.h sim/test.h sim/math_util.h \
 	sim/ai_lib.h sim/model.h sim/beam.h sim/weapon.h \
 	renderer/renderer.h renderer/physics_debug_renderer.h renderer/font.h \
+	renderer/batch.h renderer/batches/ship.h renderer/batches/tail.h \
 	test/testcase.h
 
 AM_CXXFLAGS = \
@@ -38,7 +39,10 @@ SIM_SRCS = \
 RENDERER_SRCS = \
 	renderer/physics_debug_renderer.cc \
 	renderer/renderer.cc \
-	renderer/font.c
+	renderer/font.c \
+	renderer/batches/ship.cc \
+	renderer/batches/tail.cc \
+	$(NULL)
 
 TEST_SRCS := $(wildcard $(top_srcdir)/test/*.cc)
 TESTS := $(patsubst $(top_srcdir)/test/%.cc,$(top_builddir)/test/%.so,$(TEST_SRCS))
