@@ -63,7 +63,8 @@ static glm::vec2 view_center;
 static glm::vec2 view_speed;
 static const float pan_const = 0.01;
 static int screen_width = 800, screen_height = 600;
-static const float fps = 60;
+static const float fps = 32;
+static const int target_frame_time = 1000000LL/fps;
 static uint32_t picked_id = INVALID_SHIP_ID;
 static shared_ptr<Test> game;
 
@@ -254,6 +255,8 @@ int main(int argc, char **argv) {
 	int frame_count = 0;
 
 	while (running) {
+		auto frame_start = ClockGetTime();
+
 		SDL_Event event;
 		while(SDL_PollEvent(&event)) {
 			handle_sdl_event(event);
@@ -354,6 +357,12 @@ int main(int argc, char **argv) {
 			printf("%0.2f fps\n", 1e6*frame_count/elapsed);
 			frame_count = 0;
 			prev = now;
+		}
+
+		auto frame_end = ClockGetTime();
+		int frame_time = frame_end - frame_start;
+		if (frame_time < target_frame_time) {
+			usleep(target_frame_time - frame_time);
 		}
 	}
 
