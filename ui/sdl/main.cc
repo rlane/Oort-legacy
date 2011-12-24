@@ -62,7 +62,7 @@ static const float zoom_const = 2.0;
 static glm::vec2 view_center;
 static glm::vec2 view_speed;
 static const float pan_const = 0.01;
-static const int screen_width = 1600, screen_height = 900;
+static int screen_width = 800, screen_height = 600;
 static const float fps = 60;
 static uint32_t picked_id = INVALID_SHIP_ID;
 static shared_ptr<Test> game;
@@ -170,6 +170,15 @@ static void handle_mousebuttondown(int button, int x, int y) {
 	}
 }
 
+static void handle_resize(int w, int h) {
+	screen_width = w;
+	screen_height = h;
+	SDL_SetVideoMode(w, h, 32, SDL_OPENGL | SDL_RESIZABLE);
+	glViewport(0, 0, w, h);
+	renderer->reshape(w, h);
+	physics_debug_renderer->reshape(w, h);
+}
+
 static void handle_sdl_event(const SDL_Event &event) {
 	switch(event.type) {
 		case SDL_KEYDOWN:
@@ -180,6 +189,9 @@ static void handle_sdl_event(const SDL_Event &event) {
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			handle_mousebuttondown(event.button.button, event.button.x, event.button.y);
+			break;
+		case SDL_VIDEORESIZE:
+			handle_resize(event.resize.w, event.resize.h);
 			break;
 		case SDL_QUIT:
 			running = false;
@@ -221,7 +233,7 @@ int main(int argc, char **argv) {
 		printf("unable to configure vsync\n");
 	}
 
-	SDL_SetVideoMode(screen_width, screen_height, 16, SDL_OPENGL | SDL_FULLSCREEN);
+	SDL_SetVideoMode(screen_width, screen_height, 32, SDL_OPENGL | SDL_RESIZABLE);
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
@@ -230,16 +242,13 @@ int main(int argc, char **argv) {
 	}
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	glViewport(0, 0, screen_width, screen_height);
-
 	renderer = std::unique_ptr<Renderer>(new Renderer(*game));
-	renderer->reshape(screen_width, screen_height);
 
 	physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
-	physics_debug_renderer->reshape(screen_width, screen_height);
 	physics_debug_renderer->SetFlags(b2Draw::e_shapeBit);
 	game->world->SetDebugDraw(physics_debug_renderer.get());
+
+	handle_resize(screen_width, screen_height);
 
 	auto prev = ClockGetTime();
 	int frame_count = 0;
