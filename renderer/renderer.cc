@@ -10,6 +10,7 @@
 #include "renderer/batches/bullet.h"
 #include "renderer/batches/beam.h"
 #include "renderer/batches/text.h"
+#include "renderer/batches/particle.h"
 
 using glm::vec2;
 using glm::vec4;
@@ -24,6 +25,7 @@ Renderer::Renderer(Game &game)
 {
 	batches = {
 		new TailBatch(*this),
+		new ParticleBatch(*this),
 		new ShipBatch(*this),
 		new BulletBatch(*this),
 		new BeamBatch(*this),
@@ -56,6 +58,8 @@ void Renderer::render(float view_radius,
 	                      view_center.x + view_radius,
 	                      view_center.y - view_radius/aspect_ratio,
 	                      view_center.y + view_radius/aspect_ratio);
+
+	view_scale = screen_width/view_radius;
 
 	BOOST_FOREACH(auto batch, batches) {
 		batch->render();

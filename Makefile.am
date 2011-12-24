@@ -11,6 +11,7 @@ noinst_HEADERS = \
 	renderer/renderer.h renderer/physics_debug_renderer.h renderer/font.h \
 	renderer/batch.h renderer/batches/ship.h renderer/batches/tail.h \
 	renderer/batches/bullet.h renderer/batches/beam.h renderer/batches/text.h \
+	renderer/batches/particle.h \
 	test/testcase.h
 
 AM_CXXFLAGS = \
@@ -46,6 +47,7 @@ RENDERER_SRCS = \
 	renderer/batches/bullet.cc \
 	renderer/batches/beam.cc \
 	renderer/batches/text.cc \
+	renderer/batches/particle.cc \
 	$(NULL)
 
 TEST_SRCS := $(wildcard $(top_srcdir)/test/*.cc)

@@ -27,6 +27,7 @@ public:
 	std::vector<Text> texts;
 	int screen_width, screen_height;
 	float aspect_ratio;
+	float view_scale;
 
 	Renderer(Game &game);
 	void reshape(int screen_width, int screen_height);
