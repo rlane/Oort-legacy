@@ -31,6 +31,11 @@ void BulletBatch::render() {
 		vec4(0.27f, 0.27f, 0.27f, 1.0f)
 	};
 
+	vec4 plasma_colors[] = {
+		vec4(1.0f, 0.27f, 0.27f, 0.33f),
+		vec4(1.0f, 0.27f, 0.27f, 1.0f)
+	};
+
 	prog.use();
 	GL::check();
 
@@ -38,12 +43,13 @@ void BulletBatch::render() {
 	prog.enable_attrib_array("color");
 	prog.uniform("p_matrix", renderer.p_matrix);
 	prog.uniform("mv_matrix", glm::mat4());
-	prog.attrib_ptr("color", colors);
 
 	BOOST_FOREACH(auto bullet, game.bullets) {
 		if (bullet->dead) {
 			continue;
 		}
+
+		prog.attrib_ptr("color", (bullet->get_def().type == GunType::SLUG) ? colors : plasma_colors);
 
 		auto dp = bullet->get_velocity() * (1.0f/40);
 		auto p1 = bullet->get_position() - dp;

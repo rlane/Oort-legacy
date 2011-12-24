@@ -8,7 +8,13 @@ namespace Oort {
 
 class Game;
 
+enum class GunType {
+	SLUG,
+	PLASMA,
+};
+
 struct GunDef : public WeaponDef {
+	GunType type;
 	float mass;         // kg
 	float radius;       // meters
 	float velocity;     // meters/second

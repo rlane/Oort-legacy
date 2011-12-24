@@ -26,6 +26,7 @@ void ShipClass::initialize() {
 		def.scale = 10;
 		def.model = Model::load("fighter");
 		GunDef gun;
+		gun.type = GunType::SLUG;
 		gun.mass = 0.03f;
 		gun.radius = 0.01f;
 		gun.velocity = 3000.0f;
@@ -73,6 +74,7 @@ void ShipClass::initialize() {
 		def.scale = 40;
 		def.model = Model::load("assault_frigate");
 		GunDef gun;
+		gun.type = GunType::PLASMA;
 		gun.mass = 10.0f;
 		gun.radius = 0.01f;
 		gun.velocity = 600.0f;
