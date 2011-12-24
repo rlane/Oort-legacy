@@ -34,11 +34,11 @@ void Bullet::tick() {
 	}
 }
 
-void Bullet::damage(Ship &ship) {
+float Bullet::damage(const Ship &ship) {
 	float dv = glm::length(ship.get_velocity() - get_velocity());
 	float e = 0.5 * mass * dv*dv;
-	ship.hull -= e;
 	//printf("ship %d; bullet %p; damage %g\n", ship.id, this, e);
+	return e;
 }
 
 }

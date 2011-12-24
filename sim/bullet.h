@@ -28,7 +28,7 @@ public:
 	float creation_time;
 
 	Bullet(Game *game, std::shared_ptr<Team> team, uint32_t creator_id, const GunDef &def);
-	virtual void damage(Ship &ship);
+	virtual float damage(const Ship &ship);
 	virtual const GunDef &get_def() { return static_cast<const GunDef&>(def); }
 	virtual void tick();
 };

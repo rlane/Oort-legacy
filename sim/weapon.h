@@ -29,7 +29,7 @@ public:
 	    creator_id(creator_id),
 	    def(def) {}
 	virtual bool is_weapon() { return true; }
-	virtual void damage(Ship &ship) = 0;
+	virtual float damage(const Ship &ship) = 0;
 	virtual const WeaponDef &get_def() = 0;
 
 protected:

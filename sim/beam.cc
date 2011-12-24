@@ -31,11 +31,11 @@ Beam::Beam(Game *game,
 	body->CreateFixture(&shape, 0.1)->SetSensor(true);
 }
 
-void Beam::damage(Ship &ship) {
+float Beam::damage(const Ship &ship) {
 	constexpr float tick_length = 1.0/32; // XXX
 	float e = get_def().damage * tick_length;
-	ship.hull -= e;
 	//printf("ship %d; beam %p; damage %g\n", ship.id, this, e);
+	return e;
 }
 
 }

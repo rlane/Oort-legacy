@@ -83,7 +83,7 @@ class ContactListener : public b2ContactListener {
 		auto ship = dynamic_cast<Ship*>(entityA);
 		auto weapon = dynamic_cast<Weapon*>(entityB);
 
-		weapon->damage(*ship);
+		ship->hull -= weapon->damage(*ship);
 		if (ship->hull < 0) {
 			ship->dead = true;
 		}
