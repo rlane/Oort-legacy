@@ -22,7 +22,7 @@ struct ShipClassDef {
 	float max_lateral_acc;
 	float max_angular_acc;
 	float scale;
-	Model *model;
+	std::shared_ptr<Model> model;
 	std::vector<GunDef> guns;
 	std::vector<BeamDef> beams;
 };

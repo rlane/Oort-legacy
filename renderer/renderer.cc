@@ -23,14 +23,17 @@ namespace Oort {
 Renderer::Renderer(Game &game)
   : game(game)
 {
-	batches = {
-		new TailBatch(*this),
-		new ParticleBatch(*this),
-		new ShipBatch(*this),
-		new BulletBatch(*this),
-		new BeamBatch(*this),
-		new TextBatch(*this),
-	};
+	add_batch<TailBatch>();
+	add_batch<ParticleBatch>();
+	add_batch<ShipBatch>();
+	add_batch<BulletBatch>();
+	add_batch<BeamBatch>();
+	add_batch<TextBatch>();
+}
+
+template <typename T>
+void Renderer::add_batch() {
+	batches.push_back(std::make_shared<T>(*this));
 }
 
 void Renderer::reshape(int screen_width, int screen_height) {

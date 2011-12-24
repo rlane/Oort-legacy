@@ -1,5 +1,6 @@
 #include "sim/model.h"
 
+#include <memory>
 #include <boost/foreach.hpp>
 #include <Box2D/Box2D.h>
 #include "json_spirit_reader_template.h"
@@ -20,13 +21,13 @@ static Shape read_shape(json_spirit::mArray &vertices) {
 	return s;
 }
 
-Model *Model::load(std::string name) {
+std::shared_ptr<Model> Model::load(std::string name) {
 	auto data = load_resource("models/" + name + ".json");
 	json_spirit::mValue value;
 	json_spirit::read_string(data, value);
 	json_spirit::mObject &obj = value.get_obj();
 
-	auto model = new Model;
+	auto model = std::make_shared<Model>();
 	model->name = obj.find("name")->second.get_str();
 	model->alpha = float(obj.find("alpha")->second.get_real());
 	json_spirit::mArray shapes = obj.find("shapes")->second.get_array();

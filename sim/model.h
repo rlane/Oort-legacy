@@ -15,7 +15,7 @@ namespace Oort {
 
 struct Shape {
 	std::vector<glm::vec2> vertices;
-	GL::Buffer *vertex_buffer;
+	std::shared_ptr<GL::Buffer> vertex_buffer;
 };
 
 struct Model {
@@ -24,7 +24,7 @@ struct Model {
 	std::vector<Shape> shapes;
 	float alpha;
 
-	static Model *load(std::string name);
+	static std::shared_ptr<Model> load(std::string name);
 };
 
 }

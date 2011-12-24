@@ -52,9 +52,9 @@ void ShipBatch::render() {
 		prog.uniform("color", color);
 
 		BOOST_FOREACH(Shape &shape, ship->klass.model->shapes) {
-			GL::Buffer *&vertex_buf = shape.vertex_buffer;
+			auto &vertex_buf = shape.vertex_buffer;
 			if (!vertex_buf) {
-				vertex_buf = new GL::Buffer();
+				vertex_buf = std::make_shared<GL::Buffer>();
 				vertex_buf->data(shape.vertices);
 			}
 			vertex_buf->bind();

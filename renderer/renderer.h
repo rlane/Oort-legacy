@@ -37,7 +37,9 @@ public:
 	glm::vec2 pixel2screen(glm::vec2 p);
 
 private:
-	std::vector<RendererBatches::Batch*> batches;
+	std::vector<std::shared_ptr<RendererBatches::Batch>> batches;
+
+	template <typename T> void add_batch();
 };
 
 }
