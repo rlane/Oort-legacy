@@ -50,6 +50,7 @@ public:
 			fighter.get(),
 			fighter.get(),
 			fighter.get(),
+			missile.get(),
 			ion_cannon_frigate.get(),
 			assault_frigate.get(),
 		};

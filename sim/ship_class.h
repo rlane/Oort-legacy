@@ -39,7 +39,8 @@ public:
 
 extern std::unique_ptr<ShipClass> fighter,
                                   ion_cannon_frigate,
-                                  assault_frigate;
+                                  assault_frigate,
+                                  missile;
 }
 
 #endif

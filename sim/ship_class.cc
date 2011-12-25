@@ -12,7 +12,8 @@ namespace Oort {
 
 std::unique_ptr<ShipClass> fighter,
                            ion_cannon_frigate,
-                           assault_frigate;
+                           assault_frigate,
+                           missile;
 
 void ShipClass::initialize() {
 	{
@@ -87,6 +88,20 @@ void ShipClass::initialize() {
 		def.guns.push_back(gun);
 		assault_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
+
+	{
+		ShipClassDef def;
+		def.name = "missile";
+		def.mass = 200;
+		def.hull = 30e3;
+		def.max_main_acc = 300;
+		def.max_lateral_acc = 150;
+		def.max_angular_acc = 3;
+		def.scale = 1;
+		def.model = Model::load("missile");
+		missile = std::unique_ptr<ShipClass>(new ShipClass(def));
+	}
+
 }
 
 ShipClass::ShipClass(const ShipClassDef &def)
