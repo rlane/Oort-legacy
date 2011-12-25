@@ -25,6 +25,7 @@ void ShipClass::initialize() {
 		def.max_lateral_acc = 10;
 		def.max_angular_acc = 1;
 		def.scale = 10;
+		def.tail_alpha = 0.1f;
 		def.model = Model::load("fighter");
 		GunDef gun;
 		gun.type = GunType::SLUG;
@@ -50,6 +51,7 @@ void ShipClass::initialize() {
 		def.max_lateral_acc = 2;
 		def.max_angular_acc = 0.5;
 		def.scale = 40;
+		def.tail_alpha = 0.2f;
 		def.model = Model::load("ion_cannon_frigate");
 		{
 			BeamDef beam;
@@ -73,6 +75,7 @@ void ShipClass::initialize() {
 		def.max_lateral_acc = 4;
 		def.max_angular_acc = 0.7;
 		def.scale = 40;
+		def.tail_alpha = 0.2f;
 		def.model = Model::load("assault_frigate");
 		GunDef gun;
 		gun.type = GunType::PLASMA;
@@ -98,6 +101,7 @@ void ShipClass::initialize() {
 		def.max_lateral_acc = 150;
 		def.max_angular_acc = 3;
 		def.scale = 1;
+		def.tail_alpha = 0.02f;
 		def.model = Model::load("missile");
 		missile = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}

@@ -5,6 +5,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "sim/game.h"
 #include "sim/ship.h"
+#include "sim/ship_class.h"
 #include "sim/team.h"
 #include "gl/check.h"
 #include "common/resources.h"
@@ -61,7 +62,7 @@ void TailBatch::tick() {
 		tail_segments.emplace_back(
 			TailSegment{
 				TailVertex{ ship->get_position() - ship->get_velocity()*0.7f, vec4(ship->team->color, 0) },
-				TailVertex{ ship->get_position(), vec4(ship->team->color, 0.1) }
+				TailVertex{ ship->get_position(), vec4(ship->team->color, ship->klass.tail_alpha) }
 			}
 		);
 	}
