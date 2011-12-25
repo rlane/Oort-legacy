@@ -12,6 +12,7 @@
 #include "sim/game.h"
 #include "sim/bullet.h"
 #include "sim/beam.h"
+#include "sim/explosion.h"
 #include "sim/ship_class.h"
 #include "sim/math_util.h"
 #include "common/log.h"
@@ -98,6 +99,21 @@ void Ship::fire_beam(int idx, float angle) {
 	joint.Initialize(body, beam->get_body(), body->GetPosition());
 	game->world->CreateJoint(&joint);
 	game->beams.push_back(beam);
+}
+
+void Ship::fire_missile(std::weak_ptr<Ship> target) {
+	auto ship = std::make_shared<Ship>(game, *missile, team);
+	auto origin = vec2(9,3.5);
+	auto p = get_position() + glm::rotate(origin, glm::degrees(get_heading()));
+	ship->set_position(p);
+	ship->set_velocity(get_velocity());
+	ship->set_heading(get_heading());
+	game->ships.push_back(ship);
+}
+
+void Ship::explode() {
+	dead = true;
+	game->explosions.emplace_back(Explosion{&*team, get_position(), 10e6});
 }
 
 void Ship::acc_main(float acc) {

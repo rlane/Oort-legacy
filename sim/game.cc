@@ -144,6 +144,7 @@ void Game::reap() {
 		std::remove_if(begin(ships), end(ships), entity_is_dead),
 		end(ships));
 	hits.clear();
+	explosions.clear();
 }
 
 void Game::tick() {
@@ -157,6 +158,10 @@ void Game::tick() {
 		bullet->tick();
 	}
 
+	BOOST_FOREACH(auto &explosion, explosions) {
+		explosion.tick(*this);
+	}
+
 	for (int i = 0; i < steps_per_tick; i++) {
 		world->Step(step_length, 8, 3);
 	}
@@ -168,7 +173,9 @@ void Game::tick() {
 		if (hit.ship->hull < 0) {
 			hit.ship->dead = true;
 		}
-		hit.weapon->dead = true;
+		if (hit.weapon) {
+			hit.weapon->dead = true;
+		}
 	}
 
 	ticks++;

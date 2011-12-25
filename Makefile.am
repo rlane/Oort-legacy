@@ -7,7 +7,7 @@ noinst_HEADERS = \
   common/log.h common/resources.h \
   sim/game.h sim/ship.h sim/ship_class.h sim/team.h sim/ai.h \
 	sim/scenario.h sim/entity.h sim/bullet.h sim/test.h sim/math_util.h \
-	sim/ai_lib.h sim/model.h sim/beam.h sim/weapon.h \
+	sim/ai_lib.h sim/model.h sim/beam.h sim/weapon.h sim/explosion.h \
 	renderer/renderer.h renderer/physics_debug_renderer.h renderer/font.h \
 	renderer/batch.h renderer/batches/ship.h renderer/batches/tail.h \
 	renderer/batches/bullet.h renderer/batches/beam.h renderer/batches/text.h \
@@ -31,6 +31,7 @@ SIM_SRCS = \
   sim/bullet.cc \
   sim/beam.cc \
   sim/entity.cc \
+  sim/explosion.cc \
   sim/game.cc \
   sim/model.cc \
   sim/scenario.cc \

@@ -33,6 +33,8 @@ class Ship : public Entity {
 
 	void fire_gun(int idx, float angle);
 	void fire_beam(int idx, float angle);
+	void fire_missile(std::weak_ptr<Ship> target);
+	void explode();
 
 	void acc_main(float acc);
 	void acc_lateral(float acc);

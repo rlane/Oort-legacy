@@ -110,10 +110,17 @@ void ParticleBatch::tick() {
 		}
 	}
 
-	BOOST_FOREACH(auto hit, game.hits) {
+	BOOST_FOREACH(auto &hit, game.hits) {
 		auto n = short(glm::max(hit.e/10000,1.0f));
 		shower(ParticleType::HIT, hit.cp,
 		       hit.ship->get_velocity(), vec2(0,0),
+		       256, 0.03f, 0.63f, n);
+	}
+
+	BOOST_FOREACH(auto &exp, game.explosions) {
+		auto n = 50;
+		shower(ParticleType::EXPLOSION, exp.p,
+		       vec2(0,0), vec2(0,0),
 		       256, 0.03f, 0.63f, n);
 	}
 }

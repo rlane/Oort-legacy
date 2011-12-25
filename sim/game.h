@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include "glm/glm.hpp"
+#include "sim/explosion.h"
 
 class b2World;
 
@@ -44,6 +45,7 @@ class Game {
 	std::list<std::shared_ptr<Bullet>> bullets;
 	std::list<std::shared_ptr<Beam>> beams;
 	std::vector<Hit> hits;
+	std::vector<Explosion> explosions;
 	int ticks;
 	float time;
 	bool test_finished;
