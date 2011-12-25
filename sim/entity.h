@@ -3,6 +3,7 @@
 #define OORT_SIM_ENTITY_H_
 
 #include <memory>
+#include <stdint.h>
 #include "glm/glm.hpp"
 
 class b2Body;
@@ -19,12 +20,14 @@ public:
 	std::shared_ptr<Team> team;
 	bool dead;
 	float mass;
+	uint32_t creator_id;
 
-	Entity(Game *game, std::shared_ptr<Team> team);
+	Entity(Game *game, std::shared_ptr<Team> team, uint32_t creator_id);
 	~Entity();
 
 	virtual void tick();
 	virtual bool is_weapon();
+	virtual uint32_t get_id() { return (uint32_t)-1; }
 
 	void set_position(glm::vec2 p);
 	glm::vec2 get_position() const;

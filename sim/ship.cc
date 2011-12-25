@@ -24,12 +24,13 @@ namespace Oort {
 static uint32_t next_id = 1;
 
 Ship::Ship(Game *game,
-		       const ShipClass &klass,
-					 std::shared_ptr<Team> team)
-	: Entity(game, team),
+           const ShipClass &klass,
+           std::shared_ptr<Team> team,
+           uint32_t creator_id)
+	: Entity(game, team, creator_id),
 	  klass(klass),
 	  id(next_id++), // XXX
-		hull(klass.hull),
+	  hull(klass.hull),
 	  ai(team->ai_factory->instantiate(*this)),
 	  prng(id), // XXX
 	  last_fire_times(klass.guns.size(), -std::numeric_limits<float>::infinity()) {
@@ -102,10 +103,8 @@ void Ship::fire_beam(int idx, float angle) {
 }
 
 void Ship::fire_missile(std::weak_ptr<Ship> target) {
-	auto ship = std::make_shared<Ship>(game, *missile, team);
-	auto origin = vec2(9,3.5);
-	auto p = get_position() + glm::rotate(origin, glm::degrees(get_heading()));
-	ship->set_position(p);
+	auto ship = std::make_shared<Ship>(game, *missile, team, id);
+	ship->set_position(get_position());
 	ship->set_velocity(get_velocity());
 	ship->set_heading(get_heading());
 	game->ships.push_back(ship);

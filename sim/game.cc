@@ -45,11 +45,9 @@ class ContactFilter : public b2ContactFilter {
 			return false;
 		}
 
-		if (typeid(*entityA) == typeid(Ship) &&
-				typeid(*entityB) == typeid(Bullet)) {
-			auto ship = static_cast<Ship*>(entityA);
-			auto bullet = static_cast<Bullet*>(entityB);
-			return ship->id != bullet->creator_id;
+		if (typeid(*entityA) == typeid(Ship) && entityA->get_id() == entityB->creator_id ||
+				typeid(*entityB) == typeid(Ship) && entityB->get_id() == entityA->creator_id) {
+			return false;
 		}
 		
 		return true;

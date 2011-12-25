@@ -2,7 +2,6 @@
 #ifndef OORT_SIM_WEAPON_H_
 #define OORT_SIM_WEAPON_H_
 
-#include <stdint.h>
 #include <memory>
 #include "sim/entity.h"
 
@@ -25,8 +24,7 @@ public:
 	       std::shared_ptr<Team> team,
 	       uint32_t creator_id,
 	       const WeaponDef &def)
-	  : Entity(game, team),
-	    creator_id(creator_id),
+	  : Entity(game, team, creator_id),
 	    def(def) {}
 	virtual bool is_weapon() { return true; }
 	virtual float damage(const Ship &ship) = 0;

@@ -13,11 +13,12 @@ using glm::vec2;
 
 namespace Oort {
 
-Entity::Entity(Game *game, std::shared_ptr<Team> team)
+Entity::Entity(Game *game, std::shared_ptr<Team> team, uint32_t creator_id)
 	: game(game),
 	  team(team),
 	  dead(false),
-	  mass(0) {
+	  mass(0),
+	  creator_id(creator_id) {
 	b2BodyDef def;
 	def.type = b2_dynamicBody;
 	def.userData = this;

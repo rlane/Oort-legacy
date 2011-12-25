@@ -58,7 +58,7 @@ namespace Oort {
 class Waypoint : public Entity {
 public:
 	Waypoint(Game *game, vec2 pos, float radius)
-	  : Entity(game, NULL) {
+	  : Entity(game, NULL, -1) {
 		set_position(pos);
 		b2CircleShape shape;
 		shape.m_radius = radius/Oort::SCALE;

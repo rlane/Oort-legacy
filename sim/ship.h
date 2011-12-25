@@ -26,10 +26,11 @@ class Ship : public Entity {
 	float hull;
 	std::unique_ptr<AI> ai;
 
-	Ship(Game *game, const ShipClass &klass, std::shared_ptr<Team> team);
+	Ship(Game *game, const ShipClass &klass, std::shared_ptr<Team> team, uint32_t creator_id=INVALID_SHIP_ID);
 	~Ship();
 
 	virtual void tick();
+	virtual uint32_t get_id() { return id; }
 
 	void fire_gun(int idx, float angle);
 	void fire_beam(int idx, float angle);
