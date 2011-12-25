@@ -2,6 +2,7 @@
 #include "sim/test.h"
 
 #include <dlfcn.h>
+#include <stdio.h>
 #include <exception>
 
 #include "sim/game.h"

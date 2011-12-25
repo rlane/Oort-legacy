@@ -32,7 +32,7 @@ Beam::Beam(Game *game,
 }
 
 float Beam::damage(const Ship &ship) {
-	constexpr float tick_length = 1.0/32; // XXX
+	float tick_length = 1.0/32; // XXX
 	float e = get_def().damage * tick_length;
 	//printf("ship %d; beam %p; damage %g\n", ship.id, this, e);
 	return e;

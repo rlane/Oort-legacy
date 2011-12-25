@@ -1,5 +1,4 @@
 #include "test/testcase.h"
-#include <math.h>
 
 class BeamAI : public CxxAI {
 public:
@@ -36,7 +35,7 @@ public:
 			auto ship = make_shared<Ship>(this, *fighter, red);
 			ship->set_position(vec2(dist, 0));
 			ship->set_velocity(vec2(0, 0));
-			ship->set_heading(M_PI);
+			ship->set_heading(pi);
 			ships.push_back(ship);
 		}
 	}

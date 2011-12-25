@@ -45,8 +45,8 @@ class ContactFilter : public b2ContactFilter {
 			return false;
 		}
 
-		if (typeid(*entityA) == typeid(Ship) && entityA->get_id() == entityB->creator_id ||
-				typeid(*entityB) == typeid(Ship) && entityB->get_id() == entityA->creator_id) {
+		if ((typeid(*entityA) == typeid(Ship) && entityA->get_id() == entityB->creator_id) ||
+		    (typeid(*entityB) == typeid(Ship) && entityB->get_id() == entityA->creator_id)) {
 			return false;
 		}
 		
@@ -113,10 +113,10 @@ Game::Game(const Scenario &scn, const vector<std::shared_ptr<AIFactory>> &ai_fac
 	world->SetContactFilter(&contact_filter);
 	world->SetContactListener(&contact_listener);
 
-	for (auto scn_team : scn.teams) {
+	BOOST_FOREACH(auto scn_team, scn.teams) {
 		auto ai_factory = ai_factories[player_ai_index++];
 		auto team = make_shared<Team>(scn_team.name, ai_factory, scn_team.color);
-		for (auto scn_ship : scn_team.ships) {
+		BOOST_FOREACH(auto scn_ship, scn_team.ships) {
 			auto ship = make_shared<Ship>(this, *fighter, team);
 			ship->set_position(scn_ship.p);
 			ship->set_heading(scn_ship.h);
@@ -135,12 +135,12 @@ static bool entity_is_dead(std::shared_ptr<Entity> entity) {
 
 void Game::reap() {
 	bullets.erase(
-		std::remove_if(begin(bullets), end(bullets), entity_is_dead),
-		end(bullets));
+		std::remove_if(bullets.begin(), bullets.end(), entity_is_dead),
+		bullets.end());
 	beams.clear();
 	ships.erase(
-		std::remove_if(begin(ships), end(ships), entity_is_dead),
-		end(ships));
+		std::remove_if(ships.begin(), ships.end(), entity_is_dead),
+		ships.end());
 	hits.clear();
 	explosions.clear();
 }
@@ -209,10 +209,9 @@ shared_ptr<Team> Game::check_victory() {
 		return *set.begin();
 	} else if (set.size() == 0) {
 		// TODO(rlane): handle size == 0
-		printf("tie\n");
 		abort();
 	} else {
-		return nullptr;
+		return shared_ptr<Team>();
 	}
 }
 
@@ -222,7 +221,7 @@ shared_ptr<Ship> Game::lookup_ship(uint32 id) {
 			return ship;
 		}
 	}
-	return nullptr;
+	return shared_ptr<Ship>();
 }
 
 }

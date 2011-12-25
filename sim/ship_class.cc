@@ -36,7 +36,7 @@ void ShipClass::initialize() {
 		gun.reload_time = 0.125f;
 		gun.deviation = 0.02;
 		gun.angle = 0.0;
-		gun.coverage = 0.8 * M_PI;
+		gun.coverage = 0.8 * pi;
 		gun.origin = vec2(9, 0);
 		def.guns.push_back(gun);
 		fighter = std::unique_ptr<ShipClass>(new ShipClass(def));
@@ -86,7 +86,7 @@ void ShipClass::initialize() {
 		gun.reload_time = 0.6f;
 		gun.deviation = 0.04;
 		gun.angle = 0.0;
-		gun.coverage = 2 * M_PI;
+		gun.coverage = 2 * pi;
 		gun.origin = vec2(10, 0);
 		def.guns.push_back(gun);
 		assault_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));

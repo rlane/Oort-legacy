@@ -1,5 +1,4 @@
 #include "test/testcase.h"
-#include <math.h>
 
 class BallAI : public CxxAI {
 public:
@@ -47,7 +46,7 @@ public:
 		boost::random::mt19937 prng(42);
 		boost::random::normal_distribution<float> p_dist(0.0, 1000.0);
 		boost::random::normal_distribution<float> v_dist(0.0, 20.0);
-		boost::uniform_real<float> h_dist(0.0, 2*M_PI);
+		boost::uniform_real<float> h_dist(0.0, 2*pi);
 
 		auto ai_factory = CxxAI::factory<BallAI>();
 		auto red = make_shared<Team>("red", ai_factory, vec3(1, 0, 0));

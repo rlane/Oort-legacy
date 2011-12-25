@@ -6,6 +6,8 @@
 #include <Box2D/Box2D.h>
 #include "glm/glm.hpp"
 
+const float pi = 3.141592653589793238f;
+
 namespace Oort {
 	enum {
 		SCALE = 100
@@ -13,15 +15,15 @@ namespace Oort {
 }
 
 static inline float normalize_angle(float a) {
-	while (a < -M_PI) a += 2*M_PI;
-	while (a > M_PI) a -= 2*M_PI;
+	while (a < -pi) a += 2*pi;
+	while (a > pi) a -= 2*pi;
 	return a;
 }
 
 static inline float angle_diff(float a, float b) {
 	float c = normalize_angle(b - a);
-	if (c > M_PI) {
-		c -= 2*M_PI;
+	if (c > pi) {
+		c -= 2*pi;
 	}
 	return c;
 }

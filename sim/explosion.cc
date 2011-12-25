@@ -12,7 +12,7 @@ public:
 	b2Fixture *fixture;
 	glm::vec2 point;
 
-	ExplosionCB() : fixture(nullptr) {}
+	ExplosionCB() : fixture(NULL) {}
 
 	float ReportFixture(b2Fixture *fixture,
 	                    const b2Vec2 &point,
@@ -29,14 +29,14 @@ void Explosion::tick(Game &game) {
 	auto &world = *game.world;
 	for (int i = 0; i < n; i++) {
 		ExplosionCB cb;
-		auto a = 2*M_PI*i/n;
+		auto a = 2*pi*i/n;
 		auto dp = glm::vec2(cosf(a), sinf(a)) * 100.0f;
 		world.RayCast(&cb, n2b(p), n2b(p+dp));
 		if (cb.fixture) {
 			auto entity = (Entity*) cb.fixture->GetBody()->GetUserData();
 			auto ship = dynamic_cast<Ship*>(entity);
 			if (ship) {
-				game.hits.emplace_back(Hit{ ship, nullptr, cb.point, e/n });
+				game.hits.emplace_back(Hit{ ship, NULL, cb.point, e/n });
 			}
 		}
 	}

@@ -17,7 +17,7 @@ static Shape read_shape(json_spirit::mArray &vertices) {
 		float y = float(obj["y"].get_real());
 		s.vertices.push_back(glm::vec2(x, y));
 	}
-	s.vertex_buffer = nullptr;
+	s.vertex_buffer = std::shared_ptr<GL::Buffer>();
 	return s;
 }
 
