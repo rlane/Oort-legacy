@@ -9,7 +9,12 @@
 
 namespace Oort {
 
-enum class ParticleType;
+enum class ParticleType {
+	HIT = 0,
+	PLASMA = 1,
+	ENGINE = 2,
+	EXPLOSION = 3,
+};
 
 namespace RendererBatches {
 

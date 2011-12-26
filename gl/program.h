@@ -3,11 +3,11 @@
 #define OORT_GL_PROGRAM_H_
 
 #include <stdio.h>
-#include <GL/glew.h>
 #include <memory>
 #include <unordered_map>
 #include "glm/gtc/type_ptr.hpp"
 #include "common/log.h"
+#include "gl/gl.h"
 #include "gl/shader.h"
 #include "gl/check.h"
 

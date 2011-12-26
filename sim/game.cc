@@ -197,11 +197,11 @@ void Game::tick() {
 void Game::after_tick() {
 }
 
-shared_ptr<Team> Game::check_victory() {
-	std::unordered_set<shared_ptr<Team>> set;
+Team *Game::check_victory() {
+	std::unordered_set<Team*> set;
 	BOOST_FOREACH(auto ship, ships) {
 		if (glm::length(ship->get_position()) < radius) { // TODO(rlane): set in scenario
-			set.insert(ship->team);
+			set.insert(ship->team.get());
 		}
 	}
 
@@ -211,7 +211,7 @@ shared_ptr<Team> Game::check_victory() {
 		// TODO(rlane): handle size == 0
 		abort();
 	} else {
-		return shared_ptr<Team>();
+		return NULL;
 	}
 }
 

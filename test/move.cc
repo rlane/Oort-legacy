@@ -1,10 +1,10 @@
 #include "test/testcase.h"
 
 static const int s = 32;
-static constexpr float d = 100;
-static constexpr float main_acc = d;
-static constexpr float lateral_acc = d/4;
-static constexpr float angular_acc = M_PI/2;
+static const float d = 100;
+static const float main_acc = d;
+static const float lateral_acc = d/4;
+static const float angular_acc = M_PI/2;
 
 enum {
 	t1 = 0,        // at wpA, main acc start

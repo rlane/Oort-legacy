@@ -19,6 +19,7 @@
 #include "sim/ship_class.h"
 #include "sim/math_util.h"
 #include "sim/ai_lib.h"
+#include "common/constexpr.h"
 
 using namespace std;
 using namespace Oort;
@@ -58,7 +59,7 @@ namespace Oort {
 class Waypoint : public Entity {
 public:
 	Waypoint(Game *game, vec2 pos, float radius)
-	  : Entity(game, NULL, -1) {
+	  : Entity(game, std::shared_ptr<Team>(), -1) {
 		set_position(pos);
 		b2CircleShape shape;
 		shape.m_radius = radius/Oort::SCALE;

@@ -7,12 +7,23 @@ AM_MAINTAINER_MODE
 
 AC_CANONICAL_HOST
 
+AC_MSG_CHECKING([for NaCl])
+case $host in
+  *-*-nacl*)
+    nacl="yes"
+    ;;
+  *)
+    nacl="no"
+    ;;
+esac
+AC_MSG_RESULT([$nacl])
+
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 
 CXXFLAGS="-std=c++0x -g -O1 -Wall"
-LDFLAGS="-rdynamic"
+LDFLAGS="-rdynamic -ldl"
 
 AC_SUBST(CXXFLAGS)
 AC_SUBST(LDFLAGS)
@@ -38,9 +49,21 @@ PKG_CHECK_MODULES(SDL, sdl >= $SDL_REQUIRED)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
-PKG_CHECK_MODULES(GLEW, glew >= $GLEW_REQUIRED)
-AC_SUBST(GLEW_CFLAGS)
-AC_SUBST(GLEW_LIBS)
+if test "x${nacl}" = "xno"; then
+	PKG_CHECK_MODULES(GLEW, glew >= $GLEW_REQUIRED)
+	AC_SUBST(GLEW_CFLAGS)
+	AC_SUBST(GLEW_LIBS)
+
+	FRONTENDS="oort_headless oort_sdl"
+else
+	NACL_CFLAGS=""
+	NACL_LIBS="-lppapi -lppapi_cpp -lppapi_gles2 -lnosys"
+	AC_SUBST(NACL_CFLAGS)
+	AC_SUBST(NACL_LIBS)
+
+	FRONTENDS="oort_nacl"
+fi
+AC_SUBST(FRONTENDS)
 
 PKG_CHECK_MODULES(LUA, lua >= $LUA_REQUIRED)
 AC_SUBST(LUA_CFLAGS)

@@ -55,12 +55,15 @@ void PhysicsDebugRenderer::begin_render(float view_radius,
 	prog->use();
 	glEnableVertexAttribArray(prog->attrib_location("vertex"));
 
+#ifndef __native_client__
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
+#endif
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glLineWidth(1.2f);
 
@@ -183,14 +186,18 @@ void PhysicsDebugRenderer::DrawTransform(const b2Transform& xf)
 void PhysicsDebugRenderer::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color)
 {
 	prog->uniform("color", glm::vec4(color.r, color.g, color.b, 1.0));
+#ifndef __native_client__
 	glPointSize(size);
+#endif
 	GLfloat				glVertices[] = {
 		p.x, p.y
 	};
 	glVertexAttribPointer(prog->attrib_location("vertex"),
 												2, GL_FLOAT, GL_FALSE, 0, glVertices);
 	glDrawArrays(GL_POINTS, 0, 1);
+#ifndef __native_client__
 	glPointSize(1.0f);
+#endif
 }
 
 void PhysicsDebugRenderer::DrawString(int x, int y, const char *string, ...)

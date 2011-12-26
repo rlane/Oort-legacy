@@ -3,7 +3,7 @@
 #define OORT_GL_BUFFER_H_
 
 #include <vector>
-#include <GL/glew.h>
+#include "gl/gl.h"
 #include "glm/gtc/type_ptr.hpp"
 
 namespace GL {

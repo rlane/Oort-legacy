@@ -58,7 +58,7 @@ void ShipBatch::render() {
 				vertex_buf->data(shape.vertices);
 			}
 			vertex_buf->bind();
-			prog.attrib_ptr("vertex", (vec2*)nullptr);
+			prog.attrib_ptr("vertex", (vec2*)NULL);
 			vertex_buf->unbind();
 			GL::check();
 

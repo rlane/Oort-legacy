@@ -3,8 +3,8 @@ NULL =
 AUTOMAKE_OPTIONS = foreign
 
 noinst_HEADERS = \
-  gl/buffer.h gl/check.h gl/program.h gl/shader.h gl/texture.h \
-  common/log.h common/resources.h \
+  gl/gl.h gl/buffer.h gl/check.h gl/program.h gl/shader.h gl/texture.h \
+  common/log.h common/resources.h common/constexpr.h \
   sim/game.h sim/ship.h sim/ship_class.h sim/team.h sim/ai.h \
 	sim/scenario.h sim/entity.h sim/bullet.h sim/test.h sim/math_util.h \
 	sim/ai_lib.h sim/model.h sim/beam.h sim/weapon.h sim/explosion.h \
@@ -21,6 +21,7 @@ AM_CXXFLAGS = \
 	$(LUA_CFLAGS) \
 	$(BOX2D_CFLAGS) \
 	$(GLEW_CFLAGS) \
+	$(NACL_CFLAGS) \
 	$(SDL_CFLAGS) \
 	$(JSON_CFLAGS) \
 	$(NULL)
@@ -62,7 +63,9 @@ MODELS_DIST := $(wildcard $(top_srcdir)/models/*.json)
 EXTRA_DIST = $(GLM_DIST) $(JSON_DIST) $(TEST_SRCS) $(SHADERS_DIST) $(MODELS_DIST)
 CLEANFILES = $(TESTS)
 
-bin_PROGRAMS = oort_headless oort_sdl
+bin_PROGRAMS := $(FRONTENDS)
+EXTRA_PROGRAMS := oort_headless oort_sdl oort_nacl
+
 all: $(bin_PROGRAMS) $(TESTS)
 
 oort_headless_SOURCES := ui/headless/main.cc $(SIM_SRCS)
@@ -70,6 +73,9 @@ oort_headless_LDADD=$(LUA_LIBS) $(BOX2D_LIBS)
 
 oort_sdl_SOURCES := ui/sdl/main.cc $(SIM_SRCS) $(RENDERER_SRCS)
 oort_sdl_LDADD=$(SDL_LIBS) $(GLEW_LIBS) $(LUA_LIBS) $(BOX2D_LIBS)
+
+oort_nacl_SOURCES := ui/nacl/main.cc $(SIM_SRCS) $(RENDERER_SRCS)
+oort_nacl_LDADD=$(SDL_LIBS) $(NACL_LIBS) $(LUA_LIBS) $(BOX2D_LIBS)
 
 TESTS_ENVIRONMENT = $(top_builddir)/oort_headless
 

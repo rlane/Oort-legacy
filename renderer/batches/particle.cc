@@ -20,13 +20,6 @@ using std::shared_ptr;
 
 namespace Oort {
 
-enum class ParticleType {
-	HIT = 0,
-	PLASMA = 1,
-	ENGINE = 2,
-	EXPLOSION = 3,
-};
-
 namespace RendererBatches {
 
 ParticleBatch::ParticleBatch(Renderer &renderer)

@@ -55,8 +55,8 @@ void TailBatch::tick() {
 	}
 
 	tail_segments.erase(
-		std::remove_if(begin(tail_segments), end(tail_segments), tail_segment_expired),
-		end(tail_segments));
+		std::remove_if(tail_segments.begin(), tail_segments.end(), tail_segment_expired),
+		tail_segments.end());
 
 	BOOST_FOREACH(auto ship, game.ships) {
 		tail_segments.emplace_back(

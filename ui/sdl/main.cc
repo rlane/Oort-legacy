@@ -2,10 +2,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <sys/timeb.h>
-#include <GL/glew.h>
+#include "gl/gl.h"
 #include <SDL.h>
-#define NO_SDL_GLEXT
-#include <SDL_opengl.h>
 #include <boost/timer.hpp>
 #include <memory>
 #include <vector>
@@ -147,7 +145,7 @@ public:
 		auto body = fixture->GetBody();
 		auto entity = static_cast<Entity*>(body->GetUserData());
 		auto ship = dynamic_cast<Ship*>(entity);
-		if (ship != nullptr && !ship->dead && fixture->TestPoint(center)) {
+		if (ship && !ship->dead && fixture->TestPoint(center)) {
 			found_id = ship->id;
 		}
 		return true;
@@ -243,6 +241,7 @@ int main(int argc, char **argv) {
 	}
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
 	renderer = std::unique_ptr<Renderer>(new Renderer(*game));
 
 	physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
@@ -308,7 +307,7 @@ int main(int argc, char **argv) {
 
 		if (picked_id != INVALID_SHIP_ID) {
 			auto ship = game->lookup_ship(picked_id);
-			if (ship != nullptr && !ship->dead) {
+			if (ship && !ship->dead) {
 				const int x = 15;
 				const int dy = 12;
 				const int y = screen_height - 5*dy - 3;
