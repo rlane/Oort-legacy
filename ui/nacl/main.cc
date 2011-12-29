@@ -20,12 +20,12 @@ using namespace Oort;
 
 class OortInstance : public pp::Instance {
 	Game *game;
-  pp::Graphics3D gl_context;
+	pp::Graphics3D gl_context;
 	std::unique_ptr<Renderer> renderer;
 	int screen_width, screen_height;
 
- public:
-  explicit OortInstance(PP_Instance instance)
+	public:
+	explicit OortInstance(PP_Instance instance)
 		: pp::Instance(instance)
 	{
 	}
@@ -60,14 +60,14 @@ class OortInstance : public pp::Instance {
 		renderer->reshape(w, h);
 	}
 
-  // The dtor makes the 3D context current before deleting the cube view, then
-  // destroys the 3D context both in the module and in the browser.
-  virtual ~OortInstance() {
+	// The dtor makes the 3D context current before deleting the cube view, then
+	// destroys the 3D context both in the module and in the browser.
+	virtual ~OortInstance() {
 		std::cout << "instance destroy" << std::endl;
 	}
 
-  // Called by the browser when the NaCl module is loaded and all ready to go.
-  virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
+	// Called by the browser when the NaCl module is loaded and all ready to go.
+	virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
 		std::cout << "instance init" << std::endl;
 
 		log("initializing ship classes");
@@ -120,17 +120,17 @@ class OortInstance : public pp::Instance {
 		return true;
 	}
 
-  // Called whenever the in-browser window changes size.
-  virtual void DidChangeView(const pp::Rect& position, const pp::Rect& clip) {
-		std::cout << "DidChangeView" << std::endl;
+	// Called whenever the in-browser window changes size.
+	virtual void DidChangeView(const pp::Rect& position, const pp::Rect& clip) {
+		log("DidChangeView");
 		auto size = position.size();
-    gl_context.ResizeBuffers(size.width(), size.height());
+		gl_context.ResizeBuffers(size.width(), size.height());
 		handle_resize(size.width(), size.height());
 	}
 
-  // Called by the browser to handle the postMessage() call in Javascript.
-  virtual void HandleMessage(const pp::Var& message) {
-		std::cout << "HandleMessage" << std::endl;
+	// Called by the browser to handle the postMessage() call in Javascript.
+	virtual void HandleMessage(const pp::Var& message) {
+		log("HandleMessage");
 	}
 };
 
@@ -141,29 +141,27 @@ void OortInstance::static_swap_callback(void* user_data, int32_t result)
 }
 
 class OortModule : public pp::Module {
- public:
-  OortModule() : pp::Module() {}
+public:
+	OortModule() : pp::Module() {}
 
-  virtual ~OortModule() {
-    glTerminatePPAPI();
-  }
+	virtual ~OortModule() {
+		glTerminatePPAPI();
+	}
 
-  virtual bool Init() {
-		std::cout << "module init" << std::endl;
-    return glInitializePPAPI(get_browser_interface()) == GL_TRUE;
-  }
+	virtual bool Init() {
+		log("OortModule::Init");
+		return glInitializePPAPI(get_browser_interface()) == GL_TRUE;
+	}
 
-  virtual pp::Instance* CreateInstance(PP_Instance instance) {
-		std::cout << "module CreateInstance" << std::endl;
-    return new OortInstance(instance);
-  }
+	virtual pp::Instance* CreateInstance(PP_Instance instance) {
+		log("OortModule::CreateInstance");
+		return new OortInstance(instance);
+	}
 };
 
 namespace pp {
-
-Module* CreateModule() {
-	std::cout << "CreateModule" << std::endl;
-  return new OortModule();
-}
-
+	Module* CreateModule() {
+		log("pp::CreateModule");
+		return new OortModule();
+	}
 }
