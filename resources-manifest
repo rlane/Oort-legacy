@@ -1,0 +1,14 @@
+models/assault_frigate.json
+models/fighter.json
+models/ion_cannon_frigate.json
+models/missile.json
+shaders/beam.f.glsl
+shaders/beam.v.glsl
+shaders/bullet.f.glsl
+shaders/bullet.v.glsl
+shaders/particle.f.glsl
+shaders/particle.v.glsl
+shaders/ship.f.glsl
+shaders/ship.v.glsl
+shaders/text.f.glsl
+shaders/text.v.glsl

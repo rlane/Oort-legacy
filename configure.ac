@@ -60,6 +60,7 @@ else
 	NACL_LIBS="-lppapi -lppapi_cpp -lppapi_gles2 -lnosys"
 	AC_SUBST(NACL_CFLAGS)
 	AC_SUBST(NACL_LIBS)
+	AC_PATH_PROG([RUBY],[ruby])
 
 	FRONTENDS="oort_nacl"
 fi

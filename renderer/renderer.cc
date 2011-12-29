@@ -68,6 +68,7 @@ void Renderer::render(float view_radius,
 	view_scale = screen_width/view_radius;
 
 	BOOST_FOREACH(auto batch, batches) {
+		//log("rendering batch %s", typeid(*batch).name());
 		batch->render();
 	}
 
@@ -76,6 +77,7 @@ void Renderer::render(float view_radius,
 
 void Renderer::tick() {
 	BOOST_FOREACH(auto batch, batches) {
+		//log("renderer ticking batch %s", typeid(*batch).name());
 		batch->tick();
 	}
 }
