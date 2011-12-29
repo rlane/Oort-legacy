@@ -5,6 +5,8 @@
 #include "ppapi/gles2/gl2ext_ppapi.h"
 #include "ppapi/cpp/graphics_3d.h"
 #include "ppapi/cpp/completion_callback.h"
+#include "ppapi/cpp/rect.h"
+#include "ppapi/cpp/size.h"
 #include "sim/game.h"
 #include "sim/scenario.h"
 #include "sim/ai.h"
@@ -121,6 +123,9 @@ class OortInstance : public pp::Instance {
   // Called whenever the in-browser window changes size.
   virtual void DidChangeView(const pp::Rect& position, const pp::Rect& clip) {
 		std::cout << "DidChangeView" << std::endl;
+		auto size = position.size();
+    gl_context.ResizeBuffers(size.width(), size.height());
+		handle_resize(size.width(), size.height());
 	}
 
   // Called by the browser to handle the postMessage() call in Javascript.
