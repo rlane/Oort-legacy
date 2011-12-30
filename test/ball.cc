@@ -30,9 +30,6 @@ public:
 					ship.fire_beam(0, ship.get_heading());
 				}
 			} else if (&ship.klass == missile.get()) {
-				if (length(ship.get_position() - t->get_position()) < 100) {
-					ship.explode();
-				}
 			}
 		} else {
 			drive_towards(ship, vec2(0,0), ship.klass.max_main_acc*2);

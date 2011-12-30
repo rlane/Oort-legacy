@@ -33,6 +33,7 @@ class Ship : public Entity {
 	virtual void tick();
 	virtual uint32_t get_id() const { return id; }
 	virtual bool should_collide(const Entity &e) const;
+	virtual void handle_collision(const Ship &a);
 
 	void fire_gun(int idx, float angle);
 	void fire_beam(int idx, float angle);

@@ -64,6 +64,7 @@ class ContactListener : public b2ContactListener {
 			std::swap(weapA, weapB);
 		}
 
+		// both weapons or ships
 		if (weapA || !weapB) {
 			return;
 		}
@@ -86,6 +87,21 @@ class ContactListener : public b2ContactListener {
 			worldManifold.Initialize(&m, xfA, shapeA->m_radius, xfB, shapeB->m_radius);
 			auto cp = b2n(worldManifold.points[0]);
 			game.hits.emplace_back(Hit{ ship, weapon, cp, weapon->damage(*ship) });
+		}
+	}
+
+	void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) {
+		auto fixtureA = contact->GetFixtureA();
+		auto fixtureB = contact->GetFixtureB();
+		auto bodyA = fixtureA->GetBody();
+		auto bodyB = fixtureB->GetBody();
+		auto entityA = (Entity*) bodyA->GetUserData();
+		auto entityB = (Entity*) bodyB->GetUserData();
+		auto shipA = dynamic_cast<Ship*>(entityA);
+		auto shipB = dynamic_cast<Ship*>(entityB);
+		if (shipA && shipB) {
+			shipA->handle_collision(*shipB);
+			shipB->handle_collision(*shipA);
 		}
 	}
 } contact_listener;
@@ -145,12 +161,12 @@ void Game::tick() {
 		bullet->tick();
 	}
 
-	BOOST_FOREACH(auto &explosion, explosions) {
-		explosion.tick(*this);
-	}
-
 	for (int i = 0; i < steps_per_tick; i++) {
 		world->Step(step_length, 8, 3);
+	}
+
+	BOOST_FOREACH(auto &explosion, explosions) {
+		explosion.tick(*this);
 	}
 
 	world->ClearForces();

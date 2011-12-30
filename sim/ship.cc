@@ -56,6 +56,12 @@ bool Ship::should_collide(const Entity &e) const {
 	return true;
 }
 
+void Ship::handle_collision(const Ship &s) {
+	if (&klass == &*missile && team != s.team) {
+		explode();
+	}
+}
+
 void Ship::fire_gun(int idx, float angle) {
 	if (idx >= (int)klass.guns.size()) {
 		return;

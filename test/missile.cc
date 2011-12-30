@@ -15,9 +15,6 @@ public:
 		} else if (&ship.klass == missile.get()) {
 			if (t) {
 				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
-				if (length(ship.get_position() - t->get_position()) < 40) {
-					ship.explode();
-				}
 			} else {
 				ship.explode();
 			}
