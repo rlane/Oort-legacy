@@ -189,7 +189,8 @@ void Game::after_tick() {
 Team *Game::check_victory() {
 	std::unordered_set<Team*> set;
 	BOOST_FOREACH(auto ship, ships) {
-		if (glm::length(ship->get_position()) < radius) { // TODO(rlane): set in scenario
+		if (glm::length(ship->get_position()) < radius && // TODO(rlane): set in scenario
+		    &ship->klass != &*missile) {
 			set.insert(ship->team.get());
 		}
 	}
