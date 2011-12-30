@@ -68,6 +68,10 @@ public:
 		def.isSensor = true;
 		body->CreateFixture(&def);
 	}
+
+	bool should_collide(const Entity &e) const {
+		return true;
+	}
 };
 
 void assert_contact(const Entity &a, const Entity &b) {

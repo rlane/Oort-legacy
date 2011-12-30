@@ -31,26 +31,15 @@ const float step_length = tick_length/steps_per_tick;
 
 class ContactFilter : public b2ContactFilter {
 	bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
-		auto entityA = (Entity*) fixtureA->GetBody()->GetUserData();
-		auto entityB = (Entity*) fixtureB->GetBody()->GetUserData();
+		const Entity &entityA = *(Entity*)fixtureA->GetBody()->GetUserData();
+		const Entity &entityB = *(Entity*)fixtureB->GetBody()->GetUserData();
 
-		if (entityA->is_weapon()) {
-			if (entityB->is_weapon()) {
-				return false;
-			}
-			std::swap(entityA, entityB);
-		}
-
-		if (entityA->dead || entityB->dead) {
+		if (entityA.dead || entityB.dead) {
 			return false;
 		}
 
-		if ((typeid(*entityA) == typeid(Ship) && entityA->get_id() == entityB->creator_id) ||
-		    (typeid(*entityB) == typeid(Ship) && entityB->get_id() == entityA->creator_id)) {
-			return false;
-		}
-		
-		return true;
+		return entityA.should_collide(entityB) &&
+		       entityB.should_collide(entityA);
 	}
 } contact_filter;
 

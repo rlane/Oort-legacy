@@ -38,4 +38,8 @@ float Beam::damage(const Ship &ship) {
 	return e;
 }
 
+bool Beam::should_collide(const Entity &e) const {
+	return e.get_id() != creator_id;
+}
+
 }

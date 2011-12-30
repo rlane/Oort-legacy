@@ -30,6 +30,7 @@ Ship::Ship(Game *game,
 	: Entity(game, team, creator_id),
 	  klass(klass),
 	  id(next_id++), // XXX
+	  creation_time(game->time),
 	  hull(klass.hull),
 	  ai(team->ai_factory->instantiate(*this)),
 	  prng(id), // XXX
@@ -45,6 +46,14 @@ void Ship::tick() {
 	Entity::tick();
 	ai->tick();
 	update_forces();
+}
+
+bool Ship::should_collide(const Entity &e) const {
+	if (creator_id != INVALID_SHIP_ID && creator_id == e.get_id()) {
+		return game->time >= creation_time + 1;
+	}
+
+	return true;
 }
 
 void Ship::fire_gun(int idx, float angle) {

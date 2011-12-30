@@ -19,6 +19,7 @@ public:
 	Beam(Game *game, std::shared_ptr<Team> team, uint32_t creator_id, const BeamDef &beam);
 	virtual float damage(const Ship &ship);
 	virtual const BeamDef &get_def() { return static_cast<const BeamDef&>(def); }
+	virtual bool should_collide(const Entity &e) const;
 };
 
 }

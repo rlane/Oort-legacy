@@ -31,6 +31,7 @@ public:
 	virtual float damage(const Ship &ship);
 	virtual const GunDef &get_def() { return static_cast<const GunDef&>(def); }
 	virtual void tick();
+	virtual bool should_collide(const Entity &e) const;
 };
 
 }

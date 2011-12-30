@@ -41,4 +41,8 @@ float Bullet::damage(const Ship &ship) {
 	return e;
 }
 
+bool Bullet::should_collide(const Entity &e) const {
+	return e.get_id() != creator_id;
+}
+
 }

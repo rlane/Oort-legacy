@@ -33,7 +33,7 @@ void Entity::tick() {
 	set_heading(normalize_angle(get_heading()));
 }
 
-bool Entity::is_weapon() {
+bool Entity::is_weapon() const {
 	return false;
 }
 

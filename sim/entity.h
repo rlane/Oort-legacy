@@ -26,8 +26,9 @@ public:
 	~Entity();
 
 	virtual void tick();
-	virtual bool is_weapon();
-	virtual uint32_t get_id() { return (uint32_t)-1; }
+	virtual bool is_weapon() const;
+	virtual bool should_collide(const Entity &e) const = 0;
+	virtual uint32_t get_id() const { return (uint32_t)-1; }
 
 	void set_position(glm::vec2 p);
 	glm::vec2 get_position() const;

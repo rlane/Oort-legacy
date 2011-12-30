@@ -18,15 +18,13 @@ struct WeaponDef {
 
 class Weapon : public Entity {
 public:
-	uint32_t creator_id;
-
 	Weapon(Game *game,
 	       std::shared_ptr<Team> team,
 	       uint32_t creator_id,
 	       const WeaponDef &def)
 	  : Entity(game, team, creator_id),
 	    def(def) {}
-	virtual bool is_weapon() { return true; }
+	virtual bool is_weapon() const { return true; }
 	virtual float damage(const Ship &ship) = 0;
 	virtual const WeaponDef &get_def() = 0;
 

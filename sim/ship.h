@@ -23,6 +23,7 @@ class Ship : public Entity {
 	public:
 	const ShipClass &klass;
 	uint32_t id;
+	float creation_time;
 	float hull;
 	std::unique_ptr<AI> ai;
 
@@ -30,7 +31,8 @@ class Ship : public Entity {
 	~Ship();
 
 	virtual void tick();
-	virtual uint32_t get_id() { return id; }
+	virtual uint32_t get_id() const { return id; }
+	virtual bool should_collide(const Entity &e) const;
 
 	void fire_gun(int idx, float angle);
 	void fire_beam(int idx, float angle);
