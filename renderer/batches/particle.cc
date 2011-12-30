@@ -128,16 +128,15 @@ void ParticleBatch::shower(
 	boost::uniform_real<float> s_dist(0.0f, s_max);
 	boost::uniform_real<float> fdp_dist(0.0f, 1.0f);
 	boost::uniform_real<float> life_dist(life_min, life_max);
-	const float tick_length = 1.0f/32; // XXX
 	for (int i = 0; i < count; i++) {
 		float a = a_dist(prng);
 		float s = s_dist(prng);
 		float fdp = fdp_dist(prng);
 		float lifetime = life_dist(prng);
-		vec2 dp = v * fdp * tick_length;
+		vec2 dp = v * fdp * Game::tick_length;
 		vec2 dv = vec2(cosf(a)*s, sinf(a)*s);
 		particles.emplace_back(Particle{
-			/* initial_position */ p0 + dp + dv*tick_length,
+			/* initial_position */ p0 + dp + dv*Game::tick_length,
 		  /* velocity */ v0 + v + dv,
 			/* initial_time */ game.time,
 			/* lifetime */ lifetime,

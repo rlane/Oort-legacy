@@ -9,6 +9,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 #include "sim/explosion.h"
+#include "common/constexpr.h"
 
 class b2World;
 
@@ -31,6 +32,7 @@ struct Hit {
 
 class Game {
 	public:
+	static constexpr float tick_length = 1.0f/32;
 
 	Game(const Scenario &scn, const std::vector<std::shared_ptr<AIFactory>> &ai_factories);
 	~Game();

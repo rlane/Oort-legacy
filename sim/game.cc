@@ -25,9 +25,8 @@ using std::make_shared;
 
 namespace Oort {
 
-const float tick_length = 1.0f/32;
 const int steps_per_tick = 10;
-const float step_length = tick_length/steps_per_tick;
+const float step_length = Game::tick_length/steps_per_tick;
 
 class ContactFilter : public b2ContactFilter {
 	bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
