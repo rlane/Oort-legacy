@@ -2,15 +2,19 @@
 
 class BallAI : public CxxAI {
 public:
-	BallAI(Ship &ship) : CxxAI(ship) {}
+	ProportionalNavigator nav;
+
+	BallAI(Ship &ship)
+		: CxxAI(ship),
+		  nav(ship, 5, ship.klass.max_main_acc) {}
 
 	void tick() {
 		auto t = find_target(ship);
 
 		if (t) {
-			drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
-
 			if (&ship.klass == fighter.get() || &ship.klass == assault_frigate.get()) {
+				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
+
 				const GunDef &gun = ship.klass.guns[0];
 				auto a = lead(ship.get_position(), t->get_position(),
 											ship.get_velocity(), t->get_velocity(),
@@ -30,6 +34,12 @@ public:
 					ship.fire_beam(0, ship.get_heading());
 				}
 			} else if (&ship.klass == missile.get()) {
+				float f = ship.game->time - ship.creation_time;
+				if (f < 1) {
+					turn_towards(ship, t->get_position());
+				} else {
+					nav.seek(t->get_position(), t->get_velocity());
+				}
 			}
 		} else {
 			drive_towards(ship, vec2(0,0), ship.klass.max_main_acc*2);
