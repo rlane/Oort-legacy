@@ -37,6 +37,10 @@ Ship::Ship(Game *game,
 	  last_fire_times(klass.guns.size(), -std::numeric_limits<float>::infinity()) {
 	mass = klass.mass;
 	body->CreateFixture(&klass.shape, klass.density);
+
+	if (&klass == &*missile) {
+		body->SetBullet(true);
+	}
 }
 
 Ship::~Ship() {
