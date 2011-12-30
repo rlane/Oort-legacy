@@ -101,5 +101,28 @@ std::shared_ptr<Ship> find_target(Ship &s) {
 	return target;
 }
 
+ProportionalNavigator::ProportionalNavigator(Ship &ship, float k, float a)
+	: ship(ship), k(k), a(a), last_bearing(NAN) {}
+
+void ProportionalNavigator::seek(vec2 tp, vec2 tv) {
+	auto p = ship.get_position();
+	auto bearing = angle_between(p, tp);
+
+	if (!isnan(last_bearing)) {
+		auto v = ship.get_velocity();
+
+		auto bearing_rate = angle_diff(bearing, last_bearing)/Game::tick_length;
+		auto dv = v - tv;
+		auto rv = rotate(dv, -bearing);
+		auto n = -k * rv.x * bearing_rate;
+
+		ship.acc_main(a);
+		ship.acc_lateral(n);
+		turn_to(ship, bearing);
+	}
+
+	last_bearing = bearing;
+}
+
 }
 }

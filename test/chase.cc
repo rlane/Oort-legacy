@@ -1,9 +1,14 @@
 #include "test/testcase.h"
 #include "glm/gtx/vector_angle.hpp"
+#include <math.h>
 
 class ChaseAI : public CxxAI {
 public:
-	ChaseAI(Ship &ship) : CxxAI(ship) {}
+	ProportionalNavigator nav;
+
+	ChaseAI(Ship &ship)
+		: CxxAI(ship),
+		  nav(ship, 5, ship.klass.max_main_acc) {}
 
 	void tick() {
 		auto target = find_target(ship);
@@ -24,9 +29,11 @@ public:
 			if (ship.game->ticks % 32 == 0) {
 				ship.fire_missile(target);
 			}
-		}
 
-		drive_towards(ship, target->get_position(), ship.klass.max_main_acc*2);
+			drive_towards(ship, target->get_position(), ship.klass.max_main_acc*2);
+		} else {
+			nav.seek(target->get_position(), target->get_velocity());
+		}
 	}
 };
 

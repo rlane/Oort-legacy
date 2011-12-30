@@ -18,6 +18,17 @@ void drive_towards(Ship &s, glm::vec2 tp, float speed);
 float lead(glm::vec2 p1, glm::vec2 p2, glm::vec2 v1, glm::vec2 v2, float w, float t_max);
 std::shared_ptr<Ship> find_target(Ship &s);
 
+class ProportionalNavigator {
+public:
+	Ship &ship;
+	float k;
+	float a;
+	float last_bearing;
+
+	ProportionalNavigator(Ship &ship, float k, float a);
+	void seek(glm::vec2 tp, glm::vec2 tv);
+};
+
 }
 }
 
