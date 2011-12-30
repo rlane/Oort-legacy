@@ -90,7 +90,7 @@ std::shared_ptr<Ship> find_target(Ship &s) {
 	std::shared_ptr<Ship> target;
 	float dist = 1e9f;
 	BOOST_FOREACH(auto t, s.game->ships) {
-		if (t->team != s.team) {
+		if (t->team != s.team && &t->klass != &*missile) {
 			float d = length(t->get_position() - s.get_position());
 			if (d < dist) {
 				target = t;
