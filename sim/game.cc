@@ -25,9 +25,6 @@ using std::make_shared;
 
 namespace Oort {
 
-const int steps_per_tick = 10;
-const float step_length = Game::tick_length/steps_per_tick;
-
 class ContactFilter : public b2ContactFilter {
 	bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) {
 		const Entity &entityA = *(Entity*)fixtureA->GetBody()->GetUserData();
@@ -160,9 +157,7 @@ void Game::tick() {
 		bullet->tick();
 	}
 
-	for (int i = 0; i < steps_per_tick; i++) {
-		world->Step(step_length, 8, 3);
-	}
+	world->Step(tick_length, 8, 3);
 
 	BOOST_FOREACH(auto &explosion, explosions) {
 		explosion.tick(*this);
