@@ -49,6 +49,11 @@ void turn_to(Ship &s, float angle) {
 	s.acc_angular(f * s.klass.max_angular_acc);
 }
 
+void turn_towards(Ship &s, vec2 tp) {
+	auto a = radians(orientedAngle(vec2(1,0), normalize(tp-s.get_position())));
+	turn_to(s, a);
+}
+
 void drive_towards(Ship &s, vec2 tp, float speed) {
 	auto p = s.get_position();
 	auto v = s.get_velocity();
