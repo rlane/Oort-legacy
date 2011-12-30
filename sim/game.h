@@ -39,7 +39,7 @@ class Game {
 
 	void tick();
 	virtual void after_tick();
-	Team *check_victory();
+	bool check_victory(Team *&team);
 	std::shared_ptr<Ship> lookup_ship(uint32_t id);
 
 	std::unique_ptr<b2World> world;

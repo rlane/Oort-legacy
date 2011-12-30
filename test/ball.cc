@@ -69,7 +69,8 @@ public:
 	}
 
 	void after_tick() {
-		if (ships.empty() || check_victory()) {
+		Team *winner;
+		if (ships.empty() || check_victory(winner)) {
 			test_finished = true;
 		}
 	}

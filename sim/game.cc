@@ -196,7 +196,9 @@ void Game::tick() {
 void Game::after_tick() {
 }
 
-Team *Game::check_victory() {
+bool Game::check_victory(Team *&team) {
+	team = NULL;
+
 	std::unordered_set<Team*> set;
 	BOOST_FOREACH(auto ship, ships) {
 		if (glm::length(ship->get_position()) < radius && // TODO(rlane): set in scenario
@@ -206,12 +208,12 @@ Team *Game::check_victory() {
 	}
 
 	if (set.size() == 1) {
-		return *set.begin();
+		team = *set.begin();
+		return true;
 	} else if (set.size() == 0) {
-		// TODO(rlane): handle size == 0
-		abort();
+		return true;
 	} else {
-		return NULL;
+		return false;
 	}
 }
 
