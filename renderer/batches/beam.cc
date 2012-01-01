@@ -17,15 +17,21 @@ using std::shared_ptr;
 namespace Oort {
 namespace RendererBatches {
 
+struct BeamPriv {
+	GL::Program prog;
+
+	BeamPriv()
+		: prog(GL::Program(
+		        make_shared<GL::VertexShader>(load_resource("shaders/beam.v.glsl")),
+		        make_shared<GL::FragmentShader>(load_resource("shaders/beam.f.glsl")))) {}
+};
+
 BeamBatch::BeamBatch(Renderer &renderer)
 	: Batch(renderer),
-    prog(GL::Program(
-      make_shared<GL::VertexShader>(load_resource("shaders/beam.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/beam.f.glsl"))))
-{
-}
+	  priv(make_shared<BeamPriv>()) {}
 
 void BeamBatch::render() {
+	auto &prog = priv->prog;
 	prog.use();
 	prog.uniform("p_matrix", renderer.p_matrix);
 	prog.enable_attrib_array("vertex");

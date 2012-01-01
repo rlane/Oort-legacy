@@ -7,12 +7,15 @@
 namespace Oort {
 namespace RendererBatches {
 
+struct BeamPriv;
+
 class BeamBatch : public Batch {
 public:
-	GL::Program prog;
-
 	BeamBatch(Renderer &Renderer);
 	virtual void render();
+
+private:
+	std::shared_ptr<BeamPriv> priv;
 };
 
 }
