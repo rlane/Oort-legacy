@@ -17,18 +17,38 @@ using std::shared_ptr;
 namespace Oort {
 namespace RendererBatches {
 
+struct BeamState {
+	vec2 p;
+	float h;
+	float width;
+	float length;
+};
+
 struct BeamPriv {
 	GL::Program prog;
+	std::vector<BeamState> beams;
 
 	BeamPriv()
 		: prog(GL::Program(
-		        make_shared<GL::VertexShader>(load_resource("shaders/beam.v.glsl")),
-		        make_shared<GL::FragmentShader>(load_resource("shaders/beam.f.glsl")))) {}
+		         make_shared<GL::VertexShader>(load_resource("shaders/beam.v.glsl")),
+		         make_shared<GL::FragmentShader>(load_resource("shaders/beam.f.glsl")))) {}
 };
 
 BeamBatch::BeamBatch(Renderer &renderer)
 	: Batch(renderer),
 	  priv(make_shared<BeamPriv>()) {}
+
+void BeamBatch::tick() {
+	priv->beams.clear();
+	BOOST_FOREACH(auto &beam, game.beams) {
+		priv->beams.emplace_back(BeamState{
+			beam->get_position(),
+			beam->get_heading(),
+			beam->get_def().width,
+			beam->get_def().length
+		});
+	}
+}
 
 void BeamBatch::render() {
 	auto &prog = priv->prog;
@@ -46,21 +66,18 @@ void BeamBatch::render() {
 
 	prog.attrib_ptr("texcoord", texcoords);
 
-	BOOST_FOREACH(auto beam, game.beams) {
+	BOOST_FOREACH(auto &beam, priv->beams) {
 		glm::vec4 color = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 
 		glm::mat4 mv_matrix;
-		auto p = beam->get_position();
-		auto h = beam->get_heading();
-		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
-		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
+		mv_matrix = glm::translate(mv_matrix, glm::vec3(beam.p, 0));
+		mv_matrix = glm::rotate(mv_matrix, glm::degrees(beam.h), glm::vec3(0, 0, 1));
 
-		auto &def = beam->get_def();
 		vec2 vertices[] = {
-			vec2(0, def.width/2.0f),
-			vec2(0, -def.width/2.0f),
-			vec2(def.length, def.width/2.0f),
-			vec2(def.length, -def.width/2.0f)
+			vec2(0, beam.width/2.0f),
+			vec2(0, -beam.width/2.0f),
+			vec2(beam.length, beam.width/2.0f),
+			vec2(beam.length, -beam.width/2.0f)
 		};
 
 		prog.uniform("mv_matrix", mv_matrix);
