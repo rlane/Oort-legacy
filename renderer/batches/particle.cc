@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <array>
+#include <list>
 #include <stdint.h>
 #include <boost/foreach.hpp>
 #include <boost/random/uniform_real.hpp>
@@ -31,9 +32,13 @@ struct Particle {
 	float padding;
 };
 
+struct ParticleBunch {
+	std::vector<Particle> particles;
+};
+
 struct ParticlePriv {
 	GL::Program prog;
-	std::vector<Particle> particles;
+	std::list<ParticleBunch> bunches;
 	GL::Texture tex;
 	boost::random::mt19937 prng;
 
@@ -87,14 +92,17 @@ void ParticleBatch::render() {
 	prog.enable_attrib_array("type");
 	priv->tex.bind();
 
-	{
-		Particle *p = &priv->particles[0];
+	BOOST_FOREACH(auto &bunch, priv->bunches) {
+		if (bunch.particles.size() == 0) {
+			continue;
+		}
+		Particle *p = &bunch.particles[0];
 		prog.attrib_ptr("initial_position", &p->initial_position, stride);
 		prog.attrib_ptr("velocity", &p->velocity, stride);
 		prog.attrib_ptr("initial_time", &p->initial_time, stride);
 		prog.attrib_ptr("lifetime", &p->lifetime, stride);
 		prog.attrib_ptr("type", &p->type, stride);
-		glDrawArrays(GL_POINTS, 0, priv->particles.size());
+		glDrawArrays(GL_POINTS, 0, bunch.particles.size());
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -110,6 +118,11 @@ void ParticleBatch::render() {
 }
 
 void ParticleBatch::tick() {
+	if (priv->bunches.size() >= 128) {
+		priv->bunches.pop_back();
+	}
+	priv->bunches.push_front(ParticleBunch());
+
 	BOOST_FOREACH(auto bullet, game.bullets) {
 		if (bullet->get_def().type == GunType::PLASMA) {
 			shower(ParticleType::PLASMA,
@@ -140,6 +153,7 @@ void ParticleBatch::shower(
 	float s_max, float life_min, float life_max,
 	int count)
 {
+	ParticleBunch &bunch = priv->bunches.front();
 	boost::uniform_real<float> a_dist(0.0f, M_PI*2.0f);
 	boost::uniform_real<float> s_dist(0.0f, s_max);
 	boost::uniform_real<float> fdp_dist(0.0f, 1.0f);
@@ -151,7 +165,7 @@ void ParticleBatch::shower(
 		float lifetime = life_dist(priv->prng);
 		vec2 dp = v * fdp * Game::tick_length;
 		vec2 dv = vec2(cosf(a)*s, sinf(a)*s);
-		priv->particles.emplace_back(Particle{
+		bunch.particles.emplace_back(Particle{
 			/* initial_position */ p0 + dp + dv*Game::tick_length,
 		  /* velocity */ v0 + v + dv,
 			/* initial_time */ game.time,
