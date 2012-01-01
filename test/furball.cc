@@ -1,10 +1,10 @@
 #include "test/testcase.h"
 
-class BallAI : public CxxAI {
+class FurballAI : public CxxAI {
 public:
 	ProportionalNavigator nav;
 
-	BallAI(Ship &ship)
+	FurballAI(Ship &ship)
 		: CxxAI(ship),
 		  nav(ship, 5, ship.klass.max_main_acc) {}
 
@@ -47,15 +47,15 @@ public:
 	}
 };
 
-class BallTest : public Test {
+class FurballTest : public Test {
 public:
-	BallTest() {
+	FurballTest() {
 		boost::random::mt19937 prng(42);
 		boost::random::normal_distribution<float> p_dist(0.0, 1000.0);
 		boost::random::normal_distribution<float> v_dist(0.0, 20.0);
 		boost::uniform_real<float> h_dist(0.0, 2*pi);
 
-		auto ai_factory = CxxAI::factory<BallAI>();
+		auto ai_factory = CxxAI::factory<FurballAI>();
 		auto red = make_shared<Team>("red", ai_factory, vec3(1, 0, 0));
 		auto green = make_shared<Team>("green", ai_factory, vec3(0, 1, 0));
 		auto blue = make_shared<Team>("blue", ai_factory, vec3(0, 0, 1));
