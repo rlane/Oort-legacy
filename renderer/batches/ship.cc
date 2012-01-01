@@ -22,9 +22,7 @@ namespace RendererBatches {
 
 ShipBatch::ShipBatch(Renderer &renderer)
 	: Batch(renderer),
-    prog(GL::Program(
-      make_shared<GL::VertexShader>(load_resource("shaders/ship.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/ship.f.glsl"))))
+	  prog(GL::Program::from_resources("ship"))
 {
 }
 

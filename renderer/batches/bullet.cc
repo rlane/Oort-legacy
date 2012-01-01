@@ -19,9 +19,7 @@ namespace RendererBatches {
 
 BulletBatch::BulletBatch(Renderer &renderer)
 	: Batch(renderer),
-    prog(GL::Program(
-      make_shared<GL::VertexShader>(load_resource("shaders/bullet.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/bullet.f.glsl"))))
+	  prog(GL::Program::from_resources("bullet"))
 {
 }
 

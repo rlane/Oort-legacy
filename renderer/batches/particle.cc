@@ -24,10 +24,8 @@ namespace RendererBatches {
 
 ParticleBatch::ParticleBatch(Renderer &renderer)
 	: Batch(renderer),
-    prog(GL::Program(
-      make_shared<GL::VertexShader>(load_resource("shaders/particle.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/particle.f.glsl")))),
-		prng(42)
+	  prog(GL::Program::from_resources("particle")),
+	  prng(42)
 {
 	create_texture();
 }

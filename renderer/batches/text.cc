@@ -18,9 +18,7 @@ namespace RendererBatches {
 
 TextBatch::TextBatch(Renderer &renderer)
 	: Batch(renderer),
-    prog(GL::Program(
-      make_shared<GL::VertexShader>(load_resource("shaders/text.v.glsl")),
-      make_shared<GL::FragmentShader>(load_resource("shaders/text.f.glsl"))))
+	  prog(GL::Program::from_resources("text"))
 {
 	font_tex.bind();
 	GL::check();
