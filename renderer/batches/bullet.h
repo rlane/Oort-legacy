@@ -7,12 +7,16 @@
 namespace Oort {
 namespace RendererBatches {
 
+class BulletPriv;
+
 class BulletBatch : public Batch {
 public:
-	GL::Program prog;
-
 	BulletBatch(Renderer &Renderer);
+	virtual void tick();
 	virtual void render();
+
+private:
+	std::shared_ptr<BulletPriv> priv;
 };
 
 }
