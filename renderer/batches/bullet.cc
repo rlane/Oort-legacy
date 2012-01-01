@@ -17,9 +17,13 @@ using std::shared_ptr;
 namespace Oort {
 namespace RendererBatches {
 
-struct BulletState {
+struct BulletVertex {
 	vec2 p;
-	vec2 v;
+	vec4 color;
+};
+
+struct BulletState {
+	BulletVertex a, b;
 };
 
 struct BulletPriv {
@@ -37,26 +41,28 @@ BulletBatch::BulletBatch(Renderer &renderer)
 }
 
 void BulletBatch::tick() {
+	vec4 color1(0.27f, 0.27f, 0.27f, 0.33f);
+	vec4 color2(0.27f, 0.27f, 0.27f, 1.0f);
+
 	priv->bullets.clear();
 	BOOST_FOREACH(auto bullet, game.bullets) {
 		if (bullet->dead || bullet->get_def().type == GunType::PLASMA) {
 			continue;
 		}
 
+		auto p = bullet->get_position();
+		auto v = bullet->get_velocity();
+		auto dp = v * (1.0f/40);
+
 		priv->bullets.emplace_back(BulletState{
-			bullet->get_position(),
-			bullet->get_velocity()
+			BulletVertex{ p - dp, color1 },
+			BulletVertex{ p, color2 }
 		});
 	}
 }
 
 void BulletBatch::render() {
 	auto &prog = priv->prog;
-
-	vec4 colors[] = {
-		vec4(0.27f, 0.27f, 0.27f, 0.33f),
-		vec4(0.27f, 0.27f, 0.27f, 1.0f)
-	};
 
 	prog.use();
 	GL::check();
@@ -66,17 +72,10 @@ void BulletBatch::render() {
 	prog.uniform("p_matrix", renderer.p_matrix);
 	prog.uniform("mv_matrix", glm::mat4());
 
-	BOOST_FOREACH(auto &bullet, priv->bullets) {
-		prog.attrib_ptr("color", colors);
-
-		auto dp = bullet.v * (1.0f/40);
-		auto p1 = bullet.p - dp;
-		auto p2 = bullet.p;
-
-		vec2 vertices[] = { p1, p2 };
-		prog.attrib_ptr("vertex", vertices);
-		glDrawArrays(GL_LINES, 0, 2);
-	}
+	auto stride = sizeof(BulletVertex);
+	prog.attrib_ptr("vertex", &priv->bullets[0].a.p, stride);
+	prog.attrib_ptr("color", &priv->bullets[0].a.color, stride);
+	glDrawArrays(GL_LINES, 0, priv->bullets.size()*2);
 
 	prog.disable_attrib_array("vertex");
 	prog.disable_attrib_array("color");
