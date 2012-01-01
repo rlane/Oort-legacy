@@ -10,6 +10,7 @@
 #include "gl/gl.h"
 #include "gl/shader.h"
 #include "gl/check.h"
+#include "common/resources.h"
 
 namespace GL {
 
@@ -39,6 +40,19 @@ public:
 		if (status == GL_FALSE) {
 			throw new std::exception();
 		}
+	}
+
+	Program(const Program &other) = delete;
+
+	Program(Program &&other) {
+		std::swap(id, other.id);
+		std::swap(vertex_shader, other.vertex_shader);
+		std::swap(fragment_shader, other.fragment_shader);
+	}
+
+	static GL::Program from_resources(const std::string &name) {
+		return GL::Program(std::make_shared<GL::VertexShader>(Oort::load_resource("shaders/" + name + ".v.glsl")),
+		                   std::make_shared<GL::FragmentShader>(Oort::load_resource("shaders/" + name + ".f.glsl")));
 	}
 
 	void display_info_log() {

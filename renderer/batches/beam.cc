@@ -29,9 +29,7 @@ struct BeamPriv {
 	std::vector<BeamState> beams;
 
 	BeamPriv()
-		: prog(GL::Program(
-		         make_shared<GL::VertexShader>(load_resource("shaders/beam.v.glsl")),
-		         make_shared<GL::FragmentShader>(load_resource("shaders/beam.f.glsl")))) {}
+		: prog(GL::Program::from_resources("beam")) {}
 };
 
 BeamBatch::BeamBatch(Renderer &renderer)
