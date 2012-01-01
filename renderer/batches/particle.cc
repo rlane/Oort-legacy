@@ -22,36 +22,54 @@ namespace Oort {
 
 namespace RendererBatches {
 
+struct Particle {
+	glm::vec2 initial_position;
+	glm::vec2 velocity;
+	float initial_time;
+	float lifetime;
+	float type;
+	float padding;
+};
+
+struct ParticlePriv {
+	GL::Program prog;
+	std::vector<Particle> particles;
+	GL::Texture tex;
+	boost::random::mt19937 prng;
+
+	ParticlePriv()
+		: prog(GL::Program::from_resources("particle")),
+		  prng(42)
+	{
+		tex.bind();
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		const int n = 256;
+		std::array<uint8_t, 3*n*n> data;
+		for (int y = 0; y < n; y++) {
+			for (int x = 0; x < n; x++) {
+				int i = n*y+x;
+				vec2 point = vec2(float(x)/n, float(y)/n);
+				float dist = glm::length(vec2(0.5f,0.5f) - point);
+				float alpha = powf(1-glm::clamp(2*dist, 0.0f, 1.0f), 2);
+				data[i] = (uint8_t) (alpha*255);
+			}
+		}
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, n, n, 0, GL_ALPHA, GL_UNSIGNED_BYTE, &data[0]);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		GL::check();
+	}
+};
+
 ParticleBatch::ParticleBatch(Renderer &renderer)
 	: Batch(renderer),
-	  prog(GL::Program::from_resources("particle")),
-	  prng(42)
+	  priv(make_shared<ParticlePriv>())
 {
-	create_texture();
-}
-
-void ParticleBatch::create_texture() {
-	tex.bind();
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	const int n = 256;
-	std::array<uint8_t, 3*n*n> data;
-	for (int y = 0; y < n; y++) {
-		for (int x = 0; x < n; x++) {
-			int i = n*y+x;
-			vec2 point = vec2(float(x)/n, float(y)/n);
-			float dist = glm::length(vec2(0.5f,0.5f) - point);
-			float alpha = powf(1-glm::clamp(2*dist, 0.0f, 1.0f), 2);
-			data[i] = (uint8_t) (alpha*255);
-		}
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, n, n, 0, GL_ALPHA, GL_UNSIGNED_BYTE, &data[0]);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	GL::check();
 }
 
 void ParticleBatch::render() {
+	auto &prog = priv->prog;
 	GL::check();
 	glBlendFunc(GL_ONE, GL_ONE);
 	prog.use();
@@ -67,16 +85,16 @@ void ParticleBatch::render() {
 	prog.enable_attrib_array("initial_time");
 	prog.enable_attrib_array("lifetime");
 	prog.enable_attrib_array("type");
-	tex.bind();
+	priv->tex.bind();
 
 	{
-		Particle *p = &particles[0];
+		Particle *p = &priv->particles[0];
 		prog.attrib_ptr("initial_position", &p->initial_position, stride);
 		prog.attrib_ptr("velocity", &p->velocity, stride);
 		prog.attrib_ptr("initial_time", &p->initial_time, stride);
 		prog.attrib_ptr("lifetime", &p->lifetime, stride);
 		prog.attrib_ptr("type", &p->type, stride);
-		glDrawArrays(GL_POINTS, 0, particles.size());
+		glDrawArrays(GL_POINTS, 0, priv->particles.size());
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -127,13 +145,13 @@ void ParticleBatch::shower(
 	boost::uniform_real<float> fdp_dist(0.0f, 1.0f);
 	boost::uniform_real<float> life_dist(life_min, life_max);
 	for (int i = 0; i < count; i++) {
-		float a = a_dist(prng);
-		float s = s_dist(prng);
-		float fdp = fdp_dist(prng);
-		float lifetime = life_dist(prng);
+		float a = a_dist(priv->prng);
+		float s = s_dist(priv->prng);
+		float fdp = fdp_dist(priv->prng);
+		float lifetime = life_dist(priv->prng);
 		vec2 dp = v * fdp * Game::tick_length;
 		vec2 dv = vec2(cosf(a)*s, sinf(a)*s);
-		particles.emplace_back(Particle{
+		priv->particles.emplace_back(Particle{
 			/* initial_position */ p0 + dp + dv*Game::tick_length,
 		  /* velocity */ v0 + v + dv,
 			/* initial_time */ game.time,
