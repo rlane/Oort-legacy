@@ -9,6 +9,9 @@
 #include <string>
 #include <sstream>
 #include <boost/format.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/mutex.hpp>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -54,12 +57,14 @@ static glm::vec2 view_center;
 static glm::vec2 view_speed;
 static const float pan_const = 0.01;
 static int screen_width = 800, screen_height = 600;
-static const float fps = 32;
-static const int target_frame_time = 1000000LL/fps;
+static const float fps = 60;
+static const float tps = 32;
+static const int target_tick_time = 1000000LL/tps;
 static uint32_t picked_id = INVALID_SHIP_ID;
 static shared_ptr<Test> game;
 static float instant_frame_time = 0.0f;
 static float instant_tick_time = 0.0f;
+static boost::mutex mutex;
 
 static std::unique_ptr<Renderer> renderer;
 static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
@@ -205,7 +210,22 @@ glm::vec2 mouse_position() {
 	return glm::vec2(x, y);
 }
 
-typedef int (*test_main_ft)();
+void ticker_func() {
+	while (running) {
+		auto tick_start = microseconds();
+		game->tick();
+		{
+			boost::lock_guard<boost::mutex> lock(mutex);
+			renderer->tick(*game);
+		}
+		auto tick_end = microseconds();
+		int tick_time = tick_end - tick_start;
+		instant_tick_time = float(tick_time)/1000;
+		if (tick_time < target_tick_time) {
+			usleep(target_tick_time - tick_time);
+		}
+	}
+}
 
 int main(int argc, char **argv) {
 	if (argc != 2) {
@@ -249,6 +269,8 @@ int main(int argc, char **argv) {
 	auto prev = microseconds();
 	int frame_count = 0;
 
+	boost::thread ticker(ticker_func);
+
 	while (running) {
 		auto frame_start = microseconds();
 
@@ -269,9 +291,6 @@ int main(int argc, char **argv) {
 					state = State::FINISHED;
 				}
 			}
-
-			game->tick();
-			renderer->tick(*game);
 		}
 
 		if (zoom_rate < 0) {
@@ -283,7 +302,10 @@ int main(int argc, char **argv) {
 
 		view_center += view_speed*view_radius;
 
-		renderer->render(view_radius, view_center);
+		{
+			boost::lock_guard<boost::mutex> lock(mutex);
+			renderer->render(view_radius, view_center);
+		}
 
 		if (paused) {
 			std::ostringstream tmp;
@@ -358,13 +380,9 @@ int main(int argc, char **argv) {
 			prev = now;
 			renderer->dump_perf();
 		}
-
-		auto frame_end = microseconds();
-		int frame_time = frame_end - frame_start;
-		if (frame_time < target_frame_time) {
-			usleep(target_frame_time - frame_time);
-		}
 	}
+
+	ticker.join();
 
 	return 0;
 }

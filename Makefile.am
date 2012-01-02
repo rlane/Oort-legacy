@@ -70,10 +70,10 @@ EXTRA_PROGRAMS := oort_headless oort_sdl oort_nacl
 all: $(bin_PROGRAMS) $(TESTS)
 
 oort_headless_SOURCES := ui/headless/main.cc $(SIM_SRCS)
-oort_headless_LDADD=$(LUA_LIBS) $(BOX2D_LIBS)
+oort_headless_LDADD=$(LUA_LIBS) $(BOX2D_LIBS) $(BOOST_LIBS)
 
 oort_sdl_SOURCES := ui/sdl/main.cc $(SIM_SRCS) $(RENDERER_SRCS)
-oort_sdl_LDADD=$(SDL_LIBS) $(GLEW_LIBS) $(LUA_LIBS) $(BOX2D_LIBS)
+oort_sdl_LDADD=$(SDL_LIBS) $(GLEW_LIBS) $(LUA_LIBS) $(BOX2D_LIBS) $(BOOST_LIBS)
 
 oort_nacl_SOURCES := ui/nacl/main.cc ui/nacl/embedded_resources.c $(SIM_SRCS) $(RENDERER_SRCS)
 oort_nacl_LDADD=$(SDL_LIBS) $(NACL_LIBS) $(LUA_LIBS) $(BOX2D_LIBS)
