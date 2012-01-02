@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <boost/format.hpp>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -30,6 +31,8 @@
 using glm::vec2;
 using std::make_shared;
 using std::shared_ptr;
+using boost::format;
+using boost::str;
 
 namespace Oort {
 
@@ -55,6 +58,8 @@ static const float fps = 32;
 static const int target_frame_time = 1000000LL/fps;
 static uint32_t picked_id = INVALID_SHIP_ID;
 static shared_ptr<Test> game;
+static float instant_frame_time = 0.0f;
+static float instant_tick_time = 0.0f;
 
 static std::unique_ptr<Renderer> renderer;
 static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
@@ -338,11 +343,15 @@ int main(int argc, char **argv) {
 			}
 		}
 
+		renderer->text(screen_width-160, 10, str(format("render: %0.2f ms") % instant_frame_time));
+		renderer->text(screen_width-160, 20, str(format("  tick: %0.2f ms") % instant_tick_time));
+
 		SDL_GL_SwapBuffers();
 
 		++frame_count;
 		auto now = microseconds();
 		auto elapsed = now - prev;
+		instant_frame_time = float(now - frame_start)/1000;
 		if (elapsed >= 1000000LL) {
 			printf("%0.2f fps\n", 1e6*frame_count/elapsed);
 			frame_count = 0;
