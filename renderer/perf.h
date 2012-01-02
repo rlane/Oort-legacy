@@ -9,9 +9,13 @@ namespace Oort {
 
 inline uint64_t microseconds()
 {
-    timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000000LL + (uint64_t)ts.tv_nsec / 1000LL;
+#ifdef __native_client__
+	return 0; // XXX use pp::Core::GetTime()
+#else
+	timespec ts;
+	clock_gettime(CLOCK_REALTIME, &ts);
+	return (uint64_t)ts.tv_sec * 1000000LL + (uint64_t)ts.tv_nsec / 1000LL;
+#endif
 }
 
 // Microsecond timer

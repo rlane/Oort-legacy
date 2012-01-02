@@ -43,12 +43,12 @@ class OortInstance : public pp::Instance {
 		log("tick %d", game->ticks);
 		game->tick();
 		log("render tick");
-		renderer->tick();
+		renderer->tick(*game);
 		log("ticked");
 		const float view_radius = 300;
 		const glm::vec2 view_center = glm::vec2(0,0);
 		log("rendering");
-		renderer->render(view_radius, view_center);
+		renderer->render(view_radius, view_center, 0.0f);
 		log("rendered");
 		schedule_swap();
 	}
@@ -105,7 +105,7 @@ class OortInstance : public pp::Instance {
 		glSetCurrentContextPPAPI(gl_context.pp_resource());
 		log("graphics bound");
 
-		renderer = std::unique_ptr<Renderer>(new Renderer(*game));
+		renderer = std::unique_ptr<Renderer>(new Renderer());
 		log("renderer created");
 
 		handle_resize(initial_screen_width, initial_screen_height);
