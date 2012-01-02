@@ -22,7 +22,9 @@ namespace RendererBatches {
 
 struct ShipState {
 	vec2 p;
+	vec2 v;
 	float h;
+	float w;
 	const ShipClass &klass;
 	const Team &team;
 };
@@ -48,8 +50,10 @@ void ShipBatch::render(float time_delta) {
 
 	BOOST_FOREACH(auto &ship, priv->ships) {
 		glm::mat4 mv_matrix;
-		mv_matrix = glm::translate(mv_matrix, glm::vec3(ship.p, 0));
-		mv_matrix = glm::rotate(mv_matrix, glm::degrees(ship.h), glm::vec3(0, 0, 1));
+		auto p = ship.p + ship.v * time_delta;
+		auto h = ship.h + ship.w * time_delta;
+		mv_matrix = glm::translate(mv_matrix, glm::vec3(p, 0));
+		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
 		mv_matrix = glm::scale(mv_matrix, glm::vec3(1, 1, 1) * ship.klass.scale);
 		glm::vec4 color(ship.team.color, ship.klass.model->alpha);
 		GL::check();
@@ -87,7 +91,9 @@ void ShipBatch::tick(const Game &game) {
 
 		priv->ships.emplace_back(ShipState{
 			ship->get_position(),
+			ship->get_velocity(),
 			ship->get_heading(),
+			ship->get_angular_velocity(),
 			ship->klass,
 			*ship->team
 		});
