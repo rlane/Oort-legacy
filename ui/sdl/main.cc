@@ -233,6 +233,7 @@ int main(int argc, char **argv) {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	renderer = std::unique_ptr<Renderer>(new Renderer(*game));
+	renderer->tick();
 
 	physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
 	physics_debug_renderer->SetFlags(b2Draw::e_shapeBit);

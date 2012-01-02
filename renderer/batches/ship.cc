@@ -20,8 +20,16 @@ using std::shared_ptr;
 namespace Oort {
 namespace RendererBatches {
 
+struct ShipState {
+	vec2 p;
+	float h;
+	const ShipClass &klass;
+	const Team &team;
+};
+
 struct ShipPriv {
 	GL::Program prog;
+	std::list<ShipState> ships;
 
 	ShipPriv()
 		: prog(GL::Program::from_resources("ship")) {}
@@ -38,24 +46,18 @@ void ShipBatch::render() {
 	GL::check();
 	prog.uniform("p_matrix", renderer.p_matrix);
 
-	BOOST_FOREACH(auto ship, game.ships) {
-		if (ship->dead) {
-			continue;
-		}
-
+	BOOST_FOREACH(auto &ship, priv->ships) {
 		glm::mat4 mv_matrix;
-		auto p = ship->get_position();
-		auto h = ship->get_heading();
-		mv_matrix = glm::translate(mv_matrix, glm::vec3(p.x, p.y, 0));
-		mv_matrix = glm::rotate(mv_matrix, glm::degrees(h), glm::vec3(0, 0, 1));
-		mv_matrix = glm::scale(mv_matrix, glm::vec3(1, 1, 1) * ship->klass.scale);
-		glm::vec4 color(ship->team->color, ship->klass.model->alpha);
+		mv_matrix = glm::translate(mv_matrix, glm::vec3(ship.p, 0));
+		mv_matrix = glm::rotate(mv_matrix, glm::degrees(ship.h), glm::vec3(0, 0, 1));
+		mv_matrix = glm::scale(mv_matrix, glm::vec3(1, 1, 1) * ship.klass.scale);
+		glm::vec4 color(ship.team.color, ship.klass.model->alpha);
 		GL::check();
 
 		prog.uniform("mv_matrix", mv_matrix);
 		prog.uniform("color", color);
 
-		BOOST_FOREACH(Shape &shape, ship->klass.model->shapes) {
+		BOOST_FOREACH(Shape &shape, ship.klass.model->shapes) {
 			auto &vertex_buf = shape.vertex_buffer;
 			if (!vertex_buf) {
 				vertex_buf = std::make_shared<GL::Buffer>();
@@ -74,6 +76,22 @@ void ShipBatch::render() {
 	prog.disable_attrib_array("vertex");
 	GL::Program::clear();
 	GL::check();
+}
+
+void ShipBatch::tick() {
+	priv->ships.clear();
+	BOOST_FOREACH(auto ship, game.ships) {
+		if (ship->dead) {
+			continue;
+		}
+
+		priv->ships.emplace_back(ShipState{
+			ship->get_position(),
+			ship->get_heading(),
+			ship->klass,
+			*ship->team
+		});
+	}
 }
 
 }

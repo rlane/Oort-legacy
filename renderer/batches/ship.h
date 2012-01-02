@@ -13,6 +13,7 @@ class ShipBatch : public Batch {
 public:
 	ShipBatch(Renderer &Renderer);
 	virtual void render();
+	virtual void tick();
 
 private:
 	std::shared_ptr<ShipPriv> priv;
