@@ -1,5 +1,6 @@
 #include "renderer/renderer.h"
 #include <boost/foreach.hpp>
+#include <boost/units/detail/utility.hpp>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -16,6 +17,7 @@ using glm::vec2;
 using glm::vec4;
 using std::make_shared;
 using std::shared_ptr;
+using boost::units::detail::demangle;
 using namespace Oort::RendererBatches;
 
 namespace Oort {
@@ -44,6 +46,7 @@ void Renderer::reshape(int screen_width, int screen_height) {
 
 void Renderer::render(float view_radius,
                       glm::vec2 view_center) {
+	Timer timer;
 	GL::check();
 
 #ifndef __native_client__
@@ -69,17 +72,27 @@ void Renderer::render(float view_radius,
 
 	BOOST_FOREACH(auto batch, batches) {
 		//log("rendering batch %s", typeid(*batch).name());
+		Timer timer;
 		batch->render();
+		GL::check();
+		glFinish();
+		batch->render_perf.update(timer);
 	}
 
 	texts.clear();
+
+	render_perf.update(timer);
 }
 
 void Renderer::tick() {
+	Timer timer;
 	BOOST_FOREACH(auto batch, batches) {
 		//log("renderer ticking batch %s", typeid(*batch).name());
+		Timer timer;
 		batch->tick();
+		batch->tick_perf.update(timer);
 	}
+	tick_perf.update(timer);
 }
 
 vec2 Renderer::pixel2screen(vec2 p) {
@@ -89,6 +102,19 @@ vec2 Renderer::pixel2screen(vec2 p) {
 
 void Renderer::text(int x, int y, const std::string &str) {
 	texts.emplace_back(Text{x, y, str});
+}
+
+void Renderer::dump_perf() {
+	log("Renderer performance:");
+	log("render overall: %s", render_perf.summary().c_str());
+	log("tick   overall: %s", tick_perf.summary().c_str());
+	BOOST_FOREACH(auto batch, batches) {
+		auto name_str = demangle(typeid(*batch).name());
+		auto name = strrchr(name_str.c_str(), ':') + 1;
+		log("render %13s %s", name, batch->render_perf.summary().c_str());
+		log("tick   %13s %s", name, batch->tick_perf.summary().c_str());
+	}
+	log("");
 }
 
 }

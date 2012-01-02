@@ -11,7 +11,7 @@ noinst_HEADERS = \
 	renderer/renderer.h renderer/physics_debug_renderer.h renderer/font.h \
 	renderer/batch.h renderer/batches/ship.h renderer/batches/tail.h \
 	renderer/batches/bullet.h renderer/batches/beam.h renderer/batches/text.h \
-	renderer/batches/particle.h \
+	renderer/batches/particle.h renderer/perf.h \
 	test/testcase.h
 
 AM_CXXFLAGS = \

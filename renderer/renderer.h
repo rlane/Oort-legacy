@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "glm/glm.hpp"
+#include "renderer/perf.h"
 
 namespace Oort {
 
@@ -28,6 +29,8 @@ public:
 	int screen_width, screen_height;
 	float aspect_ratio;
 	float view_scale;
+	PerfHistogram render_perf;
+	PerfHistogram tick_perf;
 
 	Renderer(Game &game);
 	void reshape(int screen_width, int screen_height);
@@ -35,10 +38,10 @@ public:
 	void tick();
 	void text(int x, int y, const std::string &str);
 	glm::vec2 pixel2screen(glm::vec2 p);
+	void dump_perf();
 
 private:
 	std::vector<std::shared_ptr<RendererBatches::Batch>> batches;
-
 	template <typename T> void add_batch();
 };
 

@@ -4,7 +4,6 @@
 #include <sys/timeb.h>
 #include "gl/gl.h"
 #include <SDL.h>
-#include <boost/timer.hpp>
 #include <memory>
 #include <vector>
 #include <string>
@@ -31,15 +30,6 @@
 using glm::vec2;
 using std::make_shared;
 using std::shared_ptr;
-
-// needs -lrt (real-time lib)
-// 1970-01-01 epoch UTC time, 1 mcs resolution (divide by 1M to get time_t)
-uint64_t ClockGetTime()
-{
-    timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000000LL + (uint64_t)ts.tv_nsec / 1000LL;
-}
 
 namespace Oort {
 
@@ -250,11 +240,11 @@ int main(int argc, char **argv) {
 
 	handle_resize(screen_width, screen_height);
 
-	auto prev = ClockGetTime();
+	auto prev = microseconds();
 	int frame_count = 0;
 
 	while (running) {
-		auto frame_start = ClockGetTime();
+		auto frame_start = microseconds();
 
 		SDL_Event event;
 		while(SDL_PollEvent(&event)) {
@@ -350,15 +340,16 @@ int main(int argc, char **argv) {
 		SDL_GL_SwapBuffers();
 
 		++frame_count;
-		auto now = ClockGetTime();
+		auto now = microseconds();
 		auto elapsed = now - prev;
 		if (elapsed >= 1000000LL) {
 			printf("%0.2f fps\n", 1e6*frame_count/elapsed);
 			frame_count = 0;
 			prev = now;
+			renderer->dump_perf();
 		}
 
-		auto frame_end = ClockGetTime();
+		auto frame_end = microseconds();
 		int frame_time = frame_end - frame_start;
 		if (frame_time < target_frame_time) {
 			usleep(target_frame_time - frame_time);

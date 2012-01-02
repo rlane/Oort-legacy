@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "renderer/renderer.h"
+#include "renderer/perf.h"
 
 namespace Oort {
 
@@ -14,6 +15,8 @@ class Batch {
 public:
 	Renderer &renderer;
 	Game &game;
+	PerfHistogram render_perf;
+	PerfHistogram tick_perf;
 
 	Batch(Renderer &renderer)
 		: renderer(renderer),
