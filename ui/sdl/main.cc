@@ -345,29 +345,31 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		if (render_physics_debug) {
-			physics_debug_renderer->begin_render(view_radius, view_center);
-			for (const b2Body *body = game->world->GetBodyList(); body; body = body->GetNext()) {
-				physics_debug_renderer->DrawPoint(body->GetWorldCenter(), 2, b2Color(0.9, 0.4, 0.3));
-				physics_debug_renderer->DrawPoint(body->GetPosition(), 2, b2Color(0.3, 0.4, 0.9));
-			}
-			physics_debug_renderer->DrawCircle(b2Vec2(0,0), game->radius/Oort::SCALE, b2Color(0.6,0.8,0.6));
-			game->world->DrawDebugData();
-			physics_debug_renderer->end_render();
-			{
-				auto p = screen2world(mouse_position());
-				std::ostringstream tmp;
-				tmp << "mouse position: " << glm::to_string(p);
-				renderer->text(5, 9, tmp.str());
-			}
-		}
-
 		renderer->text(screen_width-160, 10, str(format("render: %0.2f ms") % instant_frame_time));
 		renderer->text(screen_width-160, 20, str(format("  tick: %0.2f ms") % instant_tick_time));
 
 		{
 			boost::lock_guard<boost::mutex> lock(mutex);
+
+			if (render_physics_debug) {
+				auto p = screen2world(mouse_position());
+				std::ostringstream tmp;
+				tmp << "mouse position: " << glm::to_string(p);
+				renderer->text(5, 9, tmp.str());
+			}
+
 			renderer->render(view_radius, view_center);
+
+			if (render_physics_debug) {
+				physics_debug_renderer->begin_render(view_radius, view_center);
+				for (const b2Body *body = game->world->GetBodyList(); body; body = body->GetNext()) {
+					physics_debug_renderer->DrawPoint(body->GetWorldCenter(), 2, b2Color(0.9, 0.4, 0.3));
+					physics_debug_renderer->DrawPoint(body->GetPosition(), 2, b2Color(0.3, 0.4, 0.9));
+				}
+				physics_debug_renderer->DrawCircle(b2Vec2(0,0), game->radius/Oort::SCALE, b2Color(0.6,0.8,0.6));
+				game->world->DrawDebugData();
+				physics_debug_renderer->end_render();
+			}
 		}
 
 		++frame_count;
