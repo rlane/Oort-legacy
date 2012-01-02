@@ -213,11 +213,27 @@ glm::vec2 mouse_position() {
 void ticker_func() {
 	while (running) {
 		auto tick_start = microseconds();
-		game->tick();
-		{
-			boost::lock_guard<boost::mutex> lock(mutex);
-			renderer->tick(*game);
+
+		if (!paused) {
+			if (single_step) {
+				single_step = false;
+				paused = true;
+			}
+
+			if (state == State::RUNNING) {
+				if (game->test_finished) {
+					printf("Test finished\n");
+					state = State::FINISHED;
+				}
+			}
+
+			game->tick();
+			{
+				boost::lock_guard<boost::mutex> lock(mutex);
+				renderer->tick(*game);
+			}
 		}
+
 		auto tick_end = microseconds();
 		int tick_time = tick_end - tick_start;
 		instant_tick_time = float(tick_time)/1000;
@@ -277,20 +293,6 @@ int main(int argc, char **argv) {
 		SDL_Event event;
 		while(SDL_PollEvent(&event)) {
 			handle_sdl_event(event);
-		}
-
-		if (!paused) {
-			if (single_step) {
-				single_step = false;
-				paused = true;
-			}
-
-			if (state == State::RUNNING) {
-				if (game->test_finished) {
-					printf("Test finished\n");
-					state = State::FINISHED;
-				}
-			}
 		}
 
 		if (zoom_rate < 0) {
