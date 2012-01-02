@@ -64,7 +64,9 @@ static uint32_t picked_id = INVALID_SHIP_ID;
 static shared_ptr<Test> game;
 static float instant_frame_time = 0.0f;
 static float instant_tick_time = 0.0f;
+static uint64_t last_tick_time = 0;
 static boost::mutex mutex;
+float last_time_delta = 0.0f;
 
 static std::unique_ptr<Renderer> renderer;
 static std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
@@ -231,6 +233,7 @@ void ticker_func() {
 			{
 				boost::lock_guard<boost::mutex> lock(mutex);
 				renderer->tick(*game);
+				last_tick_time = microseconds();
 			}
 		}
 
@@ -275,6 +278,7 @@ int main(int argc, char **argv) {
 
 	renderer = std::unique_ptr<Renderer>(new Renderer());
 	renderer->tick(*game);
+	last_tick_time = microseconds();
 
 	physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
 	physics_debug_renderer->SetFlags(b2Draw::e_shapeBit);
@@ -358,7 +362,12 @@ int main(int argc, char **argv) {
 				renderer->text(5, 9, tmp.str());
 			}
 
-			renderer->render(view_radius, view_center);
+			float time_delta = float(microseconds() - last_tick_time)/(1000*1000);
+			if (time_delta > 0.1f) time_delta = 0;
+			renderer->render(view_radius, view_center, paused ? last_time_delta : time_delta);
+			if (!paused) {
+				last_time_delta = time_delta;
+			}
 
 			if (render_physics_debug) {
 				physics_debug_renderer->begin_render(view_radius, view_center);

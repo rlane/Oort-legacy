@@ -61,7 +61,7 @@ void BulletBatch::tick(const Game &game) {
 	}
 }
 
-void BulletBatch::render() {
+void BulletBatch::render(float time_delta) {
 	auto &prog = priv->prog;
 
 	prog.use();

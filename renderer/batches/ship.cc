@@ -39,7 +39,7 @@ ShipBatch::ShipBatch(Renderer &renderer)
 	: Batch(renderer),
 	  priv(make_shared<ShipPriv>()) {}
 
-void ShipBatch::render() {
+void ShipBatch::render(float time_delta) {
 	auto &prog = priv->prog;
 	prog.use();
 	prog.enable_attrib_array("vertex");

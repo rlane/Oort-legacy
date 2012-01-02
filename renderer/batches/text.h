@@ -14,7 +14,7 @@ public:
 	GL::Texture font_tex;
 
 	TextBatch(Renderer &Renderer);
-	virtual void render();
+	virtual void render(float time_delta);
 };
 
 }

@@ -33,7 +33,7 @@ public:
 
 	Renderer();
 	void reshape(int screen_width, int screen_height);
-	void render(float view_radius, glm::vec2 view_center);
+	void render(float view_radius, glm::vec2 view_center, float time_delta);
 	void tick(const Game &game);
 	void text(int x, int y, const std::string &str);
 	glm::vec2 pixel2screen(glm::vec2 p);

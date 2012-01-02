@@ -45,7 +45,7 @@ TextBatch::TextBatch(Renderer &renderer)
 	GL::check();
 }
 
-void TextBatch::render() {
+void TextBatch::render(float time_delta) {
 	BOOST_FOREACH(auto &text, renderer.texts) {
 		auto x = text.x;
 		auto y = text.y;

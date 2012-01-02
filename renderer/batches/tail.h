@@ -12,7 +12,7 @@ class TailPriv;
 class TailBatch : public Batch {
 public:
 	TailBatch(Renderer &Renderer);
-	virtual void render();
+	virtual void render(float time_delta);
 	virtual void tick(const Game &game);
 private:
 	std::shared_ptr<TailPriv> priv;

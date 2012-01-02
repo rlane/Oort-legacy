@@ -21,7 +21,7 @@ public:
 		: renderer(renderer) {}
 
 	virtual void tick(const Game &game) {};
-	virtual void render() {};
+	virtual void render(float time) {};
 };
 
 }

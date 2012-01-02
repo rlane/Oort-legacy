@@ -12,7 +12,7 @@ class ShipPriv;
 class ShipBatch : public Batch {
 public:
 	ShipBatch(Renderer &Renderer);
-	virtual void render();
+	virtual void render(float time_delta);
 	virtual void tick(const Game &game);
 
 private:

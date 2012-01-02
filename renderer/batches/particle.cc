@@ -74,13 +74,13 @@ ParticleBatch::ParticleBatch(Renderer &renderer)
 {
 }
 
-void ParticleBatch::render() {
+void ParticleBatch::render(float time_delta) {
 	auto &prog = priv->prog;
 	GL::check();
 	glBlendFunc(GL_ONE, GL_ONE);
 	prog.use();
 	prog.uniform("p_matrix", renderer.p_matrix);
-	prog.uniform("current_time", priv->time);
+	prog.uniform("current_time", priv->time + time_delta);
 	prog.uniform("view_scale", renderer.view_scale);
 	prog.uniform("tex", 0);
 

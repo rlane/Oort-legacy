@@ -48,7 +48,7 @@ void BeamBatch::tick(const Game &game) {
 	}
 }
 
-void BeamBatch::render() {
+void BeamBatch::render(float time_delta) {
 	auto &prog = priv->prog;
 	prog.use();
 	prog.uniform("p_matrix", renderer.p_matrix);

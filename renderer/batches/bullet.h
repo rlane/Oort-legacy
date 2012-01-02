@@ -13,7 +13,7 @@ class BulletBatch : public Batch {
 public:
 	BulletBatch(Renderer &Renderer);
 	virtual void tick(const Game &game);
-	virtual void render();
+	virtual void render(float time_delta);
 
 private:
 	std::shared_ptr<BulletPriv> priv;

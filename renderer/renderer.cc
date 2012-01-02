@@ -43,7 +43,8 @@ void Renderer::reshape(int screen_width, int screen_height) {
 }
 
 void Renderer::render(float view_radius,
-                      glm::vec2 view_center) {
+                      glm::vec2 view_center,
+                      float time_delta) {
 	Timer timer;
 	GL::check();
 
@@ -71,7 +72,7 @@ void Renderer::render(float view_radius,
 	BOOST_FOREACH(auto batch, batches) {
 		//log("rendering batch %s", typeid(*batch).name());
 		Timer timer;
-		batch->render();
+		batch->render(time_delta);
 		GL::check();
 		//glFinish();
 		batch->render_perf.update(timer);

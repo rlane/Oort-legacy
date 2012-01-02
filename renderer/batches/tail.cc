@@ -42,7 +42,7 @@ TailBatch::TailBatch(Renderer &renderer)
 {
 }
 
-void TailBatch::render() {
+void TailBatch::render(float time_delta) {
 	auto &prog = priv->prog;
 	prog.use();
 	GL::check();
