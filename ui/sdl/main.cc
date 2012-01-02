@@ -302,11 +302,6 @@ int main(int argc, char **argv) {
 
 		view_center += view_speed*view_radius;
 
-		{
-			boost::lock_guard<boost::mutex> lock(mutex);
-			renderer->render(view_radius, view_center);
-		}
-
 		if (paused) {
 			std::ostringstream tmp;
 			tmp << "(paused) tick " << game->ticks;
@@ -368,7 +363,10 @@ int main(int argc, char **argv) {
 		renderer->text(screen_width-160, 10, str(format("render: %0.2f ms") % instant_frame_time));
 		renderer->text(screen_width-160, 20, str(format("  tick: %0.2f ms") % instant_tick_time));
 
-		SDL_GL_SwapBuffers();
+		{
+			boost::lock_guard<boost::mutex> lock(mutex);
+			renderer->render(view_radius, view_center);
+		}
 
 		++frame_count;
 		auto now = microseconds();
@@ -380,6 +378,8 @@ int main(int argc, char **argv) {
 			prev = now;
 			renderer->dump_perf();
 		}
+
+		SDL_GL_SwapBuffers();
 	}
 
 	ticker.join();

@@ -73,7 +73,7 @@ void Renderer::render(float view_radius,
 		Timer timer;
 		batch->render();
 		GL::check();
-		glFinish();
+		//glFinish();
 		batch->render_perf.update(timer);
 	}
 
