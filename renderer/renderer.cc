@@ -22,9 +22,7 @@ using namespace Oort::RendererBatches;
 
 namespace Oort {
 
-Renderer::Renderer(Game &game)
-  : game(game)
-{
+Renderer::Renderer() {
 	add_batch<TailBatch>();
 	add_batch<ParticleBatch>();
 	add_batch<ShipBatch>();
@@ -84,12 +82,12 @@ void Renderer::render(float view_radius,
 	render_perf.update(timer);
 }
 
-void Renderer::tick() {
+void Renderer::tick(const Game &game) {
 	Timer timer;
 	BOOST_FOREACH(auto batch, batches) {
 		//log("renderer ticking batch %s", typeid(*batch).name());
 		Timer timer;
-		batch->tick();
+		batch->tick(game);
 		batch->tick_perf.update(timer);
 	}
 	tick_perf.update(timer);

@@ -12,7 +12,7 @@ struct BeamPriv;
 class BeamBatch : public Batch {
 public:
 	BeamBatch(Renderer &Renderer);
-	virtual void tick();
+	virtual void tick(const Game &game);
 	virtual void render();
 
 private:

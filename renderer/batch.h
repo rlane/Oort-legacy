@@ -14,15 +14,13 @@ namespace RendererBatches {
 class Batch {
 public:
 	Renderer &renderer;
-	Game &game;
 	PerfHistogram render_perf;
 	PerfHistogram tick_perf;
 
 	Batch(Renderer &renderer)
-		: renderer(renderer),
-		  game(renderer.game) {}
+		: renderer(renderer) {}
 
-	virtual void tick() {};
+	virtual void tick(const Game &game) {};
 	virtual void render() {};
 };
 

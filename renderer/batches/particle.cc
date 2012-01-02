@@ -41,6 +41,7 @@ struct ParticlePriv {
 	std::list<ParticleBunch> bunches;
 	GL::Texture tex;
 	boost::random::mt19937 prng;
+	float time;
 
 	ParticlePriv()
 		: prog(GL::Program::from_resources("particle")),
@@ -79,7 +80,7 @@ void ParticleBatch::render() {
 	glBlendFunc(GL_ONE, GL_ONE);
 	prog.use();
 	prog.uniform("p_matrix", renderer.p_matrix);
-	prog.uniform("current_time", game.time);
+	prog.uniform("current_time", priv->time);
 	prog.uniform("view_scale", renderer.view_scale);
 	prog.uniform("tex", 0);
 
@@ -117,7 +118,9 @@ void ParticleBatch::render() {
 	GL::check();
 }
 
-void ParticleBatch::tick() {
+void ParticleBatch::tick(const Game &game) {
+	priv->time = game.time;
+
 	if (priv->bunches.size() >= 128) {
 		priv->bunches.pop_back();
 	}
@@ -168,7 +171,7 @@ void ParticleBatch::shower(
 		bunch.particles.emplace_back(Particle{
 			/* initial_position */ p0 + dp + dv*Game::tick_length,
 		  /* velocity */ v0 + v + dv,
-			/* initial_time */ game.time,
+			/* initial_time */ priv->time,
 			/* lifetime */ lifetime,
 			/* type */ (float)type
 		});

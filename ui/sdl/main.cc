@@ -232,8 +232,8 @@ int main(int argc, char **argv) {
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	renderer = std::unique_ptr<Renderer>(new Renderer(*game));
-	renderer->tick();
+	renderer = std::unique_ptr<Renderer>(new Renderer());
+	renderer->tick(*game);
 
 	physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
 	physics_debug_renderer->SetFlags(b2Draw::e_shapeBit);
@@ -266,7 +266,7 @@ int main(int argc, char **argv) {
 			}
 
 			game->tick();
-			renderer->tick();
+			renderer->tick(*game);
 		}
 
 		if (zoom_rate < 0) {

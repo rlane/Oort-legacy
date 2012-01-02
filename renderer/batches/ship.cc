@@ -78,7 +78,7 @@ void ShipBatch::render() {
 	GL::check();
 }
 
-void ShipBatch::tick() {
+void ShipBatch::tick(const Game &game) {
 	priv->ships.clear();
 	BOOST_FOREACH(auto ship, game.ships) {
 		if (ship->dead) {

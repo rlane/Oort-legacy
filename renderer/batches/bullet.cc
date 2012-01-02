@@ -40,7 +40,7 @@ BulletBatch::BulletBatch(Renderer &renderer)
 {
 }
 
-void BulletBatch::tick() {
+void BulletBatch::tick(const Game &game) {
 	vec4 color1(0.27f, 0.27f, 0.27f, 0.33f);
 	vec4 color2(0.27f, 0.27f, 0.27f, 1.0f);
 
