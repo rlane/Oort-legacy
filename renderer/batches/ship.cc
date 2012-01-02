@@ -20,13 +20,19 @@ using std::shared_ptr;
 namespace Oort {
 namespace RendererBatches {
 
+struct ShipPriv {
+	GL::Program prog;
+
+	ShipPriv()
+		: prog(GL::Program::from_resources("ship")) {}
+};
+
 ShipBatch::ShipBatch(Renderer &renderer)
 	: Batch(renderer),
-	  prog(GL::Program::from_resources("ship"))
-{
-}
+	  priv(make_shared<ShipPriv>()) {}
 
 void ShipBatch::render() {
+	auto &prog = priv->prog;
 	prog.use();
 	prog.enable_attrib_array("vertex");
 	GL::check();

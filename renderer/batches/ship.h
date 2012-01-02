@@ -7,12 +7,15 @@
 namespace Oort {
 namespace RendererBatches {
 
+class ShipPriv;
+
 class ShipBatch : public Batch {
 public:
-	GL::Program prog;
-
 	ShipBatch(Renderer &Renderer);
 	virtual void render();
+
+private:
+	std::shared_ptr<ShipPriv> priv;
 };
 
 }
