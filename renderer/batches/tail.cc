@@ -18,13 +18,32 @@ using std::shared_ptr;
 namespace Oort {
 namespace RendererBatches {
 
+struct TailVertex {
+	glm::vec2 p;
+	glm::vec4 color;
+};
+
+struct TailSegment {
+	TailVertex a, b;
+};
+
+struct TailPriv {
+	GL::Program prog;
+	std::vector<TailSegment> tail_segments;
+
+	TailPriv()
+		: prog(GL::Program::from_resources("bullet")) {}
+
+};
+
 TailBatch::TailBatch(Renderer &renderer)
 	: Batch(renderer),
-	  prog(GL::Program::from_resources("bullet"))
+	  priv(make_shared<TailPriv>())
 {
 }
 
 void TailBatch::render() {
+	auto &prog = priv->prog;
 	prog.use();
 	GL::check();
 
@@ -33,9 +52,10 @@ void TailBatch::render() {
 	prog.uniform("p_matrix", renderer.p_matrix);
 	prog.uniform("mv_matrix", glm::mat4());
 	int stride = sizeof(TailVertex);
-	prog.attrib_ptr("vertex", &tail_segments[0].a.p, stride);
-	prog.attrib_ptr("color", &tail_segments[0].a.color, stride);
-	glDrawArrays(GL_LINES, 0, tail_segments.size()*2);
+	TailVertex &v = priv->tail_segments[0].a;
+	prog.attrib_ptr("vertex", &v.p, stride);
+	prog.attrib_ptr("color", &v.color, stride);
+	glDrawArrays(GL_LINES, 0, priv->tail_segments.size()*2);
 	prog.disable_attrib_array("vertex");
 	prog.disable_attrib_array("color");
 	GL::Program::clear();
@@ -47,17 +67,17 @@ static bool tail_segment_expired(const TailSegment &ts) {
 }
 
 void TailBatch::tick() {
-	BOOST_FOREACH(auto &ts, tail_segments) {
+	BOOST_FOREACH(auto &ts, priv->tail_segments) {
 		auto &alpha = ts.b.color.a;
 		alpha = fmaxf(0, alpha - 0.02*Game::tick_length);
 	}
 
-	tail_segments.erase(
-		std::remove_if(tail_segments.begin(), tail_segments.end(), tail_segment_expired),
-		tail_segments.end());
+	priv->tail_segments.erase(
+		std::remove_if(priv->tail_segments.begin(), priv->tail_segments.end(), tail_segment_expired),
+		priv->tail_segments.end());
 
 	BOOST_FOREACH(auto ship, game.ships) {
-		tail_segments.emplace_back(
+		priv->tail_segments.emplace_back(
 			TailSegment{
 				TailVertex{ ship->get_position() - ship->get_velocity()*0.7f, vec4(ship->team->color, 0) },
 				TailVertex{ ship->get_position(), vec4(ship->team->color, ship->klass.tail_alpha) }
