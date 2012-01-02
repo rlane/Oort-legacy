@@ -23,33 +23,34 @@ class OortInstance : public pp::Instance {
 	pp::Graphics3D gl_context;
 	std::unique_ptr<Renderer> renderer;
 	int screen_width, screen_height;
+	pthread_mutex_t mutex;
 
 	public:
 	explicit OortInstance(PP_Instance instance)
 		: pp::Instance(instance)
 	{
+		pthread_mutex_init(&mutex, NULL);
 	}
 
 	static void static_swap_callback(void* user_data, int32_t result);
 
 	void schedule_swap() {
-		log("scheduling swap: fn=%p data=%p", static_swap_callback, this);
+		//log("scheduling swap: fn=%p data=%p", static_swap_callback, this);
 		pp::CompletionCallback cb(static_swap_callback, this);
 		gl_context.SwapBuffers(cb);
-		log("swap scheduled");
+		//log("swap scheduled");
 	}
 
 	void swap_callback() {
-		log("tick %d", game->ticks);
-		game->tick();
-		log("render tick");
-		renderer->tick(*game);
-		log("ticked");
 		const float view_radius = 300;
 		const glm::vec2 view_center = glm::vec2(0,0);
-		log("rendering");
-		renderer->render(view_radius, view_center, 0.0f);
-		log("rendered");
+		//log("rendering");
+		{
+			pthread_mutex_lock(&mutex);
+			renderer->render(view_radius, view_center, 0.0f);
+			pthread_mutex_unlock(&mutex);
+		}
+		//log("rendered");
 		schedule_swap();
 	}
 
@@ -58,6 +59,24 @@ class OortInstance : public pp::Instance {
 		screen_height = h;
 		glViewport(0, 0, w, h);
 		renderer->reshape(w, h);
+	}
+
+	void ticker_func() {
+		while (true) {
+			game->tick();
+			{
+				pthread_mutex_lock(&mutex);
+				renderer->tick(*game);
+				pthread_mutex_unlock(&mutex);
+			}
+
+			usleep(31250);
+		}
+	}
+
+	static void *static_ticker_func(void *inst) {
+		static_cast<OortInstance*>(inst)->ticker_func();
+		return NULL;
 	}
 
 	// The dtor makes the 3D context current before deleting the cube view, then
@@ -82,8 +101,8 @@ class OortInstance : public pp::Instance {
 		auto green = std::make_shared<Team>("green", CxxAI::factory<CxxAI>(), glm::vec3(0, 1, 0));
 
 		log("creating ship");
-		log("klass=%p", &*fighter);
 		auto ship = std::make_shared<Ship>(game, *fighter, green);
+		ship->set_angular_velocity(3.14);
 		game->ships.push_back(ship);
 
 		log("game initialized");
@@ -115,6 +134,8 @@ class OortInstance : public pp::Instance {
 		glClear(GL_COLOR_BUFFER_BIT);
 		log("cleared");
 
+		pthread_t ticker;
+		pthread_create(&ticker, NULL, static_ticker_func, this);
 		schedule_swap();
 
 		return true;
