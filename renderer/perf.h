@@ -4,13 +4,19 @@
 
 #include <boost/format.hpp>
 #include "common/log.h"
+#include <sys/time.h>
 
 namespace Oort {
 
 inline uint64_t microseconds()
 {
 #ifdef __native_client__
-	return 0; // XXX use pp::Core::GetTime()
+	struct timeval tv;
+	if (gettimeofday(&tv, NULL)) {
+		perror("gettimeofday");
+		abort();
+	}
+	return (uint64_t)tv.tv_sec * 1000000LL + (uint64_t)tv.tv_usec;
 #else
 	timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);

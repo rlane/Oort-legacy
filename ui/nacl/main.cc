@@ -18,12 +18,44 @@
 
 using namespace Oort;
 
+class FramerateCounter {
+public:
+	int count;
+	uint64_t start;
+	uint64_t prev;
+	uint64_t instant;
+	float hz;
+
+	FramerateCounter() {
+		count = 0;
+		start = prev = microseconds();
+		hz = 0;
+	}
+
+	bool update() {
+		count++;
+		auto now = microseconds();
+		instant = now - prev;
+		prev = now;
+		auto elapsed = now - start;
+		if (elapsed >= 1000000LL) {
+			hz = 1.0e6*count/elapsed;
+			count = 0;
+			start = now;
+			return true;
+		}
+		return false;
+	}
+};
+
 class OortInstance : public pp::Instance {
 	Game *game;
 	pp::Graphics3D gl_context;
 	std::unique_ptr<Renderer> renderer;
 	int screen_width, screen_height;
 	pthread_mutex_t mutex;
+	FramerateCounter framerate;
+	FramerateCounter tickrate;
 
 	public:
 	explicit OortInstance(PP_Instance instance)
@@ -52,6 +84,12 @@ class OortInstance : public pp::Instance {
 		}
 		//log("rendered");
 		schedule_swap();
+
+		if (framerate.update()) {
+			log("%0.2f fps", framerate.hz);
+			log("%0.2f tps", tickrate.hz);
+			renderer->dump_perf();
+		}
 	}
 
 	void handle_resize(int w, int h) {
@@ -62,15 +100,23 @@ class OortInstance : public pp::Instance {
 	}
 
 	void ticker_func() {
+		const uint64_t target = 31250;
+
 		while (true) {
+			Timer timer;
+
 			game->tick();
+
 			{
 				pthread_mutex_lock(&mutex);
 				renderer->tick(*game);
 				pthread_mutex_unlock(&mutex);
 			}
 
-			usleep(31250);
+			tickrate.update();
+			auto elapsed = timer.elapsed();
+			int remaining = int(target) - int(elapsed);
+			usleep(glm::max(remaining, 1000));
 		}
 	}
 
