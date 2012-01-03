@@ -25,12 +25,12 @@ namespace Oort {
 
 Renderer::Renderer() {
 	add_batch<TailBatch>();
+	add_batch<BulletBatch>();
+	add_batch<BlurBatch>();
+	add_batch<BeamBatch>();
 	add_batch<ParticleBatch>();
 	add_batch<ShipBatch>();
-	add_batch<BulletBatch>();
-	add_batch<BeamBatch>();
 	add_batch<TextBatch>();
-	add_batch<BlurBatch>();
 }
 
 template <typename T>
@@ -73,10 +73,12 @@ void Renderer::render(float view_radius,
 		//log("rendering batch %s", typeid(*batch).name());
 		Timer timer;
 		batch->render(time_delta);
-		GL::check();
+		//GL::check();
 		//glFinish();
 		batch->render_perf.update(timer);
 	}
+	GL::check();
+	glFinish();
 
 	texts.clear();
 

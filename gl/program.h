@@ -76,15 +76,11 @@ public:
 	}
 
 	void use() {
-		GL::check();
 		glUseProgram(id);
-		GL::check();
 	}
 
 	static void clear() {
-		GL::check();
 		glUseProgram(0);
-		GL::check();
 	}
 
 	int uniform_location(std::string name) {
