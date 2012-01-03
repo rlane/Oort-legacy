@@ -51,11 +51,9 @@ void Renderer::render(float view_radius,
 #ifndef __native_client__
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glEnable(GL_BLEND);
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_LINE_SMOOTH);
 #endif
 
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
 	glLineWidth(1.2f);

@@ -49,6 +49,7 @@ void BeamBatch::tick(const Game &game) {
 }
 
 void BeamBatch::render(float time_delta) {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	auto &prog = priv->prog;
 	prog.use();
 	prog.uniform("p_matrix", renderer.p_matrix);
