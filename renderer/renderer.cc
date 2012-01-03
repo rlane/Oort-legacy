@@ -12,6 +12,7 @@
 #include "renderer/batches/beam.h"
 #include "renderer/batches/text.h"
 #include "renderer/batches/particle.h"
+#include "renderer/batches/blur.h"
 
 using glm::vec2;
 using glm::vec4;
@@ -29,6 +30,7 @@ Renderer::Renderer() {
 	add_batch<BulletBatch>();
 	add_batch<BeamBatch>();
 	add_batch<TextBatch>();
+	add_batch<BlurBatch>();
 }
 
 template <typename T>

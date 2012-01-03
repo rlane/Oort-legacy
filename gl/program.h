@@ -50,9 +50,13 @@ public:
 		std::swap(fragment_shader, other.fragment_shader);
 	}
 
+	static GL::Program from_resources(const std::string &vertex_name, const std::string &frag_name) {
+		return GL::Program(std::make_shared<GL::VertexShader>(Oort::load_resource("shaders/" + vertex_name + ".v.glsl")),
+		                   std::make_shared<GL::FragmentShader>(Oort::load_resource("shaders/" + frag_name + ".f.glsl")));
+	}
+
 	static GL::Program from_resources(const std::string &name) {
-		return GL::Program(std::make_shared<GL::VertexShader>(Oort::load_resource("shaders/" + name + ".v.glsl")),
-		                   std::make_shared<GL::FragmentShader>(Oort::load_resource("shaders/" + name + ".f.glsl")));
+		return from_resources(name, name);
 	}
 
 	void display_info_log() {
