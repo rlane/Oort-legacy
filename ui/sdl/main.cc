@@ -262,6 +262,16 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	if (SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1) != 0) {
+		printf("unable to set multisample buffers\n");
+	}
+
+	if (SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4) != 0) {
+		printf("unable to set multisample samples\n");
+	}
+
+	glEnable(GL_MULTISAMPLE);
+
 	if (SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1) != 0) {
 		printf("unable to configure vsync\n");
 	}
