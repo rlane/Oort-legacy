@@ -13,6 +13,7 @@
 #include "renderer/batches/text.h"
 #include "renderer/batches/particle.h"
 #include "renderer/batches/blur.h"
+#include "renderer/batches/clear.h"
 
 using glm::vec2;
 using glm::vec4;
@@ -24,6 +25,7 @@ using namespace Oort::RendererBatches;
 namespace Oort {
 
 Renderer::Renderer() {
+	add_batch<ClearBatch>();
 	add_batch<TailBatch>();
 	add_batch<BulletBatch>();
 	add_batch<BlurBatch>();
@@ -57,10 +59,7 @@ void Renderer::render(float view_radius,
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.0f, 0.0f, 0.03f, 0.0f);
 	glLineWidth(1.2f);
-
-	glClear(GL_COLOR_BUFFER_BIT);
 
 	p_matrix = glm::ortho(view_center.x - view_radius,
 	                      view_center.x + view_radius,
