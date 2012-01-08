@@ -25,6 +25,7 @@ using namespace Oort::RendererBatches;
 namespace Oort {
 
 Renderer::Renderer() {
+	benchmark = false;
 	add_batch<ClearBatch>();
 	add_batch<TailBatch>();
 	add_batch<BulletBatch>();
@@ -73,15 +74,18 @@ void Renderer::render(float view_radius,
 		Timer timer;
 		batch->render(time_delta);
 		//GL::check();
-		//glFinish();
-		batch->render_perf.update(timer);
+		if (benchmark) {
+			glFinish();
+			batch->render_perf.update(timer);
+		}
 	}
 	GL::check();
-	glFinish();
 
 	texts.clear();
 
-	render_perf.update(timer);
+	if (benchmark) {
+		render_perf.update(timer);
+	}
 }
 
 void Renderer::tick(const Game &game) {
@@ -90,9 +94,13 @@ void Renderer::tick(const Game &game) {
 		//log("renderer ticking batch %s", typeid(*batch).name());
 		Timer timer;
 		batch->tick(game);
-		batch->tick_perf.update(timer);
+		if (benchmark) {
+			batch->tick_perf.update(timer);
+		}
 	}
-	tick_perf.update(timer);
+	if (benchmark) {
+		tick_perf.update(timer);
+	}
 }
 
 vec2 Renderer::pixel2screen(vec2 p) {

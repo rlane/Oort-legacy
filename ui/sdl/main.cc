@@ -104,6 +104,9 @@ static void handle_keydown(int sym) {
 	case SDLK_x:
 		zoom_rate += zoom_const;
 		break;
+	case SDLK_b:
+		renderer->benchmark = !renderer->benchmark;
+		break;
 	default:
 		break;
 	}
@@ -359,8 +362,10 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		renderer->text(screen_width-160, 10, str(format("render: %0.2f ms") % instant_frame_time));
-		renderer->text(screen_width-160, 20, str(format("  tick: %0.2f ms") % instant_tick_time));
+		if (renderer->benchmark) {
+			renderer->text(screen_width-160, 10, str(format("render: %0.2f ms") % instant_frame_time));
+			renderer->text(screen_width-160, 20, str(format("  tick: %0.2f ms") % instant_tick_time));
+		}
 
 		{
 			boost::lock_guard<boost::mutex> lock(mutex);
@@ -399,7 +404,9 @@ int main(int argc, char **argv) {
 			printf("%0.2f fps\n", 1e6*frame_count/elapsed);
 			frame_count = 0;
 			prev = now;
-			renderer->dump_perf();
+			if (renderer->benchmark) {
+				renderer->dump_perf();
+			}
 		}
 
 		SDL_GL_SwapBuffers();

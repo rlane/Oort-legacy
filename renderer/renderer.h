@@ -30,6 +30,7 @@ public:
 	float view_scale;
 	PerfHistogram render_perf;
 	PerfHistogram tick_perf;
+	bool benchmark;
 
 	Renderer();
 	void reshape(int screen_width, int screen_height);
