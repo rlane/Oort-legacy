@@ -45,13 +45,14 @@ struct PerfHistogram {
 
 	int num_frames;
 	int buckets[NUM_BUCKETS];
-	float min, max, sum;
+	float min, max, sum, mavg;
 
 	PerfHistogram() {
 		num_frames = 0;
 		min = 1000;
 		max = 0;
 		sum = 0;
+		mavg = 0;
 
 		for (int i = 0; i < NUM_BUCKETS; i++) {
 			buckets[i] = 0.0f;
@@ -59,6 +60,12 @@ struct PerfHistogram {
 	}
 
 	void update(float ms) {
+		if (num_frames == 0) {
+			mavg = ms;
+		} else {
+			mavg = (63.0f*mavg + ms)/64.0f;
+		}
+
 		num_frames++;
 		sum += ms;
 		if (ms < min) min = ms;
@@ -76,6 +83,7 @@ struct PerfHistogram {
 	void dump() {
 		log("num frames: %d", num_frames);
 		log("avg time: %f ms", sum/num_frames);
+		log("mavg time: %f ms", mavg);
 		log("min time: %f ms", min);
 		log("max time: %f ms", max);
 		log("time histogram:");
@@ -87,8 +95,8 @@ struct PerfHistogram {
 	}
 
 	std::string summary() {
-		boost::format fmt("avg=%.2fms min=%.2fms max=%.2fms");
-		fmt % (sum/num_frames) % min % max;
+		boost::format fmt("mavg=%.2fms avg=%.2fms min=%.2fms max=%.2fms");
+		fmt % mavg % (sum/num_frames) % min % max;
 		return fmt.str();
 	}
 };
