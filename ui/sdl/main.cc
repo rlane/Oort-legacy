@@ -393,6 +393,7 @@ int main(int argc, char **argv) {
 		}
 
 		SDL_GL_SwapBuffers();
+		glFinish();
 	}
 
 	ticker.join();
