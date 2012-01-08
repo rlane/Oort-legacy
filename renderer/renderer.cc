@@ -12,7 +12,6 @@
 #include "renderer/batches/beam.h"
 #include "renderer/batches/text.h"
 #include "renderer/batches/particle.h"
-#include "renderer/batches/blur.h"
 #include "renderer/batches/clear.h"
 
 using glm::vec2;
@@ -28,7 +27,6 @@ Renderer::Renderer() {
 	benchmark = false;
 	add_batch<ClearBatch>();
 	add_batch<TailBatch>();
-	add_batch<BlurBatch>();
 	add_batch<BulletBatch>();
 	add_batch<BeamBatch>();
 	add_batch<ParticleBatch>();
