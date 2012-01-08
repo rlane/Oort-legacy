@@ -28,8 +28,8 @@ Renderer::Renderer() {
 	benchmark = false;
 	add_batch<ClearBatch>();
 	add_batch<TailBatch>();
-	add_batch<BulletBatch>();
 	add_batch<BlurBatch>();
+	add_batch<BulletBatch>();
 	add_batch<BeamBatch>();
 	add_batch<ParticleBatch>();
 	add_batch<ShipBatch>();
