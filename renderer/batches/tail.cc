@@ -68,12 +68,14 @@ struct TailPriv {
 	GL::Program vert_blur_prog;
 	FramebufferTexture fbs[2];
 	std::vector<TailSegment> tail_segments;
+	int fb_width, fb_height;
 
 	TailPriv()
 		: tail_prog(GL::Program::from_resources("bullet")),
 		  horiz_blur_prog(GL::Program::from_resources("gaussian", "gaussian_horiz")),
 		  vert_blur_prog(GL::Program::from_resources("gaussian", "gaussian_vert"))
 	{
+		fb_width = fb_height = 1;
 	}
 
 };
@@ -88,13 +90,15 @@ void TailBatch::render(float time_delta) {
 	std::vector<vec2> fsquad_vertices = { vec2(1,0), vec2(0,0), vec2(1,1), vec2(0,1) };
 
 	// create fb textures
-	// TODO only recreate if dimensions changed
-	{
+	if (priv->fb_width != renderer.screen_width ||
+			priv->fb_height != renderer.screen_height) {
 		glBindTexture(GL_TEXTURE_2D, priv->fbs[0].tex);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, renderer.screen_width, renderer.screen_height, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
 		glBindTexture(GL_TEXTURE_2D, priv->fbs[1].tex);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, renderer.screen_width, renderer.screen_height, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		priv->fb_width = renderer.screen_width;
+		priv->fb_height = renderer.screen_height;
 	}
 
 	// render tails to fb0
