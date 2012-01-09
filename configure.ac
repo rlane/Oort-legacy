@@ -21,6 +21,7 @@ AC_MSG_RESULT([$nacl])
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
+AC_LANG(C++)
 
 CXXFLAGS="-std=c++0x -g -O1 -Wall"
 LDFLAGS="-rdynamic -ldl"
@@ -72,6 +73,26 @@ AC_SUBST(FRONTENDS)
 PKG_CHECK_MODULES(LUA, lua >= $LUA_REQUIRED)
 AC_SUBST(LUA_CFLAGS)
 AC_SUBST(LUA_LIBS)
+
+AC_CHECK_HEADER("Box2D/Box2D.h")	
+
+AC_MSG_CHECKING([b2World constructor arguments])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <Box2D/Box2D.h>
+void check() {
+	b2World(b2Vec2(0,0), false);
+}
+]])], [b2WorldConstructor=old])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <Box2D/Box2D.h>
+void check() {
+	b2World(b2Vec2(0,0));
+}
+]])], [b2WorldConstructor=new])
+AC_MSG_RESULT([$b2WorldConstructor])
+if test $b2WorldConstructor = "old"; then
+	AC_DEFINE(B2WORLD_OLD_CONSTRUCTOR, [], [Old version of b2World constructor])
+fi
 
 AC_CONFIG_FILES([
 	Makefile

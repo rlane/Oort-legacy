@@ -109,7 +109,11 @@ Game::Game(const Scenario &scn, const vector<std::shared_ptr<AIFactory>> &ai_fac
 	test_finished = false;
 	int player_ai_index = 0;
 	b2Vec2 gravity(0, 0);
+#ifdef B2WORLD_OLD_CONSTRUCTOR
+	world = std::unique_ptr<b2World>(new b2World(gravity, false));
+#else
 	world = std::unique_ptr<b2World>(new b2World(gravity));
+#endif
 	world->SetAutoClearForces(false);
 	world->SetContactFilter(&contact_filter);
 	world->SetContactListener(&contact_listener);
