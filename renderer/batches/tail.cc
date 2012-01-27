@@ -31,11 +31,11 @@ struct FramebufferTexture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glGenFramebuffers(1, &fbo);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 		{
 			GLenum status;
-			status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+			status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 			switch (status) {
 				case GL_FRAMEBUFFER_COMPLETE:
 					break;
@@ -47,7 +47,7 @@ struct FramebufferTexture {
 					abort();
 			}
 		}
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		GL::check();
 	}
@@ -103,7 +103,7 @@ void TailBatch::render(float time_delta) {
 
 	// render tails to fb0
 	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, priv->fbs[0].fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, priv->fbs[0].fbo);
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 		auto &prog = priv->tail_prog;
@@ -125,7 +125,7 @@ void TailBatch::render(float time_delta) {
 	// render horizontal blur from tex0 to fb1
 	{
 		glBindTexture(GL_TEXTURE_2D, priv->fbs[0].tex);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, priv->fbs[1].fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, priv->fbs[1].fbo);
 		auto &prog = priv->horiz_blur_prog;
 		prog.use();
 		prog.uniform("tex", 0);
@@ -140,7 +140,7 @@ void TailBatch::render(float time_delta) {
 	// render vertical blur from tex1 to screen
 	{
 		glBindTexture(GL_TEXTURE_2D, priv->fbs[1].tex);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		auto &prog = priv->vert_blur_prog;
 		prog.use();
 		prog.uniform("tex", 0);
