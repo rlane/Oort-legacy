@@ -3,18 +3,24 @@ set -e
 
 LIBS="runnable-ld.so libpthread.so.e59bca84 libppapi_cpp.so libppapi_gles2.so libstdc++.so.6 libm.so.e59bca84 libgcc_s.so.1 libc.so.e59bca84 libdl.so.e59bca84"
 
+if [ ! -d $NACL_SDK_ROOT ]
+then
+	echo NACL_SDK_ROOT must be set
+	exit 1
+fi
+
 mkdir -p build-nacl
 cd build-nacl
 
-#for HOST in i686-nacl x86_64-nacl
-#do
-# rm -rf $HOST
-#	mkdir $HOST
-#	cd $HOST
-#	../../configure --host $HOST
-#	make -j8
-#	cd ..
-#done
+for HOST in i686-nacl x86_64-nacl
+do
+	rm -rf $HOST
+	mkdir $HOST
+	cd $HOST
+	../../configure --host $HOST
+	make -j8
+	cd ..
+done
 
 mkdir -p www
 cd www
