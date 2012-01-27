@@ -28,3 +28,6 @@ oort_sdl
 oort_nacl
 
 ui/nacl/embedded_resources.c
+
+build-linux
+build-nacl
