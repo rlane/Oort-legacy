@@ -90,7 +90,7 @@ void check() {
 }
 ]])], [b2WorldConstructor=new])
 AC_MSG_RESULT([$b2WorldConstructor])
-if test $b2WorldConstructor = "old"; then
+if [[ "$b2WorldConstructor" = "old" ]]; then
 	AC_DEFINE(B2WORLD_OLD_CONSTRUCTOR, [], [Old version of b2World constructor])
 fi
 
