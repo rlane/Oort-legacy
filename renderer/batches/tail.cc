@@ -25,7 +25,7 @@ struct FramebufferTexture {
 	FramebufferTexture() {
 		glGenTextures(1, &tex);
 		glBindTexture(GL_TEXTURE_2D, tex);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 1, 1, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -93,9 +93,9 @@ void TailBatch::render(float time_delta) {
 	if (priv->fb_width != renderer.screen_width ||
 			priv->fb_height != renderer.screen_height) {
 		glBindTexture(GL_TEXTURE_2D, priv->fbs[0].tex);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, renderer.screen_width, renderer.screen_height, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, renderer.screen_width, renderer.screen_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glBindTexture(GL_TEXTURE_2D, priv->fbs[1].tex);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, renderer.screen_width, renderer.screen_height, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, renderer.screen_width, renderer.screen_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		priv->fb_width = renderer.screen_width;
 		priv->fb_height = renderer.screen_height;
