@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <typeinfo>
 #include <boost/foreach.hpp>
+#include <stdexcept>
 
 #include "glm/glm.hpp"
 #include <Box2D/Box2D.h>
@@ -107,7 +108,7 @@ Game::Game(const Scenario &scn, const vector<std::shared_ptr<AIFactory>> &ai_fac
   : ticks(0),
     time(0),
     radius(10000) {
-	int player_ai_index = 0;
+	unsigned int player_ai_index = 0;
 	b2Vec2 gravity(0, 0);
 #ifdef B2WORLD_OLD_CONSTRUCTOR
 	world = std::unique_ptr<b2World>(new b2World(gravity, false));
@@ -119,10 +120,23 @@ Game::Game(const Scenario &scn, const vector<std::shared_ptr<AIFactory>> &ai_fac
 	world->SetContactListener(&contact_listener);
 
 	BOOST_FOREACH(auto scn_team, scn.teams) {
+		if (player_ai_index >= ai_factories.size()) {
+			throw std::runtime_error("Not enough AIs given");
+		}
 		auto ai_factory = ai_factories[player_ai_index++];
 		auto team = make_shared<Team>(scn_team.name, ai_factory, scn_team.color);
 		BOOST_FOREACH(auto scn_ship, scn_team.ships) {
-			auto ship = make_shared<Ship>(this, *fighter, team);
+			ShipClass *klass = NULL;
+			if (scn_ship.klass == "fighter") {
+				klass = &*fighter;
+			} else if (scn_ship.klass == "assault_frigate") {
+				klass = &*assault_frigate;
+			} else if (scn_ship.klass == "ion_cannon_frigate") {
+				klass = &*ion_cannon_frigate;
+			} else {
+				throw std::runtime_error("Unknown ship class");
+			}
+			auto ship = make_shared<Ship>(this, *klass, team);
 			ship->set_position(scn_ship.p);
 			ship->set_heading(scn_ship.h);
 			ship->set_velocity(scn_ship.v);

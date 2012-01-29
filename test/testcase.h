@@ -90,11 +90,14 @@ void assert_contact(const Entity &a, const Entity &b) {
 
 class SimpleTest : public Test {
 public:
-	Scenario scn;
-	std::vector<std::shared_ptr<AIFactory>> ai_factories;
 	std::shared_ptr<Game> game;
 
 	SimpleTest()
+		: game(make_shared<Game>(Scenario(), std::vector<std::shared_ptr<AIFactory>>()))
+	{
+	}
+
+	SimpleTest(const Scenario &scn, std::vector<std::shared_ptr<AIFactory>> ai_factories)
 		: game(make_shared<Game>(scn, ai_factories))
 	{
 	}

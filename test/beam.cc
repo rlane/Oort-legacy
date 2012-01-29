@@ -20,25 +20,9 @@ class BeamTest : public SimpleTest {
 
 public:
 	BeamTest()
+		: SimpleTest(Scenario::load("test/beam.json"),
+		             { CxxAI::factory<BeamAI>(), CxxAI::factory<CxxAI>() })
 	{
-		auto green = make_shared<Team>("green", CxxAI::factory<BeamAI>(), vec3(0, 1, 0));
-		auto red = make_shared<Team>("red", CxxAI::factory<CxxAI>(), vec3(1, 0, 0));
-
-		{
-			auto ship = make_shared<Ship>(&*game, *ion_cannon_frigate, green);
-			ship->set_position(vec2(-dist, 0));
-			ship->set_velocity(vec2(0, 0));
-			ship->set_heading(0);
-			game->ships.push_back(ship);
-		}
-
-		{
-			auto ship = make_shared<Ship>(&*game, *fighter, red);
-			ship->set_position(vec2(dist, 0));
-			ship->set_velocity(vec2(0, 0));
-			ship->set_heading(pi);
-			game->ships.push_back(ship);
-		}
 	}
 
 	void after_tick() {
