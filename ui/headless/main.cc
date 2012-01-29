@@ -28,17 +28,19 @@ int main(int argc, char **argv) {
 	ShipClass::initialize();
 
 	printf("Running test %s\n", argv[1]);
-	auto game = Test::load(std::string(argv[1]));
+	auto test = Test::load(std::string(argv[1]));
+	auto game = test->get_game();
 
 	b2Timer timer;
 
 	while (true) {
-		if (game->test_finished) {
+		if (test->finished) {
 			printf("Passed test in %d ticks\n", game->ticks);
 			break;
 		}
 
 		game->tick();
+		test->after_tick();
 	}
 
 	printf("ms/frame: %0.2f\n", timer.GetMilliseconds()/game->ticks);

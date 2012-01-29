@@ -15,35 +15,36 @@ public:
 	}
 };
 
-class BeamTest : public Test {
+class BeamTest : public SimpleTest {
 	static constexpr float dist = 600;
 
 public:
-	BeamTest() {
+	BeamTest()
+	{
 		auto green = make_shared<Team>("green", CxxAI::factory<BeamAI>(), vec3(0, 1, 0));
 		auto red = make_shared<Team>("red", CxxAI::factory<CxxAI>(), vec3(1, 0, 0));
 
 		{
-			auto ship = make_shared<Ship>(this, *ion_cannon_frigate, green);
+			auto ship = make_shared<Ship>(&*game, *ion_cannon_frigate, green);
 			ship->set_position(vec2(-dist, 0));
 			ship->set_velocity(vec2(0, 0));
 			ship->set_heading(0);
-			ships.push_back(ship);
+			game->ships.push_back(ship);
 		}
 
 		{
-			auto ship = make_shared<Ship>(this, *fighter, red);
+			auto ship = make_shared<Ship>(&*game, *fighter, red);
 			ship->set_position(vec2(dist, 0));
 			ship->set_velocity(vec2(0, 0));
 			ship->set_heading(pi);
-			ships.push_back(ship);
+			game->ships.push_back(ship);
 		}
 	}
 
 	void after_tick() {
 		Team *winner;
-		if (ships.empty() || check_victory(winner)) {
-			test_finished = true;
+		if (game->ships.empty() || game->check_victory(winner)) {
+			finished = true;
 		}
 	}
 } test;

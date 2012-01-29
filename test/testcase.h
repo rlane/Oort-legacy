@@ -88,4 +88,20 @@ void assert_contact(const Entity &a, const Entity &b) {
 	throw runtime_error(msg.str());
 }
 
+class SimpleTest : public Test {
+public:
+	Scenario scn;
+	std::vector<std::shared_ptr<AIFactory>> ai_factories;
+	std::shared_ptr<Game> game;
+
+	SimpleTest()
+		: game(make_shared<Game>(scn, ai_factories))
+	{
+	}
+
+	std::shared_ptr<Game> get_game() {
+		return game;
+	}
+};
+
 }

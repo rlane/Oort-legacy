@@ -47,7 +47,7 @@ public:
 	}
 };
 
-class FurballTest : public Test {
+class FurballTest : public SimpleTest {
 public:
 	FurballTest() {
 		boost::random::mt19937 prng(42);
@@ -70,18 +70,18 @@ public:
 		};
 
 		for (auto i = 0; i < 100; i++) {
-			auto ship = make_shared<Ship>(this, *klasses[(i/teams.size()) % klasses.size()], teams[i % teams.size()]);
+			auto ship = make_shared<Ship>(&*game, *klasses[(i/teams.size()) % klasses.size()], teams[i % teams.size()]);
 			ship->set_position(vec2(p_dist(prng), p_dist(prng)));
 			ship->set_velocity(vec2(v_dist(prng), v_dist(prng)));
 			ship->set_heading(h_dist(prng));
-			ships.push_back(ship);
+			game->ships.push_back(ship);
 		}
 	}
 
 	void after_tick() {
 		Team *winner;
-		if (ships.empty() || check_victory(winner)) {
-			test_finished = true;
+		if (game->ships.empty() || game->check_victory(winner)) {
+			finished = true;
 		}
 	}
 } test;

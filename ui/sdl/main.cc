@@ -61,7 +61,8 @@ static const float fps = 60;
 static const float tps = 32;
 static const int target_tick_time = 1000000LL/tps;
 static uint32_t picked_id = INVALID_SHIP_ID;
-static shared_ptr<Test> game;
+static shared_ptr<Game> game;
+static Test *test;
 static float instant_frame_time = 0.0f;
 static float instant_tick_time = 0.0f;
 static uint64_t last_tick_time = 0;
@@ -226,13 +227,14 @@ void ticker_func() {
 			}
 
 			if (state == State::RUNNING) {
-				if (game->test_finished) {
+				if (test->finished) {
 					printf("Test finished\n");
 					state = State::FINISHED;
 				}
 			}
 
 			game->tick();
+			test->after_tick();
 			{
 				boost::lock_guard<boost::mutex> lock(mutex);
 				renderer->tick(*game);
@@ -258,7 +260,8 @@ int main(int argc, char **argv) {
 	ShipClass::initialize();
 
 	printf("Running test %s\n", argv[1]);
-	game = Test::load(std::string(argv[1]));
+	test = Test::load(std::string(argv[1]));
+	game = test->get_game();
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());

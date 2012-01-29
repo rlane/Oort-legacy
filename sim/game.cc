@@ -18,6 +18,7 @@
 #include "sim/ai.h"
 #include "sim/team.h"
 #include "sim/math_util.h"
+#include "sim/test.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -106,7 +107,6 @@ Game::Game(const Scenario &scn, const vector<std::shared_ptr<AIFactory>> &ai_fac
   : ticks(0),
     time(0),
     radius(10000) {
-	test_finished = false;
 	int player_ai_index = 0;
 	b2Vec2 gravity(0, 0);
 #ifdef B2WORLD_OLD_CONSTRUCTOR
@@ -181,7 +181,6 @@ void Game::tick() {
 
 	ticks++;
 	time = ticks * tick_length;
-	after_tick();
 
 #if 0
 	auto profile = world->GetProfile();
@@ -195,9 +194,6 @@ void Game::tick() {
 	printf("broadphase: %0.2f ms\n", profile.broadphase);
 	printf("solveTOI: %0.2f ms\n", profile.solveTOI);
 #endif
-}
-
-void Game::after_tick() {
 }
 
 bool Game::check_victory(Team *&team) {

@@ -13,11 +13,7 @@ namespace Oort {
 
 Test *Test::registered;
 
-static void dl_deleter(Test *ptr) {
-	dlclose(ptr->dl_handle);
-}
-
-std::shared_ptr<Test> Test::load(std::string path) {
+Test *Test::load(std::string path) {
 	assert(registered == NULL);
 	char *p = realpath(path.c_str(), NULL);
 	if (p == NULL) {
@@ -33,20 +29,18 @@ std::shared_ptr<Test> Test::load(std::string path) {
 		exit(1);
 	}
 
-	if (registered == NULL) {
+	if (Test::registered == NULL) {
 		//throw std::runtime_error("no test registered");
 		fprintf(stderr, "no test registered\n");
 		exit(1);
 	}
 
-	registered->dl_handle = dl_handle;
-	auto tmp = registered;
-	registered = NULL;
-	return std::shared_ptr<Test>(tmp, dl_deleter);
+	auto tmp = Test::registered;
+	Test::registered = NULL;
+	return tmp;
 }
 
-Test::Test()
-  : Game(Scenario(), std::vector<std::shared_ptr<AIFactory>>()) {
+Test::Test() {
 	registered = this;
 }
 

@@ -67,7 +67,7 @@ public:
 	}
 };
 
-class ChaseTest : public Test {
+class ChaseTest : public SimpleTest {
 public:
 	weak_ptr<Ship> target_weak;
 	unique_ptr<ShipClass> speedy;
@@ -83,22 +83,22 @@ public:
 
 		{
 			auto team = make_shared<Team>("red", CxxAI::factory<TargetAI>(), vec3(1, 0, 0));
-			auto s = make_shared<Ship>(this, *speedy, team);
+			auto s = make_shared<Ship>(&*game, *speedy, team);
 			s->set_position(vec2(1500, 0));
-			ships.push_back(s);
+			game->ships.push_back(s);
 			target_weak = s;
 		}
 
 		{
 			auto team = make_shared<Team>("green", CxxAI::factory<ChaseAI>(), vec3(0, 1, 0));
-			auto s = make_shared<Ship>(this, *fighter, team);
-			ships.push_back(s);
+			auto s = make_shared<Ship>(&*game, *fighter, team);
+			game->ships.push_back(s);
 		}
 	}
 
 	void after_tick() {
 		if (target_weak.expired()) {
-			test_finished = true;
+			finished = true;
 		}
 	}
 } test;

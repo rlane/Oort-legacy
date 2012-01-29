@@ -63,21 +63,21 @@ public:
 	}
 };
 
-class MoveTest : public Test {
+class MoveTest : public SimpleTest {
 public:
 	shared_ptr<Ship> ship;
 	Waypoint wpA, wpB, wpC, wpD, wpE, wpF, wpG, wpH;
 	unique_ptr<ShipClass> speedy;
 
 	MoveTest()
-		: wpA(this, vec2(0,0), 0.1),
-		  wpB(this, vec2(d/2,0), 0.1),
-		  wpC(this, vec2(d,0), 0.1),
-		  wpD(this, vec2(d,d/2), 0.1),
-		  wpE(this, vec2(d,d), 0.1),
-		  wpF(this, vec2(d/2,d), 0.1),
-		  wpG(this, vec2(0,d), 0.1),
-		  wpH(this, vec2(0,d/2), 0.1)
+		: wpA(&*game, vec2(0,0), 0.1),
+		  wpB(&*game, vec2(d/2,0), 0.1),
+		  wpC(&*game, vec2(d,0), 0.1),
+		  wpD(&*game, vec2(d,d/2), 0.1),
+		  wpE(&*game, vec2(d,d), 0.1),
+		  wpF(&*game, vec2(d/2,d), 0.1),
+		  wpG(&*game, vec2(0,d), 0.1),
+		  wpH(&*game, vec2(0,d/2), 0.1)
 	{
 		{
 			ShipClassDef def = *fighter;
@@ -89,38 +89,38 @@ public:
 		}
 
 		auto green = make_shared<Team>("green", CxxAI::factory<MoveAI>(), vec3(0, 1, 0));
-		ship = make_shared<Ship>(this, *speedy, green);
-		ships.push_back(ship);
+		ship = make_shared<Ship>(&*game, *speedy, green);
+		game->ships.push_back(ship);
 	}
 
 	void after_tick() {
-		if (ticks == 1) {
+		if (game->ticks == 1) {
 			assert_contact(*ship, wpA);
-		} else if (ticks == t2) {
+		} else if (game->ticks == t2) {
 			assert_contact(*ship, wpB);
-		} else if (ticks == t3) {
+		} else if (game->ticks == t3) {
 			assert_contact(*ship, wpC);
-		} else if (ticks == t4) {
+		} else if (game->ticks == t4) {
 			assert_contact(*ship, wpC);
-		} else if (ticks == t5) {
+		} else if (game->ticks == t5) {
 			assert_contact(*ship, wpC);
-		} else if (ticks == t6) {
+		} else if (game->ticks == t6) {
 			assert_contact(*ship, wpD);
-		} else if (ticks == t7) {
+		} else if (game->ticks == t7) {
 			assert_contact(*ship, wpE);
-		} else if (ticks == t8) {
+		} else if (game->ticks == t8) {
 			assert_contact(*ship, wpF);
-		} else if (ticks == t9) {
+		} else if (game->ticks == t9) {
 			assert_contact(*ship, wpG);
-		} else if (ticks == t10) {
+		} else if (game->ticks == t10) {
 			assert_contact(*ship, wpG);
-		} else if (ticks == t11) {
+		} else if (game->ticks == t11) {
 			assert_contact(*ship, wpG);
-		} else if (ticks == t12) {
+		} else if (game->ticks == t12) {
 			assert_contact(*ship, wpH);
-		} else if (ticks == t13) {
+		} else if (game->ticks == t13) {
 			assert_contact(*ship, wpA);
-			test_finished = true;
+			finished = true;
 		}
 	}
 } test;

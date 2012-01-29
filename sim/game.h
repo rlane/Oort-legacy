@@ -38,7 +38,6 @@ class Game {
 	~Game();
 
 	void tick();
-	virtual void after_tick();
 	bool check_victory(Team *&team);
 	std::shared_ptr<Ship> lookup_ship(uint32_t id);
 
@@ -50,7 +49,6 @@ class Game {
 	std::vector<Explosion> explosions;
 	int ticks;
 	float time;
-	bool test_finished;
 	float radius;
 
 	private:

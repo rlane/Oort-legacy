@@ -5,19 +5,21 @@
 #include <string>
 #include <memory>
 
-#include "sim/game.h"
-
 namespace Oort {
 
-class Test : public Game {
+class Game;
+
+class Test {
 public:
 	static Test *registered;
-	static std::shared_ptr<Test> load(std::string path);
+	static Test *load(std::string path);
 
 	Test();
-	~Test();
+	virtual ~Test();
+	virtual void after_tick() = 0;
+	virtual std::shared_ptr<Game> get_game() = 0;
 
-	void *dl_handle;
+	bool finished;
 };
 
 }
