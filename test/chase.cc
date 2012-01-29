@@ -69,35 +69,16 @@ public:
 
 class ChaseTest : public SimpleTest {
 public:
-	weak_ptr<Ship> target_weak;
-	unique_ptr<ShipClass> speedy;
-
-	ChaseTest() {
-		{
-			ShipClassDef def = *fighter;
-			def.name = "speedy";
-			def.max_main_acc = 1000;
-			def.max_lateral_acc = 500;
-			speedy = unique_ptr<ShipClass>(new ShipClass(def));
-		}
-
-		{
-			auto team = make_shared<Team>("red", CxxAI::factory<TargetAI>(), vec3(1, 0, 0));
-			auto s = make_shared<Ship>(&*game, *speedy, team);
-			s->set_position(vec2(1500, 0));
-			game->ships.push_back(s);
-			target_weak = s;
-		}
-
-		{
-			auto team = make_shared<Team>("green", CxxAI::factory<ChaseAI>(), vec3(0, 1, 0));
-			auto s = make_shared<Ship>(&*game, *fighter, team);
-			game->ships.push_back(s);
-		}
+	ChaseTest()
+		: SimpleTest(Scenario::load("test/chase.json"),
+				         { CxxAI::factory<ChaseAI>(), CxxAI::factory<TargetAI>() })
+	{
+		game->radius = 100000;
 	}
 
 	void after_tick() {
-		if (target_weak.expired()) {
+		Team *winner;
+		if (game->ships.empty() || game->check_victory(winner)) {
 			finished = true;
 		}
 	}

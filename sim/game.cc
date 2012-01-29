@@ -133,6 +133,8 @@ Game::Game(const Scenario &scn, const vector<std::shared_ptr<AIFactory>> &ai_fac
 				klass = &*assault_frigate;
 			} else if (scn_ship.klass == "ion_cannon_frigate") {
 				klass = &*ion_cannon_frigate;
+			} else if (scn_ship.klass == "target") {
+				klass = &*target;
 			} else {
 				throw std::runtime_error("Unknown ship class");
 			}
