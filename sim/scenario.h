@@ -28,6 +28,8 @@ public:
 	std::vector<ScnTeam> teams;
 
   Scenario();
+
+	static Scenario load(std::string path);
 };
 
 }
