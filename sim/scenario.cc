@@ -20,53 +20,7 @@ Scenario::Scenario() {
 Scenario Scenario::load(std::string path) {
 	Scenario scn;
 
-	if (path == "test/furball.json") {
-		boost::random::mt19937 prng(42);
-		boost::random::normal_distribution<float> p_dist(0.0, 1000.0);
-		boost::random::normal_distribution<float> v_dist(0.0, 20.0);
-		boost::uniform_real<float> h_dist(0.0, 2*3.14159);
-
-		{
-			scn.teams.emplace_back();
-			auto &team = scn.teams.back();
-			team.name = "red";
-			team.color = vec3(1, 0, 0);
-		}
-
-		{
-			scn.teams.emplace_back();
-			auto &team = scn.teams.back();
-			team.name = "green";
-			team.color = vec3(0, 1, 0);
-		}
-
-		{
-			scn.teams.emplace_back();
-			auto &team = scn.teams.back();
-			team.name = "blue";
-			team.color = vec3(0, 0, 1);
-		}
-
-		std::vector<std::string> klasses = { 
-			"fighter",
-			"fighter",
-			"fighter",
-			"missile",
-			"ion_cannon_frigate",
-			"assault_frigate",
-		};
-
-		for (auto i = 0; i < 100; i++) {
-			auto &team = scn.teams[i % scn.teams.size()];
-			auto &klass = klasses[(i/scn.teams.size()) % klasses.size()];
-			team.ships.emplace_back();
-			auto &s = team.ships.back();
-			s.klass = klass;
-			s.p = vec2(p_dist(prng), p_dist(prng));
-			s.v = vec2(v_dist(prng), v_dist(prng));
-			s.h = h_dist(prng);
-		}
-	} else if (path == "test/gun.json") {
+	if (path == "test/gun.json") {
 		{
 			scn.teams.emplace_back();
 			auto &team = scn.teams.back();

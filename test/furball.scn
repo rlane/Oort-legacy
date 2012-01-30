@@ -1,0 +1,32 @@
+description "Furball test"
+author "Rich Lane"
+
+teams = {
+	"red" => [1, 0, 0],
+	"green" => [0, 1, 0],
+	"blue" => [0, 0, 1]
+}
+
+klasses = [
+	"fighter",
+	"fighter",
+	"fighter",
+	"missile",
+	"ion_cannon_frigate",
+	"assault_frigate",
+]
+
+teams.each do |t,c|
+	team t do
+		color *c
+		30.times do |i|
+			ship klasses[i%klasses.size] do
+				rnd = lambda { |r| (1 - 2*rand)*r }
+				randvec = lambda { |r| [rnd[r], rnd[r]] }
+				position *randvec[2000]
+				velocity *randvec[30]
+				heading rnd[Math::PI*2]
+			end
+		end
+	end
+end
