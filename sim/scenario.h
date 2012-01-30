@@ -32,9 +32,6 @@ public:
 	Scenario();
 
 	static Scenario load(std::string path);
-
-private:
-	static void load_json(Scenario &scn, std::string path);
 };
 
 }

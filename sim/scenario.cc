@@ -19,30 +19,6 @@ Scenario::Scenario() {
 
 Scenario Scenario::load(std::string path) {
 	Scenario scn;
-
-	if (path == "test/move.json") {
-		{
-			scn.teams.emplace_back();
-			auto &team = scn.teams.back();
-			team.name = "green";
-			team.color = vec3(0, 1, 0);
-			{
-				team.ships.emplace_back();
-				auto &s = team.ships.back();
-				s.klass = "target";
-				s.p = vec2(0, 0);
-				s.v = vec2(0, 0);
-				s.h = 0;
-			}
-		}
-	} else {
-		load_json(scn, path);
-	}
-
-	return scn;
-}
-
-void Scenario::load_json(Scenario &scn, std::string path) {
 	auto data = load_resource(path);
 	json_spirit::mValue value;
 	json_spirit::read_string(data, value);
@@ -83,6 +59,8 @@ void Scenario::load_json(Scenario &scn, std::string path) {
 			ship.h = jship.find("h")->second.get_real();
 		}
 	}
+
+	return scn;
 }
 
 }

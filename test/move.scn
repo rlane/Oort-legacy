@@ -1,0 +1,9 @@
+description "Move test"
+author "Rich Lane"
+
+team 'green' do
+	color 0, 1, 0
+
+	ship 'target' do
+	end
+end
