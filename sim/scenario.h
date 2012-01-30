@@ -25,11 +25,16 @@ struct ScnTeam {
 
 class Scenario {
 public:
+	std::string description;
+	std::string author;
 	std::vector<ScnTeam> teams;
 
-  Scenario();
+	Scenario();
 
 	static Scenario load(std::string path);
+
+private:
+	static void load_json(Scenario &scn, std::string path);
 };
 
 }

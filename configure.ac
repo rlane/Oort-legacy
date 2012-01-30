@@ -53,6 +53,8 @@ AC_SUBST(SDL_LIBS)
 BOOST_LIBS=-lboost_thread
 AC_SUBST(BOOST_LIBS)
 
+AC_PATH_PROG([RUBY],[ruby])
+
 if test "x${nacl}" = "xno"; then
 	PKG_CHECK_MODULES(GLEW, glew >= $GLEW_REQUIRED)
 	AC_SUBST(GLEW_CFLAGS)
@@ -64,7 +66,6 @@ else
 	NACL_LIBS="-lppapi -lppapi_cpp -lppapi_gles2 -lnosys"
 	AC_SUBST(NACL_CFLAGS)
 	AC_SUBST(NACL_LIBS)
-	AC_PATH_PROG([RUBY],[ruby])
 
 	FRONTENDS="oort_nacl"
 fi

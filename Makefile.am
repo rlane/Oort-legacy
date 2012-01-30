@@ -62,13 +62,16 @@ INSRC_DIST := $(shell find $(top_srcdir)/third_party/insrc -path $(top_srcdir)/t
 SHADERS_DIST := $(wildcard $(top_srcdir)/shaders/*.glsl)
 MODELS_DIST := $(wildcard $(top_srcdir)/models/*.json)
 
+# TODO autmate
+SCENARIOS = test/beam.json
+
 EXTRA_DIST = $(GLM_DIST) $(JSON_DIST) $(INSRC_DIST) $(TEST_SRCS) $(SHADERS_DIST) $(MODELS_DIST)
 CLEANFILES = $(TESTS)
 
 bin_PROGRAMS := $(FRONTENDS)
 EXTRA_PROGRAMS := oort_headless oort_sdl oort_nacl
 
-all: $(bin_PROGRAMS) $(TESTS)
+all: $(bin_PROGRAMS) $(TESTS) $(SCENARIOS)
 
 oort_headless_SOURCES := ui/headless/main.cc $(SIM_SRCS)
 oort_headless_LDADD=$(LUA_LIBS) $(BOX2D_LIBS) $(BOOST_LIBS)
@@ -91,3 +94,6 @@ lint:
 # TODO depend on resource files
 ui/nacl/embedded_resources.c: $(top_srcdir)/resources-manifest
 	$(RUBY) $(top_srcdir)/third_party/insrc/insrc.rb $(top_srcdir)/resources-manifest > $(top_builddir)/ui/nacl/embedded_resources.c
+
+%.json: %.scn devel/scenario_builder.rb
+	$(RUBY) $(top_srcdir)/devel/scenario_builder.rb $< > $@
