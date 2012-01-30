@@ -122,6 +122,36 @@ Scenario Scenario::load(std::string path) {
 			s.v = vec2(v_dist(prng), v_dist(prng));
 			s.h = h_dist(prng);
 		}
+	} else if (path == "test/gun.json") {
+		{
+			scn.teams.emplace_back();
+			auto &team = scn.teams.back();
+			team.name = "green";
+			team.color = vec3(0, 1, 0);
+			{
+				team.ships.emplace_back();
+				auto &s = team.ships.back();
+				s.klass = "fighter";
+				s.p = vec2(0, 0);
+				s.v = vec2(0, 0);
+				s.h = 0;
+			}
+		}
+
+		{
+			scn.teams.emplace_back();
+			auto &team = scn.teams.back();
+			team.name = "red";
+			team.color = vec3(1, 0, 0);
+			{
+				team.ships.emplace_back();
+				auto &s = team.ships.back();
+				s.klass = "ion_cannon_frigate";
+				s.p = vec2(500, 0);
+				s.v = vec2(0, 0);
+				s.h = 1.57;
+			}
+		}
 	} else {
 		throw std::runtime_error("Invalid scenario");
 	}
