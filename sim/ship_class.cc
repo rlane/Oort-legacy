@@ -112,9 +112,9 @@ void ShipClass::initialize() {
 		def.name = "target";
 		def.mass = 10e3;
 		def.hull = 4.5e6;
-		def.max_main_acc = 1000;
+		def.max_main_acc = 6400;
 		def.max_lateral_acc = 500;
-		def.max_angular_acc = 1;
+		def.max_angular_acc = M_PI;
 		def.scale = 10;
 		def.tail_alpha = 0.1f;
 		def.model = Model::load("fighter");

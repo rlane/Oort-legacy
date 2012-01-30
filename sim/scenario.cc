@@ -182,6 +182,21 @@ Scenario Scenario::load(std::string path) {
 				s.h = 1.57;
 			}
 		}
+	} else if (path == "test/move.json") {
+		{
+			scn.teams.emplace_back();
+			auto &team = scn.teams.back();
+			team.name = "green";
+			team.color = vec3(0, 1, 0);
+			{
+				team.ships.emplace_back();
+				auto &s = team.ships.back();
+				s.klass = "target";
+				s.p = vec2(0, 0);
+				s.v = vec2(0, 0);
+				s.h = 0;
+			}
+		}
 	} else {
 		throw std::runtime_error("Invalid scenario");
 	}

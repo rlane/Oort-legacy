@@ -67,10 +67,11 @@ class MoveTest : public SimpleTest {
 public:
 	shared_ptr<Ship> ship;
 	Waypoint wpA, wpB, wpC, wpD, wpE, wpF, wpG, wpH;
-	unique_ptr<ShipClass> speedy;
 
 	MoveTest()
-		: wpA(&*game, vec2(0,0), 0.1),
+		: SimpleTest(Scenario::load("test/move.json"),
+				         { CxxAI::factory<MoveAI>() }),
+		  wpA(&*game, vec2(0,0), 0.1),
 		  wpB(&*game, vec2(d/2,0), 0.1),
 		  wpC(&*game, vec2(d,0), 0.1),
 		  wpD(&*game, vec2(d,d/2), 0.1),
@@ -79,18 +80,7 @@ public:
 		  wpG(&*game, vec2(0,d), 0.1),
 		  wpH(&*game, vec2(0,d/2), 0.1)
 	{
-		{
-			ShipClassDef def = *fighter;
-			def.name = "speedy";
-			def.max_main_acc = main_acc*64;
-			def.max_lateral_acc = lateral_acc;
-			def.max_angular_acc = angular_acc*2;
-			speedy = unique_ptr<ShipClass>(new ShipClass(def));
-		}
-
-		auto green = make_shared<Team>("green", CxxAI::factory<MoveAI>(), vec3(0, 1, 0));
-		ship = make_shared<Ship>(&*game, *speedy, green);
-		game->ships.push_back(ship);
+		ship = game->ships.front();
 	}
 
 	void after_tick() {
