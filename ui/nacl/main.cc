@@ -139,17 +139,9 @@ class OortInstance : public pp::Instance {
 		ShipClass::initialize();
 
 		log("creating game");
-		Scenario scn;
-		std::vector<std::shared_ptr<AIFactory>> ai_factories;
+		Scenario scn = Scenario::load("test/furball.json");
+		std::vector<std::shared_ptr<AIFactory>> ai_factories = { CxxAI::factory<CxxAI>(), CxxAI::factory<CxxAI>(), CxxAI::factory<CxxAI>() };
 		game = new Game(scn, ai_factories);
-
-		log("creating team");
-		auto green = std::make_shared<Team>("green", CxxAI::factory<CxxAI>(), glm::vec3(0, 1, 0));
-
-		log("creating ship");
-		auto ship = std::make_shared<Ship>(game, *fighter, green);
-		ship->set_angular_velocity(3.14);
-		game->ships.push_back(ship);
 
 		log("game initialized");
 

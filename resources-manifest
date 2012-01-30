@@ -12,3 +12,4 @@ shaders/ship.f.glsl
 shaders/ship.v.glsl
 shaders/text.f.glsl
 shaders/text.v.glsl
+test/furball.json
