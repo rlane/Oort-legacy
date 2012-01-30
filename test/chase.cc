@@ -49,13 +49,13 @@ public:
 
 	void tick() {
 		if (length(ship.get_position()) > 10000) {
-			drive_towards(ship, vec2(0, 0), ship.klass.max_main_acc*2);
+			drive_towards(ship, vec2(0, 0), 400);
 			return;
 		}
 
 		if (countdown == 0) {
-			boost::random::normal_distribution<> main_dist(0, ship.klass.max_main_acc/3);
-			boost::random::normal_distribution<> lateral_dist(0, ship.klass.max_lateral_acc/3);
+			boost::random::normal_distribution<> main_dist(0, 600);
+			boost::random::normal_distribution<> lateral_dist(0, 200);
 			boost::uniform_real<> heading_dist(0, 2*M_PI);
 			countdown = rand() % 100;
 			ship.acc_main(main_dist(prng));

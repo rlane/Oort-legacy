@@ -20,39 +20,7 @@ Scenario::Scenario() {
 Scenario Scenario::load(std::string path) {
 	Scenario scn;
 
-	if (path == "test/beam.json") {
-		load_json(scn, path);
-	} else if (path == "test/chase.json") {
-		{
-			scn.teams.emplace_back();
-			auto &team = scn.teams.back();
-			team.name = "green";
-			team.color = vec3(0, 1, 0);
-			{
-				team.ships.emplace_back();
-				auto &s = team.ships.back();
-				s.klass = "fighter";
-				s.p = vec2(0, 0);
-				s.v = vec2(0, 0);
-				s.h = 0;
-			}
-		}
-
-		{
-			scn.teams.emplace_back();
-			auto &team = scn.teams.back();
-			team.name = "red";
-			team.color = vec3(1, 0, 0);
-			{
-				team.ships.emplace_back();
-				auto &s = team.ships.back();
-				s.klass = "target";
-				s.p = vec2(1500, 0);
-				s.v = vec2(0, 0);
-				s.h = 0;
-			}
-		}
-	} else if (path == "test/furball.json") {
+	if (path == "test/furball.json") {
 		boost::random::mt19937 prng(42);
 		boost::random::normal_distribution<float> p_dist(0.0, 1000.0);
 		boost::random::normal_distribution<float> v_dist(0.0, 20.0);
@@ -174,7 +142,7 @@ Scenario Scenario::load(std::string path) {
 			}
 		}
 	} else {
-		throw std::runtime_error("Invalid scenario");
+		load_json(scn, path);
 	}
 
 	return scn;
