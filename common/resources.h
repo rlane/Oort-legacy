@@ -8,6 +8,7 @@
 #include <string>
 #include <algorithm>
 #include <stdexcept>
+#include <boost/foreach.hpp>
 
 #include "common/log.h"
 
@@ -26,14 +27,38 @@ inline std::string load_resource(const std::string &name) {
 	}
 }
 #else
+
+static inline void find_resource(const std::string &name, std::ifstream &file) {
+	std::vector<std::string> dirs = {
+		".",
+	};
+
+	auto srcdir = getenv("srcdir");
+	if (srcdir) {
+		dirs.push_back(std::string(srcdir));
+	}
+
+	auto blddir = getenv("blddir");
+	if (blddir) {
+		dirs.push_back(std::string(blddir));
+	}
+
+	BOOST_FOREACH(auto &dir, dirs) {
+		file.open(dir + "/" + name, std::ios::in|std::ios::binary|std::ios::ate);
+		if (file) {
+			return;
+		}
+	}
+
+	throw std::runtime_error("resource not found: " + name);
+}
+
 inline std::string load_resource(const std::string &name) {
 	typedef std::istream_iterator<char> istream_iterator;
 	typedef std::ostream_iterator<char> ostream_iterator;
 	std::ifstream file;
+	find_resource(name, file);
 	file.exceptions(std::ifstream::badbit);
-	auto dir = getenv("srcdir");
-	if (!dir) dir = (char*)".";
-	file.open(std::string(dir) + "/" + name, std::ios::in|std::ios::binary|std::ios::ate);
 	file >> std::noskipws;
 	auto size = file.tellg();
 	//log("reading %s size %d", name.c_str(), static_cast<int>(size));
