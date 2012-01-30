@@ -20,37 +20,7 @@ Scenario::Scenario() {
 Scenario Scenario::load(std::string path) {
 	Scenario scn;
 
-	if (path == "test/missile.json") {
-		{
-			scn.teams.emplace_back();
-			auto &team = scn.teams.back();
-			team.name = "green";
-			team.color = vec3(0, 1, 0);
-			{
-				team.ships.emplace_back();
-				auto &s = team.ships.back();
-				s.klass = "fighter";
-				s.p = vec2(0, 0);
-				s.v = vec2(0, 0);
-				s.h = 0;
-			}
-		}
-
-		{
-			scn.teams.emplace_back();
-			auto &team = scn.teams.back();
-			team.name = "red";
-			team.color = vec3(1, 0, 0);
-			{
-				team.ships.emplace_back();
-				auto &s = team.ships.back();
-				s.klass = "ion_cannon_frigate";
-				s.p = vec2(500, 0);
-				s.v = vec2(0, 0);
-				s.h = 1.57;
-			}
-		}
-	} else if (path == "test/move.json") {
+	if (path == "test/move.json") {
 		{
 			scn.teams.emplace_back();
 			auto &team = scn.teams.back();

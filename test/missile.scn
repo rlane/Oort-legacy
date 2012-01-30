@@ -1,0 +1,16 @@
+description "Missile test"
+author "Rich Lane"
+
+team "green" do
+	color 0, 1, 0
+	ship 'fighter' do
+	end
+end
+
+team "red" do
+	color 1, 0, 0
+	ship 'ion_cannon_frigate' do
+		position 500, 0
+		heading Math::PI/2
+	end
+end
