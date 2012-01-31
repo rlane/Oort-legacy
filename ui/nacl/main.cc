@@ -8,6 +8,7 @@
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/size.h"
+#include "ppapi/cpp/input_event.h"
 #include "sim/game.h"
 #include "sim/scenario.h"
 #include "sim/ai.h"
@@ -81,8 +82,19 @@ class OortInstance : public pp::Instance {
 		glSetCurrentContextPPAPI(gl_context.pp_resource());
 		log("graphics bound");
 
+		int ret = RequestFilteringInputEvents(PP_INPUTEVENT_CLASS_KEYBOARD|PP_INPUTEVENT_CLASS_WHEEL);
+		if (ret != PP_OK) {
+			printf("failed to request input events\n");
+			return PP_FALSE;
+		}
+
+		ret = RequestInputEvents(PP_INPUTEVENT_CLASS_MOUSE);
+		if (ret != PP_OK) {
+			printf("failed to request input events\n");
+			return PP_FALSE;
+		}
+
 		gui = new GUI(game, NULL);
-		gui->paused = false;
 
 		gui->handle_resize(initial_screen_width, initial_screen_height);
 		log("screen resized");
@@ -109,6 +121,58 @@ class OortInstance : public pp::Instance {
 	// Called by the browser to handle the postMessage() call in Javascript.
 	virtual void HandleMessage(const pp::Var& message) {
 		log("HandleMessage");
+	}
+
+	uint32_t convert_key(uint32_t keycode) {
+		switch (keycode) {
+		case 32: return ' ';
+		case 13: return '\n';
+		case 71: return 'g';
+		case 87: return 'w';
+		case 83: return 's';
+		case 65: return 'a';
+		case 68: return 'd';
+		case 90: return 'z';
+		case 88: return 'x';
+		case 66: return 'b';
+		}
+		log("unexpected keycode %d", keycode);
+		return 0;
+	}
+
+	virtual bool HandleInputEvent(const pp::InputEvent &event) {
+		PP_InputEvent_Type type = event.GetType();
+		log("event %d", type);
+		if (type == PP_INPUTEVENT_TYPE_KEYDOWN) {
+			auto key_event = static_cast<pp::KeyboardInputEvent>(event);
+			auto keycode = key_event.GetKeyCode();
+			log("keycode %d", keycode);
+			gui->handle_keydown(convert_key(keycode));
+			return false;
+		} else if (type == PP_INPUTEVENT_TYPE_KEYUP) {
+			auto key_event = static_cast<pp::KeyboardInputEvent>(event);
+			auto keycode = key_event.GetKeyCode();
+			log("keycode %d", keycode);
+			gui->handle_keyup(convert_key(keycode));
+			return true;
+		} else if (type == PP_INPUTEVENT_TYPE_MOUSEDOWN) {
+			auto mouse_event = static_cast<pp::MouseInputEvent>(event);
+			auto pos = mouse_event.GetPosition();
+			auto button = mouse_event.GetButton();
+			int real_button = -1;
+			if (button == PP_INPUTEVENT_MOUSEBUTTON_LEFT) {
+				real_button = 1;
+			}
+			gui->handle_mousebuttondown(real_button, pos.x(), pos.y());
+			return true;
+		} else if (type == PP_INPUTEVENT_TYPE_MOUSEMOVE) {
+			auto mouse_event = static_cast<pp::MouseInputEvent>(event);
+			auto pos = mouse_event.GetPosition();
+			gui->update_mouse_position(pos.x(), pos.y());
+			return true;
+		} else {
+			return false;
+		}
 	}
 };
 
