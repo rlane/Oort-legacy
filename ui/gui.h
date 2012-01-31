@@ -1,3 +1,30 @@
+// Copyright 2011 Rich Lane
+#include <stdio.h>
+#include <time.h>
+#include <sys/timeb.h>
+#include <memory>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <boost/format.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/mutex.hpp>
+
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/string_cast.hpp"
+#include "glm/gtx/vector_angle.hpp"
+
+#include "sim/game.h"
+#include "sim/test.h"
+#include "sim/math_util.h"
+#include "sim/ship.h"
+#include "sim/ship_class.h"
+#include "renderer/renderer.h"
+#include "renderer/physics_debug_renderer.h"
+
 namespace Oort {
 
 class GUI {
@@ -36,6 +63,7 @@ public:
 	uint64_t prev;
 	int tick_count;
 	int frame_count;
+	glm::vec2 mouse_position;
 
 	GUI(std::shared_ptr<Game> game, Test *test)
 		: state(State::RUNNING),
@@ -57,7 +85,8 @@ public:
 			last_tick_time(0),
 			last_time_delta(0),
 			prev(microseconds()),
-			frame_count(0)
+			frame_count(0),
+			mouse_position(0, 0)
 	{
 		renderer = std::unique_ptr<Renderer>(new Renderer());
 		renderer->tick(*game);
@@ -68,40 +97,40 @@ public:
 		game->world->SetDebugDraw(physics_debug_renderer.get());
 	}
 
-	void handle_keydown(int sym) {
-		switch (sym) {
-		case SDLK_ESCAPE:
+	void handle_keydown(int keycode) {
+		switch (keycode) {
+		case 27:
 			running = false;
 			break;
-		case SDLK_SPACE:
+		case ' ':
 			paused = !paused;
 			break;
-		case SDLK_RETURN:
+		case '\n':
 			paused = false;
 			single_step = true;
 			break;
-		case SDLK_g:
+		case 'g':
 			render_physics_debug = !render_physics_debug;
 			break;
-		case SDLK_w:
+		case 'w':
 			view_speed.y += pan_const;
 			break;
-		case SDLK_s:
+		case 's':
 			view_speed.y -= pan_const;
 			break;
-		case SDLK_a:
+		case 'a':
 			view_speed.x -= pan_const;
 			break;
-		case SDLK_d:
+		case 'd':
 			view_speed.x += pan_const;
 			break;
-		case SDLK_z:
+		case 'z':
 			zoom_rate -= zoom_const;
 			break;
-		case SDLK_x:
+		case 'x':
 			zoom_rate += zoom_const;
 			break;
-		case SDLK_b:
+		case 'b':
 			renderer->benchmark = !renderer->benchmark;
 			break;
 		default:
@@ -111,22 +140,22 @@ public:
 
 	void handle_keyup(int sym) {
 		switch (sym) {
-		case SDLK_w:
+		case 'w':
 			view_speed.y -= pan_const;
 			break;
-		case SDLK_s:
+		case 's':
 			view_speed.y += pan_const;
 			break;
-		case SDLK_a:
+		case 'a':
 			view_speed.x += pan_const;
 			break;
-		case SDLK_d:
+		case 'd':
 			view_speed.x -= pan_const;
 			break;
-		case SDLK_z:
+		case 'z':
 			zoom_rate += zoom_const;
 			break;
-		case SDLK_x:
+		case 'x':
 			zoom_rate -= zoom_const;
 			break;
 		default:
@@ -186,17 +215,15 @@ public:
 		return view_center + screen_pos * (2*view_radius/screen_width);
 	}
 
-	glm::vec2 mouse_position() {
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-		return glm::vec2(x, y);
+	void update_mouse_position(int x, int y) {
+		mouse_position = glm::vec2(x, y);
 	}
 
 	void render() {
 		auto frame_start = microseconds();
 
 		if (zoom_rate < 0) {
-			auto p = screen2world(mouse_position());
+			auto p = screen2world(mouse_position);
 			auto dp = (zoom_const/fps) * (p - view_center);
 			view_center += dp;
 		}
@@ -254,7 +281,7 @@ public:
 			boost::lock_guard<boost::mutex> lock(mutex);
 
 			if (render_physics_debug) {
-				auto p = screen2world(mouse_position());
+				auto p = screen2world(mouse_position);
 				std::ostringstream tmp;
 				tmp << "mouse position: " << glm::to_string(p);
 				renderer->text(5, 9, tmp.str());
