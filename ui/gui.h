@@ -27,6 +27,36 @@
 
 namespace Oort {
 
+class FramerateCounter {
+public:
+	int count;
+	uint64_t start;
+	uint64_t prev;
+	uint64_t instant;
+	float hz;
+
+	FramerateCounter() {
+		count = 0;
+		start = prev = microseconds();
+		hz = 0;
+	}
+
+	bool update() {
+		count++;
+		auto now = microseconds();
+		instant = now - prev;
+		prev = now;
+		auto elapsed = now - start;
+		if (elapsed >= 1000000LL) {
+			hz = 1.0e6*count/elapsed;
+			count = 0;
+			start = now;
+			return true;
+		}
+		return false;
+	}
+};
+
 class GUI {
 public:
 	enum class State {
@@ -37,8 +67,6 @@ public:
 	static constexpr float zoom_const = 2.0;
 	static constexpr float pan_const = 0.01;
 	static constexpr float fps = 60;
-	static constexpr float tps = 32;
-	static constexpr int target_tick_time = 1000000LL/tps;
 
 	enum State state;
 	bool running;
@@ -55,15 +83,12 @@ public:
 	std::unique_ptr<Renderer> renderer;
 	std::unique_ptr<PhysicsDebugRenderer> physics_debug_renderer;
 	int screen_width, screen_height;
-	float instant_frame_time;
-	float instant_tick_time;
 	uint64_t last_tick_time;
-	boost::mutex mutex;
 	float last_time_delta;
-	uint64_t prev;
-	int tick_count;
-	int frame_count;
 	glm::vec2 mouse_position;
+	pthread_mutex_t mutex;
+	FramerateCounter framerate;
+	FramerateCounter tickrate;
 
 	GUI(std::shared_ptr<Game> game, Test *test)
 		: state(State::RUNNING),
@@ -80,14 +105,12 @@ public:
 			test(test),
 			screen_width(0),
 			screen_height(0),
-			instant_frame_time(0),
-			instant_tick_time(0),
 			last_tick_time(0),
 			last_time_delta(0),
-			prev(microseconds()),
-			frame_count(0),
 			mouse_position(0, 0)
 	{
+		pthread_mutex_init(&mutex, NULL);
+
 		renderer = std::unique_ptr<Renderer>(new Renderer());
 		renderer->tick(*game);
 		last_tick_time = microseconds();
@@ -203,7 +226,6 @@ public:
 	void handle_resize(int w, int h) {
 		screen_width = w;
 		screen_height = h;
-		printf("resize %d %d\n", w, h);
 		glViewport(0, 0, w, h);
 		renderer->reshape(w, h);
 		physics_debug_renderer->reshape(w, h);
@@ -220,8 +242,6 @@ public:
 	}
 
 	void render() {
-		auto frame_start = microseconds();
-
 		if (zoom_rate < 0) {
 			auto p = screen2world(mouse_position);
 			auto dp = (zoom_const/fps) * (p - view_center);
@@ -273,12 +293,12 @@ public:
 		}
 
 		if (renderer->benchmark) {
-			renderer->text(screen_width-160, 10, boost::str(boost::format("render: %0.2f ms") % instant_frame_time));
-			renderer->text(screen_width-160, 20, boost::str(boost::format("  tick: %0.2f ms") % instant_tick_time));
+			renderer->text(screen_width-160, 10, boost::str(boost::format("render: %0.2f ms") % framerate.instant));
+			renderer->text(screen_width-160, 20, boost::str(boost::format("  tick: %0.2f ms") % tickrate.instant));
 		}
 
 		{
-			boost::lock_guard<boost::mutex> lock(mutex);
+			pthread_mutex_lock(&mutex);
 
 			if (render_physics_debug) {
 				auto p = screen2world(mouse_position);
@@ -304,30 +324,28 @@ public:
 				game->world->DrawDebugData();
 				physics_debug_renderer->end_render();
 			}
+
+			pthread_mutex_unlock(&mutex);
 		}
 
-		++frame_count;
-		auto now = microseconds();
-		auto elapsed = now - prev;
-		instant_frame_time = float(now - frame_start)/1000;
-		if (elapsed >= 1000000LL) {
-			printf("%0.2f fps\n", 1e6*frame_count/elapsed);
-			frame_count = 0;
-			prev = now;
-			if (renderer->benchmark) {
-				renderer->dump_perf();
-			}
+		if (renderer->benchmark && framerate.update()) {
+			log("%0.2f fps", framerate.hz);
+			log("%0.2f tps", tickrate.hz);
+			renderer->dump_perf();
 		}
 	}
 
-	static void static_ticker_func(void *arg) {
+	static void *static_ticker_func(void *arg) {
 		auto gui = static_cast<GUI*>(arg);
 		gui->ticker_func();
+		return NULL;
 	}
 
 	void ticker_func() {
+		const uint64_t target = 31250;
+
 		while (running) {
-			auto tick_start = microseconds();
+			Timer timer;
 
 			if (!paused) {
 				if (single_step) {
@@ -336,27 +354,29 @@ public:
 				}
 
 				if (state == State::RUNNING) {
-					if (test->finished) {
+					if (test && test->finished) {
 						printf("Test finished\n");
 						state = State::FINISHED;
 					}
 				}
 
 				game->tick();
-				test->after_tick();
+
+				if (test) {
+					test->after_tick();
+				}
+
 				{
-					boost::lock_guard<boost::mutex> lock(mutex);
+					pthread_mutex_lock(&mutex);
 					renderer->tick(*game);
-					last_tick_time = microseconds();
+					pthread_mutex_unlock(&mutex);
 				}
 			}
 
-			auto tick_end = microseconds();
-			int tick_time = tick_end - tick_start;
-			instant_tick_time = float(tick_time)/1000;
-			if (tick_time < target_tick_time) {
-				usleep(target_tick_time - tick_time);
-			}
+			tickrate.update();
+			auto elapsed = timer.elapsed();
+			int remaining = int(target) - int(elapsed);
+			usleep(glm::max(remaining, 1000));
 		}
 	}
 };
