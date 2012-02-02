@@ -21,6 +21,12 @@
 
 using namespace Oort;
 
+namespace Oort {
+	extern CxxAIFactory<CxxAI> default_ai_factory;
+
+	void null_ai_deleter(CxxAIFactory<CxxAI> *x) {}
+}
+
 class OortInstance : public pp::Instance {
 	std::shared_ptr<Game> game;
 	GUI *gui;
@@ -62,7 +68,8 @@ class OortInstance : public pp::Instance {
 
 		log("creating game");
 		Scenario scn = Scenario::load("test/furball.json");
-		std::vector<std::shared_ptr<AIFactory>> ai_factories = { CxxAI::factory<CxxAI>(), CxxAI::factory<CxxAI>(), CxxAI::factory<CxxAI>() };
+		auto ai_factory = std::shared_ptr<CxxAIFactory<CxxAI>>(&default_ai_factory, null_ai_deleter);
+		std::vector<std::shared_ptr<AIFactory>> ai_factories = { ai_factory, ai_factory, ai_factory };
 		game = std::make_shared<Game>(scn, ai_factories);
 
 		log("game initialized");
