@@ -1,5 +1,6 @@
 #include "ui/gui.h"
 #include <iostream>
+#include <unordered_set>
 #include "gl/gl.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
@@ -24,6 +25,7 @@ class OortInstance : public pp::Instance {
 	std::shared_ptr<Game> game;
 	GUI *gui;
 	pp::Graphics3D gl_context;
+	std::unordered_set<uint32_t> keys_down;
 
 	public:
 	explicit OortInstance(PP_Instance instance)
@@ -142,17 +144,18 @@ class OortInstance : public pp::Instance {
 
 	virtual bool HandleInputEvent(const pp::InputEvent &event) {
 		PP_InputEvent_Type type = event.GetType();
-		log("event %d", type);
 		if (type == PP_INPUTEVENT_TYPE_KEYDOWN) {
 			auto key_event = static_cast<pp::KeyboardInputEvent>(event);
 			auto keycode = key_event.GetKeyCode();
-			log("keycode %d", keycode);
-			gui->handle_keydown(convert_key(keycode));
-			return false;
+			if (keys_down.count(keycode) == 0) {
+				keys_down.insert(keycode);
+				gui->handle_keydown(convert_key(keycode));
+			}
+			return true;
 		} else if (type == PP_INPUTEVENT_TYPE_KEYUP) {
 			auto key_event = static_cast<pp::KeyboardInputEvent>(event);
 			auto keycode = key_event.GetKeyCode();
-			log("keycode %d", keycode);
+			keys_down.erase(keycode);
 			gui->handle_keyup(convert_key(keycode));
 			return true;
 		} else if (type == PP_INPUTEVENT_TYPE_MOUSEDOWN) {
