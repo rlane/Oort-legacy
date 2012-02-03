@@ -14,10 +14,16 @@ cd build-nacl
 
 for HOST in i686-nacl x86_64-nacl
 do
-	rm -rf $HOST
-	mkdir $HOST
+	if [[ $1 = clean ]]
+	then
+		rm -rf $HOST
+	fi
+	mkdir -p $HOST
 	cd $HOST
-	../../configure --host $HOST
+	if [[ $1 = clean ]]
+	then
+		../../configure --host $HOST
+	fi
 	make -j8
 	cd ..
 done
@@ -31,6 +37,8 @@ ln -sf ../x86_64-nacl/oort_nacl oort_nacl64
 
 echo symlinking Oort HTML
 ln -sf ../../ui/nacl/oort.html
+ln -sf ../../ui/nacl/oort.js
+ln -sf ../../ui/nacl/oort.css
 
 rm -rf lib32 lib64
 mkdir lib32 lib64

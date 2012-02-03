@@ -8,32 +8,8 @@
 <head>
   <title>Oort</title>
 
-  <style TYPE="text/css">
-#oort {
-  display:block;
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background-color:black
-}
-  </style>
-
-  <script type="text/javascript">
-    oort = null;  // Global application object.
-
-    // Indicate success when the NaCl module has loaded.
-    function moduleDidLoad() {
-      oort = document.getElementById('oort');
-      oort.postMessage('start');
-    }
-
-    // Handle a message coming from the NaCl module.
-    function handleMessage(message_event) {
-      alert(message_event.data);
-    }
-  </script>
+  <link rel="stylesheet" type="text/css" href="oort.css" />
+  <script type="text/javascript" src="oort.js"></script>
 </head>
 <body>
 

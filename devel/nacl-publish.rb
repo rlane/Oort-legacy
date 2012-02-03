@@ -11,6 +11,8 @@ sha1 = ARGV[0] or fail "sha1 arg required"
 
 files = {
   'oort.html' => 'build-nacl/www/oort.html',
+  'oort.js' => 'build-nacl/www/oort.js',
+  'oort.css' => 'build-nacl/www/oort.css',
   'oort.nmf' => 'build-nacl/www/oort.nmf',
   'oort_nacl64' => "build-nacl/x86_64-nacl/oort_nacl",
   'oort_nacl32' => "build-nacl/i686-nacl/oort_nacl",
@@ -72,7 +74,7 @@ files.each do |remote,local|
   full_remote = "#{sha1}/#{remote}"
   remote_mod_time = remote_mod_times[full_remote]
   local_mod_time = File.mtime local
-  next unless local_mod_time >= remote_mod_time
+  next unless !remote_mod_time or local_mod_time >= remote_mod_time
   puts "publishing #{local} -> #{full_remote}..."
   File.open local, 'r' do |io|
     S3::S3Object.store(full_remote, io, BUCKET_NAME, :access => :public_read)
