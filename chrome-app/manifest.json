@@ -1,0 +1,16 @@
+{
+  "name": "Oort",
+  "description": "Space fleet programming game",
+  "version": "0.0.0.2",
+  "icons": {
+    "128": "icon_128.png"
+  },
+  "app": {
+    "urls": [
+      "http://oort-nacl.s3-website-us-east-1.amazonaws.com/"
+    ],
+    "launch": {
+      "web_url": "http://oort-nacl.s3-website-us-east-1.amazonaws.com/"
+    }
+  }
+}
