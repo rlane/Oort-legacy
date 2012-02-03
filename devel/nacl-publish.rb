@@ -66,8 +66,13 @@ upload_libs.each do |remote|
   end
 end
 
+remote_mod_times = Hash[S3::Bucket.objects(BUCKET_NAME, :prefix => "#{sha1}/").map { |x| [x.key, Time.parse(x.about["last-modified"])] }]
+
 files.each do |remote,local|
   full_remote = "#{sha1}/#{remote}"
+  remote_mod_time = remote_mod_times[full_remote]
+  local_mod_time = File.mtime local
+  next unless local_mod_time >= remote_mod_time
   puts "publishing #{local} -> #{full_remote}..."
   File.open local, 'r' do |io|
     S3::S3Object.store(full_remote, io, BUCKET_NAME, :access => :public_read)
