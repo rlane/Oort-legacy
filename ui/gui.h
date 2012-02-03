@@ -258,18 +258,20 @@ public:
 		if (paused) {
 			std::ostringstream tmp;
 			tmp << "(paused) tick " << game->ticks;
-			renderer->text(screen_width-tmp.str().length()*9-3, screen_height-22, tmp.str());
+			renderer->text(screen_width-tmp.str().length()*9-3, screen_height-10, tmp.str());
 		} else {
 			std::ostringstream tmp;
 			tmp << "tick " << game->ticks;
-			renderer->text(screen_width-tmp.str().length()*9-3, screen_height-22, tmp.str());
+			renderer->text(screen_width-tmp.str().length()*9-3, screen_height-10, tmp.str());
 		}
 
-		if (state == State::RUNNING) {
-			renderer->text(screen_width-120, screen_height-10, "test running");
-		} else if (state == State::FINISHED) {
-			renderer->text(screen_width-120, screen_height-10, "test finished");
-		} 
+		if (test) {
+			if (state == State::RUNNING) {
+				renderer->text(screen_width-120, screen_height-22, "test running");
+			} else if (state == State::FINISHED) {
+				renderer->text(screen_width-120, screen_height-22, "test finished");
+			} 
+		}
 
 		if (picked_id != INVALID_SHIP_ID) {
 			auto ship = game->lookup_ship(picked_id);
