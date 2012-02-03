@@ -93,7 +93,7 @@ public:
 	GUI(std::shared_ptr<Game> game, Test *test)
 		: state(State::RUNNING),
 		  running(true),
-		  paused(true),
+		  paused(false),
 		  single_step(false),
 		  render_physics_debug(false),
 		  view_radius(3000.0f),
@@ -118,6 +118,10 @@ public:
 		physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
 		physics_debug_renderer->SetFlags(b2Draw::e_shapeBit);
 		game->world->SetDebugDraw(physics_debug_renderer.get());
+
+		if (test) {
+			paused = true;
+		}
 	}
 
 	void handle_keydown(int keycode) {
