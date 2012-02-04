@@ -13,6 +13,7 @@
 #include "sim/team.h"
 #include "gl/check.h"
 #include "common/resources.h"
+#include "renderer/bunch.h"
 
 using glm::vec2;
 using glm::vec4;
@@ -32,13 +33,12 @@ struct Particle {
 	float padding;
 };
 
-struct ParticleBunch {
-	std::vector<Particle> particles;
-};
+template<> std::vector<GLuint> Bunch<Particle>::buffer_freelist = std::vector<GLuint>();
 
 struct ParticlePriv {
 	GL::Program prog;
-	std::list<ParticleBunch> bunches;
+	std::vector<Particle> tmp_particles;
+	std::list<Bunch<Particle>> bunches;
 	GL::Texture tex;
 	boost::random::mt19937 prng;
 	float time;
@@ -94,17 +94,19 @@ void ParticleBatch::render(float time_delta) {
 	priv->tex.bind();
 
 	BOOST_FOREACH(auto &bunch, priv->bunches) {
-		if (bunch.particles.size() == 0) {
+		if (bunch.size == 0) {
 			continue;
 		}
-		Particle *p = &bunch.particles[0];
+		bunch.bind();
+		Particle *p = (Particle*)NULL;
 		prog.attrib_ptr("initial_position", &p->initial_position, stride);
 		prog.attrib_ptr("velocity", &p->velocity, stride);
 		prog.attrib_ptr("initial_time", &p->initial_time, stride);
 		prog.attrib_ptr("lifetime", &p->lifetime, stride);
 		prog.attrib_ptr("type", &p->type, stride);
-		glDrawArrays(GL_POINTS, 0, bunch.particles.size());
+		glDrawArrays(GL_POINTS, 0, bunch.size);
 	}
+	Bunch<Particle>::unbind();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	prog.disable_attrib_array("initial_position");
@@ -124,7 +126,6 @@ void ParticleBatch::snapshot(const Game &game) {
 	if (priv->bunches.size() >= 128) {
 		priv->bunches.pop_back();
 	}
-	priv->bunches.push_front(ParticleBunch());
 
 	BOOST_FOREACH(auto bullet, game.bullets) {
 		if (bullet->get_def().type == GunType::PLASMA) {
@@ -148,6 +149,8 @@ void ParticleBatch::snapshot(const Game &game) {
 		       vec2(0,0), vec2(0,0),
 		       256, 0.03f, 0.63f, n);
 	}
+
+	priv->bunches.push_front(Bunch<Particle>(game.time, std::move(priv->tmp_particles)));
 }
 
 void ParticleBatch::shower(
@@ -156,7 +159,6 @@ void ParticleBatch::shower(
 	float s_max, float life_min, float life_max,
 	int count)
 {
-	ParticleBunch &bunch = priv->bunches.front();
 	boost::uniform_real<float> a_dist(0.0f, M_PI*2.0f);
 	boost::uniform_real<float> s_dist(0.0f, s_max);
 	boost::uniform_real<float> fdp_dist(0.0f, 1.0f);
@@ -168,7 +170,7 @@ void ParticleBatch::shower(
 		float lifetime = life_dist(priv->prng);
 		vec2 dp = v * fdp * Game::tick_length;
 		vec2 dv = vec2(cosf(a)*s, sinf(a)*s);
-		bunch.particles.emplace_back(Particle{
+		priv->tmp_particles.emplace_back(Particle{
 			/* initial_position */ p0 + dp + dv*Game::tick_length,
 		  /* velocity */ v0 + v + dv,
 			/* initial_time */ priv->time,
