@@ -112,12 +112,7 @@ class OortInstance : public pp::Instance {
 		glClear(GL_COLOR_BUFFER_BIT);
 		log("cleared");
 
-		pthread_t ticker;
-		pthread_create(&ticker, NULL, GUI::static_ticker_func, gui);
-
-		pthread_t snapshotter;
-		pthread_create(&snapshotter, NULL, GUI::static_snapshotter_func, gui);
-
+		gui->start();
 		schedule_swap();
 
 		return true;

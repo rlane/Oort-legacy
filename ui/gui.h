@@ -7,9 +7,6 @@
 #include <string>
 #include <sstream>
 #include <boost/format.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/locks.hpp>
-#include <boost/thread/mutex.hpp>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -92,6 +89,8 @@ public:
 	pthread_mutex_t tick_mutex;
 	pthread_mutex_t render_mutex;
 	pthread_cond_t snapshot_cond;
+	pthread_t ticker;
+	pthread_t snapshotter;
 	FramerateCounter framerate;
 	FramerateCounter tickrate;
 
@@ -134,10 +133,21 @@ public:
 		}
 	}
 
+	void start() {
+		pthread_create(&ticker, NULL, GUI::static_ticker_func, this);
+		pthread_create(&snapshotter, NULL, GUI::static_snapshotter_func, this);
+	}
+
+	void stop() {
+		running = false;
+		pthread_join(ticker, NULL);
+		pthread_join(snapshotter, NULL);
+	}
+
 	void handle_keydown(int keycode) {
 		switch (keycode) {
 		case 27:
-			running = false;
+			stop();
 			break;
 		case ' ':
 			paused = !paused;
