@@ -409,6 +409,7 @@ public:
 			}
 
 			tickrate.update();
+			last_tick_time = microseconds();
 			tick_time = timer.elapsed();
 			int remaining = int(target - tick_time);
 			usleep(glm::max(remaining, 1000));
