@@ -85,8 +85,13 @@ public:
 	int screen_width, screen_height;
 	uint64_t last_tick_time;
 	float last_time_delta;
+	uint64_t render_time;
+	uint64_t tick_time;
+	uint64_t snapshot_time;
 	glm::vec2 mouse_position;
-	pthread_mutex_t mutex;
+	pthread_mutex_t tick_mutex;
+	pthread_mutex_t render_mutex;
+	pthread_cond_t snapshot_cond;
 	FramerateCounter framerate;
 	FramerateCounter tickrate;
 
@@ -107,9 +112,14 @@ public:
 			screen_height(0),
 			last_tick_time(0),
 			last_time_delta(0),
+			render_time(0),
+			tick_time(0),
+			snapshot_time(0),
 			mouse_position(0, 0)
 	{
-		pthread_mutex_init(&mutex, NULL);
+		pthread_mutex_init(&tick_mutex, NULL);
+		pthread_mutex_init(&render_mutex, NULL);
+		pthread_cond_init(&snapshot_cond, NULL);
 
 		renderer = std::unique_ptr<Renderer>(new Renderer());
 		renderer->tick(*game);
@@ -246,6 +256,8 @@ public:
 	}
 
 	void render() {
+		Timer timer;
+
 		if (zoom_rate < 0) {
 			auto p = screen2world(mouse_position);
 			auto dp = (zoom_const/fps) * (p - view_center);
@@ -299,12 +311,15 @@ public:
 		}
 
 		if (renderer->benchmark) {
-			renderer->text(screen_width-160, 10, boost::str(boost::format("render: %0.2f ms") % framerate.instant));
-			renderer->text(screen_width-160, 20, boost::str(boost::format("  tick: %0.2f ms") % tickrate.instant));
+			renderer->text(screen_width-180, 10, boost::str(boost::format("  render: %0.2f ms") % (render_time/1000.0)));
+			renderer->text(screen_width-180, 20, boost::str(boost::format("    tick: %0.2f ms") % (tick_time/1000.0)));
+			renderer->text(screen_width-180, 30, boost::str(boost::format("snapshot: %0.2f ms") % (snapshot_time/1000.0)));
+			renderer->text(screen_width-180, 50, boost::str(boost::format("     fps: %0.2f") % framerate.hz));
+			renderer->text(screen_width-180, 60, boost::str(boost::format("     tps: %0.2f") % tickrate.hz));
 		}
 
 		{
-			pthread_mutex_lock(&mutex);
+			pthread_mutex_lock(&render_mutex);
 
 			if (render_physics_debug) {
 				auto p = screen2world(mouse_position);
@@ -331,7 +346,7 @@ public:
 				physics_debug_renderer->end_render();
 			}
 
-			pthread_mutex_unlock(&mutex);
+			pthread_mutex_unlock(&render_mutex);
 		}
 
 		if (renderer->benchmark && framerate.update()) {
@@ -339,6 +354,8 @@ public:
 			log("%0.2f tps", tickrate.hz);
 			renderer->dump_perf();
 		}
+
+		render_time = timer.elapsed();
 	}
 
 	static void *static_ticker_func(void *arg) {
@@ -366,24 +383,48 @@ public:
 					}
 				}
 
-				game->tick();
-
-				if (test) {
-					test->after_tick();
-				}
-
 				{
-					pthread_mutex_lock(&mutex);
-					renderer->tick(*game);
-					pthread_mutex_unlock(&mutex);
+					pthread_mutex_lock(&tick_mutex);
+
+					game->tick();
+
+					if (test) {
+						test->after_tick();
+					}
+
+					pthread_mutex_unlock(&tick_mutex);
 				}
+
+				pthread_cond_broadcast(&snapshot_cond);
 			}
 
 			tickrate.update();
-			auto elapsed = timer.elapsed();
-			int remaining = int(target) - int(elapsed);
+			tick_time = timer.elapsed();
+			int remaining = int(target - tick_time);
 			usleep(glm::max(remaining, 1000));
 		}
+
+		pthread_cond_broadcast(&snapshot_cond);
+	}
+
+	static void *static_snapshotter_func(void *arg) {
+		auto gui = static_cast<GUI*>(arg);
+		gui->snapshotter_func();
+		return NULL;
+	}
+
+	void snapshotter_func() {
+		pthread_mutex_lock(&render_mutex);
+
+		while (pthread_cond_wait(&snapshot_cond, &render_mutex) == 0 && running) {
+			pthread_mutex_lock(&tick_mutex);
+			Timer timer;
+			renderer->tick(*game);
+			snapshot_time = timer.elapsed();
+			pthread_mutex_unlock(&tick_mutex);
+		}
+
+		pthread_mutex_unlock(&render_mutex);
 	}
 };
 

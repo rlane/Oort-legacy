@@ -112,13 +112,13 @@ void Renderer::text(int x, int y, const std::string &str) {
 
 void Renderer::dump_perf() {
 	log("Renderer performance:");
-	log("render overall: %s", render_perf.summary().c_str());
-	log("tick   overall: %s", tick_perf.summary().c_str());
+	log("render   overall: %s", render_perf.summary().c_str());
+	log("snapshot overall: %s", tick_perf.summary().c_str());
 	BOOST_FOREACH(auto batch, batches) {
 		auto name_str = demangle(typeid(*batch).name());
 		auto name = strrchr(name_str.c_str(), ':') + 1;
-		log("render %13s %s", name, batch->render_perf.summary().c_str());
-		log("tick   %13s %s", name, batch->tick_perf.summary().c_str());
+		log("render   %13s %s", name, batch->render_perf.summary().c_str());
+		log("snapshot %13s %s", name, batch->tick_perf.summary().c_str());
 	}
 	log("");
 }

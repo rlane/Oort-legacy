@@ -103,6 +103,7 @@ int main(int argc, char **argv) {
 	gui->handle_resize(initial_screen_width, initial_screen_height);
 
 	boost::thread ticker(GUI::static_ticker_func, gui);
+	boost::thread snapshotter(GUI::static_snapshotter_func, gui);
 
 	while (gui->running) {
 		int x, y;
@@ -121,6 +122,7 @@ int main(int argc, char **argv) {
 	}
 
 	ticker.join();
+	snapshotter.join();
 
 	return 0;
 }
