@@ -65,7 +65,7 @@ static bool tail_segment_expired(const TailSegment &ts) {
 	return ts.b.color.a <= 0.0f;
 }
 
-void TailBatch::tick(const Game &game) {
+void TailBatch::snapshot(const Game &game) {
 	BOOST_FOREACH(auto &ts, priv->tail_segments) {
 		auto &alpha = ts.b.color.a;
 		alpha = fmaxf(0, alpha - 0.02*Game::tick_length);

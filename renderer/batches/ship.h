@@ -13,7 +13,7 @@ class ShipBatch : public Batch {
 public:
 	ShipBatch(Renderer &Renderer);
 	virtual void render(float time_delta);
-	virtual void tick(const Game &game);
+	virtual void snapshot(const Game &game);
 
 private:
 	std::shared_ptr<ShipPriv> priv;

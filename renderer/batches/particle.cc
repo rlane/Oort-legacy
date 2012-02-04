@@ -118,7 +118,7 @@ void ParticleBatch::render(float time_delta) {
 	GL::check();
 }
 
-void ParticleBatch::tick(const Game &game) {
+void ParticleBatch::snapshot(const Game &game) {
 	priv->time = game.time;
 
 	if (priv->bunches.size() >= 128) {

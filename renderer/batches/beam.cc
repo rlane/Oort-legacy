@@ -36,7 +36,7 @@ BeamBatch::BeamBatch(Renderer &renderer)
 	: Batch(renderer),
 	  priv(make_shared<BeamPriv>()) {}
 
-void BeamBatch::tick(const Game &game) {
+void BeamBatch::snapshot(const Game &game) {
 	priv->beams.clear();
 	BOOST_FOREACH(auto &beam, game.beams) {
 		priv->beams.emplace_back(BeamState{

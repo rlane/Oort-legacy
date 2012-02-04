@@ -15,12 +15,12 @@ class Batch {
 public:
 	Renderer &renderer;
 	PerfHistogram render_perf;
-	PerfHistogram tick_perf;
+	PerfHistogram snapshot_perf;
 
 	Batch(Renderer &renderer)
 		: renderer(renderer) {}
 
-	virtual void tick(const Game &game) {};
+	virtual void snapshot(const Game &game) {};
 	virtual void render(float time) {};
 };
 

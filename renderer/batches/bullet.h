@@ -12,7 +12,7 @@ class BulletPriv;
 class BulletBatch : public Batch {
 public:
 	BulletBatch(Renderer &Renderer);
-	virtual void tick(const Game &game);
+	virtual void snapshot(const Game &game);
 	virtual void render(float time_delta);
 
 private:

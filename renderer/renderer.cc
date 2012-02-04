@@ -86,18 +86,18 @@ void Renderer::render(float view_radius,
 	}
 }
 
-void Renderer::tick(const Game &game) {
+void Renderer::snapshot(const Game &game) {
 	Timer timer;
 	BOOST_FOREACH(auto batch, batches) {
-		//log("renderer ticking batch %s", typeid(*batch).name());
+		//log("renderer snapshotting batch %s", typeid(*batch).name());
 		Timer timer;
-		batch->tick(game);
+		batch->snapshot(game);
 		if (benchmark) {
-			batch->tick_perf.update(timer);
+			batch->snapshot_perf.update(timer);
 		}
 	}
 	if (benchmark) {
-		tick_perf.update(timer);
+		snapshot_perf.update(timer);
 	}
 }
 
@@ -113,12 +113,12 @@ void Renderer::text(int x, int y, const std::string &str) {
 void Renderer::dump_perf() {
 	log("Renderer performance:");
 	log("render   overall: %s", render_perf.summary().c_str());
-	log("snapshot overall: %s", tick_perf.summary().c_str());
+	log("snapshot overall: %s", snapshot_perf.summary().c_str());
 	BOOST_FOREACH(auto batch, batches) {
 		auto name_str = demangle(typeid(*batch).name());
 		auto name = strrchr(name_str.c_str(), ':') + 1;
 		log("render   %13s %s", name, batch->render_perf.summary().c_str());
-		log("snapshot %13s %s", name, batch->tick_perf.summary().c_str());
+		log("snapshot %13s %s", name, batch->snapshot_perf.summary().c_str());
 	}
 	log("");
 }

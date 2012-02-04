@@ -121,7 +121,7 @@ public:
 		pthread_cond_init(&snapshot_cond, NULL);
 
 		renderer = std::unique_ptr<Renderer>(new Renderer());
-		renderer->tick(*game);
+		renderer->snapshot(*game);
 		last_tick_time = microseconds();
 
 		physics_debug_renderer = std::unique_ptr<PhysicsDebugRenderer>(new PhysicsDebugRenderer());
@@ -430,7 +430,7 @@ public:
 		while (pthread_cond_wait(&snapshot_cond, &render_mutex) == 0 && running) {
 			pthread_mutex_lock(&tick_mutex);
 			Timer timer;
-			renderer->tick(*game);
+			renderer->snapshot(*game);
 			snapshot_time = timer.elapsed();
 			pthread_mutex_unlock(&tick_mutex);
 		}
