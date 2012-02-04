@@ -10,6 +10,8 @@ shaders/particle.f.glsl
 shaders/particle.v.glsl
 shaders/ship.f.glsl
 shaders/ship.v.glsl
+shaders/tail.f.glsl
+shaders/tail.v.glsl
 shaders/text.f.glsl
 shaders/text.v.glsl
 test/furball.json
