@@ -27,10 +27,8 @@ namespace RendererBatches {
 struct Particle {
 	glm::vec2 initial_position;
 	glm::vec2 velocity;
-	float initial_time;
 	float lifetime;
 	float type;
-	float padding;
 };
 
 template<> std::vector<GLuint> Bunch<Particle>::buffer_freelist = std::vector<GLuint>();
@@ -85,10 +83,10 @@ void ParticleBatch::render(float time_delta) {
 	prog.uniform("tex", 0);
 
 	auto stride = sizeof(Particle);
+	Particle *p = (Particle*)NULL;
 
 	prog.enable_attrib_array("initial_position");
 	prog.enable_attrib_array("velocity");
-	prog.enable_attrib_array("initial_time");
 	prog.enable_attrib_array("lifetime");
 	prog.enable_attrib_array("type");
 	priv->tex.bind();
@@ -98,10 +96,9 @@ void ParticleBatch::render(float time_delta) {
 			continue;
 		}
 		bunch.bind();
-		Particle *p = (Particle*)NULL;
+		prog.attrib("initial_time", bunch.initial_time);
 		prog.attrib_ptr("initial_position", &p->initial_position, stride);
 		prog.attrib_ptr("velocity", &p->velocity, stride);
-		prog.attrib_ptr("initial_time", &p->initial_time, stride);
 		prog.attrib_ptr("lifetime", &p->lifetime, stride);
 		prog.attrib_ptr("type", &p->type, stride);
 		glDrawArrays(GL_POINTS, 0, bunch.size);
@@ -111,7 +108,6 @@ void ParticleBatch::render(float time_delta) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	prog.disable_attrib_array("initial_position");
 	prog.disable_attrib_array("velocity");
-	prog.disable_attrib_array("initial_time");
 	prog.disable_attrib_array("lifetime");
 	prog.disable_attrib_array("type");
 
@@ -173,7 +169,6 @@ void ParticleBatch::shower(
 		priv->tmp_particles.emplace_back(Particle{
 			/* initial_position */ p0 + dp + dv*Game::tick_length,
 		  /* velocity */ v0 + v + dv,
-			/* initial_time */ priv->time,
 			/* lifetime */ lifetime,
 			/* type */ (float)type
 		});

@@ -123,6 +123,10 @@ public:
 		glUniformMatrix4fv(uniform_location(name), 1, false, glm::value_ptr(val));
 	}
 
+	void attrib(std::string name, const float &val) {
+		glVertexAttrib1f(attrib_location(name), val);
+	}
+
 	void attrib(std::string name, const glm::vec2 &val) {
 		glVertexAttrib2f(attrib_location(name), val.x, val.y);
 	}

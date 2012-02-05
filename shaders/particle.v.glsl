@@ -3,9 +3,9 @@ uniform float current_time;
 uniform float view_scale;
 attribute vec2 initial_position;
 attribute vec2 velocity;
-attribute float initial_time;
 attribute float lifetime;
 attribute float type;
+attribute float initial_time;
 varying vec4 v_color;
 
 #define PARTICLE_TYPE_HIT 0.0

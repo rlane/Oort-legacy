@@ -64,7 +64,7 @@ void TailBatch::render(float time_delta) {
 			continue;
 		}
 		bunch.bind();
-		prog.uniform("initial_time", bunch.initial_time);
+		prog.attrib("initial_time", bunch.initial_time);
 		prog.attrib_ptr("vertex", &v->p, stride);
 		prog.attrib_ptr("color", &v->color, stride);
 		glDrawArrays(GL_LINES, 0, bunch.size*2);

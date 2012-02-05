@@ -1,8 +1,8 @@
 uniform mat4 p_matrix;
-uniform float initial_time;
 uniform float current_time;
 attribute vec2 vertex;
 attribute vec4 color;
+attribute float initial_time;
 varying vec4 v_color;
 
 void main()
