@@ -35,7 +35,7 @@ public:
 	FramerateCounter() {
 		count = 0;
 		start = prev = microseconds();
-		hz = 0;
+		hz = 60;
 	}
 
 	bool update() {
@@ -62,8 +62,7 @@ public:
 	};
 
 	static constexpr float zoom_const = 2.0;
-	static constexpr float pan_const = 0.01;
-	static constexpr float fps = 60;
+	static constexpr float pan_const = 0.6;
 
 	enum State state;
 	bool running;
@@ -270,12 +269,12 @@ public:
 
 		if (zoom_rate < 0) {
 			auto p = screen2world(mouse_position);
-			auto dp = (zoom_const/fps) * (p - view_center);
+			auto dp = (zoom_const/framerate.hz) * (p - view_center);
 			view_center += dp;
 		}
-		view_radius *= (1 + zoom_rate/fps);
+		view_radius *= (1 + zoom_rate/framerate.hz);
 
-		view_center += view_speed*view_radius;
+		view_center += (view_speed/framerate.hz)*view_radius;
 
 		if (paused) {
 			std::ostringstream tmp;
