@@ -25,7 +25,7 @@ public:
 					ship.fire_gun(0, a);
 				}
 
-				if (ship.game->ticks % 32 == 0) {
+				if (ship.game->ticks % 256 == 0) {
 					ship.fire_missile(t);
 				}
 			} else if (&ship.klass == ion_cannon_frigate.get()) {

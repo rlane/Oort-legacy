@@ -67,7 +67,7 @@ class OortInstance : public pp::Instance {
 		ShipClass::initialize();
 
 		log("creating game");
-		Scenario scn = Scenario::load("test/furball.json");
+		Scenario scn = Scenario::load("scenarios/basic.json");
 		auto ai_factory = std::shared_ptr<CxxAIFactory<CxxAI>>(&default_ai_factory, null_ai_deleter);
 		std::vector<std::shared_ptr<AIFactory>> ai_factories = { ai_factory, ai_factory, ai_factory };
 		game = std::make_shared<Game>(scn, ai_factories);
