@@ -36,6 +36,7 @@ public:
 					ship.fire_missile(t);
 				}
 			} else if (&ship.klass == ion_cannon_frigate.get()) {
+				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
 				const BeamDef &beam = ship.klass.beams[0];
 				float a = angle_between(ship.get_position(), t->get_position());
 				float da = angle_diff(ship.get_heading(), a);
