@@ -1,6 +1,6 @@
 // Copyright 2011 Rich Lane
-#ifndef OORT_RENDERER_PERF_H_
-#define OORT_RENDERER_PERF_H_
+#ifndef OORT_COMMON_PERF_H_
+#define OORT_COMMON_PERF_H_
 
 #include <boost/format.hpp>
 #include "common/log.h"

@@ -3,7 +3,7 @@
 
 #include <memory>
 #include "renderer/renderer.h"
-#include "renderer/perf.h"
+#include "common/perf.h"
 
 namespace Oort {
 
