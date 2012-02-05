@@ -50,13 +50,19 @@ void ShipBatch::render(float time_delta) {
 	prog.uniform("p_matrix", renderer.p_matrix);
 
 	std::vector<vec2> jitters = {
-#if 0
+#ifdef __native_client__
+#define SAMPLES 4
+#else
+#define SAMPLES 0
+#endif
+
+#if SAMPLES == 4
 #warning "4 samples"
 		vec2(0.375, 0.25),
 		vec2(0.125, 0.75),
 		vec2(0.875, 0.25),
 		vec2(0.625, 0.75),
-#elif 0
+#elif SAMPLES == 16
 #warning "16 samples"
 		vec2(0.375, 0.4375), vec2(0.625, 0.0625), vec2(0.875, 0.1875), vec2(0.125, 0.0625),
 		vec2(0.375, 0.6875), vec2(0.875, 0.4375), vec2(0.625, 0.5625), vec2(0.375, 0.9375),
