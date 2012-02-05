@@ -1,12 +1,13 @@
+#include "sim/builtin_ai.h"
 #include "test/testcase.h"
 
 namespace Oort {
 
-class DefaultAI : public CxxAI {
+class BuiltinAI : public CxxAI {
 public:
 	ProportionalNavigator nav;
 
-	DefaultAI(Ship &ship)
+	BuiltinAI(Ship &ship)
 		: CxxAI(ship),
 		  nav(ship, 5, ship.klass.max_main_acc) {}
 
@@ -49,6 +50,7 @@ public:
 	}
 };
 
-CxxAIFactory<DefaultAI> default_ai_factory;
+static CxxAIFactory<BuiltinAI> builtin_ai_factory_obj;
+std::shared_ptr<AIFactory> builtin_ai_factory(static_cast<AIFactory*>(&builtin_ai_factory_obj));
 
 }

@@ -19,6 +19,7 @@
 #include "sim/ship_class.h"
 #include "sim/math_util.h"
 #include "sim/ai_lib.h"
+#include "sim/builtin_ai.h"
 #include "common/constexpr.h"
 
 using namespace std;

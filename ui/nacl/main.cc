@@ -18,14 +18,9 @@
 #include "sim/ship_class.h"
 #include "renderer/renderer.h"
 #include "common/log.h"
+#include "sim/builtin_ai.h"
 
 using namespace Oort;
-
-namespace Oort {
-	extern CxxAIFactory<CxxAI> default_ai_factory;
-
-	void null_ai_deleter(CxxAIFactory<CxxAI> *x) {}
-}
 
 class OortInstance : public pp::Instance {
 	std::shared_ptr<Game> game;
@@ -68,8 +63,7 @@ class OortInstance : public pp::Instance {
 
 		log("creating game");
 		Scenario scn = Scenario::load("scenarios/basic.json");
-		auto ai_factory = std::shared_ptr<CxxAIFactory<CxxAI>>(&default_ai_factory, null_ai_deleter);
-		std::vector<std::shared_ptr<AIFactory>> ai_factories = { ai_factory, ai_factory, ai_factory };
+		std::vector<std::shared_ptr<AIFactory>> ai_factories = { builtin_ai_factory, builtin_ai_factory, builtin_ai_factory };
 		game = std::make_shared<Game>(scn, ai_factories);
 
 		log("game initialized");
