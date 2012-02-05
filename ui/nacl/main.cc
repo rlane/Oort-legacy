@@ -174,6 +174,11 @@ class OortInstance : public pp::Instance {
 			}
 			gui->handle_mousebuttondown(real_button, pos.x(), pos.y());
 			return true;
+		} else if (type == PP_INPUTEVENT_TYPE_WHEEL) {
+			// TODO smooth scrolling
+			auto wheel_event = static_cast<pp::WheelInputEvent>(event);
+			gui->handle_scroll(wheel_event.GetDelta().y() > 0);
+			return true;
 		} else if (type == PP_INPUTEVENT_TYPE_MOUSEMOVE) {
 			auto mouse_event = static_cast<pp::MouseInputEvent>(event);
 			auto pos = mouse_event.GetPosition();

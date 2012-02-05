@@ -45,7 +45,12 @@ static void handle_sdl_event(const SDL_Event &event) {
 			gui->handle_keyup(convert_keycode(event.key.keysym.sym));
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			gui->handle_mousebuttondown(event.button.button, event.button.x, event.button.y);
+			if (event.button.button == SDL_BUTTON_WHEELUP ||
+			    event.button.button == SDL_BUTTON_WHEELDOWN) {
+				gui->handle_scroll(event.button.button == SDL_BUTTON_WHEELUP);
+			} else {
+				gui->handle_mousebuttondown(event.button.button, event.button.x, event.button.y);
+			}
 			break;
 		case SDL_VIDEORESIZE:
 			SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_OPENGL | SDL_RESIZABLE);

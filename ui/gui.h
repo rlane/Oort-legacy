@@ -246,6 +246,10 @@ public:
 		}
 	}
 
+	void handle_scroll(bool up) {
+		zoom(up ? -0.1 : 0.1);
+	}
+
 	void handle_resize(int w, int h) {
 		screen_width = w;
 		screen_height = h;
@@ -264,17 +268,24 @@ public:
 		mouse_position = glm::vec2(x, y);
 	}
 
+	void zoom(float d) {
+		if (d < 0) {
+			auto p = screen2world(mouse_position);
+			auto dp = -d * (p - view_center);
+			view_center += dp;
+		}
+		view_radius *= (1 + d);
+	}
+
+	void pan(glm::vec2 d) {
+		view_center += d*view_radius;
+	}
+
 	void render() {
 		Timer timer;
 
-		if (zoom_rate < 0) {
-			auto p = screen2world(mouse_position);
-			auto dp = (zoom_const/framerate.hz) * (p - view_center);
-			view_center += dp;
-		}
-		view_radius *= (1 + zoom_rate/framerate.hz);
-
-		view_center += (view_speed/framerate.hz)*view_radius;
+		zoom(zoom_rate/framerate.hz);
+		pan(view_speed/framerate.hz);
 
 		if (paused) {
 			std::ostringstream tmp;
