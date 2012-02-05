@@ -10,6 +10,7 @@
 #include "glm/glm.hpp"
 #include "sim/explosion.h"
 #include "common/constexpr.h"
+#include "common/perf.h"
 
 class b2World;
 
@@ -50,6 +51,8 @@ class Game {
 	int ticks;
 	float time;
 	float radius;
+	PerfHistogram physics_perf;
+	PerfHistogram ai_perf;
 
 	private:
 	void reap();

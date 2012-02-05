@@ -179,6 +179,21 @@ public:
 		case 'b':
 			renderer->benchmark = !renderer->benchmark;
 			break;
+		case 'n':
+			log("%0.2f fps", framerate.hz);
+			log("%0.2f tps", tickrate.hz);
+			log("");
+			log("Simulation performance:");
+			log("physics: %s", game->physics_perf.summary().c_str());
+			log("ai:      %s", game->ai_perf.summary().c_str());
+			log("");
+			log("Renderer performance:");
+			renderer->dump_perf();
+			log("");
+			log("Physics:");
+			game->physics_perf.dump();
+			log("");
+			break;
 		default:
 			break;
 		}
@@ -369,12 +384,7 @@ public:
 			pthread_mutex_unlock(&render_mutex);
 		}
 
-		if (renderer->benchmark && framerate.update()) {
-			log("%0.2f fps", framerate.hz);
-			log("%0.2f tps", tickrate.hz);
-			renderer->dump_perf();
-		}
-
+		framerate.update();
 		render_time = timer.elapsed();
 	}
 

@@ -111,7 +111,6 @@ void Renderer::text(int x, int y, const std::string &str) {
 }
 
 void Renderer::dump_perf() {
-	log("Renderer performance:");
 	log("render   overall: %s", render_perf.summary().c_str());
 	log("snapshot overall: %s", snapshot_perf.summary().c_str());
 	BOOST_FOREACH(auto batch, batches) {
@@ -120,7 +119,6 @@ void Renderer::dump_perf() {
 		log("render   %13s %s", name, batch->render_perf.summary().c_str());
 		log("snapshot %13s %s", name, batch->snapshot_perf.summary().c_str());
 	}
-	log("");
 }
 
 }

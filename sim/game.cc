@@ -173,15 +173,19 @@ void Game::reap() {
 void Game::tick() {
 	reap();
 
+	Timer ai_timer;
 	BOOST_FOREACH(auto ship, ships) {
 		ship->tick();
 	}
+	ai_perf.update(ai_timer);
 
 	BOOST_FOREACH(auto bullet, bullets) {
 		bullet->tick();
 	}
 
+	Timer physics_timer;
 	world->Step(tick_length, 8, 3);
+	physics_perf.update(physics_timer);
 
 	BOOST_FOREACH(auto &explosion, explosions) {
 		explosion.tick(*this);
