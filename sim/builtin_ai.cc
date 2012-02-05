@@ -6,27 +6,33 @@ namespace Oort {
 class BuiltinAI : public CxxAI {
 public:
 	ProportionalNavigator nav;
+	boost::random::mt19937 prng;
 
 	BuiltinAI(Ship &ship)
 		: CxxAI(ship),
-		  nav(ship, 5, ship.klass.max_main_acc) {}
+		  nav(ship, 5, ship.klass.max_main_acc),
+	    prng(ship.id) {}
 
 	void tick() {
 		auto t = find_target(ship);
 
 		if (t) {
 			if (&ship.klass == fighter.get() || &ship.klass == assault_frigate.get()) {
+				boost::uniform_real<> gun_dist(0, 3);
+				boost::uniform_real<> missile_dist(0, 256);
 				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
 
-				const GunDef &gun = ship.klass.guns[0];
-				auto a = lead(ship.get_position(), t->get_position(),
-											ship.get_velocity(), t->get_velocity(),
-											gun.velocity, gun.ttl);
-				if (!isnan(a)) {
-					ship.fire_gun(0, a);
+				if (gun_dist(prng) < 1.0) {
+					const GunDef &gun = ship.klass.guns[0];
+					auto a = lead(ship.get_position(), t->get_position(),
+												ship.get_velocity(), t->get_velocity(),
+												gun.velocity, gun.ttl);
+					if (!isnan(a)) {
+						ship.fire_gun(0, a);
+					}
 				}
 
-				if (ship.game->ticks % 256 == 0) {
+				if (missile_dist(prng) < 1.0) {
 					ship.fire_missile(t);
 				}
 			} else if (&ship.klass == ion_cannon_frigate.get()) {
