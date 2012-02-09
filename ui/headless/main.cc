@@ -1,5 +1,6 @@
 // Copyright 2011 Rich Lane
 #include <boost/foreach.hpp>
+#include <boost/program_options.hpp>
 #include <memory>
 
 #include "glm/glm.hpp"
@@ -16,19 +17,37 @@
 
 using glm::vec2;
 using std::make_shared;
+namespace po = boost::program_options;
 
 namespace Oort {
 
 int main(int argc, char **argv) {
-	if (argc != 2) {
-		fprintf(stderr, "usage: %s test.so\n", argv[0]);
+	po::options_description desc("Allowed options");
+	desc.add_options()
+		("help,h", "produce help message")
+		("test,t", po::value<std::string>(), "test to run")
+		;
+
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
+
+	if (vm.count("help")) {
+		std::cerr << desc << std::endl;
+		return 0;
+	}
+
+	if (!vm.count("test")) {
+		fprintf(stderr, "no test specified\n");
 		return 1;
 	}
 
+	std::string test_path = vm["test"].as<std::string>();
+
 	ShipClass::initialize();
 
-	printf("Running test %s\n", argv[1]);
-	auto test = Test::load(std::string(argv[1]));
+	printf("Running test %s\n", test_path.c_str());
+	auto test = Test::load(test_path);
 	auto game = test->get_game();
 
 	b2Timer timer;

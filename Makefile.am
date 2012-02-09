@@ -83,7 +83,7 @@ oort_sdl_LDADD=$(SDL_LIBS) $(GLEW_LIBS) $(LUA_LIBS) $(BOX2D_LIBS) $(BOOST_LIBS)
 oort_nacl_SOURCES := ui/nacl/main.cc ui/nacl/embedded_resources.c $(SIM_SRCS) $(RENDERER_SRCS)
 oort_nacl_LDADD=$(SDL_LIBS) $(NACL_LIBS) $(LUA_LIBS) $(BOX2D_LIBS)
 
-TESTS_ENVIRONMENT = $(top_builddir)/oort_headless
+TESTS_ENVIRONMENT = $(top_builddir)/oort_headless -t
 
 test/%.so: test/%.cc
 	@mkdir -p test
