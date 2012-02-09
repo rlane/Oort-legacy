@@ -57,7 +57,9 @@ public:
 	}
 };
 
+static void null_deleter(AIFactory *) {}
+
 static CxxAIFactory<BuiltinAI> builtin_ai_factory_obj;
-std::shared_ptr<AIFactory> builtin_ai_factory(static_cast<AIFactory*>(&builtin_ai_factory_obj));
+std::shared_ptr<AIFactory> builtin_ai_factory(static_cast<AIFactory*>(&builtin_ai_factory_obj), null_deleter);
 
 }
