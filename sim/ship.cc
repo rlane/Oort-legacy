@@ -66,6 +66,12 @@ void Ship::handle_collision(const Ship &s) {
 	}
 }
 
+bool Ship::gun_ready(int idx) {
+	const GunDef &gun = klass.guns[idx];
+	float lft = last_fire_times[idx];
+	return lft + gun.reload_time <= game->time;
+}
+
 void Ship::fire_gun(int idx, float angle) {
 	if (idx >= (int)klass.guns.size()) {
 		return;
@@ -78,12 +84,11 @@ void Ship::fire_gun(int idx, float angle) {
 		return;
 	}
 
-	float &lft = last_fire_times[idx];
-	if (lft + gun.reload_time > game->time) {
+	if (!gun_ready(idx)) {
 		return;
-	} else {
-		lft = game->time;
 	}
+
+	last_fire_times[idx] = game->time;
 
 	boost::random::normal_distribution<float> v_dist(gun.velocity, 10);
 	boost::random::normal_distribution<float> a_dist(angle, gun.deviation);

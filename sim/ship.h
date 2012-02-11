@@ -35,6 +35,7 @@ class Ship : public Entity {
 	virtual bool should_collide(const Entity &e) const;
 	virtual void handle_collision(const Ship &a);
 
+	bool gun_ready(int idx);
 	void fire_gun(int idx, float angle);
 	void fire_beam(int idx, float angle);
 	void fire_missile(std::weak_ptr<Ship> target);

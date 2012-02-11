@@ -22,7 +22,7 @@ public:
 				boost::uniform_real<> missile_dist(0, 256);
 				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
 
-				if (gun_dist(prng) < 1.0) {
+				if (ship.gun_ready(0)) {
 					const GunDef &gun = ship.klass.guns[0];
 					auto a = lead(ship.get_position(), t->get_position(),
 												ship.get_velocity(), t->get_velocity(),
