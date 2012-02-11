@@ -1,16 +1,20 @@
 // Copyright 2011 Rich Lane
+#include <boost/program_options.hpp>
 #include "ui/gui.h"
 #include "gl/gl.h"
 #include <SDL.h>
 #include "sim/game.h"
 #include "sim/test.h"
 #include "sim/ship_class.h"
+#include "sim/scenario.h"
+#include "sim/builtin_ai.h"
 
 using glm::vec2;
 using std::make_shared;
 using std::shared_ptr;
 using boost::format;
 using boost::str;
+namespace po = boost::program_options;
 
 namespace Oort {
 
@@ -64,16 +68,47 @@ static void handle_sdl_event(const SDL_Event &event) {
 }
 
 int main(int argc, char **argv) {
-	if (argc != 2) {
-		fprintf(stderr, "usage: %s test.so\n", argv[0]);
-		return 1;
-	}
+	std::shared_ptr<Game> game;
+	Test *test = NULL;
 
 	ShipClass::initialize();
 
-	printf("Running test %s\n", argv[1]);
-	auto test = Test::load(std::string(argv[1]));
-	auto game = test->get_game();
+	po::options_description desc("Allowed options");
+	desc.add_options()
+		("help,h", "produce help message")
+		("test,t", po::value<std::string>(), "test to run")
+		("scenario,s", po::value<std::string>(), "scenario")
+		;
+
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
+
+	if (vm.count("help")) {
+		std::cerr << desc << std::endl;
+		return 0;
+	}
+
+	if (vm.count("test") && vm.count("scenario")) {
+		fprintf(stderr, "both test or scenario specified\n");
+		return 1;
+	}
+
+	if (vm.count("test")) {
+		std::string test_path = vm["test"].as<std::string>();
+		printf("Running test %s\n", test_path.c_str());
+		test = Test::load(test_path);
+		game = test->get_game();
+	} else if (vm.count("scenario")) {
+		std::string scn_path = vm["scenario"].as<std::string>();
+		printf("Running scenario %s\n", scn_path.c_str());
+		Scenario scn = Scenario::load(scn_path);
+		std::vector<std::shared_ptr<AIFactory>> ai_factories{ builtin_ai_factory, builtin_ai_factory, builtin_ai_factory };
+		game = std::make_shared<Game>(scn, ai_factories);
+	} else {
+		fprintf(stderr, "no test or scenario specified\n");
+		return 1;
+	}
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
