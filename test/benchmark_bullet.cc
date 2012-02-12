@@ -33,8 +33,16 @@ public:
 	}
 
 	void after_tick() {
-		if (game->ticks >= 128) {
+		if (game->ticks == 128) {
 			finished = true;
+
+			log("Physics:");
+			game->physics_perf.dump();
+			int missed = 0;
+			for (int i = 1; i < PerfHistogram::NUM_BUCKETS; i++) {
+				missed += game->physics_perf.buckets[i];
+			}
+			log("missed target: %d", missed);
 		}
 	}
 } test;

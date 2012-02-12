@@ -46,12 +46,12 @@ void BulletBatch::snapshot(const Game &game) {
 
 	priv->bullets.clear();
 	BOOST_FOREACH(auto bullet, game.bullets) {
-		if (bullet->dead || bullet->get_def().type == GunType::PLASMA) {
+		if (bullet->dead || bullet->def.type == GunType::PLASMA) {
 			continue;
 		}
 
-		auto p = bullet->get_position();
-		auto v = bullet->get_velocity();
+		auto p = bullet->get_position(game.time);
+		auto v = bullet->velocity;
 		auto dp = v * (1.0f/40);
 
 		priv->bullets.emplace_back(BulletState{

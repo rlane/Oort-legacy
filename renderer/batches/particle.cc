@@ -124,10 +124,10 @@ void ParticleBatch::snapshot(const Game &game) {
 	}
 
 	BOOST_FOREACH(auto bullet, game.bullets) {
-		if (bullet->get_def().type == GunType::PLASMA) {
+		if (bullet->def.type == GunType::PLASMA) {
 			shower(ParticleType::PLASMA,
-			       bullet->get_position(),
-			       vec2(0,0), bullet->get_velocity() * 0.507f,
+			       bullet->get_position(game.time),
+			       vec2(0,0), bullet->velocity * 0.507f,
 			       20.0f, 0.2f, 0.4f, 4);
 		}
 	}

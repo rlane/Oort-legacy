@@ -158,9 +158,13 @@ static bool entity_is_dead(std::shared_ptr<Entity> entity) {
 	return entity->dead;
 }
 
+static bool bullet_is_dead(std::shared_ptr<Bullet> bullet) {
+	return bullet->dead;
+}
+
 void Game::reap() {
 	bullets.erase(
-		std::remove_if(bullets.begin(), bullets.end(), entity_is_dead),
+		std::remove_if(bullets.begin(), bullets.end(), bullet_is_dead),
 		bullets.end());
 	beams.clear();
 	ships.erase(
@@ -179,9 +183,7 @@ void Game::tick() {
 	}
 	ai_perf.update(ai_timer);
 
-	BOOST_FOREACH(auto bullet, bullets) {
-		bullet->tick();
-	}
+	Bullet::tick_all(*this);
 
 	Timer physics_timer;
 	world->Step(tick_length, 8, 3);

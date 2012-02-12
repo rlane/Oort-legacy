@@ -93,12 +93,9 @@ void Ship::fire_gun(int idx, float angle) {
 	boost::random::normal_distribution<float> v_dist(gun.velocity, 10);
 	boost::random::normal_distribution<float> a_dist(angle, gun.deviation);
 	angle = a_dist(prng);
-	auto bullet = std::make_shared<Bullet>(game, team, id, gun);
 	auto p = get_position() + glm::rotate(gun.origin, glm::degrees(get_heading()));
 	auto v = get_velocity() + v_dist(prng) * vec2(cos(angle), sin(angle));
-	bullet->set_position(p);
-	bullet->set_heading(angle);
-	bullet->set_velocity(v);
+	auto bullet = std::make_shared<Bullet>(game, team, id, gun, p, v);
 	game->bullets.push_back(bullet);
 }
 
