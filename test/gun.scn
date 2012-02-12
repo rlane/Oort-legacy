@@ -5,12 +5,16 @@ team "green" do
 	color 0, 1, 0
 	ship 'fighter' do
 	end
+	ship 'target' do
+		position 500, 10
+		heading Math::PI/2
+	end
 end
 
 team "red" do
 	color 1, 0, 0
-	ship 'ion_cannon_frigate' do
-		position 500, 0
+	ship 'target' do
+		position 500, -10
 		heading Math::PI/2
 	end
 end

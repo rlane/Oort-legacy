@@ -20,6 +20,14 @@ public:
 	}
 
 	void after_tick() {
+		BOOST_FOREACH(auto &s, game->ships) {
+			if (s->team->name == "green") {
+				if (s->hull != s->klass.hull) {
+					throw runtime_error("friendly ship damaged");
+				}
+			}
+		}
+
 		Team *winner;
 		if (game->ships.empty() || game->check_victory(winner)) {
 			finished = true;

@@ -84,7 +84,9 @@ void Bullet::tick_all(Game &game) {
 			game.world->RayCast(&callback, p1, p2);
 			auto ship = callback.ship;
 			if (ship) {
-				game.hits.emplace_back(Hit{ ship, NULL, callback.point, b->damage(*ship) });
+				if (ship->team != b->team) {
+					game.hits.emplace_back(Hit{ ship, NULL, callback.point, b->damage(*ship) });
+				}
 				b->dead = true;
 			}
 		}
