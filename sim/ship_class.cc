@@ -5,6 +5,7 @@
 #include <boost/foreach.hpp>
 #include "sim/math_util.h"
 #include "sim/model.h"
+#include "sim/game.h"
 
 using glm::vec2;
 
@@ -30,11 +31,11 @@ void ShipClass::initialize() {
 		def.model = Model::load("fighter");
 		GunDef gun;
 		gun.type = GunType::SLUG;
-		gun.mass = 0.03f;
+		gun.mass = 0.0075f;
 		gun.radius = 0.01f;
 		gun.velocity = 3000.0f;
 		gun.ttl = 1.0f;
-		gun.reload_time = 0.125f;
+		gun.reload_time = Game::tick_length;
 		gun.deviation = 0.02;
 		gun.angle = 0.0;
 		gun.coverage = 0.8 * pi;
