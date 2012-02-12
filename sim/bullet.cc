@@ -43,12 +43,50 @@ bool Bullet::should_collide(const Entity &e) const {
 }
 */
 
+class BulletRayCastCallback : public b2RayCastCallback
+{
+public:
+	const Bullet &bullet;
+	Ship *ship;
+	glm::vec2 point;
+
+	BulletRayCastCallback(const Bullet &b)
+	  : bullet(b),
+		  ship(NULL)
+	{
+	}
+
+	float32 ReportFixture(b2Fixture* fixture, const b2Vec2& point,
+	                      const b2Vec2& normal, float32 fraction)
+	{
+		auto body = fixture->GetBody();
+		auto entity = (Entity*) body->GetUserData();
+		auto ship = dynamic_cast<Ship*>(entity);
+
+		if (!ship || ship->get_id() == bullet.creator_id) {
+			return -1;
+		}
+
+		this->ship = ship;
+		this->point = b2n(point);
+		return fraction;
+	}
+};
+
 void Bullet::tick_all(Game &game) {
 	BOOST_FOREACH(auto &b, game.bullets) {
 		if (game.time > b->creation_time + b->def.ttl) {
 			b->dead = true;
 		} else {
-			// XXX collision detection
+			BulletRayCastCallback callback(*b);
+			auto p2 = n2b(b->get_position(game.time));
+			auto p1 = n2b(b->get_position(game.time+Game::tick_length));
+			game.world->RayCast(&callback, p1, p2);
+			auto ship = callback.ship;
+			if (ship) {
+				game.hits.emplace_back(Hit{ ship, NULL, callback.point, b->damage(*ship) });
+				b->dead = true;
+			}
 		}
 	}
 }
