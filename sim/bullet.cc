@@ -79,8 +79,8 @@ void Bullet::tick_all(Game &game) {
 			b->dead = true;
 		} else {
 			BulletRayCastCallback callback(*b);
-			auto p2 = n2b(b->get_position(game.time));
-			auto p1 = n2b(b->get_position(game.time+Game::tick_length));
+			auto p1 = n2b(b->get_position(game.time));
+			auto p2 = n2b(b->get_position(game.time+Game::tick_length));
 			game.world->RayCast(&callback, p1, p2);
 			auto ship = callback.ship;
 			if (ship) {
