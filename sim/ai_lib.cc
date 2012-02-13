@@ -91,11 +91,24 @@ float lead(vec2 p1, vec2 p2, vec2 v1, vec2 v2, float w, float t_max) {
 	}
 }
 
-std::shared_ptr<Ship> find_target(Ship &s) {
+std::shared_ptr<Ship> find_target(Ship &s, float dist) {
 	std::shared_ptr<Ship> target;
-	float dist = 1e9f;
 	BOOST_FOREACH(auto t, s.game->ships) {
 		if (t->team != s.team && &t->klass != &*missile) {
+			float d = length(t->get_position() - s.get_position());
+			if (d < dist) {
+				target = t;
+				dist = d;
+			}
+		}
+	}
+	return target;
+}
+
+std::shared_ptr<Ship> find_missile_target(Ship &s, float dist) {
+	std::shared_ptr<Ship> target;
+	BOOST_FOREACH(auto t, s.game->ships) {
+		if (t->team != s.team && &t->klass == &*missile) {
 			float d = length(t->get_position() - s.get_position());
 			if (d < dist) {
 				target = t;
