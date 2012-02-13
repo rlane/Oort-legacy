@@ -100,12 +100,37 @@ void api_push_vector(lua_State *L, vec2 v) {
 
 int api_position(lua_State *L) {
 	auto &ship = lua_ai(L).ship;
-	api_push_vector(L, ship.get_position());
+	auto p = ship.get_position();
+	lua_pushnumber(L, p.x);
+	lua_pushnumber(L, p.y);
+	return 2;
+}
+
+int api_velocity(lua_State *L) {
+	auto &ship = lua_ai(L).ship;
+	auto v = ship.get_velocity();
+	lua_pushnumber(L, v.x);
+	lua_pushnumber(L, v.y);
+	return 2;
+}
+
+int api_heading(lua_State *L) {
+	auto &ship = lua_ai(L).ship;
+	lua_pushnumber(L, ship.get_heading());
+	return 1;
+}
+
+int api_angular_velocity(lua_State *L) {
+	auto &ship = lua_ai(L).ship;
+	lua_pushnumber(L, ship.get_angular_velocity());
 	return 1;
 }
 
 void LuaAI::register_api() {
-	lua_register(G, "position", api_position);
+	lua_register(G, "sys_position", api_position);
+	lua_register(G, "sys_velocity", api_velocity);
+	lua_register(G, "sys_heading", api_heading);
+	lua_register(G, "sys_angular_velocity", api_angular_velocity);
 }
 
 }

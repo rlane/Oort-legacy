@@ -1,5 +1,7 @@
 while true do
-	local p = position()
-	print(p[1], p[2])
+	print(sys_position())
+	print(sys_velocity())
+	print(sys_heading())
+	print(sys_angular_velocity())
 	coroutine.yield()
 end
