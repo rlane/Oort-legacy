@@ -16,7 +16,6 @@ enum class GunType {
 struct GunDef : public WeaponDef {
 	GunType type;
 	float mass;         // kg
-	float radius;       // meters
 	float velocity;     // meters/second
 	float ttl;          // seconds
 	float reload_time;  // seconds

@@ -32,7 +32,6 @@ void ShipClass::initialize() {
 		GunDef gun;
 		gun.type = GunType::SLUG;
 		gun.mass = 0.015f;
-		gun.radius = 0.01f;
 		gun.velocity = 3000.0f;
 		gun.ttl = 1.0f;
 		gun.reload_time = Game::tick_length*2;
@@ -83,7 +82,6 @@ void ShipClass::initialize() {
 			GunDef gun;
 			gun.type = GunType::PLASMA;
 			gun.mass = 10.0f;
-			gun.radius = 0.01f;
 			gun.velocity = 800.0f;
 			gun.ttl = 10.0f;
 			gun.reload_time = 0.6f;
@@ -97,7 +95,6 @@ void ShipClass::initialize() {
 			GunDef gun;
 			gun.type = GunType::SLUG;
 			gun.mass = 0.0075;
-			gun.radius = 0.01f;
 			gun.velocity = 3000.0f;
 			gun.ttl = 1.0f;
 			gun.reload_time = Game::tick_length*2;
@@ -111,7 +108,6 @@ void ShipClass::initialize() {
 			GunDef gun;
 			gun.type = GunType::SLUG;
 			gun.mass = 0.0075f;
-			gun.radius = 0.01f;
 			gun.velocity = 3000.0f;
 			gun.ttl = 1.0f;
 			gun.reload_time = Game::tick_length*2;
