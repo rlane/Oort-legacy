@@ -31,11 +31,11 @@ void ShipClass::initialize() {
 		def.model = Model::load("fighter");
 		GunDef gun;
 		gun.type = GunType::SLUG;
-		gun.mass = 0.0075f;
+		gun.mass = 0.015f;
 		gun.radius = 0.01f;
 		gun.velocity = 3000.0f;
 		gun.ttl = 1.0f;
-		gun.reload_time = Game::tick_length;
+		gun.reload_time = Game::tick_length*2;
 		gun.deviation = 0.02;
 		gun.angle = 0.0;
 		gun.coverage = 0.8 * pi;
@@ -57,7 +57,7 @@ void ShipClass::initialize() {
 		def.model = Model::load("ion_cannon_frigate");
 		{
 			BeamDef beam;
-			beam.damage = 6e6;
+			beam.damage = 10e6;
 			beam.length = 1e3;
 			beam.width = 6;
 			beam.angle = 0;
@@ -79,18 +79,48 @@ void ShipClass::initialize() {
 		def.scale = 40;
 		def.tail_alpha = 0.2f;
 		def.model = Model::load("assault_frigate");
-		GunDef gun;
-		gun.type = GunType::PLASMA;
-		gun.mass = 10.0f;
-		gun.radius = 0.01f;
-		gun.velocity = 600.0f;
-		gun.ttl = 10.0f;
-		gun.reload_time = 0.6f;
-		gun.deviation = 0.04;
-		gun.angle = 0.0;
-		gun.coverage = 2 * pi;
-		gun.origin = vec2(10, 0);
-		def.guns.push_back(gun);
+		{
+			GunDef gun;
+			gun.type = GunType::PLASMA;
+			gun.mass = 10.0f;
+			gun.radius = 0.01f;
+			gun.velocity = 800.0f;
+			gun.ttl = 10.0f;
+			gun.reload_time = 0.6f;
+			gun.deviation = 0.04;
+			gun.angle = 0.0;
+			gun.coverage = 2 * pi;
+			gun.origin = vec2(10, 0);
+			def.guns.push_back(gun);
+		}
+		{
+			GunDef gun;
+			gun.type = GunType::SLUG;
+			gun.mass = 0.0075;
+			gun.radius = 0.01f;
+			gun.velocity = 3000.0f;
+			gun.ttl = 1.0f;
+			gun.reload_time = Game::tick_length*2;
+			gun.deviation = 0.01;
+			gun.angle = 0.0;
+			gun.coverage = 2*pi;
+			gun.origin = vec2(-15, 0);
+			def.guns.push_back(gun);
+		}
+		{
+			GunDef gun;
+			gun.type = GunType::SLUG;
+			gun.mass = 0.0075f;
+			gun.radius = 0.01f;
+			gun.velocity = 3000.0f;
+			gun.ttl = 1.0f;
+			gun.reload_time = Game::tick_length*2;
+			gun.deviation = 0.01;
+			gun.angle = 0.0;
+			gun.coverage = 2*pi;
+			gun.origin = vec2(15, 0);
+			def.guns.push_back(gun);
+		}
 		assault_frigate = std::unique_ptr<ShipClass>(new ShipClass(def));
 	}
 

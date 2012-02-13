@@ -127,7 +127,7 @@ void ParticleBatch::snapshot(const Game &game) {
 		if (bullet->def.type == GunType::PLASMA) {
 			shower(ParticleType::PLASMA,
 			       bullet->get_position(game.time),
-			       vec2(0,0), bullet->velocity * 0.507f,
+			       vec2(0,0), bullet->velocity * 0.707f,
 			       20.0f, 0.2f, 0.4f, 4);
 		}
 	}

@@ -1,5 +1,6 @@
 #include "sim/builtin_ai.h"
 #include "test/testcase.h"
+#include "glm/gtx/rotate_vector.hpp"
 
 namespace Oort {
 
@@ -17,8 +18,7 @@ public:
 		auto t = find_target(ship);
 
 		if (t) {
-			if (&ship.klass == fighter.get() || &ship.klass == assault_frigate.get()) {
-				boost::uniform_real<> gun_dist(0, 3);
+			if (&ship.klass == fighter.get()) {
 				boost::uniform_real<> missile_dist(0, 256);
 				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
 
@@ -35,8 +35,30 @@ public:
 				if (missile_dist(prng) < 1.0) {
 					ship.fire_missile(t);
 				}
+			} else if (&ship.klass == assault_frigate.get()) {
+				auto mt = find_missile_target(ship, 1e3);
+				boost::uniform_real<> missile_dist(0, 32);
+				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*8);
+
+				for (unsigned int i = 0; i < ship.klass.guns.size(); i++) {
+					auto tgt = (i != 0 && mt) ? mt : t;
+					if (ship.gun_ready(i)) {
+						const GunDef &gun = ship.klass.guns[i];
+						auto gun_pos = ship.get_position() + glm::rotate(gun.origin, glm::degrees(ship.get_heading()));
+						auto a = lead(gun_pos, tgt->get_position(),
+													ship.get_velocity(), tgt->get_velocity(),
+													gun.velocity, gun.ttl);
+						if (!isnan(a)) {
+							ship.fire_gun(i, a);
+						}
+					}
+				}
+
+				if (missile_dist(prng) < 1.0) {
+					ship.fire_missile(t);
+				}
 			} else if (&ship.klass == ion_cannon_frigate.get()) {
-				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*5);
+				drive_towards(ship, t->get_position(), ship.klass.max_main_acc*8);
 				const BeamDef &beam = ship.klass.beams[0];
 				float a = angle_between(ship.get_position(), t->get_position());
 				float da = angle_diff(ship.get_heading(), a);
