@@ -18,6 +18,7 @@ extern "C" {
 #include "sim/ship.h"
 #include "sim/bullet.h"
 #include "common/log.h"
+#include "common/resources.h"
 
 using glm::vec2;
 
@@ -57,10 +58,27 @@ LuaAI::LuaAI(Ship &ship, std::string filename, std::string code)
 	luaL_openlibs(G);
 	register_api();
 
+	std::vector<std::string> libs = { "lib", "strict", "vector" };
+	BOOST_FOREACH(auto &lib, libs) {
+		std::string filename = lib + ".lua";
+		auto lib_code = load_resource(filename);
+		luaL_loadbuffer(G, lib_code.c_str(), lib_code.length(), filename.c_str());
+		lua_setglobal(G, lib.c_str());
+	}
+
+	auto runtime_code = load_resource("runtime.lua");
+	luaL_loadbuffer(G, runtime_code.c_str(), runtime_code.length(), "runtime.lua");
+	lua_call(G, 0, 0);
+
 	L = lua_newthread(G);
+
+	lua_getglobal(L, "sandbox");
+
 	if (luaL_loadbuffer(L, code.c_str(), code.length(), filename.c_str())) {
 		throw std::runtime_error("Failed to load Lua AI"); // XXX message
 	}
+
+	lua_call(L, 1, 1);
 }
 
 LuaAI::~LuaAI() {
