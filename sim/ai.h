@@ -59,6 +59,7 @@ public:
 	LuaAI(Ship &ship, std::string filename, std::string code);
 	virtual ~LuaAI();
 	virtual void tick();
+	void register_api();
 
 private:
 	lua_State *G, *L;

@@ -19,6 +19,8 @@ extern "C" {
 #include "sim/bullet.h"
 #include "common/log.h"
 
+using glm::vec2;
+
 namespace Oort {
 
 AI::AI(Ship &ship) : ship(ship) {}
@@ -38,6 +40,8 @@ std::unique_ptr<AI> LuaAIFactory::instantiate(Ship &ship) {
 	return std::unique_ptr<AI>(new LuaAI(ship, filename, code));
 }
 
+static void *AI_RKEY = (void*)0xAABBCC02;
+
 LuaAI::LuaAI(Ship &ship, std::string filename, std::string code)
 	: AI(ship)
 {
@@ -46,7 +50,12 @@ LuaAI::LuaAI(Ship &ship, std::string filename, std::string code)
 		throw std::runtime_error("Failed to create Lua state");
 	}
 
+	lua_pushlightuserdata(G, AI_RKEY);
+	lua_pushlightuserdata(G, this);
+	lua_settable(G, LUA_REGISTRYINDEX);
+
 	luaL_openlibs(G);
+	register_api();
 
 	L = lua_newthread(G);
 	if (luaL_loadbuffer(L, code.c_str(), code.length(), filename.c_str())) {
@@ -66,8 +75,37 @@ void LuaAI::tick() {
 		throw std::runtime_error("AI exited");
 	} else if (result == LUA_YIELD) {
 	} else {
-		throw std::runtime_error("AI error"); // XXX message, traceback
+		std::string msg(lua_tostring(L, -1));
+		throw std::runtime_error("AI error" + msg); // XXX traceback
 	}
+}
+
+static LuaAI &lua_ai(lua_State *L) {
+	lua_pushlightuserdata(L, AI_RKEY);
+	lua_gettable(L, LUA_REGISTRYINDEX);
+	void *v = lua_touserdata(L, -1);
+	lua_pop(L, 1);
+	return *(LuaAI*)v;
+}
+
+void api_push_vector(lua_State *L, vec2 v) {
+	lua_createtable(L, 2, 0);
+
+	lua_pushnumber(L, v.x);
+	lua_rawseti(L, -2, 1);
+
+	lua_pushnumber(L, v.y);
+	lua_rawseti(L, -2, 2);
+}
+
+int api_position(lua_State *L) {
+	auto &ship = lua_ai(L).ship;
+	api_push_vector(L, ship.get_position());
+	return 1;
+}
+
+void LuaAI::register_api() {
+	lua_register(G, "position", api_position);
 }
 
 }
