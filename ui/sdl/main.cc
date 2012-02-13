@@ -78,11 +78,17 @@ int main(int argc, char **argv) {
 		("help,h", "produce help message")
 		("test,t", po::value<std::string>(), "test to run")
 		("scenario,s", po::value<std::string>(), "scenario")
+		("ai,a", po::value<std::vector<std::string>>(), "ai")
 		;
 
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);
+
+	std::vector<std::string> ai_filenames;
+	if (vm.count("ai")) {
+		ai_filenames = vm["ai"].as<std::vector<std::string>>();
+	}
 
 	if (vm.count("help")) {
 		std::cerr << desc << std::endl;
@@ -100,10 +106,18 @@ int main(int argc, char **argv) {
 		test = Test::load(test_path);
 		game = test->get_game();
 	} else if (vm.count("scenario")) {
-		std::string scn_path = vm["scenario"].as<std::string>();
+		auto scn_path = vm["scenario"].as<std::string>();
 		printf("Running scenario %s\n", scn_path.c_str());
 		Scenario scn = Scenario::load(scn_path);
-		std::vector<std::shared_ptr<AIFactory>> ai_factories{ builtin_ai_factory, builtin_ai_factory, builtin_ai_factory };
+		std::vector<std::shared_ptr<AIFactory>> ai_factories;
+		BOOST_FOREACH(auto &filename, ai_filenames) {
+			if (filename == "builtin") {
+				ai_factories.push_back(builtin_ai_factory);
+			} else {
+				std::string code = load_resource(filename);
+				ai_factories.push_back(std::make_shared<LuaAIFactory>(filename, code));
+			}
+		}
 		game = std::make_shared<Game>(scn, ai_factories);
 	} else {
 		fprintf(stderr, "no test or scenario specified\n");

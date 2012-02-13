@@ -27,14 +27,13 @@ public:
 	}
 };
 
-#if 0
 class LuaAIFactory : public AIFactory {
 public:
 	std::string filename;
 	std::string code;
+	LuaAIFactory(std::string filename, std::string code);
 	virtual std::unique_ptr<AI> instantiate(Ship &ship);
 };
-#endif
 
 class AI {
 public:
@@ -55,7 +54,6 @@ public:
 	}
 };
 
-#if 0
 class LuaAI : public AI {
 public:
 	LuaAI(Ship &ship, std::string filename, std::string code);
@@ -65,7 +63,6 @@ public:
 private:
 	lua_State *G, *L;
 };
-#endif
 
 }
 
