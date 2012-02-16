@@ -27,8 +27,8 @@ function thrust_angular(acc,exhaust_velocity)
 	sys_thrust_angular(acc)
 end
 
-function fire(name, a)
-	error("NYI")
+function fire_gun(idx, a)
+	sys_fire_gun(idx, a)	
 end
 
 function check_gun_ready(name)
@@ -87,7 +87,7 @@ sandbox_api = {
 	angular_velocity = sys_angular_velocity,
 	reaction_mass = reaction_mass,
 	energy = energy,
-	fire = fire,
+	fire_gun = fire_gun,
 	check_gun_ready = check_gun_ready,
 	yield = yield,
 	sensor_contacts = sensor_contacts,

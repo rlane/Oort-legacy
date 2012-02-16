@@ -146,22 +146,30 @@ int api_angular_velocity(lua_State *L) {
 
 int api_acc_main(lua_State *L) {
 	auto &ship = lua_ai(L).ship;
-	float a = lua_tonumber(L, -1);
+	float a = luaL_checknumber(L, 1);
 	ship.acc_main(a);
 	return 0;
 }
 
 int api_acc_lateral(lua_State *L) {
 	auto &ship = lua_ai(L).ship;
-	float a = lua_tonumber(L, -1);
+	float a = luaL_checknumber(L, 1);
 	ship.acc_lateral(a);
 	return 0;
 }
 
 int api_acc_angular(lua_State *L) {
 	auto &ship = lua_ai(L).ship;
-	float a = lua_tonumber(L, -1);
+	float a = luaL_checknumber(L, 1);
 	ship.acc_angular(a);
+	return 0;
+}
+
+int api_fire_gun(lua_State *L) {
+	auto &ship = lua_ai(L).ship;
+	int idx = luaL_checkinteger(L, 1);
+	float a = luaL_checknumber(L, 2);
+	ship.fire_gun(idx, a);
 	return 0;
 }
 
@@ -173,6 +181,7 @@ void LuaAI::register_api() {
 	lua_register(G, "sys_thrust_main", api_acc_main);
 	lua_register(G, "sys_thrust_lateral", api_acc_lateral);
 	lua_register(G, "sys_thrust_angular", api_acc_angular);
+	lua_register(G, "sys_fire_gun", api_fire_gun);
 }
 
 }

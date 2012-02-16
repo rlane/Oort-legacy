@@ -1,11 +1,8 @@
 while true do
-	print(position())
-	print(velocity())
-	print(heading())
-	print(angular_velocity())
-	thrust_main(10)
-	thrust_lateral(5)
-	thrust_angular(0.1)
 	drive_towards(100, 0, 0)
+	local a = lead_vec(position_vec(), vec(0, 0), velocity_vec(), vec(0, 0), 3000, 10)
+	if a then
+		fire_gun(0, a)
+	end
 	yield()
 end
