@@ -1,4 +1,5 @@
 lib()
+vector()
 
 function time()
 	error("NYI")

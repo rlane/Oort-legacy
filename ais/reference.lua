@@ -6,5 +6,6 @@ while true do
 	thrust_main(10)
 	thrust_lateral(5)
 	thrust_angular(0.1)
+	drive_towards(100, 0, 0)
 	yield()
 end
